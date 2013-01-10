@@ -41,6 +41,11 @@ static HeftManager* instance = 0;
 	return instance;
 }
 
++ (void)initHeftManager:(NSObject<HeftDiscoveryDelegate>*)obj{
+    HeftManager* manager = [HeftManager sharedManager];
+	manager.delegate = obj;
+}
+
 NSString* devicesPath(){
 	return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"devices"];
 }

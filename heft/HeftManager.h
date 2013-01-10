@@ -31,6 +31,9 @@
 
 + (HeftManager*)sharedManager;
 
+// 
++ (void)initHeftManager:(NSObject<HeftDiscoveryDelegate>*) obj;
+
 @property(nonatomic, readonly) NSString* version;
 
 - (BOOL)hasSources;
