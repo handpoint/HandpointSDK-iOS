@@ -23,10 +23,10 @@ private:
 	eLevel m_level;
 };
 
-/*#ifdef HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 #define LOG_RELEASE(level, ...) LOG(__VA_ARGS__)
-#else*/
+#else
 #define LOG_RELEASE(level, ...) if(Logger::instance().isLogable(level)) Logger::instance().log(__VA_ARGS__);
-/*#endif*/
+#endif
 
 NSString* dump(NSString* prefix, const void* const pData, int len);

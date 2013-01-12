@@ -39,9 +39,7 @@
 #pragma mark IBAction
 
 - (IBAction)sale{
-    //[heftClient financeInit];
-    [heftClient saleWithAmount:[amount.text intValue] currency:@"EUR" cardholder:YES];
-
+	[heftClient saleWithAmount:[amount.text intValue] currency:@"GBP" cardholder:YES];
 }
 
 #pragma mark UITextFieldDelegate

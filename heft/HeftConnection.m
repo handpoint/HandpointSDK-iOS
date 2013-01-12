@@ -11,8 +11,6 @@
 
 const int ciDefaultMaxFrameSize = 2048;
 
-const int ciTimeout[] = {2, 15, 1, 45};
-
 enum eBufferConditions{
 	eNoDataCondition
 	, eHasDataCondition

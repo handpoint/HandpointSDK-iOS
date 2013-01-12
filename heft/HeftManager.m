@@ -16,6 +16,12 @@
 //NSString* file = nil;
 //NSMutableString* log2file = nil;
 
+#if HEFT_SIMULATOR
+NSString* devicesFileName = @"devices_simulator";
+#else
+NSString* devicesFileName = @"devices";
+#endif
+
 @interface HeftRemoteDevice ()
 - (id)initWithName:(NSString*)aName address:(NSString*)aAddress;
 @end
@@ -41,13 +47,8 @@ static HeftManager* instance = 0;
 	return instance;
 }
 
-+ (void)initHeftManager:(NSObject<HeftDiscoveryDelegate>*)obj{
-    HeftManager* manager = [HeftManager sharedManager];
-	manager.delegate = obj;
-}
-
 NSString* devicesPath(){
-	return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"devices"];
+	return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:devicesFileName];
 }
 
 - (id)init{
@@ -57,12 +58,24 @@ NSString* devicesPath(){
 		if(!devices)
 			devices = [NSMutableArray new];
 
+#if HEFT_SIMULATOR
+		[self performSelectorOnMainThread:@selector(asyncSimulatorInit) withObject:nil waitUntilDone:NO];
+#else
 		dtdev = [DTDevices sharedDevice];
 		[dtdev addDelegate:self];
 		[dtdev connect];
+#endif
 	}
 	return self;
 }
+
+#if HEFT_SIMULATOR
+- (void)asyncSimulatorInit{
+	[self connectionState:CONN_CONNECTING];
+	[self connectionState:CONN_CONNECTED];
+	[self deviceFeatureSupported:FEAT_BLUETOOTH value:YES];
+}
+#endif
 
 - (void)dealloc{
 	LOG(@"HeftManager::dealloc");
@@ -74,7 +87,11 @@ NSString* devicesPath(){
 }
 
 - (id<HeftClient>)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
+#if HEFT_SIMULATOR
+	return [[MpedDevice alloc] initWithConnection:nil sharedSecret:sharedSecret delegate:aDelegate];
+#else
 	return [[MpedDevice alloc] initWithConnection:[[HeftConnection alloc] initWithDevice:device] sharedSecret:sharedSecret delegate:aDelegate];
+#endif
 }
 
 #pragma mark property
@@ -88,9 +105,14 @@ NSString* devicesPath(){
 - (void)startDiscovery{
 	if(hasBluetooth){
 		LOG(@"bluetooth discovery started");
+#if HEFT_SIMULATOR
+		[self bluetoothDeviceDiscovered:@"" name:@"Simulator"];
+		[self bluetoothDiscoverComplete:YES];
+#else
 		NSError* error = NULL;
 		[dtdev btDiscoverPinpadsInBackground:&error];
 		//[dtdev btDiscoverDevicesInBackground:10 maxTime:200 codTypes:0 error:&error];
+#endif
 	}
 }
 

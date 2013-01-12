@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D0D3F3C162C64450057301F /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
 		2D1208A5165E9729004C1AEC /* libdtdev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D1208A4165E9729004C1AEC /* libdtdev.a */; };
-		2D398928165FF23D00F8FA29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
+		2D1B8AD016A0A77600B11BC9 /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; };
+		2D1B8AD116A0A77600B11BC9 /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; };
+		2D1B8AD216A0A77600B11BC9 /* HeftStatusReport.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398956165FF88800F8FA29 /* HeftStatusReport.h */; };
+		2D1B8AD416A0AD5700B11BC9 /* RequestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */; };
+		2D1B8AD516A0AD5B00B11BC9 /* ResponseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */; };
+		2D1B8AD616A0AD6000B11BC9 /* FinanceTransactionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCAF169B2B5A00BA0D48 /* FinanceTransactionOperation.m */; };
 		2D398936165FF23E00F8FA29 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3991628B0590043AFBC /* SenTestingKit.framework */; };
 		2D398937165FF23E00F8FA29 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3721628B0580043AFBC /* UIKit.framework */; };
 		2D398938165FF23E00F8FA29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
@@ -31,7 +35,9 @@
 		2D39897F165FF88800F8FA29 /* RequestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896E165FF88800F8FA29 /* RequestCommand.cpp */; };
 		2D398980165FF88800F8FA29 /* ResponseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D398970165FF88800F8FA29 /* ResponseCommand.cpp */; };
 		2D3DAAA91660089000FC0565 /* libheft.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D398927165FF23D00F8FA29 /* libheft.a */; };
-		2DEAD201164020A5006E2429 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEAD200164020A5006E2429 /* Security.framework */; };
+		2D5ACCB3169B2F5E00BA0D48 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
+		2D5ACCB4169B2F6800BA0D48 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEAD200164020A5006E2429 /* Security.framework */; };
+		2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		2DEDA3731628B0590043AFBC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3721628B0580043AFBC /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		2DEDA3751628B0590043AFBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		2DEDA3771628B0590043AFBC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3761628B0590043AFBC /* CoreGraphics.framework */; };
@@ -82,9 +88,12 @@
 		2D398925165FF23D00F8FA29 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "include/${PRODUCT_NAME}";
+			dstPath = include;
 			dstSubfolderSpec = 16;
 			files = (
+				2D1B8AD016A0A77600B11BC9 /* HeftClient.h in CopyFiles */,
+				2D1B8AD116A0A77600B11BC9 /* HeftManager.h in CopyFiles */,
+				2D1B8AD216A0A77600B11BC9 /* HeftStatusReport.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +147,12 @@
 		2D398970165FF88800F8FA29 /* ResponseCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ResponseCommand.cpp; sourceTree = "<group>"; };
 		2D398971165FF88800F8FA29 /* ResponseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseCommand.h; sourceTree = "<group>"; };
 		2D398972165FF88800F8FA29 /* StdAfx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdAfx.h; sourceTree = "<group>"; };
+		2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = RequestCommand.cpp; path = simulator/Shared/RequestCommand.cpp; sourceTree = "<group>"; };
+		2D5ACCA9169B258F00BA0D48 /* RequestCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RequestCommand.h; path = simulator/Shared/RequestCommand.h; sourceTree = "<group>"; };
+		2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ResponseCommand.cpp; path = simulator/Shared/ResponseCommand.cpp; sourceTree = "<group>"; };
+		2D5ACCAB169B258F00BA0D48 /* ResponseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResponseCommand.h; path = simulator/Shared/ResponseCommand.h; sourceTree = "<group>"; };
+		2D5ACCAE169B2B5A00BA0D48 /* FinanceTransactionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FinanceTransactionOperation.h; path = simulator/FinanceTransactionOperation.h; sourceTree = "<group>"; };
+		2D5ACCAF169B2B5A00BA0D48 /* FinanceTransactionOperation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = FinanceTransactionOperation.m; path = simulator/FinanceTransactionOperation.m; sourceTree = "<group>"; };
 		2DEAD200164020A5006E2429 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		2DEDA36E1628B0580043AFBC /* headstart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = headstart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DEDA3721628B0580043AFBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -174,7 +189,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D398928165FF23D00F8FA29 /* Foundation.framework in Frameworks */,
+				2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,12 +209,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D3DAAA91660089000FC0565 /* libheft.a in Frameworks */,
-				2DEAD201164020A5006E2429 /* Security.framework in Frameworks */,
-				2D0D3F3C162C64450057301F /* ExternalAccessory.framework in Frameworks */,
 				2DEDA3731628B0590043AFBC /* UIKit.framework in Frameworks */,
 				2DEDA3751628B0590043AFBC /* Foundation.framework in Frameworks */,
 				2DEDA3771628B0590043AFBC /* CoreGraphics.framework in Frameworks */,
 				2D1208A5165E9729004C1AEC /* libdtdev.a in Frameworks */,
+				2D5ACCB3169B2F5E00BA0D48 /* ExternalAccessory.framework in Frameworks */,
+				2D5ACCB4169B2F6800BA0D48 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +254,7 @@
 		2D398929165FF23D00F8FA29 /* heft */ = {
 			isa = PBXGroup;
 			children = (
+				2D5ACC95169B229200BA0D48 /* simulator */,
 				2DFB46391694744800E95CCC /* api */,
 				2D39895C165FF88800F8FA29 /* Shared */,
 				2D398953165FF88800F8FA29 /* HeftManager.m */,
@@ -321,6 +337,27 @@
 				2D39895E165FF88800F8FA29 /* CmdIds.h */,
 			);
 			path = api;
+			sourceTree = "<group>";
+		};
+		2D5ACC95169B229200BA0D48 /* simulator */ = {
+			isa = PBXGroup;
+			children = (
+				2D5ACC97169B229E00BA0D48 /* Shared */,
+				2D5ACCAE169B2B5A00BA0D48 /* FinanceTransactionOperation.h */,
+				2D5ACCAF169B2B5A00BA0D48 /* FinanceTransactionOperation.m */,
+			);
+			name = simulator;
+			sourceTree = "<group>";
+		};
+		2D5ACC97169B229E00BA0D48 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */,
+				2D5ACCA9169B258F00BA0D48 /* RequestCommand.h */,
+				2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */,
+				2D5ACCAB169B258F00BA0D48 /* ResponseCommand.h */,
+			);
+			name = Shared;
 			sourceTree = "<group>";
 		};
 		2DEDA3631628B0580043AFBC = {
@@ -604,6 +641,9 @@
 				2D39897E165FF88800F8FA29 /* Logger.cpp in Sources */,
 				2D39897F165FF88800F8FA29 /* RequestCommand.cpp in Sources */,
 				2D398980165FF88800F8FA29 /* ResponseCommand.cpp in Sources */,
+				2D1B8AD416A0AD5700B11BC9 /* RequestCommand.cpp in Sources */,
+				2D1B8AD516A0AD5B00B11BC9 /* ResponseCommand.cpp in Sources */,
+				2D1B8AD616A0AD6000B11BC9 /* FinanceTransactionOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,13 +739,243 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		2D38903A169F629E00720A15 /* Debug Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"HEFT_SIMULATOR=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = armv7;
+			};
+			name = "Debug Simulator";
+		};
+		2D38903B169F629E00720A15 /* Debug Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				INFOPLIST_FILE = "headstart/headstart-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-lc++";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Debug Simulator";
+		};
+		2D38903C169F629E00720A15 /* Debug Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/headstart.app/headstart";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
+				INFOPLIST_FILE = "headstartTests/headstartTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Debug Simulator";
+		};
+		2D38903D169F629E00720A15 /* Debug Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					HeftConnection.m,
+					FinanceTransactionOperation.m,
+					"Shared/*",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				SKIP_INSTALL = YES;
+			};
+			name = "Debug Simulator";
+		};
+		2D38903E169F629E00720A15 /* Debug Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				INFOPLIST_FILE = "heftTests/heftTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Debug Simulator";
+		};
+		2D389040169F62B800720A15 /* Release Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HEFT_SIMULATOR=1",
+					"NS_BLOCK_ASSERTIONS=1",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
+			};
+			name = "Release Simulator";
+		};
+		2D389041169F62B800720A15 /* Release Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				INFOPLIST_FILE = "headstart/headstart-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-lc++";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Release Simulator";
+		};
+		2D389042169F62B800720A15 /* Release Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/headstart.app/headstart";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
+				INFOPLIST_FILE = "headstartTests/headstartTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Release Simulator";
+		};
+		2D389043169F62B800720A15 /* Release Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					HeftConnection.m,
+					FinanceTransactionOperation.m,
+					"Shared/*",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				SKIP_INSTALL = YES;
+			};
+			name = "Release Simulator";
+		};
+		2D389044169F62B800720A15 /* Release Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				INFOPLIST_FILE = "heftTests/heftTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Release Simulator";
+		};
 		2D398946165FF23E00F8FA29 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -722,9 +992,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -815,12 +1090,13 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "NS_BLOCK_ASSERTIONS=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -858,7 +1134,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
 				);
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -907,7 +1182,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D398946165FF23E00F8FA29 /* Debug */,
+				2D38903D169F629E00720A15 /* Debug Simulator */,
 				2D398947165FF23E00F8FA29 /* Release */,
+				2D389043169F62B800720A15 /* Release Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -916,7 +1193,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D398949165FF23E00F8FA29 /* Debug */,
+				2D38903E169F629E00720A15 /* Debug Simulator */,
 				2D39894A165FF23E00F8FA29 /* Release */,
+				2D389044169F62B800720A15 /* Release Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -925,7 +1204,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2DEDA3A81628B0590043AFBC /* Debug */,
+				2D38903A169F629E00720A15 /* Debug Simulator */,
 				2DEDA3A91628B0590043AFBC /* Release */,
+				2D389040169F62B800720A15 /* Release Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -934,7 +1215,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2DEDA3AB1628B0590043AFBC /* Debug */,
+				2D38903B169F629E00720A15 /* Debug Simulator */,
 				2DEDA3AC1628B0590043AFBC /* Release */,
+				2D389041169F62B800720A15 /* Release Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -943,7 +1226,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2DEDA3AE1628B0590043AFBC /* Debug */,
+				2D38903C169F629E00720A15 /* Debug Simulator */,
 				2DEDA3AF1628B0590043AFBC /* Release */,
+				2D389042169F62B800720A15 /* Release Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

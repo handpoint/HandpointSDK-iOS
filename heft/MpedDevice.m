@@ -6,14 +6,21 @@
 #import "MpedDevice.h"
 #import "HeftConnection.h"
 #import "HeftStatusReport.h"
-#import "FinanceTransactionOperation.h"
 #import "ResponseParser.h"
 
 #import "StdAfx.h"
-#import "RequestCommand.h"
-#import "ResponseCommand.h"
+
+#if HEFT_SIMULATOR
+#import "simulator/Shared/RequestCommand.h"
+#import "simulator/Shared/ResponseCommand.h"
+#import "simulator/FinanceTransactionOperation.h"
+#else
 #import "FrameManager.h"
 #import "Frame.h"
+#import "Shared/RequestCommand.h"
+#import "Shared/ResponseCommand.h"
+#import "FinanceTransactionOperation.h"
+#endif
 
 const NSString* kSerialNumberInfoKey = @"SerialNumber";
 const NSString* kPublicKeyVersionInfoKey = @"PublicKeyVersion";
@@ -24,6 +31,8 @@ const NSString* kModelCodeInfoKey = @"ModelCode";
 const NSString* kAppNameInfoKey = @"AppName";
 const NSString* kAppVersionInfoKey = @"AppVersion";
 const NSString* kXMLDetailsInfoKey = @"XMLDetails";
+
+const int ciTimeout[] = {2, 15, 1, 45};
 
 NSString* statusMessages[] = {
 	@""
@@ -77,16 +86,31 @@ enum eSignConditions{
 @synthesize mpedInfo;
 
 - (id)initWithConnection:(HeftConnection*)aConnection sharedSecret:(NSData*)aSharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
+#if !HEFT_SIMULATOR
 	if(aConnection){
+#endif
 		if(self = [super init]){
 			LOG(@"MpedDevice::init");
-			connection = aConnection;
 			queue = [NSOperationQueue new];
 			[queue setMaxConcurrentOperationCount:1];
-			sharedSecret = aSharedSecret;
 			delegate = aDelegate;
 			signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
 
+#if HEFT_SIMULATOR
+			mpedInfo = @{
+				kSerialNumberInfoKey:@"0123456789AB"
+				, kPublicKeyVersionInfoKey:@1
+				, kEMVParamVersionInfoKey:@1
+				, kGeneralParamInfoKey:@1
+				, kManufacturerCodeInfoKey:@0
+				, kModelCodeInfoKey:@0
+				, kAppNameInfoKey:@"EFTSimul"
+				, kAppVersionInfoKey:@0x0100
+				, kXMLDetailsInfoKey:@""
+			};
+#else
+			connection = aConnection;
+			sharedSecret = aSharedSecret;
 			try{
 				FrameManager fm(InitRequestCommand(), connection.maxBufferSize);
 				fm.Write(connection);
@@ -108,12 +132,15 @@ enum eSignConditions{
 				[self sendResponseInfo:exception.stringId() xml:nil];
 				self = nil;
 			}
+#endif
 		}
+#if !HEFT_SIMULATOR
 	}
 	else{
 		[self sendResponseInfo:@"Cann't create bluetooth connection" xml:nil];
 		self = nil;
 	}
+#endif
 
 	return self;
 }
@@ -127,8 +154,12 @@ enum eSignConditions{
 
 - (void)cancel{
 	LOG_RELEASE(Logger::eFine, @"Cancelling current financial transaction");
+#if HEFT_SIMULATOR
+	[queue cancelAllOperations];
+#else
 	FrameManager fm(IdleRequestCommand(), connection.maxBufferSize);
 	fm.WriteWithoutAck(connection);
+#endif
 	LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
 }
 
@@ -251,12 +282,19 @@ enum eSignConditions{
 
 -(void)processResponse:(ResponseCommand*)pResponse{
 	int status = pResponse->GetStatus();
-	if(status != EFT_PP_STATUS_SUCCESS)
+	if(status != EFT_PP_STATUS_SUCCESS){
 		[self sendResponseInfo:statusMessages[status] xml:nil];
+#if HEFT_SIMULATOR
+		[NSThread sleepForTimeInterval:1.];
+#endif
+	}
 }
 
 -(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse{
 	[self sendResponseInfo:statusMessages[pResponse->GetStatus()] xml:[self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]];
+#if HEFT_SIMULATOR
+	[NSThread sleepForTimeInterval:1.];
+#endif
 }
 
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse{

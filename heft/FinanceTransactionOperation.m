@@ -11,8 +11,8 @@
 #import "StdAfx.h"
 #import "FrameManager.h"
 #import "Frame.h"
-#import "RequestCommand.h"
-#import "ResponseCommand.h"
+#import "Shared/RequestCommand.h"
+#import "Shared/ResponseCommand.h"
 
 @implementation FinanceTransactionOperation
 
