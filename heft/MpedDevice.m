@@ -69,7 +69,7 @@ NSString* statusMessages[] = {
 	,@""
 	,@"Connecting"
 	,@"Sending"
-	,@"Receiveing"
+	,@"Receiving"
 	,@"Disconnecting"
 };
 

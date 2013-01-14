@@ -12,17 +12,18 @@
 
 - (void)viewDidLoad{
     [super viewDidLoad];
+    [HeftManager initHeftManager:self];
 
-	HeftManager* manager = [HeftManager sharedManager];
-	manager.delegate = self;
-	if(!manager.hasSources){
-		discoveryButton.hidden = YES;
-		connectButton.hidden = YES;
-	}
-	else{
-		devices = [manager.devices mutableCopy];
-		connectButton.hidden = ![devices count];
-	}
+//	HeftManager* manager = [HeftManager sharedManager];
+//	manager.delegate = self;
+//	if(!manager.hasSources){
+//		discoveryButton.hidden = YES;
+//		connectButton.hidden = YES;
+//	}
+//	else{
+//		devices = [manager.devices mutableCopy];
+//		connectButton.hidden = ![devices count];
+//	}
 }
 
 /*- (void)didReceiveMemoryWarning

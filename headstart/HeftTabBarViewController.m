@@ -56,10 +56,14 @@
 
 - (void)responseStatus:(ResponseInfo*)info{
 	NSLog(@"responseStatus:");
+    NSLog(info.status);
+    NSLog(info.xml.description);
 }
 
 - (void)responseFinanceStatus:(FinanceResponseInfo*)info{
 	NSLog(@"responseFinanceStatus:");
+    NSLog(info.status);
+    NSLog(info.customerReceipt);
 }
 
 - (void)responseLogInfo:(LogInfo*)info{
@@ -68,6 +72,7 @@
 
 - (void)requestSignature:(NSString*)receipt{
 	NSLog(@"requestSignature:");
+    NSLog(receipt);
 	UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"" message:@"sign?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
 	[alert show];
 }
