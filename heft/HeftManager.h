@@ -31,6 +31,7 @@
 
 + (HeftManager*)sharedManager;
 
++ (void)initHeftManager:(NSObject<HeftDiscoveryDelegate>*)obj;
 
 
 
