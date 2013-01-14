@@ -31,6 +31,9 @@
 
 + (HeftManager*)sharedManager;
 
+
+
+
 @property(nonatomic, readonly) NSString* version;
 
 - (BOOL)hasSources;
