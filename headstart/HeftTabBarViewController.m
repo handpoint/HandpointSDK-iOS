@@ -64,6 +64,7 @@
 	NSLog(@"responseFinanceStatus:");
     NSLog(info.status);
     NSLog(info.customerReceipt);
+    NSLog(info.xml.description);
 }
 
 - (void)responseLogInfo:(LogInfo*)info{
