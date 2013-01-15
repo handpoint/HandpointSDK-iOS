@@ -165,13 +165,16 @@ char* stateLabel[] = {"disconnected", "connecting", "connected"};
 	NSUInteger index = [devices indexOfObjectPassingTest:^(HeftRemoteDevice* obj, NSUInteger idx, BOOL *stop){
 		if([obj.address isEqualToString:btAddress])
 			*stop = YES;
-		return *stop;
+        return *stop;
 	}];
+    HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
 	if(index == NSNotFound){
-		HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
+		//HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
+        newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
 		[devices addObject:newDevice];
-		[delegate didDiscoverDevice:newDevice];
+		//[delegate didDiscoverDevice:newDevice];
 	}
+    [delegate didDiscoverDevice:newDevice];
 }
 
 @end
