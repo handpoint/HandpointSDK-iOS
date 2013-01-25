@@ -9,33 +9,25 @@
 @class DTDevices;
 
 
-
-
 @protocol HeftDiscoveryDelegate
 - (void)hasSources;
 - (void)noSources;
 - (void)didDiscoverDevice:(HeftRemoteDevice*)newDevice;
+- (void)didDiscoverFinished;
 @end
 
 
 @protocol HeftDiscovery
 @property(nonatomic, readonly) NSArray* devices;
 @property(nonatomic, weak) NSObject<HeftDiscoveryDelegate>* delegate;
-- (void)startDiscovery;
+- (void)startDiscovery:(BOOL)fDiscoverAllDevices;
+- (void)resetDevices;
 @end
 
 
-@interface HeftManager : NSObject<HeftDiscovery>{
-	DTDevices *dtdev;
-	BOOL hasBluetooth;
-	NSMutableArray* devices;
-}
+@interface HeftManager : NSObject<HeftDiscovery>
 
 + (HeftManager*)sharedManager;
-
-+ (void)initHeftManager:(NSObject<HeftDiscoveryDelegate>*)obj;
-
-
 
 @property(nonatomic, readonly) NSString* version;
 

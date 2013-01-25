@@ -20,6 +20,7 @@
 
 @protocol HeftStatusReportDelegate
 - (void)responseStatus:(ResponseInfo*)info;
+- (void)responseError:(ResponseInfo*)info;
 - (void)responseFinanceStatus:(FinanceResponseInfo*)info;
 - (void)responseLogInfo:(LogInfo*)info;
 - (void)requestSignature:(NSString*)receipt;

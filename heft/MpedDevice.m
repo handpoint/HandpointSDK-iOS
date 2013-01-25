@@ -129,7 +129,7 @@ enum eSignConditions{
 				};
 			}
 			catch(heft_exception& exception){
-				[self sendResponseInfo:exception.stringId() xml:nil];
+				[self sendResponseError:exception.stringId()];
 				self = nil;
 			}
 #endif
@@ -137,7 +137,7 @@ enum eSignConditions{
 #if !HEFT_SIMULATOR
 	}
 	else{
-		[self sendResponseInfo:@"Cann't create bluetooth connection" xml:nil];
+		[self sendResponseError:@"Cann't create bluetooth connection"];
 		self = nil;
 	}
 #endif
@@ -249,7 +249,10 @@ enum eSignConditions{
 	NSXMLParser* xmlParser = [[NSXMLParser alloc] initWithData:[[NSData alloc] initWithBytesNoCopy:(void*)[xml UTF8String] length:[xml length] freeWhenDone:NO]];
 	ResponseParser* parser = [[ResponseParser alloc] initWithPath:path];
 	xmlParser.delegate = parser;
-	Verify([xmlParser parse]);
+	//LOG(@"%@", xml);
+	[xmlParser parse];
+	//Verify([xmlParser parse]);
+	//LOG(@"%@", xmlParser.parserError);
 	//LOG(@"%@", parser.result);
 	return parser.result;
 }
@@ -262,6 +265,13 @@ enum eSignConditions{
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
 	[delegate performSelectorOnMainThread:@selector(responseStatus:) withObject:info waitUntilDone:NO];
+}
+
+-(void)sendResponseError:(NSString*)status{
+	ResponseInfo* info = [ResponseInfo new];
+	info.status = status;
+	LOG_RELEASE(Logger::eFine, @"%@", info.status);
+	[delegate performSelectorOnMainThread:@selector(responseError:) withObject:info waitUntilDone:NO];
 }
 
 - (int)processSign:(NSString*)receipt{

@@ -21,8 +21,8 @@
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string{
 	if(key){
-		[result setObject:string forKey:key];
-		key = nil;
+		NSString* newString = [result[key] stringByAppendingString:string];
+		result[key] = newString ? newString : string;
 	}
 }
 

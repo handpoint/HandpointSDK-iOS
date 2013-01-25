@@ -62,7 +62,7 @@ FinanceRequestCommand::FinanceRequestCommand(int iCommandSize, UINT32 type, cons
 		}
 	}
 
-	if(fCheckCodeSize && currency_code.length() != sizeof(ISO4217CurrencyCodes[0].code))
+	if(fCheckCodeSize && currency_code.length() != sizeof(ISO4217CurrencyCodes[0].code) - 1)
 		throw std::invalid_argument("invalid currency code");
 
 	FinancePayload* pRequest = GetPayload<FinancePayload>();

@@ -4,11 +4,27 @@
 //
 
 #import "HeftTabBarViewController.h"
-#import "PhoneViewController.h"
+#import "NumPadViewController.h"
+#import "HistoryViewController.h"
+#import "SettingsViewController.h"
+#import "TransactionViewController.h"
 
 #import "../heft/HeftClient.h"
 
-@implementation HeftTabBarViewController
+enum eTab{
+	eScanTab
+	, eNumPadTab
+	, eHistoryTab
+	, eSettingsTab
+};
+
+@interface TransactionViewController ()
++ (id)transactionWithType:(eTransactionType)type storyboard:(UIStoryboard*)storyboard;
+@end
+
+@implementation HeftTabBarViewController{
+	TransactionViewController* transactionViewController;
+}
 
 @synthesize heftClient;
 
@@ -41,39 +57,79 @@
 	return UIInterfaceOrientationMaskPortrait;
 }
 
+- (void)addFadeTransition{
+	CATransition* transition = [CATransition animation];
+	transition.type = kCATransitionFade;
+	[self.view.layer addAnimation:transition forKey:nil];
+}
+
+- (void)showTransactionViewController:(eTransactionType)type{
+	transactionViewController = [TransactionViewController transactionWithType:type storyboard:self.storyboard];
+
+	[self addFadeTransition];
+	[self.view addSubview:transactionViewController.view];
+}
+
+- (void)dismissTransactionViewController{
+	[self addFadeTransition];
+	[transactionViewController.view removeFromSuperview];
+
+	transactionViewController = nil;
+}
+
+- (void)setTransactionStatus:(NSString*)status{
+	[transactionViewController setStatusMessage:status];
+}
+
 #pragma mark property
 
 - (void)setHeftClient:(id<HeftClient>)aHeftClient{
 	if(heftClient != aHeftClient){
 		heftClient = aHeftClient;
-		PhoneViewController* phoneViewController = self.viewControllers[1];
-		Assert([phoneViewController isKindOfClass:[PhoneViewController class]]);
-		phoneViewController.heftClient = heftClient;
+		NumPadViewController* phoneViewController = self.viewControllers[eNumPadTab];
+		Assert([phoneViewController isKindOfClass:[NumPadViewController class]]);
+		[phoneViewController updateOnHeftClient:heftClient != nil];
+
+		SettingsViewController* settingsViewController = self.viewControllers[eSettingsTab];
+		Assert([settingsViewController isKindOfClass:[SettingsViewController class]]);
+		[settingsViewController updateOnHeftClient:heftClient != nil];
+
+		self.selectedIndex = eNumPadTab;
 	}
 }
 
 #pragma mark HeftStatusReportDelegate
 
 - (void)responseStatus:(ResponseInfo*)info{
-	NSLog(@"responseStatus:");
-    NSLog(info.status);
-    NSLog(info.xml.description);
+	NSLog(@"responseStatus:%@", info.xml);
+	[self setTransactionStatus:info.status];
+	[transactionViewController allowCancel:[info.xml[@"CancelAllowed"] boolValue]];
+}
+
+- (void)responseError:(ResponseInfo*)info{
+	NSLog(@"responseError:%@", info.status);
+	[transactionViewController setStatusMessage:info.status];
+	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
 }
 
 - (void)responseFinanceStatus:(FinanceResponseInfo*)info{
-	NSLog(@"responseFinanceStatus:");
-    NSLog(info.status);
-    NSLog(info.customerReceipt);
-    NSLog(info.xml.description);
+	NSLog(@"responseFinanceStatus:%@", info.status);
+	[transactionViewController setStatusMessage:info.status];
+	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
+	self.selectedIndex = eHistoryTab;
+	
+	HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
+	Assert([historyViewController isKindOfClass:[HistoryViewController class]]);
+	[historyViewController addNewTransaction:info];
 }
 
 - (void)responseLogInfo:(LogInfo*)info{
-	NSLog(@"responseLogInfo:");
+	NSLog(@"responseLogInfo:%@", info.status);
+	[self dismissTransactionViewController];
 }
 
 - (void)requestSignature:(NSString*)receipt{
 	NSLog(@"requestSignature:");
-    NSLog(receipt);
 	UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"" message:@"sign?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
 	[alert show];
 }

@@ -98,8 +98,9 @@ enum eBufferConditions{
 		if([aStream getBuffer:&buf length:&nread]){
 			LOG(@"stream:handleEvent: has bytes: %d", nread);
 			Assert(nread);
-			nread = [inputStream read:&tmpBuf[currentPosition] maxLength:fmin(nread, maxBufferSize - currentPosition)];
-			Assert(nread);
+			double minread = fmin(nread, maxBufferSize - currentPosition);
+			nread = [inputStream read:&tmpBuf[currentPosition] maxLength:minread];
+			Assert(nread == minread);
 			currentPosition += nread;
 		}
 		[bufferLock unlockWithCondition:currentPosition ? eHasDataCondition : eNoDataCondition];

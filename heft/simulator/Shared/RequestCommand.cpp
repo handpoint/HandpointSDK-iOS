@@ -8,8 +8,6 @@ const int ciSignRequestAmount = 3000;
 
 ResponseCommand* RequestCommand::CreateResponse()const{return new ResponseCommand(m_cmd);}
 
-ResponseCommand* RequestCommand::CreateResponseOnCancel()const{return new ResponseCommand(m_cmd, EFT_PP_STATUS_USER_CANCELLED);}
-
 FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present) 
 	: RequestCommand(type)
 	, state(eWaitingCard), amount(trans_amount)
@@ -27,11 +25,9 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
 	};
 	
 	bool fCheckCodeSize = true;
-	const char* code = currency_code.c_str();
 	for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
 		CurrencyCode cc = ISO4217CurrencyCodes[i];
 		if(!currency_code.compare(cc.name)){
-			code = cc.code;
 			fCheckCodeSize = false;
 			break;
 		}
@@ -62,6 +58,8 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 	}
 	return result;
 }
+
+ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const{return new FinanceResponseCommand(m_cmd, amount, EFT_PP_STATUS_USER_CANCELLED);}
 
 SaleRequestCommand::SaleRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present) 
 	: FinanceRequestCommand(CMD_FIN_SALE_REQ, currency_code, trans_amount, card_present)

@@ -15,7 +15,6 @@ public:
 	//Command
 	bool isResponse(){return false;}
 	virtual ResponseCommand* CreateResponse()const;
-	ResponseCommand* CreateResponseOnCancel()const;
 
 	UINT32 GetType()const{return m_cmd;}
 };
@@ -30,6 +29,7 @@ protected:
 public:
 	FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present);
 	ResponseCommand* CreateResponse()const;
+	ResponseCommand* CreateResponseOnCancel()const;
 };
 
 class SaleRequestCommand : public FinanceRequestCommand{

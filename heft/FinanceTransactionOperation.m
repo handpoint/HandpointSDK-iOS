@@ -30,6 +30,7 @@
 
 - (void)dealloc{
 	NSLog(@"FinanceTransactionOperation ended");
+	[connection shutdown];
 	delete pRequestCommand;
 }
 
@@ -71,7 +72,7 @@
 			}
 		}
 		catch(heft_exception& exception){
-			[processor sendResponseInfo:exception.stringId() xml:nil];
+			[processor sendResponseError:exception.stringId()];
 		}
 	}
 }

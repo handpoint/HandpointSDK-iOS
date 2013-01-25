@@ -35,7 +35,7 @@
 				
 				auto_ptr<ResponseCommand> pResponse;
 				while(true){
-					pResponse.reset([self isCancelled] ? pRequestCommand->CreateResponseOnCancel() : currentRequest->CreateResponse());
+					pResponse.reset([self isCancelled] ? static_cast<FinanceRequestCommand*>(pRequestCommand)->CreateResponseOnCancel() : currentRequest->CreateResponse());
 					
 					if(pRequestCommand != currentRequest){
 						delete currentRequest;
@@ -60,7 +60,7 @@
 			}
 		}
 		catch(heft_exception& exception){
-			[processor sendResponseInfo:exception.stringId() xml:nil];
+			[processor sendResponseError:exception.stringId()];
 		}
 	}
 }

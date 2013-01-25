@@ -27,7 +27,12 @@ NSString* devicesFileName = @"devices";
 @end
 
 
-@implementation HeftManager
+@implementation HeftManager{
+	DTDevices *dtdev;
+	BOOL hasBluetooth;
+	NSMutableArray* devices;
+	BOOL fNotifyForAllDevices;
+}
 
 @synthesize devices, delegate;
 
@@ -45,11 +50,6 @@ static HeftManager* instance = 0;
 
 + (HeftManager*)sharedManager{
 	return instance;
-}
-
-+ (void) initHeftManager:(NSObject<HeftDiscoveryDelegate> *)obj{
-    HeftManager* manager = [HeftManager sharedManager];
-	manager.delegate = obj;
 }
 
 NSString* devicesPath(){
@@ -107,18 +107,30 @@ NSString* devicesPath(){
 
 #pragma mark HeftDiscovery
 
-- (void)startDiscovery{
+- (void)startDiscovery:(BOOL)fDiscoverAllDevices{
 	if(hasBluetooth){
 		LOG(@"bluetooth discovery started");
+		fNotifyForAllDevices = fDiscoverAllDevices;
 #if HEFT_SIMULATOR
-		[self bluetoothDeviceDiscovered:@"" name:@"Simulator"];
-		[self bluetoothDiscoverComplete:YES];
+		[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 #else
 		NSError* error = NULL;
 		[dtdev btDiscoverPinpadsInBackground:&error];
 		//[dtdev btDiscoverDevicesInBackground:10 maxTime:200 codTypes:0 error:&error];
 #endif
 	}
+}
+
+#if HEFT_SIMULATOR
+- (void)simulateDiscovery{
+	[self bluetoothDeviceDiscovered:@"" name:@"Simulator"];
+	[self bluetoothDiscoverComplete:YES];
+}
+#endif
+
+- (void)resetDevices{
+	devices = [NSMutableArray new];
+	[NSKeyedArchiver archiveRootObject:devices toFile:devicesPath()];
 }
 
 #pragma mark DTDeviceDelegate
@@ -158,6 +170,7 @@ char* stateLabel[] = {"disconnected", "connecting", "connected"};
 	Assert(success);
 	LOG(@"bluetooth discovery completed");
 	[NSKeyedArchiver archiveRootObject:devices toFile:devicesPath()];
+	[delegate didDiscoverFinished];
 }
 
 -(void)bluetoothDeviceDiscovered:(NSString *)btAddress name:(NSString *)btName{
@@ -165,16 +178,16 @@ char* stateLabel[] = {"disconnected", "connecting", "connected"};
 	NSUInteger index = [devices indexOfObjectPassingTest:^(HeftRemoteDevice* obj, NSUInteger idx, BOOL *stop){
 		if([obj.address isEqualToString:btAddress])
 			*stop = YES;
-        return *stop;
+		return *stop;
 	}];
-    HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
 	if(index == NSNotFound){
-		//HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
-        newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
+		HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
 		[devices addObject:newDevice];
-		//[delegate didDiscoverDevice:newDevice];
+		[delegate didDiscoverDevice:newDevice];
 	}
-    [delegate didDiscoverDevice:newDevice];
+	else if(fNotifyForAllDevices){
+		[delegate didDiscoverDevice:devices[index]];
+	}
 }
 
 @end

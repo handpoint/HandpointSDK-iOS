@@ -9,6 +9,7 @@ class GetLogInfoResponseCommand;
 @protocol IResponseProcessor
 
 -(void)sendResponseInfo:(NSString*)status xml:(NSDictionary*)xml;
+-(void)sendResponseError:(NSString*)status;
 -(int)processSign:(NSString*)receipt;
 -(void)processResponse:(ResponseCommand*)pResponse;
 -(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse;
