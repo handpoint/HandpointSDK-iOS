@@ -10,6 +10,7 @@
 #import "TransactionViewController.h"
 
 #import "../heft/HeftClient.h"
+#import "../heft/Shared/api/CmdIds.h"
 
 enum eTab{
 	eScanTab
@@ -94,48 +95,53 @@ enum eTab{
 		Assert([settingsViewController isKindOfClass:[SettingsViewController class]]);
 		[settingsViewController updateOnHeftClient:heftClient != nil];
 
-		self.selectedIndex = eNumPadTab;
+		if(heftClient)
+			self.selectedIndex = eNumPadTab;
 	}
 }
 
 #pragma mark HeftStatusReportDelegate
 
 - (void)responseStatus:(ResponseInfo*)info{
-	NSLog(@"responseStatus:%@", info.xml);
+	LOG(@"responseStatus:%@", info.xml);
 	[self setTransactionStatus:info.status];
 	[transactionViewController allowCancel:[info.xml[@"CancelAllowed"] boolValue]];
 }
 
 - (void)responseError:(ResponseInfo*)info{
-	NSLog(@"responseError:%@", info.status);
+	LOG(@"responseError:%@", info.status);
 	[transactionViewController setStatusMessage:info.status];
 	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
 }
 
 - (void)responseFinanceStatus:(FinanceResponseInfo*)info{
-	NSLog(@"responseFinanceStatus:%@", info.status);
+	LOG(@"responseFinanceStatus:%@", info.status);
 	[transactionViewController setStatusMessage:info.status];
 	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
-	self.selectedIndex = eHistoryTab;
 	
-	HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
-	Assert([historyViewController isKindOfClass:[HistoryViewController class]]);
-	[historyViewController addNewTransaction:info];
+	if(info.statusCode == EFT_PP_STATUS_SUCCESS){
+		self.selectedIndex = eHistoryTab;
+		
+		HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
+		Assert([historyViewController isKindOfClass:[HistoryViewController class]]);
+		[historyViewController addNewTransaction:info];
+	}
 }
 
 - (void)responseLogInfo:(LogInfo*)info{
-	NSLog(@"responseLogInfo:%@", info.status);
+	LOG(@"responseLogInfo:%@", info.status);
+	[info.log writeToFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"mped_log.txt"] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	[self dismissTransactionViewController];
 }
 
 - (void)requestSignature:(NSString*)receipt{
-	NSLog(@"requestSignature:");
+	LOG(@"requestSignature:");
 	UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"" message:@"sign?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
 	[alert show];
 }
 
 - (void)cancelSignature{
-	NSLog(@"cancelSignature");
+	LOG(@"cancelSignature");
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{

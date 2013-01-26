@@ -34,8 +34,8 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse));
 	case CMD_STAT_CHALENGE_REQ:
 		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse));
-	case CMD_DBG_INFO_RSP:
-		return new DebugInfoResponseCommand(pResponse);
+	/*case CMD_DBG_INFO_RSP:
+		return new DebugInfoResponseCommand(pResponse);*/
 	case CMD_LOG_GET_INF_RSP:
 		return new GetLogInfoResponseCommand(pResponse);
 	case CMD_STAT_INFO_RSP:
@@ -90,6 +90,8 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload) : Resp
 		manufacturer_code = pResponse->manufacturer_code;
 		model_code = pResponse->model_code;
 		app_name.assign(reinterpret_cast<const char*>(pResponse->app_name), sizeof(pResponse->app_name));
+		if(app_name != "EFCLIENT")
+			throw communication_exception();
 		app_ver = ntohs(pResponse->app_ver);
 		UINT32 xml_len = ntohl(pResponse->xml_details_length);
 		xml_details.assign(pResponse->xml_details, xml_len);
@@ -136,12 +138,12 @@ FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload)
 	}
 }
 
-DebugInfoResponseCommand::DebugInfoResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
+/*DebugInfoResponseCommand::DebugInfoResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS){
 		const DebugInfoPayload* pResponse = static_cast<const DebugInfoPayload*>(pPayload);
 		data.assign(pResponse->data, &pResponse->data[ntohs(pResponse->data_len)]);
 	}
-}
+}*/
 
 GetLogInfoResponseCommand::GetLogInfoResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS){

@@ -259,8 +259,9 @@ enum eSignConditions{
 
 #pragma mark IResponseProcessor
 
-- (void)sendResponseInfo:(NSString*)status xml:(NSDictionary*)xml{
+- (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
 	ResponseInfo* info = [ResponseInfo new];
+	info.statusCode = code;
 	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
@@ -293,7 +294,7 @@ enum eSignConditions{
 -(void)processResponse:(ResponseCommand*)pResponse{
 	int status = pResponse->GetStatus();
 	if(status != EFT_PP_STATUS_SUCCESS){
-		[self sendResponseInfo:statusMessages[status] xml:nil];
+		[self sendResponseInfo:statusMessages[status] code:status xml:nil];
 #if HEFT_SIMULATOR
 		[NSThread sleepForTimeInterval:1.];
 #endif
@@ -301,28 +302,34 @@ enum eSignConditions{
 }
 
 -(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse{
-	[self sendResponseInfo:statusMessages[pResponse->GetStatus()] xml:[self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]];
+	int status = pResponse->GetStatus();
+	[self sendResponseInfo:statusMessages[status] code:status xml:[self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]];
 #if HEFT_SIMULATOR
 	[NSThread sleepForTimeInterval:1.];
 #endif
 }
 
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse{
+	int status = pResponse->GetStatus();
 	FinanceResponseInfo* info = [FinanceResponseInfo new];
+	info.statusCode = status;
 	NSDictionary* xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"FinancialTransactionResponse"];
 	info.xml = xmlDetails;
-	info.status = pResponse->GetStatus() == EFT_PP_STATUS_SUCCESS ? [xmlDetails objectForKey:@"FinancialStatus"] : [xmlDetails objectForKey:@"StatusMessage"];
+	info.status = status == EFT_PP_STATUS_SUCCESS ? [xmlDetails objectForKey:@"FinancialStatus"] : [xmlDetails objectForKey:@"StatusMessage"];
+	info.authorisedAmount = pResponse->GetAmount();
+	info.transactionId = @(pResponse->GetTransID().c_str());
 	info.customerReceipt = @(pResponse->GetCustomerReceipt().c_str());
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
 	[delegate performSelectorOnMainThread:@selector(responseFinanceStatus:) withObject:info waitUntilDone:NO];
 }
 
--(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
-}
+/*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
+}*/
 
 -(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse{
 	LogInfo* info = [LogInfo new];
 	int status = pResponse->GetStatus();
+	info.statusCode = status;
 	info.status = statusMessages[status];
 	if(status == EFT_PP_STATUS_SUCCESS)
 		info.log = @(pResponse->GetData().c_str());

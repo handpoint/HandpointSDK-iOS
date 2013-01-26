@@ -13,7 +13,7 @@
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
 	if(self = [super init]){
-		NSLog(@"FinanceTransactionOperation started");
+		LOG(@"FinanceTransactionOperation started");
 		pRequestCommand = aRequest;
 		processor = aProcessor;
 	}
@@ -21,7 +21,7 @@
 }
 
 - (void)dealloc{
-	NSLog(@"FinanceTransactionOperation ended");
+	LOG(@"FinanceTransactionOperation ended");
 	delete pRequestCommand;
 }
 

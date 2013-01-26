@@ -4,6 +4,7 @@
 //
 
 @interface ResponseInfo : NSObject
+@property(nonatomic) int statusCode;
 @property(nonatomic,strong) NSString* status;
 @property(nonatomic,strong) NSDictionary* xml;
 @end

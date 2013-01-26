@@ -11,7 +11,6 @@
 #import "../heft/HeftClient.h"
 
 @interface Transaction : NSObject<NSCoding>
-
 @property(nonatomic, strong) NSString* date;
 @property(nonatomic, assign) int amount;
 @property(nonatomic, strong) NSString* currency;
@@ -19,43 +18,45 @@
 @property(nonatomic, strong) NSString* type;
 @property(nonatomic, strong) NSString* transactionId;
 @property(nonatomic, strong) NSString* receipt;
-
-- (id)initWith;
-
+@property(nonatomic, assign) BOOL voided;
 @end
+
+static NSString* const kTransactionDateKey = @"date";
+static NSString* const kTransactionAmountKey = @"amount";
+static NSString* const kTransactionCurrencyKey = @"currency";
+static NSString* const kTransactionAmountStringKey = @"amount_s";
+static NSString* const kTransactionTypeKey = @"type";
+static NSString* const kTransactionIdKey = @"id";
+static NSString* const kTransactionReceiptKey = @"receipt";
+static NSString* const kTransactionVoidKey = @"void";
 
 @implementation Transaction
 
-@synthesize date, amount, currency, amountString, type, transactionId, receipt;
-
-- (id)initWith{
-	if(self = [super init]){
-		
-	}
-	return self;
-}
+@synthesize date, amount, currency, amountString, type, transactionId, receipt, voided;
 
 #pragma mark NSCoding
 
 - (void)encodeWithCoder:(NSCoder *)aCoder{
-	[aCoder encodeObject:date];
-	[aCoder encodeInt:amount forKey:@"amount"];
-	[aCoder encodeObject:currency];
-	[aCoder encodeObject:amountString];
-	[aCoder encodeObject:type];
-	[aCoder encodeObject:transactionId];
-	[aCoder encodeObject:receipt];
+	[aCoder encodeObject:date forKey:kTransactionDateKey];
+	[aCoder encodeInt:amount forKey:kTransactionAmountKey];
+	[aCoder encodeObject:currency forKey:kTransactionCurrencyKey];
+	[aCoder encodeObject:amountString forKey:kTransactionAmountStringKey];
+	[aCoder encodeObject:type forKey:kTransactionTypeKey];
+	[aCoder encodeObject:transactionId forKey:kTransactionIdKey];
+	[aCoder encodeObject:receipt forKey:kTransactionReceiptKey];
+	[aCoder encodeBool:voided forKey:kTransactionVoidKey];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder{
     if(self = [super init]){
-		date = [aDecoder decodeObject];
-		amount = [aDecoder decodeIntegerForKey:@"amount"];
-		currency = [aDecoder decodeObject];
-		amountString = [aDecoder decodeObject];
-		type = [aDecoder decodeObject];
-		transactionId = [aDecoder decodeObject];
-		receipt = [aDecoder decodeObject];
+		date = [aDecoder decodeObjectForKey:kTransactionDateKey];
+		amount = [aDecoder decodeIntegerForKey:kTransactionAmountKey];
+		currency = [aDecoder decodeObjectForKey:kTransactionCurrencyKey];
+		amountString = [aDecoder decodeObjectForKey:kTransactionAmountStringKey];
+		type = [aDecoder decodeObjectForKey:kTransactionTypeKey];
+		transactionId = [aDecoder decodeObjectForKey:kTransactionIdKey];
+		receipt = [aDecoder decodeObjectForKey:kTransactionReceiptKey];
+		voided = [aDecoder decodeBoolForKey:kTransactionVoidKey];
     }
     return self;
 }
@@ -106,30 +107,41 @@ NSString* historyPath(){
 - (void)addNewTransaction:(FinanceResponseInfo*)info{
 	NSDictionary* xml = info.xml;
 	LOG(@"%@", xml);
-
-	NSString* currency = xml[@"Currency"];
-	int amountInt = 0;
-	NSString* amount = nil;
-	if(currency){
-		amountInt = [xml[@"TotalAmount"] intValue];
-		amount = [((NSString*)currencySymbol[currency]) stringByAppendingString:xml[@"TotalAmount"]];
-		Assert([amount length] > 2);
-		amount = [amount stringByReplacingCharactersInRange:NSMakeRange([amount length] - 2, 0) withString:@"."];
-		currency = [@"0" stringByAppendingString:currency];
-	}
-
-	NSString* date = xml[@"EFTTimestamp"];
-	NSString* transactionId = xml[@"TransactionID"];
-	NSString* type = xml[@"TransactionType"];
 	
-	Transaction* tr = [Transaction new];
-	tr.date = date;
-	tr.amount = amountInt;
-	tr.currency = currency;
-	tr.amountString = amount;
-	tr.transactionId = transactionId;
-	tr.type = type;
-	[transactions addObject:tr];
+	NSString* type = xml[@"TransactionType"];
+
+	if([type isEqualToString:@"SALE"] || [type isEqualToString:@"REFUND"]){
+		NSString* currency = xml[@"Currency"];
+		NSString* amount = nil;
+		if(currency){
+			amount = [((NSString*)currencySymbol[currency]) stringByAppendingString:xml[@"RequestedAmount"]];
+			Assert([amount length] > 2);
+			amount = [amount stringByReplacingCharactersInRange:NSMakeRange([amount length] - 2, 0) withString:@"."];
+			currency = [@"0" stringByAppendingString:currency];
+		}
+		
+		NSString* date = xml[@"EFTTimestamp"];
+		
+		Transaction* transaction = [Transaction new];
+		transaction.date = date;
+		transaction.amount = info.authorisedAmount;
+		transaction.currency = currency;
+		transaction.amountString = amount;
+		transaction.transactionId = info.transactionId;
+		transaction.type = type;
+		[transactions addObject:transaction];
+	}
+	else if ([type hasPrefix:@"VOID"]){
+		NSString* transactionId = xml[@"OriginalEFTTransactionID"];
+		int index = [transactions indexOfObjectPassingTest:^(Transaction* obj, NSUInteger idx, BOOL *stop){
+			if([obj.transactionId isEqualToString:transactionId])
+				*stop = YES;
+			return *stop;
+		}];
+		Assert(index != NSNotFound);
+		Transaction* transaction = transactions[index];
+		transaction.voided = YES;
+	}
 	
 	[NSKeyedArchiver archiveRootObject:transactions toFile:historyPath()];
 	[self.tableView reloadData];
@@ -152,6 +164,7 @@ NSString* historyPath(){
 	cell.dateLabel.text = transaction.date;
 	cell.amountLabel.text = transaction.amountString;
 	cell.typeLabel.text = transaction.type;
+	cell.voidLabel.hidden = !transaction.voided;
 	
 	return cell;
 }
@@ -163,7 +176,10 @@ NSString* historyPath(){
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	int row = indexPath.row;
 	Transaction* transaction = transactions[row];
-	[mainController.heftClient saleVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
+	if(!transaction.voided){
+		[mainController.heftClient saleVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
+		[mainController showTransactionViewController:eTransactionVoid];
+	}
 }
 
 @end

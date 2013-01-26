@@ -132,6 +132,7 @@ class FinanceResponseCommand : public ResponseCommand{
 public:
 	FinanceResponseCommand(const ResponsePayload* pPayload);
 	eTransactionStatus GetFinancialStatus(){return eTransactionStatus(financial_status);}
+	UINT32 GetAmount(){return authorised_amount;}
 	const string& GetCustomerReceipt(){return customer_receipt;}
 	const string& GetMerchantReceipt(){return merchant_receipt;}
 	const string& GetTransID(){return trans_id;}
@@ -141,7 +142,7 @@ public:
 	void ProcessResult(id<IResponseProcessor> processor){[processor processFinanceResponse:this];}
 };
 
-class DebugInfoResponseCommand : public ResponseCommand{
+/*class DebugInfoResponseCommand : public ResponseCommand{
 	string data;
 
 #pragma pack(push, 1)
@@ -157,7 +158,7 @@ public:
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor){[processor processDebugInfoResponse:this];}
-};
+};*/
 
 class GetLogInfoResponseCommand : public ResponseCommand{
 	string data;

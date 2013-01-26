@@ -6,7 +6,7 @@
 #import "HeftStatusReport.h"
 
 @implementation ResponseInfo
-@synthesize status, xml;
+@synthesize statusCode, status, xml;
 @end
 
 @implementation FinanceResponseInfo

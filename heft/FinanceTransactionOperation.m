@@ -18,7 +18,7 @@
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
 	if(self = [super init]){
-		NSLog(@"FinanceTransactionOperation started");
+		LOG(@"FinanceTransactionOperation started");
 		pRequestCommand = aRequest;
 		connection = aConnection;
 		//maxFrameSize = frameSize;
@@ -29,7 +29,7 @@
 }
 
 - (void)dealloc{
-	NSLog(@"FinanceTransactionOperation ended");
+	LOG(@"FinanceTransactionOperation ended");
 	[connection shutdown];
 	delete pRequestCommand;
 }

@@ -64,10 +64,10 @@ FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, UINT32 amount, int st
 	xml_details = [@"<FinancialTransactionResponse><StatusMessage>User Cancelled</StatusMessage></FinancialTransactionResponse>" cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
-DebugInfoResponseCommand::DebugInfoResponseCommand() : ResponseCommand(CMD_DBG_INFO_REQ)
+/*DebugInfoResponseCommand::DebugInfoResponseCommand() : ResponseCommand(CMD_DBG_INFO_REQ)
 {
 	data = "Debug info data";
-}
+}*/
 
 GetLogInfoResponseCommand::GetLogInfoResponseCommand() : ResponseCommand(CMD_LOG_GET_INF_REQ)
 {

@@ -7,7 +7,7 @@
 
 @implementation HistoryCell
 
-@synthesize dateLabel, amountLabel, typeLabel;
+@synthesize dateLabel, amountLabel, typeLabel, voidLabel;
 
 /*- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
