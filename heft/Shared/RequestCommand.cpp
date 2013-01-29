@@ -62,7 +62,7 @@ FinanceRequestCommand::FinanceRequestCommand(int iCommandSize, UINT32 type, cons
 		}
 	}
 
-	if(fCheckCodeSize && currency_code.length() != sizeof(ISO4217CurrencyCodes[0].code) - 1)
+	if(fCheckCodeSize && currency_code.length() != currency_code_length)
 		throw std::invalid_argument("invalid currency code");
 
 	FinancePayload* pRequest = GetPayload<FinancePayload>();
@@ -204,7 +204,7 @@ ChallengeResponseCommand::ChallengeResponseCommand(const vector<UINT8>& mx, cons
 	memcpy(pZx, &zx[0], zx.size());
 }
 
-DebugEnableRequestCommand::DebugEnableRequestCommand()
+/*DebugEnableRequestCommand::DebugEnableRequestCommand()
 	: RequestCommand(0, CMD_DBG_ENABLE_REQ)
 {}
 
@@ -218,7 +218,7 @@ DebugResetRequestCommand::DebugResetRequestCommand()
 
 DebugInfoRequestCommand::DebugInfoRequestCommand()
 	: RequestCommand(0, CMD_DBG_INFO_REQ)
-{}
+{}*/
 
 SetLogLevelRequestCommand::SetLogLevelRequestCommand(UINT8 log_level) 
 	: RequestCommand(ciMinSize, CMD_LOG_SET_LEV_REQ)

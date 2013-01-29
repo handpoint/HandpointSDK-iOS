@@ -3,7 +3,7 @@
 class ResponseCommand;
 class EventInfoResponseCommand;
 class FinanceResponseCommand;
-class DebugInfoResponseCommand;
+//class DebugInfoResponseCommand;
 class GetLogInfoResponseCommand;
 
 @protocol IResponseProcessor

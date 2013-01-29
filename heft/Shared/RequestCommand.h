@@ -256,7 +256,7 @@ public:
 	ChallengeResponseCommand(const vector<UINT8>& mx, const vector<UINT8>& zx);
 };
 
-class DebugEnableRequestCommand : public RequestCommand{
+/*class DebugEnableRequestCommand : public RequestCommand{
 public:
 	DebugEnableRequestCommand();
 };
@@ -274,7 +274,7 @@ public:
 class DebugInfoRequestCommand : public RequestCommand{
 public:
 	DebugInfoRequestCommand();
-};
+};*/
 
 class SetLogLevelRequestCommand : public RequestCommand{
 	static const int ciMinSize = 1;

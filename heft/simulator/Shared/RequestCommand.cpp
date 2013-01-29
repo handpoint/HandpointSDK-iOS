@@ -170,7 +170,7 @@ SignatureRequestCommand::SignatureRequestCommand(UINT32 aAmount, UINT32 aType)
 	receipt = [buf cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
-DebugEnableRequestCommand::DebugEnableRequestCommand()
+/*DebugEnableRequestCommand::DebugEnableRequestCommand()
 	: RequestCommand(CMD_DBG_ENABLE_REQ)
 {}
 
@@ -186,7 +186,7 @@ DebugInfoRequestCommand::DebugInfoRequestCommand()
 	: RequestCommand(CMD_DBG_INFO_REQ)
 {}
 
-//ResponseCommand* DebugInfoRequestCommand::CreateResponse()const{return new DebugInfoResponseCommand;}
+ResponseCommand* DebugInfoRequestCommand::CreateResponse()const{return new DebugInfoResponseCommand;}*/
 
 SetLogLevelRequestCommand::SetLogLevelRequestCommand(UINT8 log_level) 
 	: RequestCommand(CMD_LOG_SET_LEV_REQ)

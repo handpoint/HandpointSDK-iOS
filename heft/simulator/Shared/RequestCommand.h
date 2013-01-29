@@ -141,7 +141,7 @@ public:
 	ResponseCommand* CreateResponse()const{ATLASSERT(false);return false;}
 };
 
-class DebugEnableRequestCommand : public RequestCommand{
+/*class DebugEnableRequestCommand : public RequestCommand{
 public:
 	DebugEnableRequestCommand();
 };
@@ -160,7 +160,7 @@ class DebugInfoRequestCommand : public RequestCommand{
 public:
 	DebugInfoRequestCommand();
 	ResponseCommand* CreateResponse()const;
-};
+};*/
 
 class SetLogLevelRequestCommand : public RequestCommand{
 public:
