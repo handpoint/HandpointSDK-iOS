@@ -5,6 +5,8 @@
 
 #import <DTDevices.h>
 
+#import "StdAfx.h"
+
 #import "HeftManager.h"
 #import "HeftConnection.h"
 #import "MpedDevice.h"
@@ -135,7 +137,7 @@ NSString* devicesPath(){
 
 #pragma mark DTDeviceDelegate
 
-char* stateLabel[] = {"disconnected", "connecting", "connected"};
+const char* stateLabel[] = {"disconnected", "connecting", "connected"};
 
 -(void)connectionState:(int)state {
 	LOG(@"connectionState: %s", stateLabel[state]);

@@ -62,21 +62,12 @@ enum eBufferConditions{
 }
 
 - (void)writeData:(uint8_t*)data length:(int)len{
+	currentPosition = 0;
 	while(len){
 		while(![outputStream hasSpaceAvailable]);
-		/*uint8_t packet[] = {0x10, 0x02, 0x49, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x37, 0x20, 0x12, 0x08, 0x10, 0x10, 0x18, 0x08, 0x34, 0x10, 0x03, 0x2F, 0xBD};
-		BOOL b = [outputStream hasSpaceAvailable];
-		int nwritten = [outputStream write:packet maxLength:sizeof(packet)];*/
 		int nwritten = [outputStream write:data maxLength:fmin(len, maxBufferSize)];
 		LOG(@"HeftConnection::writeData %d: %c%c%c%c", nwritten, data[2], data[3], data[4], data[5]);
 		Assert(nwritten > 0);
-
-		/*uint8_t buf[100] = {0};
-		b = [inputStream hasBytesAvailable];
-		int nread = [inputStream read:buf maxLength:sizeof(buf)];
-		NSError* serr = inputStream.streamError;
-		NSLog(@"inputStream error: %@", serr);
-		NSLog(@"outputStream error: %@", outputStream.streamError);*/
 
 		len -= nwritten;
 		data += nwritten;
@@ -108,9 +99,9 @@ enum eBufferConditions{
 	}
 }
 
-- (int)readData:(void*)buffer timeout:(eConnectionTimeout)timeout{
-	vector<UINT8>& vBuf = *reinterpret_cast<vector<UINT8>*>(buffer);
-	int initSize = vBuf.size();
+- (int)readData:(vector<UINT8>&)buffer timeout:(eConnectionTimeout)timeout{
+	//vector<UINT8>& vBuf = *reinterpret_cast<vector<UINT8>*>(buffer);
+	int initSize = buffer.size();
 
 	if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]]){
 		if(timeout == eFinanceTimeout){
@@ -124,8 +115,8 @@ enum eBufferConditions{
 		
 	}
 	
-	vBuf.resize(initSize + currentPosition);
-	memcpy(&vBuf[initSize], tmpBuf, currentPosition);
+	buffer.resize(initSize + currentPosition);
+	memcpy(&buffer[initSize], tmpBuf, currentPosition);
 
 	int nread = currentPosition;
 	currentPosition = 0;

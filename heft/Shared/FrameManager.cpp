@@ -127,9 +127,11 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 				if(pData[j] == cuiDle)
 					++j;
 			}
-
-			if(!frame.isPartial())
+			
+			if(!frame.isPartial()){
+				ATLASSERT(buf.size() == len);
 				break;
+			}
 
 			buf.erase(buf.begin(), buf.begin() + len);
 			pos = 0;
@@ -140,7 +142,7 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 			pos = std::max(static_cast<int>(buf.size()) - 4, 0);
 
 		//connection.Read(buf, eResponseTimeout);
-		[connection readData:&buf timeout:eResponseTimeout];
+		[connection readData:buf timeout:eResponseTimeout];
 	}while(true);
 	//}while(!bCancel);
 
@@ -154,7 +156,7 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 	while(true){
 	//while(!bCancel){
 		//int nread = connection.Read(buf, finance_timeout ? eFinanceTimeout : eResponseTimeout);
-		int nread = [connection readData:&buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
+		int nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
 		if(!nread){
 			if(finance_timeout)
 				throw timeout4_exception();

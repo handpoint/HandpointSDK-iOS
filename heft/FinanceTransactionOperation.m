@@ -3,16 +3,16 @@
 //  headstart
 //
 
-#import "FinanceTransactionOperation.h"
-#import "HeftConnection.h"
-
-#import <CommonCrypto/CommonHMAC.h>
-
 #import "StdAfx.h"
 #import "FrameManager.h"
 #import "Frame.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
+
+#import "FinanceTransactionOperation.h"
+#import "HeftConnection.h"
+
+#import <CommonCrypto/CommonHMAC.h>
 
 @implementation FinanceTransactionOperation
 
@@ -30,7 +30,6 @@
 
 - (void)dealloc{
 	LOG(@"FinanceTransactionOperation ended");
-	[connection shutdown];
 	delete pRequestCommand;
 }
 

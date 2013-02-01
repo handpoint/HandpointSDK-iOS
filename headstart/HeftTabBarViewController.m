@@ -94,6 +94,10 @@ enum eTab{
 		SettingsViewController* settingsViewController = self.viewControllers[eSettingsTab];
 		Assert([settingsViewController isKindOfClass:[SettingsViewController class]]);
 		[settingsViewController updateOnHeftClient:heftClient != nil];
+		
+		HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
+		Assert([historyViewController isKindOfClass:[HistoryViewController class]]);
+		[historyViewController updateOnHeftClient:heftClient != nil];
 
 		if(heftClient)
 			self.selectedIndex = eNumPadTab;

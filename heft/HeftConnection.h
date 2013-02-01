@@ -31,7 +31,7 @@ typedef enum{
 
 - (void)writeData:(uint8_t*)data length:(int)len;
 - (void)writeAck:(UInt16)ack;
-- (int)readData:(void*)buffer timeout:(eConnectionTimeout)timeout;
+- (int)readData:(vector<UINT8>&)buffer timeout:(eConnectionTimeout)timeout;
 - (UInt16)readAck;
 
 @end

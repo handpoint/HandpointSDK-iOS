@@ -3,12 +3,12 @@
 //  headstart
 //
 
+#import "StdAfx.h"
+
 #import "MpedDevice.h"
 #import "HeftConnection.h"
 #import "HeftStatusReport.h"
 #import "ResponseParser.h"
-
-#import "StdAfx.h"
 
 #if HEFT_SIMULATOR
 #import "simulator/Shared/RequestCommand.h"

@@ -92,10 +92,8 @@ NSString* historyPath(){
     return self;
 }
 
-/*- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
+/*- (void)viewDidLoad{
+	[super viewDidLoad];
 }
 
 - (void)didReceiveMemoryWarning
@@ -103,6 +101,16 @@ NSString* historyPath(){
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }*/
+
+- (void)viewWillAppear:(BOOL)animated{
+	[super viewWillAppear:animated];
+	
+	[self updateOnHeftClient:mainController.heftClient != nil];
+}
+
+- (void)updateOnHeftClient:(BOOL)fOn{
+	self.tableView.allowsSelection = fOn;
+}
 
 - (void)addNewTransaction:(FinanceResponseInfo*)info{
 	NSDictionary* xml = info.xml;
