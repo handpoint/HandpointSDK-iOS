@@ -10,7 +10,7 @@
 
 @implementation ScanViewController{
 	__weak IBOutlet UIButton* discoveryButton;
-	__weak IBOutlet UIActivityIndicatorView* spiner;
+	__weak IBOutlet UIActivityIndicatorView* spinner;
 	__weak IBOutlet UIButton* connectButton;
 	__weak IBOutlet UIButton* resetButton;
 	__weak IBOutlet UIPickerView* deviceList;
@@ -62,7 +62,7 @@
 
 - (IBAction)startDiscovery{
 	discoveryButton.enabled = NO;
-	[spiner startAnimating];
+	[spinner startAnimating];
 	[[HeftManager sharedManager] startDiscovery:NO];
 }
 
@@ -114,6 +114,7 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 
 - (void)noSources{
 	discoveryButton.enabled = NO;
+	[spinner stopAnimating];
 	connectButton.enabled = NO;
 	resetButton.enabled = NO;
 	mainController.heftClient = nil;
@@ -130,7 +131,7 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 
 - (void)didDiscoverFinished{
 	discoveryButton.enabled = YES;
-	[spiner stopAnimating];
+	[spinner stopAnimating];
 }
 
 @end

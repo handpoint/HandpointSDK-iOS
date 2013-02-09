@@ -73,7 +73,7 @@
 	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_CONNECTING));
 	spStatus->ProcessResult(processor);
 	
-	return new HostResponseCommand(CMD_HOST_CONN_RSP, pRequest->GetFinCommand(), pRequest->GetAmount());
+	return new HostResponseCommand(CMD_HOST_CONN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
@@ -82,7 +82,7 @@
 	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_SENDING));
 	spStatus->ProcessResult(processor);
 
-	return new HostResponseCommand(CMD_HOST_SEND_RSP, pRequest->GetFinCommand(), pRequest->GetAmount());
+	return new HostResponseCommand(CMD_HOST_SEND_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest{
@@ -91,7 +91,7 @@
 	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_RECEIVEING));
 	spStatus->ProcessResult(processor);
 	
-	return new HostResponseCommand(CMD_HOST_RECV_RSP, pRequest->GetFinCommand(), pRequest->GetAmount());
+	return new HostResponseCommand(CMD_HOST_RECV_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
@@ -99,13 +99,13 @@
 	spStatus->ProcessResult(processor);
 	
 	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: disconnected"));
-	return new HostResponseCommand(CMD_HOST_DISC_RSP, pRequest->GetFinCommand(), pRequest->GetAmount());
+	return new HostResponseCommand(CMD_HOST_DISC_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
 	LOG(_T("Signature required request"));
 	int status = [processor processSign:[NSString stringWithUTF8String:pRequest->GetReceipt().c_str()]];
-	return new HostResponseCommand(CMD_STAT_SIGN_RSP, pRequest->GetFinCommand(), pRequest->GetAmount(), status);
+	return new HostResponseCommand(CMD_STAT_SIGN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount(), status);
 }
 
 - (RequestCommand*)processChallenge:(ChallengeRequestCommand*)pRequest{

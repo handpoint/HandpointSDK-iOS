@@ -67,7 +67,9 @@ enum eBufferConditions{
 		while(![outputStream hasSpaceAvailable]);
 		int nwritten = [outputStream write:data maxLength:fmin(len, maxBufferSize)];
 		LOG(@"HeftConnection::writeData %d: %c%c%c%c", nwritten, data[2], data[3], data[4], data[5]);
-		Assert(nwritten > 0);
+		if(nwritten <= 0)
+			throw communication_exception();
+
 
 		len -= nwritten;
 		data += nwritten;
@@ -78,7 +80,8 @@ enum eBufferConditions{
 	//LOG(@"HeftConnection::writeAck %04X", ack_n);
 	while(![outputStream hasSpaceAvailable]);
 	int nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
-	Assert(nwritten == sizeof(ack));
+	if(nwritten != sizeof(ack))
+		throw communication_exception();
 }
 
 - (void)stream:(NSInputStream*)aStream handleEvent:(NSStreamEvent)eventCode{

@@ -98,15 +98,21 @@
 
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
 	LOG_RELEASE(Logger::eFine, _T("Request to bureau (length:%d): %@"), pRequest->GetLength(), [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSUTF8StringEncoding]);
+
 	while(![sendStream hasSpaceAvailable]);
 	NSInteger nwrite = [sendStream write:pRequest->GetData() maxLength:pRequest->GetLength()];
 	LOG(@"sent to server %d bytes", nwrite);
-	Assert(nwrite);
+
+	if(nwrite != pRequest->GetLength()){
+		LOG_RELEASE(Logger::eWarning, _T("Error sending bureau data"));
+		return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SENDING_ERROR);
+	}
 	return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest{
 	LOG(_T("Recv :%d bytes, %ds timeout"), pRequest->GetDataLen(), pRequest->GetTimeout());
+
 	vector<UINT8> data;
 	int stepSize = connection.maxBufferSize;
 	int nrecv = 0;
@@ -118,6 +124,7 @@
 		data.resize(old_size + nrecv);
 	//}
 	}while(nrecv);
+
 	LOG_RELEASE(Logger::eFine, _T("Response from bureau (length:%d): "), data.size());
 	return data.size() ? new ReceiveResponseCommand(data) : new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVEING_ERROR);
 }

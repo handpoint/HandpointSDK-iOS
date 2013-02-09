@@ -89,7 +89,7 @@
                         <outlet property="deviceList" destination="jj0-9O-vkk" id="kAq-CH-we3"/>
                         <outlet property="discoveryButton" destination="Xuy-AW-sN9" id="ArL-eH-Sv9"/>
                         <outlet property="resetButton" destination="VkX-11-B38" id="XNr-O9-nqg"/>
-                        <outlet property="spiner" destination="QRG-sH-RBs" id="Br2-7O-OGk"/>
+                        <outlet property="spinner" destination="QRG-sH-RBs" id="9qd-hS-FRG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>

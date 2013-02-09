@@ -10,6 +10,8 @@
 #import "../heft/HeftStatusReport.h"
 #import "../heft/HeftClient.h"
 
+extern NSMutableString* formatAmountString(NSString* currency, NSString* amountString);
+
 @interface Transaction : NSObject<NSCoding>
 @property(nonatomic, strong) NSString* date;
 @property(nonatomic, assign) int amount;
@@ -122,9 +124,9 @@ NSString* historyPath(){
 		NSString* currency = xml[@"Currency"];
 		NSString* amount = nil;
 		if(currency){
-			amount = [((NSString*)currencySymbol[currency]) stringByAppendingString:xml[@"RequestedAmount"]];
-			Assert([amount length] > 2);
-			amount = [amount stringByReplacingCharactersInRange:NSMakeRange([amount length] - 2, 0) withString:@"."];
+			amount = xml[@"RequestedAmount"];
+			Assert([amount length]);
+			amount = formatAmountString(currencySymbol[currency], amount);
 			currency = [@"0" stringByAppendingString:currency];
 		}
 		
@@ -185,7 +187,12 @@ NSString* historyPath(){
 	int row = indexPath.row;
 	Transaction* transaction = transactions[row];
 	if(!transaction.voided){
-		[mainController.heftClient saleVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
+		if([transaction.type isEqualToString:@"SALE"])
+			[mainController.heftClient saleVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
+		else if([transaction.type isEqualToString:@"REFUND"])
+			[mainController.heftClient refundVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
+		else
+			return;
 		[mainController showTransactionViewController:eTransactionVoid];
 	}
 }

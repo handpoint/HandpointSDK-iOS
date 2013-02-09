@@ -164,7 +164,7 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 				throw timeout2_exception();
 		}
 		FramePayload* pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
-		ATLASSERT(nread >= sizeof(pCommand->StartSequence));
+		//ATLASSERT(nread >= sizeof(pCommand->StartSequence));
 		if(nread < sizeof(pCommand->StartSequence))
 			throw communication_exception();
 		switch(pCommand->StartSequence){

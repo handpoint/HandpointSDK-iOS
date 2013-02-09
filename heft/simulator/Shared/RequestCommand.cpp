@@ -25,16 +25,20 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
 	};
 	
 	bool fCheckCodeSize = true;
+	const char* code = currency_code.c_str();
 	for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
 		CurrencyCode cc = ISO4217CurrencyCodes[i];
 		if(!currency_code.compare(cc.name)){
+			code = cc.code;
 			fCheckCodeSize = false;
 			break;
 		}
 	}
 	
-	if(fCheckCodeSize && currency_code.length() != sizeof(ISO4217CurrencyCodes[0].code))
+	if(fCheckCodeSize && currency_code.length() != currency_code_length)
 		throw std::invalid_argument("invalid currency code");
+	
+	currency = code;
 }
 
 ResponseCommand* FinanceRequestCommand::CreateResponse()const{
@@ -50,10 +54,10 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 		result = new EventInfoResponseCommand(EFT_PP_STATUS_APPLICATION_SELECTION);
 		break;
 	case ePinInput:
-		result = amount == ciSignRequestAmount ? reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(amount, GetType())) : new EventInfoResponseCommand(EFT_PP_STATUS_PIN_INPUT);
+		result = amount == ciSignRequestAmount ? reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(currency, amount, GetType())) : new EventInfoResponseCommand(EFT_PP_STATUS_PIN_INPUT);
 		break;
 	case eConnect:
-		result = amount == ciUserCancelAmount ? CreateResponseOnCancel() : reinterpret_cast<ResponseCommand*>(new ConnectRequestCommand(amount, GetType()));
+		result = amount == ciUserCancelAmount ? CreateResponseOnCancel() : reinterpret_cast<ResponseCommand*>(new ConnectRequestCommand(currency, amount, GetType()));
 		break;
 	}
 	return result;
@@ -103,9 +107,9 @@ FinanceInitRequestCommand::FinanceInitRequestCommand()
 	: RequestCommand(CMD_FIN_INIT_REQ)
 {}
 
-HostResponseCommand::HostResponseCommand(UINT32 command, UINT32 aFin_cmd, UINT32 aAmount, int aStatus) 
+HostResponseCommand::HostResponseCommand(UINT32 command, UINT32 aFin_cmd, const string& aCurrency, UINT32 aAmount, int aStatus) 
 	: RequestCommand(command)
-	, fin_cmd(aFin_cmd), amount(aAmount), status(aStatus)
+	, fin_cmd(aFin_cmd), currency(aCurrency), amount(aAmount), status(aStatus)
 {
 }
 
@@ -113,47 +117,47 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
 	RequestCommand* result = 0;
 	switch(m_cmd){
 	case CMD_HOST_CONN_RSP:
-		result = new SendRequestCommand(amount, fin_cmd);
+		result = new SendRequestCommand(currency, amount, fin_cmd);
 		break;
 	case CMD_HOST_SEND_RSP:
-		result = new ReceiveRequestCommand(amount, fin_cmd);
+		result = new ReceiveRequestCommand(currency, amount, fin_cmd);
 		break;
 	case CMD_HOST_RECV_RSP:
-		result = new DisconnectRequestCommand(amount, fin_cmd);
+		result = new DisconnectRequestCommand(currency, amount, fin_cmd);
 		break;
 	case CMD_HOST_DISC_RSP:
-		return new FinanceResponseCommand(fin_cmd, amount, amount == ciTransactionDeclinedAmount ? eTransactionDeclined : eTransactionApproved);
+		return new FinanceResponseCommand(fin_cmd, currency, amount, amount == ciTransactionDeclinedAmount ? eTransactionDeclined : eTransactionApproved);
 	case CMD_STAT_SIGN_RSP:
 		if(status == EFT_PP_STATUS_SUCCESS)
-			result = new ConnectRequestCommand(amount, fin_cmd);
+			result = new ConnectRequestCommand(currency, amount, fin_cmd);
 		else
-			return new FinanceResponseCommand(fin_cmd, amount, eTransactionNotProcessed);
+			return new FinanceResponseCommand(fin_cmd, currency, amount, eTransactionNotProcessed);
 	}
 	return reinterpret_cast<ResponseCommand*>(result);
 }
 
-ConnectRequestCommand::ConnectRequestCommand(UINT32 aAmount, UINT32 aFin_cmd)
-	: HostRequestCommand(CMD_HOST_CONN_REQ, aAmount, aFin_cmd)
+ConnectRequestCommand::ConnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+	: HostRequestCommand(CMD_HOST_CONN_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-SendRequestCommand::SendRequestCommand(UINT32 aAmount, UINT32 aFin_cmd)
-	: HostRequestCommand(CMD_HOST_SEND_REQ, aAmount, aFin_cmd)
+SendRequestCommand::SendRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+	: HostRequestCommand(CMD_HOST_SEND_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-ReceiveRequestCommand::ReceiveRequestCommand(UINT32 aAmount, UINT32 aFin_cmd)
-	: HostRequestCommand(CMD_HOST_RECV_REQ, aAmount, aFin_cmd)
+ReceiveRequestCommand::ReceiveRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+	: HostRequestCommand(CMD_HOST_RECV_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-DisconnectRequestCommand::DisconnectRequestCommand(UINT32 aAmount, UINT32 aFin_cmd)
-	: HostRequestCommand(CMD_HOST_DISC_REQ, aAmount, aFin_cmd)
+DisconnectRequestCommand::DisconnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+	: HostRequestCommand(CMD_HOST_DISC_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-SignatureRequestCommand::SignatureRequestCommand(UINT32 aAmount, UINT32 aType) 
-	: RequestCommand(CMD_STAT_SIGN_REQ), amount(aAmount), type(aType)
+SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aType) 
+	: RequestCommand(CMD_STAT_SIGN_REQ), currency(aCurrency), amount(aAmount), type(aType)
 {
 	NSString* trans_id = [NSString stringWithFormat:@"transactID%d", trans_id_seed];
 

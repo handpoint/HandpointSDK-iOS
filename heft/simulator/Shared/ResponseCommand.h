@@ -43,7 +43,7 @@ class FinanceResponseCommand : public ResponseCommand{
 	string xml_details;
 
 public:
-	FinanceResponseCommand(UINT32 cmd, UINT32 amount, eTransactionStatus status = eTransactionApproved);
+	FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, eTransactionStatus status = eTransactionApproved);
 	FinanceResponseCommand(UINT32 cmd, UINT32 amount, int status);
 	eTransactionStatus GetFinancialStatus(){return eTransactionStatus(financial_status);}
 	UINT32 GetAmount(){return authorised_amount;}

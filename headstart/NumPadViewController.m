@@ -15,6 +15,21 @@ extern NSString* currency[];
 
 NSString* currencySymbol[] = {@"₤", @"$", @"€"};
 
+NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
+	const unichar padding[] = {L'0', L'0', L'0'};
+	int length = dim(padding) - [amountString length];
+	NSMutableString* text = nil;
+	if(length < 0)
+		text = [amountString mutableCopy];
+	else{
+		text = [NSMutableString stringWithCharacters:padding length:length];
+		[text appendString:amountString];
+	}
+	[text insertString:@"." atIndex:[text length] - 2];
+	[text insertString:currency atIndex:0];
+	return text;
+}
+
 @implementation NumPadViewController{
 	__weak IBOutlet UIButton* saleButton;
 	__weak IBOutlet UIButton* refundButton;
@@ -38,21 +53,6 @@ NSString* currencySymbol[] = {@"₤", @"$", @"€"};
 
 - (void)dealloc{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)formatAmountString{
-	const unichar padding[] = {L'0', L'0', L'0'};
-	int length = dim(padding) - [amountString length];
-	NSMutableString* text = nil;
-	if(length < 0)
-		text = [amountString mutableCopy];
-	else{
-		text = [NSMutableString stringWithCharacters:padding length:length];
-		[text appendString:amountString];
-	}
-	[text insertString:@"." atIndex:[text length] - 2];
-	[text insertString:currencySymbol[currentCurrencyIndex] atIndex:0];
-	amount.text = text;
 }
 
 - (void)viewDidLoad{
@@ -86,7 +86,7 @@ NSString* currencySymbol[] = {@"₤", @"$", @"€"};
 
 - (void)currencyDidChanged:(NSNotification*)notification{
 	currentCurrencyIndex = [[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey];
-	[self formatAmountString];
+	amount.text = formatAmountString(currencySymbol[currentCurrencyIndex], amountString);
 }
 
 - (void)updateOnHeftClient:(BOOL)fOn{
@@ -118,8 +118,11 @@ NSString* currencySymbol[] = {@"₤", @"$", @"€"};
 - (IBAction)digit:(UIButton*)sender{
 	[self resetAmountIfNeeded];
 
-	[amountString appendFormat:@"%d", sender.tag];
-	[self formatAmountString];
+	int digit = sender.tag;
+	if(digit || [amountString length]){
+		[amountString appendFormat:@"%d", digit];
+		amount.text = formatAmountString(currencySymbol[currentCurrencyIndex], amountString);
+	}
 }
 
 - (IBAction)zeros{
@@ -127,7 +130,7 @@ NSString* currencySymbol[] = {@"₤", @"$", @"€"};
 	
 	if([amountString length]){
 		[amountString appendString:@"00"];
-		[self formatAmountString];
+		amount.text = formatAmountString(currencySymbol[currentCurrencyIndex], amountString);
 	}
 }
 
@@ -137,7 +140,7 @@ NSString* currencySymbol[] = {@"₤", @"$", @"€"};
 	int newLength = [amountString length] - 1;
 	if(newLength >= 0){
 		[amountString deleteCharactersInRange:NSMakeRange(newLength, 1)];
-		[self formatAmountString];
+		amount.text = formatAmountString(currencySymbol[currentCurrencyIndex], amountString);
 	}
 }
 

@@ -16,8 +16,9 @@ EventInfoResponseCommand::EventInfoResponseCommand(int status)
 
 int trans_id_seed = 1;
 NSString* fin_type[] = {@"Sale", @"Refund", @"Sale void", @"Refund void", @"Start day", @"End day", @"Finance init"};
+NSString* fin_type_transaction[] = {@"SALE", @"REFUND", @"VOID_SALE", @"VOID_REFUND", @"Start day", @"End day", @"Finance init"};
 
-FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, UINT32 amount, eTransactionStatus status) 
+FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, eTransactionStatus status) 
 	: ResponseCommand(cmd), 
 	financial_status(status), authorised_amount(amount)
 {
@@ -38,8 +39,19 @@ FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, UINT32 amount, eTrans
 					, double(amount / 100)];
 	merchant_receipt = [buf cStringUsingEncoding:NSUTF8StringEncoding];
 	customer_receipt = merchant_receipt;
+	NSMutableString* currency = [@(aCurrency.c_str()) mutableCopy];
+	if([currency characterAtIndex:0] == L'0')
+		[currency deleteCharactersInRange:NSMakeRange(0, 1)];
 
-	xml_details = [[NSString stringWithFormat:@"<FinancialTransactionResponse><FinancialStatus>%@</FinancialStatus></FinancialTransactionResponse>", fin_status[status]] cStringUsingEncoding:NSUTF8StringEncoding];
+	buf = [NSString stringWithFormat:@"<FinancialTransactionResponse><FinancialStatus>%@</FinancialStatus>"
+					"<TransactionType>%@</TransactionType>"
+					"<Currency>%@</Currency>"
+					"<RequestedAmount>%ld</RequestedAmount></FinancialTransactionResponse>"
+					, fin_status[status]
+					, fin_type_transaction[(cmd >> 8) & 0xf]
+					, currency
+					, amount];
+				   xml_details = [buf cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
 FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, UINT32 amount, int status)

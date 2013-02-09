@@ -114,7 +114,9 @@ enum eSignConditions{
 			try{
 				FrameManager fm(InitRequestCommand(), connection.maxBufferSize);
 				fm.Write(connection);
-				InitResponseCommand* pResponse = fm.ReadResponse<InitResponseCommand>(connection, false);
+				InitResponseCommand* pResponse = dynamic_cast<InitResponseCommand*>(reinterpret_cast<ResponseCommand*>(fm.ReadResponse<InitResponseCommand>(connection, false)));
+				if(!pResponse)
+					throw communication_exception();
 				connection.maxBufferSize = pResponse->GetBufferSize();
 				mpedInfo = @{
 					kSerialNumberInfoKey:@(pResponse->GetSerialNumber().c_str())
