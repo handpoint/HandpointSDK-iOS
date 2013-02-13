@@ -129,7 +129,38 @@ enum eTab{
 		HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
 		Assert([historyViewController isKindOfClass:[HistoryViewController class]]);
 		[historyViewController addNewTransaction:info];
+       
+        
+        // Display reciept - temp solution
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Receipt" message: [self flattenHTML:info.customerReceipt] delegate:self cancelButtonTitle:@"Done" otherButtonTitles: nil];
+        [alert show];
 	}
+}
+
+// Flatten HTML -- Temporary solution for viewing reciepts
+- (NSString *)flattenHTML:(NSString *)html {
+    
+    NSScanner *thescanner;
+    NSString *text = nil;
+    
+    thescanner = [NSScanner scannerWithString:html];
+    
+    while ([thescanner isAtEnd] == NO) {
+        
+        // find start of tag
+        [thescanner  scanUpToString:@"<" intoString:NULL] ;
+        
+        // find end of tag
+        [thescanner scanUpToString:@">" intoString:&text] ;
+        
+        // replace the found tag with a space
+        //(you can filter multi-spaces out later if you wish)
+        html = [html stringByReplacingOccurrencesOfString:[ NSString stringWithFormat:@"%@>", text] withString:@" "];
+        
+    } // while //
+    
+    return html;
+    
 }
 
 - (void)responseLogInfo:(LogInfo*)info{
