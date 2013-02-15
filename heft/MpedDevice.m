@@ -155,6 +155,8 @@ enum eSignConditions{
 #pragma mark HeftClient
 
 - (void)cancel{
+	if(![queue operationCount])
+		return;
 	LOG_RELEASE(Logger::eFine, @"Cancelling current financial transaction");
 #if HEFT_SIMULATOR
 	[queue cancelAllOperations];
@@ -165,78 +167,77 @@ enum eSignConditions{
 	LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
 }
 
+- (BOOL)postOperationToQueueIfNew:(FinanceTransactionOperation*)operation{
+	if([queue operationCount])
+		return NO;
+
+	[queue addOperation:operation];
+
+	return YES;
+}
+
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
 	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@", amount, currency, present ? @"is present" : @"is not present");
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new SaleRequestCommand(string([currency UTF8String]), amount, present)
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
 	LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@", amount, currency, present ? @"is present" : @"is not present");
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new RefundRequestCommand(string([currency UTF8String]), amount, present)
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new SaleVRequestCommand(string([currency UTF8String]), amount, present, string([transaction UTF8String]))
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new RefundVRequestCommand(string([currency UTF8String]), amount, present, string([transaction UTF8String]))
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeStartOfDay{
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new StartOfDayRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeEndOfDay{
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new EndOfDayRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeInit{
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceInitRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logSetLevel:(eLogLevel)level{
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logReset{
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logGetInfo{
 	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
-	[queue addOperation:operation];
-	return YES;
+	return [self postOperationToQueueIfNew:operation];
 }
 
 - (void)acceptSignature:(BOOL)flag{

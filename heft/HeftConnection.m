@@ -21,7 +21,7 @@ enum eBufferConditions{
 
 @implementation HeftConnection
 
-@synthesize maxBufferSize, currentPosition;
+@synthesize maxBufferSize/*, currentPosition*/;
 
 - (id)initWithDevice:(HeftRemoteDevice*)aDevice{
 	NSError* error = nil;
@@ -49,16 +49,24 @@ enum eBufferConditions{
 	return self;
 }
 
-- (void)shutdown{
-	inputStream.delegate = nil;
-}
-
 - (void)dealloc{
 	LOG(@"Disconnection from %@", device.name);
 	free(tmpBuf);
 	NSError* error = nil;
 	if(device && ![[DTDevices sharedDevice] btDisconnect:device.address error:&error])
 		LOG(@"btDisconnect error: %@", error);
+}
+
+- (void)shutdown{
+	inputStream.delegate = nil;
+}
+
+- (void)resetData{
+	if(currentPosition){
+		[bufferLock lockWhenCondition:eHasDataCondition];
+		currentPosition = 0;
+		[bufferLock unlockWithCondition:eNoDataCondition];
+	}
 }
 
 - (void)writeData:(uint8_t*)data length:(int)len{

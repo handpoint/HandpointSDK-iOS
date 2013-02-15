@@ -14,6 +14,14 @@
 
 #import <CommonCrypto/CommonHMAC.h>
 
+enum eConnectCondition{
+	eNoConnectStateCondition
+	, eReadyStateCondition
+};
+
+@interface FinanceTransactionOperation()<NSStreamDelegate>
+@end
+
 @implementation FinanceTransactionOperation
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
@@ -24,6 +32,7 @@
 		//maxFrameSize = frameSize;
 		processor = aProcessor;
 		sharedSecret = aSharedSecret;
+		connectLock = [[NSConditionLock alloc] initWithCondition:eNoConnectStateCondition];
 	}
 	return self;
 }
@@ -37,7 +46,7 @@
 	@autoreleasepool {
 		try{
 			RequestCommand* currentRequest = pRequestCommand;
-			connection.currentPosition = 0;
+			[connection resetData];
 			
 			while(true){
 				//LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
@@ -78,28 +87,61 @@
 
 #pragma mark IHostProcessor
 
+- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode{
+	[aStream setDelegate:nil];
+	Assert(eventCode == NSStreamEventOpenCompleted || eventCode == NSStreamEventErrorOccurred);
+	[connectLock lock];
+	[connectLock unlockWithCondition:eReadyStateCondition];
+}
+
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest{
 	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: connecting to bureau %s:%d timeout:%d"), pRequest->GetAddr().c_str(), pRequest->GetPort(), pRequest->GetTimeout());
+
 	NSString* host = [NSString stringWithUTF8String:pRequest->GetAddr().c_str()];
 	CFReadStreamRef readStream;
 	CFWriteStreamRef writeStream;
 	CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault, (__bridge CFStringRef)host, pRequest->GetPort(), &readStream, &writeStream);
 	recvStream = (NSInputStream*)CFBridgingRelease(readStream);
 	sendStream = (NSOutputStream*)CFBridgingRelease(writeStream);
+
 	[recvStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
-	[sendStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
-	NSRunLoop* currentRunLoop = [NSRunLoop currentRunLoop];
-	[recvStream scheduleInRunLoop:currentRunLoop forMode:NSDefaultRunLoopMode];
-	[sendStream scheduleInRunLoop:currentRunLoop forMode:NSDefaultRunLoopMode];
+	//[sendStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
+	[recvStream setDelegate:self];
+	NSRunLoop* mainRunLoop = [NSRunLoop mainRunLoop];
+	[recvStream scheduleInRunLoop:mainRunLoop forMode:NSDefaultRunLoopMode];
+	//[sendStream scheduleInRunLoop:mainRunLoop forMode:NSDefaultRunLoopMode];
 	[recvStream open];
 	[sendStream open];
-	return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);//kCFStreamPropertySSLSettings
+
+	int status = EFT_PP_STATUS_SUCCESS;
+	if(sendStream && recvStream){
+		if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]]){
+			[connectLock unlockWithCondition:eNoConnectStateCondition];
+			if(recvStream.streamStatus == NSStreamStatusOpen){
+				LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: connected to bureau"));
+			}
+			else{
+				LOG_RELEASE(Logger::eWarning, _T("Error connecting bureau."));
+				status = EFT_PP_STATUS_CONNECT_ERROR;
+			}
+		}
+		else{
+			LOG_RELEASE(Logger::eWarning, _T("Error connecting bureau (timeout)."));
+			status = EFT_PP_STATUS_CONNECT_TIMEOUT;
+		}
+	}
+	else{
+		LOG_RELEASE(Logger::eWarning, _T("Error connecting bureau."));
+		status = EFT_PP_STATUS_CONNECT_ERROR;
+	}
+
+	return new HostResponseCommand(CMD_HOST_CONN_RSP, status);//kCFStreamPropertySSLSettings
 }
 
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
 	LOG_RELEASE(Logger::eFine, _T("Request to bureau (length:%d): %@"), pRequest->GetLength(), [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSUTF8StringEncoding]);
 
-	while(![sendStream hasSpaceAvailable]);
+	//while(![sendStream hasSpaceAvailable]);
 	NSInteger nwrite = [sendStream write:pRequest->GetData() maxLength:pRequest->GetLength()];
 	LOG(@"sent to server %d bytes", nwrite);
 
@@ -121,12 +163,14 @@
 		int old_size = data.size();
 		data.resize(old_size + stepSize);
 		nrecv = [recvStream read:&data[old_size] maxLength:stepSize];
+		if(nrecv < 0)
+			break;
 		data.resize(old_size + nrecv);
 	//}
 	}while(nrecv);
 
 	LOG_RELEASE(Logger::eFine, _T("Response from bureau (length:%d): "), data.size());
-	return data.size() ? new ReceiveResponseCommand(data) : new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVEING_ERROR);
+	return data.size() && nrecv >= 0 ? new ReceiveResponseCommand(data) : new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVEING_ERROR);
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{

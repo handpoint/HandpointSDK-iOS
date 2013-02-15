@@ -1,12 +1,13 @@
-#include "StdAfx.h"
+#include "../../Shared/StdAfx.h"
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
+#include "HeftCmdIds.h"
 
 const int ciTransactionDeclinedAmount = 1000;
 const int ciUserCancelAmount = 2000;
 const int ciSignRequestAmount = 3000;
 
-ResponseCommand* RequestCommand::CreateResponse()const{return new ResponseCommand(m_cmd);}
+ResponseCommand* RequestCommand::CreateResponse()const{return new FinanceResponseCommand(m_cmd);}
 
 FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present) 
 	: RequestCommand(type)
@@ -80,10 +81,12 @@ ResponseCommand* RefundRequestCommand::CreateResponse()const{
 }
 
 FinanceVRequestCommand::FinanceVRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id)
-	: FinanceRequestCommand(type, currency_code, trans_amount, card_present)
+	: FinanceRequestCommand(type, currency_code, trans_amount, card_present), transaction_id(trans_id)
 {
 	state = eConnect;
 }
+
+ResponseCommand* FinanceVRequestCommand::CreateResponse()const{return new FinanceResponseCommand(m_cmd, GetCurrency(), GetAmount(), transaction_id);}
 
 SaleVRequestCommand::SaleVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id) 
 	: FinanceVRequestCommand(CMD_FIN_SALEV_REQ, currency_code, trans_amount, card_present, trans_id)

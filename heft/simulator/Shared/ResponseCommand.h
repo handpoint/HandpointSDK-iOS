@@ -45,6 +45,8 @@ class FinanceResponseCommand : public ResponseCommand{
 public:
 	FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, eTransactionStatus status = eTransactionApproved);
 	FinanceResponseCommand(UINT32 cmd, UINT32 amount, int status);
+	FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, const string& transaction_id);
+	FinanceResponseCommand(UINT32 cmd) : ResponseCommand(cmd){};
 	eTransactionStatus GetFinancialStatus(){return eTransactionStatus(financial_status);}
 	UINT32 GetAmount(){return authorised_amount;}
 	const string& GetCustomerReceipt(){return customer_receipt;}

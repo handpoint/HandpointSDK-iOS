@@ -61,6 +61,7 @@
 		2D5ACCB3169B2F5E00BA0D48 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
 		2D5ACCB4169B2F6800BA0D48 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEAD200164020A5006E2429 /* Security.framework */; };
 		2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
+		2D90B99B16CECB4A00D412B3 /* HtmlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D90B99A16CECB4A00D412B3 /* HtmlViewController.m */; };
 		2DEDA3731628B0590043AFBC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3721628B0580043AFBC /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		2DEDA3751628B0590043AFBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		2DEDA3771628B0590043AFBC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3761628B0590043AFBC /* CoreGraphics.framework */; };
@@ -203,6 +204,8 @@
 		2D5ACCAB169B258F00BA0D48 /* ResponseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResponseCommand.h; path = simulator/Shared/ResponseCommand.h; sourceTree = "<group>"; };
 		2D5ACCAE169B2B5A00BA0D48 /* FinanceTransactionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FinanceTransactionOperation.h; path = simulator/FinanceTransactionOperation.h; sourceTree = "<group>"; };
 		2D5ACCAF169B2B5A00BA0D48 /* FinanceTransactionOperation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = FinanceTransactionOperation.m; path = simulator/FinanceTransactionOperation.m; sourceTree = "<group>"; };
+		2D90B99916CECB4A00D412B3 /* HtmlViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HtmlViewController.h; sourceTree = "<group>"; };
+		2D90B99A16CECB4A00D412B3 /* HtmlViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HtmlViewController.m; sourceTree = "<group>"; };
 		2DEAD200164020A5006E2429 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		2DEDA36E1628B0580043AFBC /* headstart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = headstart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DEDA3721628B0580043AFBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -487,6 +490,8 @@
 				2D2B45FB16A49FFF001A8902 /* TransactionViewController.m */,
 				2D0D3F39162C62F90057301F /* Resources */,
 				2DEDA3791628B0590043AFBC /* Supporting Files */,
+				2D90B99916CECB4A00D412B3 /* HtmlViewController.h */,
+				2D90B99A16CECB4A00D412B3 /* HtmlViewController.m */,
 			);
 			path = headstart;
 			sourceTree = "<group>";
@@ -762,6 +767,7 @@
 				2D2B45FC16A49FFF001A8902 /* TransactionViewController.m in Sources */,
 				2D2379E416B2C76C00F834D4 /* HistoryViewController.m in Sources */,
 				2D2379E916B2F49B00F834D4 /* HistoryCell.m in Sources */,
+				2D90B99B16CECB4A00D412B3 /* HtmlViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

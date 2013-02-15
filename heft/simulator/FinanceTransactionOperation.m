@@ -8,6 +8,7 @@
 #import "StdAfx.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
+#include "HeftCmdIds.h"
 
 @implementation FinanceTransactionOperation
 

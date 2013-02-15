@@ -1,7 +1,6 @@
 #pragma once
 #include "Command.h"
 #include "CmdIds.h"
-#include "HeftCmdIds.h"
 
 class ResponseCommand;
 
@@ -29,6 +28,8 @@ protected:
 
 public:
 	FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present);
+	UINT32 GetAmount()const{return amount;}
+	const string& GetCurrency()const{return currency;}
 	ResponseCommand* CreateResponse()const;
 	ResponseCommand* CreateResponseOnCancel()const;
 };
@@ -45,8 +46,10 @@ public:
 };
 
 class FinanceVRequestCommand : public FinanceRequestCommand{
+	string transaction_id;
 public:
 	FinanceVRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
+	ResponseCommand* CreateResponse()const;
 };
 
 class SaleVRequestCommand : public FinanceVRequestCommand{

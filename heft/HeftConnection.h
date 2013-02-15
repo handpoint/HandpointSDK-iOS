@@ -19,15 +19,15 @@ typedef enum{
 	NSOutputStream* outputStream;
 
 	uint8_t* tmpBuf;
-	//int currentPosition;
+	int currentPosition;
 	NSConditionLock* bufferLock;
 }
 
 @property(nonatomic) int maxBufferSize;
-@property(nonatomic) int currentPosition;
 
 - (id)initWithDevice:(HeftRemoteDevice*)aDevice;
 - (void)shutdown;
+- (void)resetData;
 
 - (void)writeData:(uint8_t*)data length:(int)len;
 - (void)writeAck:(UInt16)ack;

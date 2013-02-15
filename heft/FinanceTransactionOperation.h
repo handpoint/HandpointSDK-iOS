@@ -17,6 +17,7 @@ class RequestCommand;
 	NSData* sharedSecret;
 	NSOutputStream* sendStream;
 	NSInputStream* recvStream;
+	NSConditionLock* connectLock;
 }
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)processor sharedSecret:(NSData*)aSharedSecret;

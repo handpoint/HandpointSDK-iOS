@@ -8,6 +8,7 @@
 #import "HistoryViewController.h"
 #import "SettingsViewController.h"
 #import "TransactionViewController.h"
+#import "HtmlViewController.h"
 
 #import "../heft/HeftClient.h"
 #import "../heft/Shared/api/CmdIds.h"
@@ -25,6 +26,8 @@ enum eTab{
 
 @implementation HeftTabBarViewController{
 	TransactionViewController* transactionViewController;
+	HtmlViewController* htmlViewController;
+	UIAlertView* signAlert;
 }
 
 @synthesize heftClient;
@@ -64,22 +67,38 @@ enum eTab{
 	[self.view.layer addAnimation:transition forKey:nil];
 }
 
+- (void)showViewController:(UIViewController*)viewController{
+	[self addFadeTransition];
+	[self.view addSubview:viewController.view];
+}
+
+- (void)dismissViewController:(UIViewController*)viewController{
+	[self addFadeTransition];
+	[viewController.view removeFromSuperview];
+}
+
 - (void)showTransactionViewController:(eTransactionType)type{
 	transactionViewController = [TransactionViewController transactionWithType:type storyboard:self.storyboard];
-
-	[self addFadeTransition];
-	[self.view addSubview:transactionViewController.view];
+	[self showViewController:transactionViewController];
 }
 
 - (void)dismissTransactionViewController{
-	[self addFadeTransition];
-	[transactionViewController.view removeFromSuperview];
-
+	[self dismissViewController:transactionViewController];
 	transactionViewController = nil;
 }
 
 - (void)setTransactionStatus:(NSString*)status{
 	[transactionViewController setStatusMessage:status];
+}
+
+- (void)showHtmlViewControllerWithHtmlString:(NSString*)html{
+	htmlViewController = [HtmlViewController controllerWithHtmlString:html storyboard:self.storyboard];
+	[self showViewController:htmlViewController];
+}
+
+- (void)dismissHtmlViewController{
+	[self dismissViewController:htmlViewController];
+	htmlViewController = nil;
 }
 
 #pragma mark property
@@ -123,64 +142,42 @@ enum eTab{
 	[transactionViewController setStatusMessage:info.status];
 	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
 	
+	NSString* receipt = info.customerReceipt;
+	if(receipt.length)
+		[self performSelector:@selector(showHtmlViewControllerWithHtmlString:) withObject:info.customerReceipt afterDelay:2.3];
+	
 	if(info.statusCode == EFT_PP_STATUS_SUCCESS){
 		self.selectedIndex = eHistoryTab;
 		
 		HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
 		Assert([historyViewController isKindOfClass:[HistoryViewController class]]);
 		[historyViewController addNewTransaction:info];
-       
-        
-        // Display reciept - temp solution
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Receipt" message: [self flattenHTML:info.customerReceipt] delegate:self cancelButtonTitle:@"Done" otherButtonTitles: nil];
-        [alert show];
 	}
-}
-
-// Flatten HTML -- Temporary solution for viewing reciepts
-- (NSString *)flattenHTML:(NSString *)html {
-    
-    NSScanner *thescanner;
-    NSString *text = nil;
-    
-    thescanner = [NSScanner scannerWithString:html];
-    
-    while ([thescanner isAtEnd] == NO) {
-        
-        // find start of tag
-        [thescanner  scanUpToString:@"<" intoString:NULL] ;
-        
-        // find end of tag
-        [thescanner scanUpToString:@">" intoString:&text] ;
-        
-        // replace the found tag with a space
-        //(you can filter multi-spaces out later if you wish)
-        html = [html stringByReplacingOccurrencesOfString:[ NSString stringWithFormat:@"%@>", text] withString:@" "];
-        
-    } // while //
-    
-    return html;
-    
 }
 
 - (void)responseLogInfo:(LogInfo*)info{
 	LOG(@"responseLogInfo:%@", info.status);
 	[info.log writeToFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"mped_log.txt"] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	[self dismissTransactionViewController];
+	[self showHtmlViewControllerWithHtmlString:info.log];
 }
 
 - (void)requestSignature:(NSString*)receipt{
 	LOG(@"requestSignature:");
-	UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"" message:@"sign?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
-	[alert show];
+	[self showHtmlViewControllerWithHtmlString:receipt];
+	signAlert = [[UIAlertView alloc] initWithTitle:@"" message:@"sign?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+	[signAlert show];
 }
 
 - (void)cancelSignature{
 	LOG(@"cancelSignature");
+	[self dismissHtmlViewController];
+	[signAlert dismissWithClickedButtonIndex:1 animated:YES];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
 	[heftClient acceptSignature:buttonIndex != [alertView cancelButtonIndex]];
+	[self dismissHtmlViewController];
 }
 
 @end
