@@ -10,13 +10,10 @@
 
 NSString* const kUserCurrencyKey = @"UserCurrency";
 NSString* const kRefundKey = @"Refund";
+NSString* const kLogLevel = @"LogLevel";
 NSString* const currencyDidChangedNotification = @"currencyDidChangedNotification";
 
 NSString* currency[] = {@"GBP", @"USD", @"EUR"};
-
-/*@interface SettingsViewController() <UITableViewDelegate, UITableViewDelegate>
-
-@end*/
 
 @implementation SettingsViewController{
 	HeftTabBarViewController* __weak mainController;
@@ -36,6 +33,7 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
 	currentCurrency = [defaults integerForKey:kUserCurrencyKey];
 	refundSwitch.on = [defaults boolForKey:kRefundKey];
+	logLevelControl.selectedSegmentIndex = [defaults integerForKey: kLogLevel];
 }
 
 /*- (void)didReceiveMemoryWarning
@@ -49,6 +47,7 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	getLogsButton.enabled = fOn;
 }
 
+#pragma mark -
 #pragma mark IBAction
 
 - (IBAction)refundChanged:(UISwitch*)sender{
@@ -66,6 +65,12 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	[mainController setTransactionStatus:@"Getting logs"];
 }
 
+- (IBAction)controlSegmentChange:(UISegmentedControl *)sender {
+	[[NSUserDefaults standardUserDefaults] setInteger:logLevelControl.selectedSegmentIndex forKey: kLogLevel];
+	[mainController.heftClient logSetLevel:logLevelControl.selectedSegmentIndex];
+}
+
+#pragma mark -
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -83,6 +88,7 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	return cell;
 }
 
+#pragma mark -
 #pragma mark UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -95,5 +101,4 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	[[NSUserDefaults standardUserDefaults] setInteger:currentCurrency forKey:kUserCurrencyKey];
 	[[NSNotificationCenter defaultCenter] postNotificationName:currencyDidChangedNotification object:self];
 }
-
 @end

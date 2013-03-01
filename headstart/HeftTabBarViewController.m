@@ -4,11 +4,13 @@
 //
 
 #import "HeftTabBarViewController.h"
-#import "NumPadViewController.h"
+//#import "ScanViewController.h"
+//#import "NumPadViewController.h"
 #import "HistoryViewController.h"
-#import "SettingsViewController.h"
+//#import "SettingsViewController.h"
 #import "TransactionViewController.h"
 #import "HtmlViewController.h"
+#import "TextViewController.h"
 
 #import "../heft/HeftClient.h"
 #import "../heft/Shared/api/CmdIds.h"
@@ -27,6 +29,7 @@ enum eTab{
 @implementation HeftTabBarViewController{
 	TransactionViewController* transactionViewController;
 	HtmlViewController* htmlViewController;
+	TextViewController* textViewController;
 	UIAlertView* signAlert;
 }
 
@@ -91,8 +94,9 @@ enum eTab{
 	[transactionViewController setStatusMessage:status];
 }
 
-- (void)showHtmlViewControllerWithHtmlString:(NSString*)html{
-	htmlViewController = [HtmlViewController controllerWithHtmlString:html storyboard:self.storyboard];
+- (void)showHtmlViewControllerWithDetails:(NSArray*)details  {
+	htmlViewController = [HtmlViewController controllerWithDetails:details storyboard:self.storyboard];
+    
 	[self showViewController:htmlViewController];
 }
 
@@ -101,7 +105,22 @@ enum eTab{
 	htmlViewController = nil;
 }
 
-#pragma mark property
+- (void)showTextViewControllerWithString:(NSString*)text{
+	textViewController = [TextViewController controllerWithString:text storyboard:self.storyboard];
+	[self showViewController:textViewController];
+}
+
+- (void)dismissTextViewController{
+	[self dismissViewController:textViewController];
+	textViewController = nil;
+}
+
+- (void)acceptSign:(BOOL)accepted{
+	[heftClient acceptSignature:accepted];
+	[self dismissHtmlViewController];
+}
+
+/*#pragma mark property
 
 - (void)setHeftClient:(id<HeftClient>)aHeftClient{
 	if(heftClient != aHeftClient){
@@ -121,32 +140,42 @@ enum eTab{
 		if(heftClient)
 			self.selectedIndex = eNumPadTab;
 	}
-}
+}*/
 
 #pragma mark HeftStatusReportDelegate
 
-- (void)responseStatus:(ResponseInfo*)info{
+- (void)didConnect:(id<HeftClient>)client{
+	self.heftClient = client;
+
+	for(id vc in self.viewControllers)
+		[vc updateOnHeftClient:heftClient != nil];
+
+	if(heftClient)
+		self.selectedIndex = eNumPadTab;
+}
+
+- (void)responseStatus:(id<ResponseInfo>)info{
 	LOG(@"responseStatus:%@", info.xml);
 	[self setTransactionStatus:info.status];
 	[transactionViewController allowCancel:[info.xml[@"CancelAllowed"] boolValue]];
 }
 
-- (void)responseError:(ResponseInfo*)info{
+- (void)responseError:(id<ResponseInfo>)info{
 	LOG(@"responseError:%@", info.status);
 	[transactionViewController setStatusMessage:info.status];
 	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
 }
 
-- (void)responseFinanceStatus:(FinanceResponseInfo*)info{
+- (void)responseFinanceStatus:(id<FinanceResponseInfo>)info{
 	LOG(@"responseFinanceStatus:%@", info.status);
 	[transactionViewController setStatusMessage:info.status];
 	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
 	
 	NSString* receipt = info.customerReceipt;
-	if(receipt.length)
-		[self performSelector:@selector(showHtmlViewControllerWithHtmlString:) withObject:info.customerReceipt afterDelay:2.3];
-	
-	if(info.statusCode == EFT_PP_STATUS_SUCCESS){
+        if(receipt.length)
+        [self performSelector:@selector(showHtmlViewControllerWithDetails:) withObject:@[receipt, info.xml] afterDelay:2.3];
+    
+        if(info.statusCode == EFT_PP_STATUS_SUCCESS){
 		self.selectedIndex = eHistoryTab;
 		
 		HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
@@ -155,29 +184,22 @@ enum eTab{
 	}
 }
 
-- (void)responseLogInfo:(LogInfo*)info{
+- (void)responseLogInfo:(id<LogInfo>)info{
 	LOG(@"responseLogInfo:%@", info.status);
 	[info.log writeToFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"mped_log.txt"] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	[self dismissTransactionViewController];
-	[self showHtmlViewControllerWithHtmlString:info.log];
+	[self showTextViewControllerWithString:info.log];
 }
 
 - (void)requestSignature:(NSString*)receipt{
-	LOG(@"requestSignature:");
-	[self showHtmlViewControllerWithHtmlString:receipt];
-	signAlert = [[UIAlertView alloc] initWithTitle:@"" message:@"sign?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
-	[signAlert show];
+     LOG(@"requestSignature:");
+     [self showHtmlViewControllerWithDetails:@[receipt]];
 }
 
 - (void)cancelSignature{
 	LOG(@"cancelSignature");
 	[self dismissHtmlViewController];
 	[signAlert dismissWithClickedButtonIndex:1 animated:YES];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-	[heftClient acceptSignature:buttonIndex != [alertView cancelButtonIndex]];
-	[self dismissHtmlViewController];
 }
 
 @end

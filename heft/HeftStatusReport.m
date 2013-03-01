@@ -10,7 +10,7 @@
 @end
 
 @implementation FinanceResponseInfo
-@synthesize authorisedAmount,transactionId,customerReceipt;
+@synthesize authorisedAmount, transactionId, customerReceipt, merchantReceipt;
 @end
 
 @implementation LogInfo

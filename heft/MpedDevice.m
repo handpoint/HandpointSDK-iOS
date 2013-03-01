@@ -322,6 +322,7 @@ enum eSignConditions{
 	info.authorisedAmount = pResponse->GetAmount();
 	info.transactionId = @(pResponse->GetTransID().c_str());
 	info.customerReceipt = @(pResponse->GetCustomerReceipt().c_str());
+	info.merchantReceipt = @(pResponse->GetMerchantReceipt().c_str());
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
 	[delegate performSelectorOnMainThread:@selector(responseFinanceStatus:) withObject:info waitUntilDone:NO];
 }

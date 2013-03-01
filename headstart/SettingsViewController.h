@@ -3,10 +3,11 @@
 //  headstart
 //
 
-@interface SettingsViewController : UIViewController<UITableViewDelegate, UITableViewDelegate>{
+@interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>{
 	__weak IBOutlet UISwitch* refundSwitch;
 	__weak IBOutlet UIButton* finInitButton;
 	__weak IBOutlet UIButton* getLogsButton;
+	__weak IBOutlet UISegmentedControl *logLevelControl;
 	int currentCurrency;
 }
 

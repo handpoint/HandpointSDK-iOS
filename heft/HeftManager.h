@@ -32,6 +32,6 @@
 @property(nonatomic, readonly) NSString* version;
 
 - (BOOL)hasSources;
-- (id<HeftClient>)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
+- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
 
 @end

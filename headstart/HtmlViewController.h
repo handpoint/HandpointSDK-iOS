@@ -3,13 +3,8 @@
 //  headstart
 //
 
-@interface HtmlViewController : UIViewController{
-	__weak IBOutlet UIWebView* webView;
-	NSString* html;
-}
+@interface HtmlViewController : UIViewController
 
-+ (id)controllerWithHtmlString:(NSString*)html storyboard:(UIStoryboard*)storyboard;
-
-- (IBAction)close;
++ (id)controllerWithDetails:(NSArray*)details storyboard:(UIStoryboard*)storyboard;
 
 @end

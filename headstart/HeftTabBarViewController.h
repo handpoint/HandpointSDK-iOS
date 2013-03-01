@@ -3,7 +3,7 @@
 //  headstart
 //
 
-#import "../heft/HeftStatusReport.h"
+#import "../heft/HeftStatusReportPublic.h"
 
 @protocol HeftClient;
 
@@ -22,7 +22,10 @@ typedef enum{
 @property(nonatomic, strong) id<HeftClient> heftClient;
 
 - (void)showTransactionViewController:(eTransactionType)type;
-- (void)dismissHtmlViewController;
 - (void)setTransactionStatus:(NSString*)status;
+- (void)dismissHtmlViewController;
+- (void)dismissTextViewController;
+- (void)acceptSign:(BOOL)accepted;
+- (void)showHtmlViewControllerWithDetails:(NSArray*)details;
 
 @end

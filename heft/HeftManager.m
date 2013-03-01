@@ -93,12 +93,24 @@ NSString* devicesPath(){
 	return hasBluetooth;
 }
 
-- (id<HeftClient>)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
+- (void)asyncClientForDevice:(NSArray*)params{
+	@autoreleasepool{
+		id<HeftClient> result = nil;
+		NSData* sharedSecret = params[1];
+		NSObject<HeftStatusReportDelegate>* aDelegate = params[2];
 #if HEFT_SIMULATOR
-	return [[MpedDevice alloc] initWithConnection:nil sharedSecret:sharedSecret delegate:aDelegate];
+		[NSThread sleepForTimeInterval:2];
+		result = [[MpedDevice alloc] initWithConnection:nil sharedSecret:sharedSecret delegate:aDelegate];
 #else
-	return [[MpedDevice alloc] initWithConnection:[[HeftConnection alloc] initWithDevice:device] sharedSecret:sharedSecret delegate:aDelegate];
+		HeftRemoteDevice* device = params[0];
+		result = [[MpedDevice alloc] initWithConnection:[[HeftConnection alloc] initWithDevice:device] sharedSecret:sharedSecret delegate:aDelegate];
 #endif
+		[aDelegate performSelectorOnMainThread:@selector(didConnect:) withObject:result waitUntilDone:NO];
+	}
+}
+
+- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
+	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:) toTarget:self withObject:@[device, sharedSecret, aDelegate]];
 }
 
 #pragma mark property

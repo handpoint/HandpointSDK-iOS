@@ -3,11 +3,11 @@
 //  headstart
 //
 
-@class FinanceResponseInfo;
+@protocol FinanceResponseInfo;
 
 @interface HistoryViewController : UITableViewController
 
 - (void)updateOnHeftClient:(BOOL)fOn;
-- (void)addNewTransaction:(FinanceResponseInfo*)info;
+- (void)addNewTransaction:(id<FinanceResponseInfo>)info;
 
 @end

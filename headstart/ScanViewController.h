@@ -11,4 +11,6 @@
 - (IBAction)connect;
 - (IBAction)resetDevices;
 
+- (void)updateOnHeftClient:(BOOL)fOn;
+
 @end

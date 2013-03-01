@@ -97,13 +97,19 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 #pragma mark IBAction
 
 - (IBAction)sale{
-	[mainController.heftClient saleWithAmount:[amountString intValue] currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
+	int iAmount = [amountString intValue];
+	if(!iAmount)
+		return;
+	[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
 	[mainController showTransactionViewController:eTransactionSale];
 	amountUsed = YES;
 }
 
 - (IBAction)refund{
-	[mainController.heftClient refundWithAmount:[amountString intValue] currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
+	int iAmount = [amountString intValue];
+	if(!iAmount)
+		return;
+	[mainController.heftClient refundWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
 	[mainController showTransactionViewController:eTransactionRefund];
 	amountUsed = YES;
 }

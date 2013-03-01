@@ -6,7 +6,11 @@
 #import "ScanViewController.h"
 #import "HeftTabBarViewController.h"
 
+#import "../heft/HeftClient.h"
+
 //#pragma comment(lib, "libc++")
+
+extern NSString* const kLogLevel;
 
 @implementation ScanViewController{
 	__weak IBOutlet UIButton* discoveryButton;
@@ -15,7 +19,7 @@
 	__weak IBOutlet UIButton* resetButton;
 	__weak IBOutlet UIPickerView* deviceList;
 	NSMutableArray* devices;
-	HeftTabBarViewController* __weak mainController;
+	__weak HeftTabBarViewController* mainController;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder{
@@ -70,8 +74,10 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 				, 0x17, 0x18, 0x19, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30, 0x31, 0x32};
 
 - (IBAction)connect{
+	connectButton.enabled = NO;
 	mainController.heftClient = nil;
-	mainController.heftClient = [[HeftManager sharedManager] clientForDevice:[devices objectAtIndex:[deviceList selectedRowInComponent:0]] sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
+	[[HeftManager sharedManager] clientForDevice:[devices objectAtIndex:[deviceList selectedRowInComponent:0]] sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
+	[mainController.heftClient logSetLevel:[[NSUserDefaults standardUserDefaults] integerForKey:kLogLevel]];
 }
 
 - (IBAction)resetDevices{
@@ -82,6 +88,10 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 	connectButton.enabled = enabled;
 	resetButton.enabled = enabled;
 	[deviceList reloadAllComponents];
+}
+
+- (void)updateOnHeftClient:(BOOL)fOn{
+	connectButton.enabled = YES;
 }
 
 #pragma mark UIPickerViewDataSource
