@@ -9,8 +9,7 @@
 
 @synthesize keysXmlInfo, xmlInfo;
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad{
     [super viewDidLoad];
     keysXmlInfo = xmlInfo.allKeys;
  }
@@ -45,7 +44,5 @@
 - (IBAction)close:(id)sender {
        [self dismissViewControllerAnimated:YES completion:nil];
 }
-
-
 
 @end

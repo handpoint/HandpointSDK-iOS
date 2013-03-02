@@ -22,6 +22,10 @@ enum eTab{
 	, eSettingsTab
 };
 
+extern NSString* const kLogLevel;
+
+NSString* kMpedLogName = @"mped_log.txt";
+
 @interface TransactionViewController ()
 + (id)transactionWithType:(eTransactionType)type storyboard:(UIStoryboard*)storyboard;
 @end
@@ -150,8 +154,10 @@ enum eTab{
 	for(id vc in self.viewControllers)
 		[vc updateOnHeftClient:heftClient != nil];
 
-	if(heftClient)
+	if(heftClient){
+		[heftClient logSetLevel:[[NSUserDefaults standardUserDefaults] integerForKey:kLogLevel]];
 		self.selectedIndex = eNumPadTab;
+	}
 }
 
 - (void)responseStatus:(id<ResponseInfo>)info{
@@ -172,10 +178,10 @@ enum eTab{
 	[self performSelector:@selector(dismissTransactionViewController) withObject:nil afterDelay:2.];
 	
 	NSString* receipt = info.customerReceipt;
-        if(receipt.length)
-        [self performSelector:@selector(showHtmlViewControllerWithDetails:) withObject:@[receipt, info.xml] afterDelay:2.3];
-    
-        if(info.statusCode == EFT_PP_STATUS_SUCCESS){
+	if(receipt.length)
+		[self performSelector:@selector(showHtmlViewControllerWithDetails:) withObject:@[receipt, info.xml] afterDelay:2.3];
+
+	if(info.statusCode == EFT_PP_STATUS_SUCCESS && info.status){
 		self.selectedIndex = eHistoryTab;
 		
 		HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
@@ -186,13 +192,13 @@ enum eTab{
 
 - (void)responseLogInfo:(id<LogInfo>)info{
 	LOG(@"responseLogInfo:%@", info.status);
-	[info.log writeToFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"mped_log.txt"] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+	[info.log writeToFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:kMpedLogName] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	[self dismissTransactionViewController];
 	[self showTextViewControllerWithString:info.log];
 }
 
 - (void)requestSignature:(NSString*)receipt{
-     LOG(@"requestSignature:");
+	 LOG(@"requestSignature:");
      [self showHtmlViewControllerWithDetails:@[receipt]];
 }
 

@@ -6,6 +6,10 @@
 #import "TextViewController.h"
 #import "HeftTabBarViewController.h"
 
+extern NSString* kMpedLogName;
+
+NSString* kEmailSubject = @"MPED log";
+
 /*@interface TextViewController()<UITextViewDelegate>
 @end*/
 
@@ -20,13 +24,7 @@
 - (void)viewDidLoad{
     [super viewDidLoad];
 	textView.text = text;
-	
-	Class mailClass = (NSClassFromString(@"MFMailComposeViewController"));
-	mailClass = nil;
-	if ((!mailClass) || (![mailClass canSendMail]))
-	{
-		sendLogButton.enabled = NO;
-	}
+	sendLogButton.enabled = [MFMailComposeViewController canSendMail];
 }
 
 #pragma mark -
@@ -44,58 +42,44 @@
 #pragma mark Compose Mail
 
 // Displays an email composition interface inside the application. Populates all the Mail fields.
--(void)displayComposerSheet
-{
-	MFMailComposeViewController* mailController = [[MFMailComposeViewController alloc] init];
+-(void)displayComposerSheet{
+	MFMailComposeViewController* mailController = [MFMailComposeViewController new];
 	mailController.mailComposeDelegate = self;
 	
-	[mailController setSubject:@"MPED log"];
+	[mailController setSubject:kEmailSubject];
 	
 	
-	NSString* logFileName = @"mped_log.txt";
-	
-	NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString* documentsPath = [paths objectAtIndex:0];
-	NSString* logFilePath = [documentsPath stringByAppendingPathComponent:logFileName];
-	
-	NSData* logData = [NSData dataWithContentsOfFile:logFilePath];
-	[mailController addAttachmentData:logData mimeType:@"txt/plain" fileName:logFileName];
+	NSString* logFilePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+							 stringByAppendingPathComponent:kMpedLogName];
+	[mailController addAttachmentData:[NSData dataWithContentsOfFile:logFilePath] mimeType:@"txt/plain" fileName:kMpedLogName];
 	
 	[self presentViewController:mailController animated:YES completion:nil];
 }
 
 
-- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
-{
-	switch (result)
-	{
-		case MFMailComposeResultCancelled:
-			break;
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error{
+	switch(result){
 		case MFMailComposeResultSaved:
-			break;
-		case MFMailComposeResultSent:
-		{
-			UIAlertView *reportAlert = [[UIAlertView alloc]initWithTitle:@"Send report"
-																 message:@"Log a problem."
+		case MFMailComposeResultSent:{
+			UIAlertView *reportAlert = [[UIAlertView alloc]initWithTitle:kEmailSubject
+																 message:@"Log is in the Outbox"
 																delegate:self
-													   cancelButtonTitle:@"Ok"
-													   otherButtonTitles:nil, nil];
-			[reportAlert show];
-		}
-			break;
-		case MFMailComposeResultFailed:
-		{
-			UIAlertView *reportAlert = [[UIAlertView alloc]initWithTitle:[error localizedDescription]
-																 message:[error localizedRecoverySuggestion]
-																delegate:self
-													   cancelButtonTitle:@"Ok"
+													   cancelButtonTitle:@"OK"
 													   otherButtonTitles:nil];
 			[reportAlert show];
+			break;
 		}
+		case MFMailComposeResultFailed:{
+			UIAlertView *reportAlert = [[UIAlertView alloc]initWithTitle:kEmailSubject
+																 message:[error localizedDescription]
+																delegate:self
+													   cancelButtonTitle:@"OK"
+													   otherButtonTitles:nil];
+			[reportAlert show];
 			break;
-		default:
-			break;
+		}
+		default:;
 	}
-	[ self dismissViewControllerAnimated:YES completion:nil];
+	[self dismissViewControllerAnimated:YES completion:nil];
 }
 @end

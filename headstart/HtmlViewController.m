@@ -28,19 +28,11 @@
 	return result;
 }
 
-- (void)setSignMode{
-	closeButton.hidden = YES;
-	showInfoButton.hidden = YES;
-	signButton.hidden = NO;
-	declineButton.hidden = NO;
-    
-}
-
 - (void)viewDidLoad{
-    [super viewDidLoad];
-    [webView loadHTMLString:html baseURL:nil];
-    if (xmlInfo)
-        [self setSignMode];
+	[super viewDidLoad];
+	[webView loadHTMLString:html baseURL:nil];
+	if(!xmlInfo)
+		[self setSignMode];
 }
 
 /*- (void)didReceiveMemoryWarning
@@ -48,6 +40,14 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }*/
+
+- (void)setSignMode{
+	closeButton.hidden = YES;
+	showInfoButton.hidden = YES;
+	signButton.hidden = NO;
+	declineButton.hidden = NO;
+    
+}
 
 #pragma mark -
 #pragma mark Segue

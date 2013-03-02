@@ -3,7 +3,7 @@
 
 Logger Logger::logger;
 
-Logger::Logger(){
+Logger::Logger() : m_level(eFiner){
 	fileName = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"release_log.txt"];
 	logStr = [NSMutableString new];
 }

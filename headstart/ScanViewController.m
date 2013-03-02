@@ -10,8 +10,6 @@
 
 //#pragma comment(lib, "libc++")
 
-extern NSString* const kLogLevel;
-
 @implementation ScanViewController{
 	__weak IBOutlet UIButton* discoveryButton;
 	__weak IBOutlet UIActivityIndicatorView* spinner;
@@ -77,7 +75,6 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 	connectButton.enabled = NO;
 	mainController.heftClient = nil;
 	[[HeftManager sharedManager] clientForDevice:[devices objectAtIndex:[deviceList selectedRowInComponent:0]] sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
-	[mainController.heftClient logSetLevel:[[NSUserDefaults standardUserDefaults] integerForKey:kLogLevel]];
 }
 
 - (IBAction)resetDevices{

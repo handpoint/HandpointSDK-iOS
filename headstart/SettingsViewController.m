@@ -65,9 +65,10 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	[mainController setTransactionStatus:@"Getting logs"];
 }
 
-- (IBAction)controlSegmentChange:(UISegmentedControl *)sender {
-	[[NSUserDefaults standardUserDefaults] setInteger:logLevelControl.selectedSegmentIndex forKey: kLogLevel];
-	[mainController.heftClient logSetLevel:logLevelControl.selectedSegmentIndex];
+- (IBAction)logLevelChange:(UISegmentedControl*)sender{
+	int iLogLevel = sender.selectedSegmentIndex;
+	[[NSUserDefaults standardUserDefaults] setInteger:iLogLevel forKey: kLogLevel];
+	[mainController.heftClient logSetLevel:iLogLevel];
 }
 
 #pragma mark -
