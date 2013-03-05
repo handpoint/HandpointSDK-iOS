@@ -306,7 +306,8 @@ enum eSignConditions{
 
 -(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse{
 	int status = pResponse->GetStatus();
-	[self sendResponseInfo:statusMessages[status] code:status xml:[self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]];
+	NSString* statusMessage = status < dim(statusMessages) ? statusMessages[status] : @"Unknown status";
+	[self sendResponseInfo:statusMessage code:status xml:[self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]];
 #if HEFT_SIMULATOR
 	[NSThread sleepForTimeInterval:1.];
 #endif
