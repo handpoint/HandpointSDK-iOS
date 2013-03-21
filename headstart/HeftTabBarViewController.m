@@ -16,13 +16,16 @@
 #import "../heft/Shared/api/CmdIds.h"
 
 enum eTab{
-	eScanTab
-	, eNumPadTab
+	eNumPadTab
+	, eScanTab
 	, eHistoryTab
 	, eSettingsTab
 };
 
 extern NSString* const kLogLevel;
+extern NSString* const kTransactionCustomerReceiptKey;
+extern NSString* const kTransactionInfo;
+extern NSString* const kTransactionIdKey;
 
 NSString* kMpedLogName = @"mped_log.txt";
 
@@ -35,6 +38,9 @@ NSString* kMpedLogName = @"mped_log.txt";
 	HtmlViewController* htmlViewController;
 	TextViewController* textViewController;
 	UIAlertView* signAlert;
+	NSArray* noBtTabsControllers;
+	NSArray* btTabsControllers;
+	UIImage* signImage;
 }
 
 @synthesize heftClient;
@@ -47,13 +53,18 @@ NSString* kMpedLogName = @"mped_log.txt";
     }
     return self;
 }
-
-- (void)viewDidLoad
-{
+*/
+- (void)viewDidLoad{
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-}
 
+	btTabsControllers = self.viewControllers;
+	NSMutableArray* controllers = [btTabsControllers mutableCopy];
+	[controllers removeObjectAtIndex:0];
+	noBtTabsControllers = [controllers copy];
+
+	[self hideNumPadViewBarButtonAnimated:NO];
+}
+/*
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -98,7 +109,7 @@ NSString* kMpedLogName = @"mped_log.txt";
 	[transactionViewController setStatusMessage:status];
 }
 
-- (void)showHtmlViewControllerWithDetails:(NSArray*)details  {
+- (void)showHtmlViewControllerWithDetails:(NSDictionary*)details  {
 	htmlViewController = [HtmlViewController controllerWithDetails:details storyboard:self.storyboard];
     
 	[self showViewController:htmlViewController];
@@ -119,8 +130,9 @@ NSString* kMpedLogName = @"mped_log.txt";
 	textViewController = nil;
 }
 
-- (void)acceptSign:(BOOL)accepted{
-	[heftClient acceptSignature:accepted];
+- (void)acceptSign:(UIImage*)accepted{
+	signImage = accepted;
+	[heftClient acceptSignature:accepted ? YES : NO];
 	[self dismissHtmlViewController];
 }
 
@@ -156,6 +168,7 @@ NSString* kMpedLogName = @"mped_log.txt";
 
 	if(heftClient){
 		[heftClient logSetLevel:[[NSUserDefaults standardUserDefaults] integerForKey:kLogLevel]];
+		[self showNumPadViewBarButtonAnimated:YES];
 		self.selectedIndex = eNumPadTab;
 	}
 }
@@ -179,14 +192,15 @@ NSString* kMpedLogName = @"mped_log.txt";
 	
 	NSString* receipt = info.customerReceipt;
 	if(receipt.length)
-		[self performSelector:@selector(showHtmlViewControllerWithDetails:) withObject:@[receipt, info.xml] afterDelay:2.3];
+		[self performSelector:@selector(showHtmlViewControllerWithDetails:) withObject:@{kTransactionCustomerReceiptKey:receipt, kTransactionInfo:info.xml, kTransactionIdKey:info.transactionId} afterDelay:2.3];
 
 	if(info.statusCode == EFT_PP_STATUS_SUCCESS && info.status){
 		self.selectedIndex = eHistoryTab;
 		
 		HistoryViewController* historyViewController = self.viewControllers[eHistoryTab];
 		Assert([historyViewController isKindOfClass:[HistoryViewController class]]);
-		[historyViewController addNewTransaction:info];
+		[historyViewController addNewTransaction:info sign:signImage];
+		signImage = nil;
 	}
 }
 
@@ -199,13 +213,23 @@ NSString* kMpedLogName = @"mped_log.txt";
 
 - (void)requestSignature:(NSString*)receipt{
 	 LOG(@"requestSignature:");
-     [self showHtmlViewControllerWithDetails:@[receipt]];
+	[self showHtmlViewControllerWithDetails:@{kTransactionCustomerReceiptKey:receipt}];
 }
 
 - (void)cancelSignature{
 	LOG(@"cancelSignature");
 	[self dismissHtmlViewController];
 	[signAlert dismissWithClickedButtonIndex:1 animated:YES];
+}
+
+#pragma mark - 
+
+- (void)showNumPadViewBarButtonAnimated:(BOOL)animated{
+	[self setViewControllers:btTabsControllers animated:animated];
+}
+
+- (void)hideNumPadViewBarButtonAnimated:(BOOL)animated{
+	[self setViewControllers:noBtTabsControllers animated:animated];
 }
 
 @end

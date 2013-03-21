@@ -129,12 +129,18 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
 		result = new DisconnectRequestCommand(currency, amount, fin_cmd);
 		break;
 	case CMD_HOST_DISC_RSP:
-		return new FinanceResponseCommand(fin_cmd, currency, amount, amount == ciTransactionDeclinedAmount ? eTransactionDeclined : eTransactionApproved);
+			if(amount == ciTransactionDeclinedAmount){
+				FinanceResponseCommand* pResponse = new FinanceResponseCommand(fin_cmd, amount, EFT_PP_STATUS_RECEIVEING_ERROR);
+				pResponse->SetFinancialStatus(eTransactionDeclined);
+				return pResponse;
+			}
+			else
+				return new FinanceResponseCommand(fin_cmd, currency, amount, eTransactionApproved);
 	case CMD_STAT_SIGN_RSP:
 		if(status == EFT_PP_STATUS_SUCCESS)
 			result = new ConnectRequestCommand(currency, amount, fin_cmd);
 		else
-			return new FinanceResponseCommand(fin_cmd, currency, amount, eTransactionNotProcessed);
+			return new FinanceResponseCommand(fin_cmd, amount, EFT_PP_STATUS_INVALID_SIGNATURE);
 	}
 	return reinterpret_cast<ResponseCommand*>(result);
 }

@@ -48,6 +48,7 @@ public:
 	FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, const string& transaction_id);
 	FinanceResponseCommand(UINT32 cmd) : ResponseCommand(cmd){};
 	eTransactionStatus GetFinancialStatus(){return eTransactionStatus(financial_status);}
+	void SetFinancialStatus(eTransactionStatus status){financial_status = status;}
 	UINT32 GetAmount(){return authorised_amount;}
 	const string& GetCustomerReceipt(){return customer_receipt;}
 	const string& GetMerchantReceipt(){return merchant_receipt;}

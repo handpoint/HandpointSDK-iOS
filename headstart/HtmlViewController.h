@@ -5,6 +5,8 @@
 
 @interface HtmlViewController : UIViewController
 
-+ (id)controllerWithDetails:(NSArray*)details storyboard:(UIStoryboard*)storyboard;
++ (id)controllerWithDetails:(NSDictionary*)details storyboard:(UIStoryboard*)storyboard;
+
+- (void)setSignImage:(UIImage*)image;
 
 @end

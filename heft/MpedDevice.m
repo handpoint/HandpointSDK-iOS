@@ -246,7 +246,7 @@ enum eSignConditions{
 	[signLock unlockWithCondition:eSignCondition];
 }
 
-#pragma mark ----
+#pragma mark -
 
 - (NSDictionary*)getValuesFromXml:(NSString*)xml path:(NSString*)path{
 	NSXMLParser* xmlParser = [[NSXMLParser alloc] initWithData:[[NSData alloc] initWithBytesNoCopy:(void*)[xml UTF8String] length:[xml length] freeWhenDone:NO]];

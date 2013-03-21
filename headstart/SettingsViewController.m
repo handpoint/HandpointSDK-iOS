@@ -8,6 +8,8 @@
 
 #import "../heft/HeftClient.h"
 
+extern NSString* kMpedLogName;
+
 NSString* const kUserCurrencyKey = @"UserCurrency";
 NSString* const kRefundKey = @"Refund";
 NSString* const kLogLevel = @"LogLevel";
@@ -69,6 +71,10 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	int iLogLevel = sender.selectedSegmentIndex;
 	[[NSUserDefaults standardUserDefaults] setInteger:iLogLevel forKey: kLogLevel];
 	[mainController.heftClient logSetLevel:iLogLevel];
+}
+
+- (IBAction)showLogs:(UIButton*)sender {
+	[mainController showTextViewControllerWithString:[NSString stringWithContentsOfFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:kMpedLogName]  encoding:NSUTF8StringEncoding error:NULL]];
 }
 
 #pragma mark -

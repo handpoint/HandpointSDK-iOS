@@ -12,6 +12,8 @@
 
 extern NSMutableString* formatAmountString(NSString* currency, NSString* amountString);
 
+NSString* pathToTransactionSign(NSString* transactionId);
+
 @interface Transaction : NSObject<NSCoding>
 @property(nonatomic, strong) NSString* status;
 @property(nonatomic, strong) NSString* date;
@@ -22,25 +24,28 @@ extern NSMutableString* formatAmountString(NSString* currency, NSString* amountS
 @property(nonatomic, strong) NSString* transactionId;
 @property(nonatomic, strong) NSString* customerReceipt;
 @property(nonatomic, strong) NSString* merchantReceipt;
-@property(nonatomic, assign) BOOL voided;
 @property(nonatomic, strong) NSDictionary* xmlInfo;
+@property(nonatomic, strong) NSString* voidReceipt;
+@property(nonatomic, strong) NSDictionary* voidXmlInfo;
 @end
 
-static NSString* const kTransactionStatusKey = @"status";
-static NSString* const kTransactionDateKey = @"date";
-static NSString* const kTransactionAmountKey = @"amount";
-static NSString* const kTransactionCurrencyKey = @"currency";
-static NSString* const kTransactionAmountStringKey = @"amount_s";
-static NSString* const kTransactionTypeKey = @"type";
-static NSString* const kTransactionIdKey = @"id";
-static NSString* const kTransactionCustomerReceiptKey = @"customerReceipt";
-static NSString* const kTransactionMerchantReceiptKey = @"merchantReceipt";
-static NSString* const kTransactionVoidKey = @"void";
-static NSString* const kTransactionInfo = @"xmlInfo";
+NSString* const kTransactionStatusKey = @"status";
+NSString* const kTransactionDateKey = @"date";
+NSString* const kTransactionAmountKey = @"amount";
+NSString* const kTransactionCurrencyKey = @"currency";
+NSString* const kTransactionAmountStringKey = @"amount_s";
+NSString* const kTransactionTypeKey = @"type";
+NSString* const kTransactionIdKey = @"id";
+NSString* const kTransactionCustomerReceiptKey = @"customerReceipt";
+NSString* const kTransactionMerchantReceiptKey = @"merchantReceipt";
+NSString* const kTransactionVoidKey = @"void";
+NSString* const kTransactionInfo = @"xmlInfo";
+NSString* const kVoidReceipt = @"voidReciept";
+NSString* const kVoidTransactionInfo = @"voidXmlInfo";
 
 @implementation Transaction
 
-@synthesize status, date, amount, currency, amountString, type, transactionId, customerReceipt, merchantReceipt, voided, xmlInfo;
+@synthesize status, date, amount, currency, amountString, type, transactionId, customerReceipt, merchantReceipt, xmlInfo, voidReceipt, voidXmlInfo;
 
 #pragma mark NSCoding
 
@@ -54,8 +59,9 @@ static NSString* const kTransactionInfo = @"xmlInfo";
 	[aCoder encodeObject:transactionId forKey:kTransactionIdKey];
 	[aCoder encodeObject:customerReceipt forKey:kTransactionCustomerReceiptKey];
 	[aCoder encodeObject:merchantReceipt forKey:kTransactionMerchantReceiptKey];
-	[aCoder encodeBool:voided forKey:kTransactionVoidKey];
 	[aCoder encodeObject:xmlInfo forKey:kTransactionInfo];
+	[aCoder encodeObject:voidReceipt forKey:kVoidReceipt];
+	[aCoder encodeObject:voidXmlInfo forKey:kVoidTransactionInfo];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder{
@@ -69,8 +75,9 @@ static NSString* const kTransactionInfo = @"xmlInfo";
 		transactionId = [aDecoder decodeObjectForKey:kTransactionIdKey];
 		customerReceipt = [aDecoder decodeObjectForKey:kTransactionCustomerReceiptKey];
 		merchantReceipt = [aDecoder decodeObjectForKey:kTransactionMerchantReceiptKey];
-		voided = [aDecoder decodeBoolForKey:kTransactionVoidKey];
 		xmlInfo = [aDecoder decodeObjectForKey:kTransactionInfo];
+		voidReceipt = [aDecoder decodeObjectForKey:kVoidReceipt];
+		voidXmlInfo = [aDecoder decodeObjectForKey:kVoidTransactionInfo];
     }
     return self;
 }
@@ -85,8 +92,13 @@ NSString* historyPath(){
 }
 
 @implementation HistoryViewController{
-	HeftTabBarViewController* __weak mainController;
+	__weak HeftTabBarViewController* mainController;
 	NSMutableArray* transactions;
+	__weak IBOutlet UIToolbar *toolbar;
+	__weak IBOutlet UIBarButtonItem *flexibleSpace;
+	NSArray* noToolBarItems;
+	NSArray* toolBarItems;
+	NSMutableArray* selectedCellsIndexPaths;
 }
 
 + (void)initialize{
@@ -106,10 +118,18 @@ NSString* historyPath(){
     return self;
 }
 
-/*- (void)viewDidLoad{
+- (void)viewDidLoad{
 	[super viewDidLoad];
-}
 
+	UIBarButtonItem* editButton = self.editButtonItem;
+	UIBarButtonItem* cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+												   target:self
+												   action:@selector(cancelEditing)];
+ 	noToolBarItems = @[flexibleSpace, editButton];
+	toolBarItems = @[cancelButton, flexibleSpace, editButton];
+	toolbar.items = noToolBarItems;
+}
+/*
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -126,7 +146,7 @@ NSString* historyPath(){
 	self.tableView.allowsSelection = fOn;
 }
 
-- (void)addNewTransaction:(id<FinanceResponseInfo>)info{
+- (void)addNewTransaction:(id<FinanceResponseInfo>)info sign:(UIImage*)sign{
 	NSDictionary* xml = info.xml;
 	LOG(@"%@", xml);
 	
@@ -156,6 +176,8 @@ NSString* historyPath(){
 		transaction.merchantReceipt = info.merchantReceipt;
 		transaction.xmlInfo = info.xml;
 		[transactions addObject:transaction];
+		if(sign)
+			Verify([UIImagePNGRepresentation(sign) writeToFile:pathToTransactionSign(transaction.transactionId) atomically:YES]);
 	}
 	else if ([type hasPrefix:@"VOID"]){
 		if([info.status isEqualToString:@"DECLINED"])
@@ -168,7 +190,8 @@ NSString* historyPath(){
 		}];
 		Assert(index != NSNotFound);
 		Transaction* transaction = transactions[index];
-		transaction.voided = YES;
+		transaction.voidReceipt = info.customerReceipt;
+		transaction.voidXmlInfo = info.xml;
 	}
 	
 	[NSKeyedArchiver archiveRootObject:transactions toFile:historyPath()];
@@ -192,39 +215,105 @@ NSString* historyPath(){
 	cell.dateLabel.text = transaction.date;
 	cell.amountLabel.text = transaction.amountString;
 	cell.typeLabel.text = transaction.type;
-	cell.voidLabel.hidden = !transaction.voided;
-	
+	cell.voidLabel.hidden = !transaction.voidReceipt;
 	return cell;
+}
+
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (editingStyle == UITableViewCellEditingStyleDelete){
+		[self deleteSignWithTransactionId:[transactions[indexPath.row] transactionId]];
+        [transactions removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+		[NSKeyedArchiver archiveRootObject:transactions toFile:historyPath()];
+    }
 }
 
 #pragma mark -
 #pragma mark UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-	int row = indexPath.row;
-	Transaction* transaction = transactions[row];
-	if(!transaction.voided && ![transaction.status isEqualToString:@"DECLINED"]){
-		if([transaction.type isEqualToString:@"SALE"])
-			[mainController.heftClient saleVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
-		else if([transaction.type isEqualToString:@"REFUND"])
-			[mainController.heftClient refundVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
-		else
-			return;
-		[mainController showTransactionViewController:eTransactionVoid];
+	if(tableView.editing){
+        [selectedCellsIndexPaths addObject:indexPath];
 	}
+	else{
+		[tableView deselectRowAtIndexPath:indexPath animated:YES];
+		int row = indexPath.row;
+		Transaction* transaction = transactions[row];
+		if(!transaction.voidReceipt && ![transaction.status isEqualToString:@"DECLINED"]){
+			if([transaction.type isEqualToString:@"SALE"])
+				[mainController.heftClient saleVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
+			else if([transaction.type isEqualToString:@"REFUND"])
+				[mainController.heftClient refundVoidWithAmount:transaction.amount currency:transaction.currency cardholder:YES transaction:transaction.transactionId];
+			else
+				return;
+			[mainController showTransactionViewController:eTransactionVoid];
+		}
+	}
+}
+
+
+-(void) tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [selectedCellsIndexPaths removeObject:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath{
     int row = indexPath.row;
 	Transaction* transaction = transactions[row];
     
-    NSDictionary* cellInfo = transaction.xmlInfo;
-    
-    if (cellInfo)
-    {
-        [mainController showHtmlViewControllerWithDetails:@[transaction.customerReceipt, cellInfo]];
+	if (transaction.voidReceipt){
+		[mainController showHtmlViewControllerWithDetails:@{kTransactionCustomerReceiptKey:transaction.customerReceipt, kTransactionInfo:transaction.xmlInfo, kVoidReceipt:transaction.voidReceipt, kVoidTransactionInfo:transaction.voidXmlInfo, kTransactionIdKey:transaction.transactionId}];
+	}
+	else{
+		[mainController showHtmlViewControllerWithDetails:@{kTransactionCustomerReceiptKey:transaction.customerReceipt, kTransactionInfo:transaction.xmlInfo, kTransactionIdKey:transaction.transactionId}];
+	}
+}
+
+- (void)tableView:(UITableView*)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath{
+	return;
+}
+
+#pragma mark -
+#pragma mark IBAction
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated{
+	if(editing){
+		self.tableView.allowsMultipleSelectionDuringEditing = YES;
+		[super setEditing:editing animated:animated];
+		toolbar.items = toolBarItems;
+		selectedCellsIndexPaths = [NSMutableArray array];
+	}
+	else{
+		[selectedCellsIndexPaths sortUsingComparator: ^NSComparisonResult (NSIndexPath* obj1, NSIndexPath* obj2){
+			if (obj1.row < obj2.row)
+				return NSOrderedDescending;
+			else if (obj1.row > obj2.row)
+				return NSOrderedAscending;
+			else
+				return NSOrderedSame;
+		}];
+        for(NSIndexPath* index in selectedCellsIndexPaths){
+			[self deleteSignWithTransactionId:[transactions[index.row] transactionId]];
+            [transactions removeObjectAtIndex:index.row];
+        }
+        [self.tableView deleteRowsAtIndexPaths:selectedCellsIndexPaths withRowAnimation:UITableViewRowAnimationLeft];
+        [NSKeyedArchiver archiveRootObject:transactions toFile:historyPath()];
+		[self cancelEditing];
     }
+}
+
+
+- (void)cancelEditing{
+	[super setEditing:NO animated:YES];
+	self.tableView.allowsMultipleSelectionDuringEditing = NO;
+	toolbar.items = noToolBarItems;
+	selectedCellsIndexPaths = nil;
+}
+
+#pragma mark -
+
+-(void) deleteSignWithTransactionId:(NSString*) transactionId{
+	Verify([[NSFileManager defaultManager] removeItemAtPath:pathToTransactionSign(transactionId) error:nil]);
 }
 
 @end

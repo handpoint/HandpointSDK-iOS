@@ -15,12 +15,14 @@ EventInfoResponseCommand::EventInfoResponseCommand(int status)
 	xml_details = [[NSString stringWithFormat:@"<EventInfoResponse><StatusMessage>%@</StatusMessage><CancelAllowed>true</CancelAllowed></EventInfoResponse>", statusMessages[status]] cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
-int trans_id_seed = 1;
+NSString* kTransIdSeedKey = @"last_trans_id";
+int trans_id_seed = [[NSUserDefaults standardUserDefaults] integerForKey:kTransIdSeedKey];
 NSString* fin_type[] = {@"Sale", @"Refund", @"Sale void", @"Refund void", @"Start day", @"End day", @"Finance init"};
 NSString* fin_type_transaction[] = {@"SALE", @"REFUND", @"VOID_SALE", @"VOID_REFUND", @"Start day", @"End day", @"Finance init"};
 
 string transactID(){
-	return [[NSString stringWithFormat:@"transactID%d", trans_id_seed++] cStringUsingEncoding:NSUTF8StringEncoding];
+	[[NSUserDefaults standardUserDefaults] setInteger:trans_id_seed + 1 forKey:kTransIdSeedKey];
+	return [[NSString stringWithFormat:@"transactID%d", ++trans_id_seed] cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
 FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, eTransactionStatus status) 
@@ -74,7 +76,7 @@ FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, UINT32 amount, int st
 	merchant_receipt = [buf cStringUsingEncoding:NSUTF8StringEncoding];
 	customer_receipt = merchant_receipt;
 	
-	xml_details = [@"<FinancialTransactionResponse><StatusMessage>User Cancelled</StatusMessage></FinancialTransactionResponse>" cStringUsingEncoding:NSUTF8StringEncoding];
+	xml_details = [[NSString stringWithFormat:@"<FinancialTransactionResponse><StatusMessage>%@</StatusMessage></FinancialTransactionResponse>", statusMessages[status]] cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
 FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, const string& transaction_id)

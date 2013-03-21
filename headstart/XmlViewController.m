@@ -14,6 +14,14 @@
     keysXmlInfo = xmlInfo.allKeys;
  }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+	return UIInterfaceOrientationIsPortrait(toInterfaceOrientation);
+}
+
+- (NSUInteger)supportedInterfaceOrientations{
+	return UIInterfaceOrientationMaskPortrait;
+}
+
 #pragma mark -
 #pragma mark UITableViewDataSource
 

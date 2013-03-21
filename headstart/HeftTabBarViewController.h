@@ -24,8 +24,10 @@ typedef enum{
 - (void)showTransactionViewController:(eTransactionType)type;
 - (void)setTransactionStatus:(NSString*)status;
 - (void)dismissHtmlViewController;
+- (void)showTextViewControllerWithString:(NSString*)text;
 - (void)dismissTextViewController;
-- (void)acceptSign:(BOOL)accepted;
-- (void)showHtmlViewControllerWithDetails:(NSArray*)details;
-
+- (void)acceptSign:(UIImage*)accepted;
+- (void)showHtmlViewControllerWithDetails:(NSDictionary*)details;
+- (void)showNumPadViewBarButtonAnimated:(BOOL)animated;
+- (void)hideNumPadViewBarButtonAnimated:(BOOL)animated;
 @end

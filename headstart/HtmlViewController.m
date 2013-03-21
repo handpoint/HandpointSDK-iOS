@@ -6,6 +6,15 @@
 #import "HtmlViewController.h"
 #import "HeftTabBarViewController.h"
 #import "XmlViewController.h"
+#import "SignViewController.h"
+
+NSString* const kReceiptTypeKey = @"CheckType";
+
+extern const NSString* kTransactionCustomerReceiptKey ;
+extern const NSString* kTransactionInfo;
+extern const NSString* kVoidReceipt;
+extern const NSString* kVoidTransactionInfo;
+extern const NSString* kTransactionIdKey;
 
 @interface HtmlViewController()<UIWebViewDelegate>
 @end
@@ -15,23 +24,42 @@
 	__weak IBOutlet UIButton* closeButton;
 	__weak IBOutlet UIButton* signButton;
 	__weak IBOutlet UIButton* declineButton;
-    __weak IBOutlet UIButton* showInfoButton;
+	__weak IBOutlet UIButton* showInfoButton;
+	__weak IBOutlet UISwitch* receiptTypeSwitch;
+	__weak IBOutlet UILabel* switchLabel;
+	__weak IBOutlet UIButton* showSignButton;
 	NSString* html;
-    NSDictionary* xmlInfo;
+	NSDictionary* xmlInfo;
+	NSString* voidHtml;
+	NSDictionary* voidXmlInfo;
+	NSString* transactionId;
 }
 
-+ (id)controllerWithDetails:(NSArray*)details storyboard:(UIStoryboard*)storyboard{
++ (id)controllerWithDetails:(NSDictionary*)details storyboard:(UIStoryboard*)storyboard{
 	HtmlViewController* result = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass(self)];
-	result->html = details[0];
-	result->xmlInfo = details.count > 1 ? details[1] : nil;
-    
+	result->html = details[kTransactionCustomerReceiptKey];
+	result->xmlInfo = details[kTransactionInfo];
+	result->voidHtml = details[kVoidReceipt];
+	result->voidXmlInfo = details[kVoidTransactionInfo];
+	result->transactionId = details[kTransactionIdKey];
 	return result;
 }
 
 - (void)viewDidLoad{
 	[super viewDidLoad];
-	[webView loadHTMLString:html baseURL:nil];
-	if(!xmlInfo)
+
+	if(voidHtml){
+		receiptTypeSwitch.hidden = NO;
+		switchLabel.hidden = NO;
+	}
+	receiptTypeSwitch.on =[[NSUserDefaults standardUserDefaults] boolForKey:kReceiptTypeKey];
+	[self reloadWebView];
+	
+	if(xmlInfo){
+		if(!transactionId || ![[NSFileManager defaultManager] fileExistsAtPath: pathToTransactionSign(transactionId)])
+			showSignButton.enabled = NO;
+	}
+	else
 		[self setSignMode];
 }
 
@@ -44,9 +72,9 @@
 - (void)setSignMode{
 	closeButton.hidden = YES;
 	showInfoButton.hidden = YES;
+	showSignButton.hidden = YES;
 	signButton.hidden = NO;
 	declineButton.hidden = NO;
-    
 }
 
 #pragma mark -
@@ -57,7 +85,10 @@
     if ([[segue identifier] isEqualToString:@"showXml"])
     {
         XmlViewController* controller = (XmlViewController*) segue.destinationViewController;
-        controller.xmlInfo = xmlInfo;
+		if(receiptTypeSwitch.on && voidXmlInfo)
+			controller.xmlInfo = voidXmlInfo;
+		else
+			controller.xmlInfo = xmlInfo;
     }
 }
 
@@ -68,8 +99,21 @@
 	[(HeftTabBarViewController*)self.view.superview.nextResponder dismissHtmlViewController];
 }
 
-- (IBAction)sign:(UIButton*)sender{
-	[(HeftTabBarViewController*)self.view.superview.nextResponder acceptSign:sender == signButton];
+- (IBAction)decline:(UIButton*)sender{
+	[(HeftTabBarViewController*)self.view.superview.nextResponder acceptSign:nil];
+}
+
+- (IBAction)receiptTypeChanged:(UISwitch *)sender {
+	[[NSUserDefaults standardUserDefaults] setBool:sender.on forKey:kReceiptTypeKey];
+	[self reloadWebView];
+}
+
+- (IBAction)ShowSign:(UIButton *)sender {
+	SignViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:@"SignViewController"];
+	controller.target = self;
+	if(showSignButton == sender)
+		controller.transactionId = transactionId;
+	[[UIApplication sharedApplication].delegate.window.rootViewController presentModalViewController:controller animated:YES];
 }
 
 /*#pragma mark UIWebViewDelegate
@@ -77,4 +121,16 @@
 - (void)webViewDidFinishLoad:(UIWebView*)webView{
 }*/
 
+#pragma mark -
+- (void)reloadWebView{
+	if (voidHtml && receiptTypeSwitch.on)
+		[webView loadHTMLString:voidHtml baseURL:nil];
+	else
+		[webView loadHTMLString:html baseURL:nil];
+}
+
+- (void)setSignImage:(UIImage*)image{
+	[(HeftTabBarViewController*)self.view.superview.nextResponder acceptSign:image];
+
+}
 @end

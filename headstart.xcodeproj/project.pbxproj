@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D046A6E16F3186100948519 /* SignView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D046A6D16F3186100948519 /* SignView.m */; };
 		2D1208A5165E9729004C1AEC /* libdtdev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D1208A4165E9729004C1AEC /* libdtdev.a */; };
 		2D1B8AD016A0A77600B11BC9 /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; };
 		2D1B8AD116A0A77600B11BC9 /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; };
@@ -62,6 +63,8 @@
 		2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		2D90B99B16CECB4A00D412B3 /* HtmlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D90B99A16CECB4A00D412B3 /* HtmlViewController.m */; };
 		2D9C90BA16E27AA000229402 /* HeftStatusReportPublic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; };
+		2DC1BADE16E9337100585089 /* PickerElementView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC1BADD16E9337100585089 /* PickerElementView.m */; };
+		2DC1BAE016E9337E00585089 /* PickerElementView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC1BADF16E9337E00585089 /* PickerElementView.xib */; };
 		2DEDA3731628B0590043AFBC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3721628B0580043AFBC /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		2DEDA3751628B0590043AFBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		2DEDA3771628B0590043AFBC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3761628B0590043AFBC /* CoreGraphics.framework */; };
@@ -84,6 +87,9 @@
 		2DFB463816946D7000E95CCC /* HeftTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFB463716946D7000E95CCC /* HeftTabBarViewController.m */; };
 		AD869C2E16DE66DE006A16EF /* XmlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD869C2D16DE66DE006A16EF /* XmlViewController.m */; };
 		AD87936116E09AEF00A2C326 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD87936016E09AEF00A2C326 /* MessageUI.framework */; };
+		ADA94C2B16F2053C0076F1F3 /* SignViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADA94C2A16F2053C0076F1F3 /* SignViewController.m */; };
+		ADADA19516E5FCBE00DE265F /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = ADADA19316E5FCBE00DE265F /* check.png */; };
+		ADADA19616E5FCBE00DE265F /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ADADA19416E5FCBE00DE265F /* check@2x.png */; };
 		C31ECE5F16D30C5F00779EC2 /* TextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C31ECE5E16D30C5F00779EC2 /* TextViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -128,6 +134,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D046A6C16F3186100948519 /* SignView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignView.h; sourceTree = "<group>"; };
+		2D046A6D16F3186100948519 /* SignView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignView.m; sourceTree = "<group>"; };
 		2D0D3F3B162C64450057301F /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		2D1208A4165E9729004C1AEC /* libdtdev.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdtdev.a; path = ../Library/libdtdev.a; sourceTree = "<group>"; };
 		2D1C0E9116A9BBDA00D080DA /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-72.png"; path = "images/icon-72.png"; sourceTree = "<group>"; };
@@ -210,6 +218,9 @@
 		2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftStatusReportPublic.h; sourceTree = "<group>"; };
 		2D90B99916CECB4A00D412B3 /* HtmlViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HtmlViewController.h; sourceTree = "<group>"; };
 		2D90B99A16CECB4A00D412B3 /* HtmlViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HtmlViewController.m; sourceTree = "<group>"; };
+		2DC1BADC16E9337100585089 /* PickerElementView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PickerElementView.h; sourceTree = "<group>"; };
+		2DC1BADD16E9337100585089 /* PickerElementView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PickerElementView.m; sourceTree = "<group>"; };
+		2DC1BADF16E9337E00585089 /* PickerElementView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PickerElementView.xib; sourceTree = "<group>"; };
 		2DEAD200164020A5006E2429 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		2DEDA36E1628B0580043AFBC /* headstart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = headstart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DEDA3721628B0580043AFBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -242,6 +253,10 @@
 		AD0AFCB316DB64A9008AC10D /* XmlViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlViewController.h; sourceTree = "<group>"; };
 		AD869C2D16DE66DE006A16EF /* XmlViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlViewController.m; sourceTree = "<group>"; };
 		AD87936016E09AEF00A2C326 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		ADA94C2916F2053C0076F1F3 /* SignViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignViewController.h; sourceTree = "<group>"; };
+		ADA94C2A16F2053C0076F1F3 /* SignViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignViewController.m; sourceTree = "<group>"; };
+		ADADA19316E5FCBE00DE265F /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = check.png; path = images/check.png; sourceTree = "<group>"; };
+		ADADA19416E5FCBE00DE265F /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "check@2x.png"; path = "images/check@2x.png"; sourceTree = "<group>"; };
 		C31ECE5D16D30C5F00779EC2 /* TextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextViewController.h; sourceTree = "<group>"; };
 		C31ECE5E16D30C5F00779EC2 /* TextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -298,6 +313,7 @@
 		2D0D3F39162C62F90057301F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DC1BADF16E9337E00585089 /* PickerElementView.xib */,
 				2D0D3F3A162C63190057301F /* images */,
 				2DEDA38A1628B0590043AFBC /* MainStoryboard_iPhone.storyboard */,
 				2DEDA38D1628B0590043AFBC /* MainStoryboard_iPad.storyboard */,
@@ -308,6 +324,8 @@
 		2D0D3F3A162C63190057301F /* images */ = {
 			isa = PBXGroup;
 			children = (
+				ADADA19316E5FCBE00DE265F /* check.png */,
+				ADADA19416E5FCBE00DE265F /* check@2x.png */,
 				2D2379E516B2F17E00F834D4 /* logo_visa_electron.png */,
 				2D1C0E9116A9BBDA00D080DA /* icon-72.png */,
 				2D1C0E9216A9BBDA00D080DA /* icon.png */,
@@ -484,6 +502,8 @@
 		2DEDA3781628B0590043AFBC /* headstart */ = {
 			isa = PBXGroup;
 			children = (
+				2DC1BADC16E9337100585089 /* PickerElementView.h */,
+				2DC1BADD16E9337100585089 /* PickerElementView.m */,
 				2DEDA3811628B0590043AFBC /* AppDelegate.h */,
 				2DEDA3821628B0590043AFBC /* AppDelegate.m */,
 				2DFB463616946D7000E95CCC /* HeftTabBarViewController.h */,
@@ -498,12 +518,16 @@
 				2D2379E816B2F49B00F834D4 /* HistoryCell.m */,
 				AD0AFCB316DB64A9008AC10D /* XmlViewController.h */,
 				AD869C2D16DE66DE006A16EF /* XmlViewController.m */,
+				2D046A6C16F3186100948519 /* SignView.h */,
+				2D046A6D16F3186100948519 /* SignView.m */,
 				2D2B45F616A48222001A8902 /* SettingsViewController.h */,
 				2D2B45F716A48222001A8902 /* SettingsViewController.m */,
 				2D2B45FA16A49FFF001A8902 /* TransactionViewController.h */,
 				2D2B45FB16A49FFF001A8902 /* TransactionViewController.m */,
 				2D90B99916CECB4A00D412B3 /* HtmlViewController.h */,
 				2D90B99A16CECB4A00D412B3 /* HtmlViewController.m */,
+				ADA94C2916F2053C0076F1F3 /* SignViewController.h */,
+				ADA94C2A16F2053C0076F1F3 /* SignViewController.m */,
 				C31ECE5D16D30C5F00779EC2 /* TextViewController.h */,
 				C31ECE5E16D30C5F00779EC2 /* TextViewController.m */,
 				2D0D3F39162C62F90057301F /* Resources */,
@@ -695,6 +719,9 @@
 				2D1C0EAF16A9BBDA00D080DA /* transaction.sale.0.png in Resources */,
 				2D1C0EB016A9BBDA00D080DA /* transaction.sale.1.png in Resources */,
 				2D2379E616B2F17E00F834D4 /* logo_visa_electron.png in Resources */,
+				ADADA19516E5FCBE00DE265F /* check.png in Resources */,
+				ADADA19616E5FCBE00DE265F /* check@2x.png in Resources */,
+				2DC1BAE016E9337E00585089 /* PickerElementView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -786,6 +813,9 @@
 				2D90B99B16CECB4A00D412B3 /* HtmlViewController.m in Sources */,
 				C31ECE5F16D30C5F00779EC2 /* TextViewController.m in Sources */,
 				AD869C2E16DE66DE006A16EF /* XmlViewController.m in Sources */,
+				2DC1BADE16E9337100585089 /* PickerElementView.m in Sources */,
+				ADA94C2B16F2053C0076F1F3 /* SignViewController.m in Sources */,
+				2D046A6E16F3186100948519 /* SignView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
