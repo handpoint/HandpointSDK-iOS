@@ -3,11 +3,7 @@
 //  headstart
 //
 
-@interface TransactionViewController : UIViewController{
-	__weak IBOutlet UILabel* statusLabel;
-	__weak IBOutlet UIImageView* statusImage;
-	__weak IBOutlet UIButton* cancelButton;
-}
+@interface TransactionViewController : UIViewController
 
 - (IBAction)cancel;
 

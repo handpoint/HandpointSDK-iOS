@@ -1,15 +1,9 @@
 //
 //  SignView.h
-//  iSign
+//  headstart
 //
 
-@interface SignView : UIView{
-	CGPoint prev;
-	CGLayerRef sign;
-	NSMutableArray* points;
-	NSMutableArray* paths;
-	NSUInteger undoIndex;
-}
+@interface SignView : UIView
 
 @property(nonatomic, readonly) BOOL dirty;
 @property(nonatomic, readonly) UIImage* image;

@@ -7,7 +7,7 @@
 #import "SignView.h"
 
 NSString* pathToTransactionSign(NSString* transactionId){
-	return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", transactionId]];
+	return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", transactionId]];
 }
 
 @implementation SignViewController{
@@ -56,5 +56,6 @@ NSString* pathToTransactionSign(NSString* transactionId){
 		[target  performSelector:@selector(setSignImage:) withObject:image];
 	}];
 }
+
 @end
 

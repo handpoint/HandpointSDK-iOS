@@ -5,14 +5,8 @@
 
 #import <MessageUI/MessageUI.h>
 
-@interface TextViewController : UIViewController<MFMailComposeViewControllerDelegate>{
-	__weak IBOutlet UITextView* textView;
-	__weak IBOutlet UIButton *sendLogButton;
-	NSString* text;
-}
+@interface TextViewController : UIViewController<MFMailComposeViewControllerDelegate>
 
 + (id)controllerWithString:(NSString*)text storyboard:(UIStoryboard*)storyboard;
-
-- (IBAction)close;
 
 @end

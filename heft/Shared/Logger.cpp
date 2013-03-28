@@ -4,14 +4,14 @@
 Logger Logger::logger;
 
 Logger::Logger() : m_level(eFiner){
-	fileName = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"release_log.txt"];
+	fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"release_log.txt"];
 	logStr = [NSMutableString new];
 }
 
 void Logger::setFileName(NSString* filename){
 	if(m_level != eOff && !fileName){
 		[[NSFileManager defaultManager] removeItemAtPath:fileName error:NULL];
-		fileName = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:filename];
+		fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:filename];
 		[logStr writeToFile:fileName atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	}
 }

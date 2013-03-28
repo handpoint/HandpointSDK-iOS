@@ -13,7 +13,11 @@ NSString* kEmailSubject = @"MPED log";
 /*@interface TextViewController()<UITextViewDelegate>
 @end*/
 
-@implementation TextViewController
+@implementation TextViewController{
+	__weak IBOutlet UITextView* textView;
+	__weak IBOutlet UIButton *sendLogButton;
+	NSString* text;
+}
 
 + (id)controllerWithString:(NSString*)text storyboard:(UIStoryboard*)storyboard{
 	TextViewController* result = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass(self)];
@@ -49,7 +53,7 @@ NSString* kEmailSubject = @"MPED log";
 	[mailController setSubject:kEmailSubject];
 	
 	
-	NSString* logFilePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+	NSString* logFilePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0]
 							 stringByAppendingPathComponent:kMpedLogName];
 	[mailController addAttachmentData:[NSData dataWithContentsOfFile:logFilePath] mimeType:@"txt/plain" fileName:kMpedLogName];
 	
@@ -82,4 +86,5 @@ NSString* kEmailSubject = @"MPED log";
 	}
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
+
 @end

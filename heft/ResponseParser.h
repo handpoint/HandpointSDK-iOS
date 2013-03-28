@@ -3,11 +3,7 @@
 //  headstart
 //
 
-@interface ResponseParser : NSObject<NSXMLParserDelegate>{
-	NSString* nodeName;
-	BOOL inScope;
-	NSString* key;
-}
+@interface ResponseParser : NSObject<NSXMLParserDelegate>
 
 @property(nonatomic, readonly) NSMutableDictionary* result;
 

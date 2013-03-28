@@ -55,11 +55,7 @@ extern const NSString* kTransactionIdKey;
 	receiptTypeSwitch.on =[[NSUserDefaults standardUserDefaults] boolForKey:kReceiptTypeKey];
 	[self reloadWebView];
 	
-	if(xmlInfo){
-		if(!transactionId || ![[NSFileManager defaultManager] fileExistsAtPath: pathToTransactionSign(transactionId)])
-			showSignButton.enabled = NO;
-	}
-	else
+	if(!xmlInfo)
 		[self setSignMode];
 }
 
@@ -123,14 +119,18 @@ extern const NSString* kTransactionIdKey;
 
 #pragma mark -
 - (void)reloadWebView{
-	if (voidHtml && receiptTypeSwitch.on)
+	if (voidHtml && receiptTypeSwitch.on){
 		[webView loadHTMLString:voidHtml baseURL:nil];
-	else
+		showSignButton.enabled = NO;
+	}
+	else{
 		[webView loadHTMLString:html baseURL:nil];
+		showSignButton.enabled = [[NSFileManager defaultManager] fileExistsAtPath: pathToTransactionSign(transactionId)];
+	}
 }
 
 - (void)setSignImage:(UIImage*)image{
 	[(HeftTabBarViewController*)self.view.superview.nextResponder acceptSign:image];
-
 }
+
 @end

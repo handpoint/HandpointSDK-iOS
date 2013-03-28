@@ -42,7 +42,7 @@ static HeftManager* instance = 0;
 
 + (void)initialize{
 	if(self == [HeftManager class]){
-		//file = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"log.txt"];
+		//file = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"log.txt"];
 		//log2file = [NSMutableString string];
 		//freopen([file cStringUsingEncoding:NSASCIIStringEncoding], "w+", stderr);
 		LOG(@"HeftManager::initialize");
@@ -55,7 +55,7 @@ static HeftManager* instance = 0;
 }
 
 NSString* devicesPath(){
-	return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:devicesFileName];
+	return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:devicesFileName];
 }
 
 - (id)init{

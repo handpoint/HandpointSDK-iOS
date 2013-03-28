@@ -3,16 +3,7 @@
 //  headstart
 //
 
-@protocol HeftClient;
+#import "TabBarItemProtocol.h"
 
-@interface NumPadViewController : UIViewController
-
-- (void)updateOnHeftClient:(BOOL)fOn;
-
-- (IBAction)sale;
-- (IBAction)refund;
-- (IBAction)digit:(UIButton*)sender;
-- (IBAction)zeros;
-- (IBAction)clearDigit;
-
+@interface NumPadViewController : UIViewController<TabBarItemProtocol>
 @end

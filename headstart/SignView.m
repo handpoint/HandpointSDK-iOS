@@ -1,11 +1,17 @@
 //
 //  SignView.m
-//  iSign
+//  headstart
 //
 
 #import "SignView.h"
 
-@implementation SignView
+@implementation SignView{
+    CGPoint prev;
+	CGLayerRef sign;
+	NSMutableArray* points;
+	NSMutableArray* paths;
+	NSUInteger undoIndex;
+}
 
 CGLayerRef createLayer(CGSize size){
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -55,7 +61,7 @@ void initSign(CGContextRef bmpContext, CGSize size){
 - (void)releasePaths:(int)index{
 	int count = [paths count];
 	for(int i = index; i < count; ++i){
-		NSValue* item = [paths objectAtIndex:i];
+		NSValue* item = paths[i];
 		CGPathRef path = [item pointerValue];
 		CGPathRelease(path);
 	}
@@ -95,15 +101,15 @@ void initSign(CGContextRef bmpContext, CGSize size){
 	[paths removeObjectsInRange:NSMakeRange(undoIndex, [paths count] - undoIndex)];
 	
 	NSUndoManager* undoManager = self.undoManager;
-	[undoManager registerUndoWithTarget:self selector:@selector(undoSign:) object:[NSNumber numberWithInt:undoIndex]];
+	[undoManager registerUndoWithTarget:self selector:@selector(undoSign:) object:@(undoIndex)];
 	[undoManager setActionName:@"sign"];
 	
 	CGMutablePathRef path = CGPathCreateMutable();
-	NSData* item = [points objectAtIndex:0];
+	NSData* item = points[0];
 	const CGPoint* pPoint = [item bytes];
 	CGPathMoveToPoint(path, NULL, pPoint->x, pPoint->y);
 	for(int i = 1; i < [points count]; ++i){
-		item = [points objectAtIndex:i];
+		item = points[i];
 		pPoint = [item bytes];
 		CGPathAddLineToPoint(path, NULL, pPoint->x, pPoint->y);
 	}

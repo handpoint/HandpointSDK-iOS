@@ -19,6 +19,11 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 
 @implementation SettingsViewController{
 	HeftTabBarViewController* __weak mainController;
+    __weak IBOutlet UISwitch* refundSwitch;
+	__weak IBOutlet UIButton* finInitButton;
+	__weak IBOutlet UIButton* getLogsButton;
+	__weak IBOutlet UISegmentedControl *logLevelControl;
+	int currentCurrency;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder{
@@ -43,6 +48,8 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }*/
+
+#pragma mark TabBarItemProtocol
 
 - (void)updateOnHeftClient:(BOOL)fOn{
 	finInitButton.enabled = fOn;
@@ -74,7 +81,7 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 }
 
 - (IBAction)showLogs:(UIButton*)sender {
-	[mainController showTextViewControllerWithString:[NSString stringWithContentsOfFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:kMpedLogName]  encoding:NSUTF8StringEncoding error:NULL]];
+	[mainController showTextViewControllerWithString:[NSString stringWithContentsOfFile:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:kMpedLogName]  encoding:NSUTF8StringEncoding error:NULL]];
 }
 
 #pragma mark -
@@ -108,4 +115,5 @@ NSString* currency[] = {@"GBP", @"USD", @"EUR"};
 	[[NSUserDefaults standardUserDefaults] setInteger:currentCurrency forKey:kUserCurrencyKey];
 	[[NSNotificationCenter defaultCenter] postNotificationName:currencyDidChangedNotification object:self];
 }
+
 @end

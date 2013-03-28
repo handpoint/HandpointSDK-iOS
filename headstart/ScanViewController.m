@@ -71,6 +71,7 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 
 - (IBAction)startDiscovery{
 	discoveryButton.enabled = NO;
+	[self disconnect];
 	[spinner startAnimating];
 	[[HeftManager sharedManager] startDiscovery:NO];
 }
@@ -91,6 +92,8 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 	resetButton.enabled = enabled;
 	[deviceList reloadAllComponents];
 }
+
+#pragma mark TabBarItemProtocol
 
 - (void)updateOnHeftClient:(BOOL)fOn{
 	connectButton.enabled = YES;
@@ -173,32 +176,36 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 
 - (void)didDiscoverDevice:(HeftRemoteDevice*)newDevice{
 	[devices addObject:newDevice];
-	connectButton.enabled = YES;
 	resetButton.enabled = YES;
 	[deviceList reloadAllComponents];
 }
 
 - (void)didDiscoverFinished{
 	discoveryButton.enabled = YES;
+	connectButton.enabled = YES;
 	[spinner stopAnimating];
 }
 
 #pragma mark -
 
-- (void)executeConnect{
+- (void) disconnect{
     NSUInteger index = [devices indexOfObjectPassingTest:^(HeftRemoteDevice* obj, NSUInteger idx, BOOL *stop){
 		if([obj.name isEqualToString:currentDeviceName])
 			*stop = YES;
 		return *stop;
 	}];
     ((PickerElementView*)[deviceList viewForRow:index forComponent:0]).checkmarkPicture.hidden = YES;
-    
 	mainController.heftClient = nil;
 	for(id vc in mainController.viewControllers)
 		[vc updateOnHeftClient:NO];
 	connectButton.enabled = NO;
-	[mainController hideNumPadViewBarButtonAnimated:YES];
+   	[mainController hideNumPadViewBarButtonAnimated:YES];
+}
+
+- (void)executeConnect{
+	[self disconnect];
 	currentDeviceName = [devices[[deviceList selectedRowInComponent:0]] name];
 	[[HeftManager sharedManager] clientForDevice:devices[[deviceList selectedRowInComponent:0]] sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
 }
+
 @end

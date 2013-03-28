@@ -5,7 +5,11 @@
 
 #import "ResponseParser.h"
 
-@implementation ResponseParser
+@implementation ResponseParser{
+	NSString* nodeName;
+	BOOL inScope;
+	NSString* key;
+}
 
 @synthesize result;
 

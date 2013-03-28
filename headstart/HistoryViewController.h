@@ -3,11 +3,12 @@
 //  headstart
 //
 
+#import "TabBarItemProtocol.h"
+
 @protocol FinanceResponseInfo;
 
-@interface HistoryViewController : UITableViewController
+@interface HistoryViewController : UITableViewController<TabBarItemProtocol>
 
-- (void)updateOnHeftClient:(BOOL)fOn;
 - (void)addNewTransaction:(id<FinanceResponseInfo>)info sign:(UIImage*)sign;
 
 @end

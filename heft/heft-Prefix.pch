@@ -1,5 +1,5 @@
 //
-// Prefix header for all source files of the 'heft' target in the 'heft' project
+// Prefix header for all source files of the 'heft' target in the 'headstart' project
 //
 
 #import <Availability.h>

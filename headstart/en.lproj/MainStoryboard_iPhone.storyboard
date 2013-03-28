@@ -1026,10 +1026,6 @@
         </class>
         <class className="SignViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/SignViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="cancelSign:" candidateClass="UIButton"/>
-                <relationship kind="action" name="doneSign:" candidateClass="UIButton"/>
-            </relationships>
         </class>
         <class className="TextViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TextViewController.h"/>

@@ -11,7 +11,11 @@
 @property(nonatomic) eTransactionType type;
 @end
 
-@implementation TransactionViewController
+@implementation TransactionViewController{
+    __weak IBOutlet UILabel* statusLabel;
+	__weak IBOutlet UIImageView* statusImage;
+	__weak IBOutlet UIButton* cancelButton;
+}
 
 @synthesize type;
 

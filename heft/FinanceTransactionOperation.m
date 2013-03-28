@@ -22,7 +22,16 @@ enum eConnectCondition{
 @interface FinanceTransactionOperation()<NSStreamDelegate>
 @end
 
-@implementation FinanceTransactionOperation
+@implementation FinanceTransactionOperation{
+	RequestCommand*	pRequestCommand;
+	HeftConnection* connection;
+	//int maxFrameSize;
+	__weak id<IResponseProcessor> processor;
+	NSData* sharedSecret;
+	NSOutputStream* sendStream;
+	NSInputStream* recvStream;
+	NSConditionLock* connectLock;
+}
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
 	if(self = [super init]){
@@ -97,7 +106,7 @@ enum eConnectCondition{
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest{
 	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: connecting to bureau %s:%d timeout:%d"), pRequest->GetAddr().c_str(), pRequest->GetPort(), pRequest->GetTimeout());
 
-	NSString* host = [NSString stringWithUTF8String:pRequest->GetAddr().c_str()];
+	NSString* host = @(pRequest->GetAddr().c_str());
 	CFReadStreamRef readStream;
 	CFWriteStreamRef writeStream;
 	CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault, (__bridge CFStringRef)host, pRequest->GetPort(), &readStream, &writeStream);
@@ -184,7 +193,7 @@ enum eConnectCondition{
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
 	LOG(_T("Signature required request"));
-	int status = [processor processSign:[NSString stringWithUTF8String:pRequest->GetReceipt().c_str()]];
+	int status = [processor processSign:@(pRequest->GetReceipt().c_str())];
 	return new HostResponseCommand(CMD_STAT_SIGN_RSP, status);
 }
 

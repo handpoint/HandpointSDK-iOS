@@ -13,15 +13,7 @@ typedef enum{
 	, eTimeoutNum
 } eConnectionTimeout;
 
-@interface HeftConnection : NSObject{
-	HeftRemoteDevice* device;
-	NSInputStream* inputStream;
-	NSOutputStream* outputStream;
-
-	uint8_t* tmpBuf;
-	int currentPosition;
-	NSConditionLock* bufferLock;
-}
+@interface HeftConnection : NSObject
 
 @property(nonatomic) int maxBufferSize;
 

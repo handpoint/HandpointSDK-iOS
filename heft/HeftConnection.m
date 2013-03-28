@@ -19,7 +19,15 @@ enum eBufferConditions{
 @interface HeftConnection()<NSStreamDelegate>
 @end
 
-@implementation HeftConnection
+@implementation HeftConnection{
+	HeftRemoteDevice* device;
+	NSInputStream* inputStream;
+	NSOutputStream* outputStream;
+    
+	uint8_t* tmpBuf;
+	int currentPosition;
+	NSConditionLock* bufferLock;
+}
 
 @synthesize maxBufferSize/*, currentPosition*/;
 

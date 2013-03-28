@@ -89,6 +89,8 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	amount.text = formatAmountString(currencySymbol[currentCurrencyIndex], amountString);
 }
 
+#pragma mark TabBarItemProtocol
+
 - (void)updateOnHeftClient:(BOOL)fOn{
 	saleButton.enabled = fOn;
 	refundButton.enabled = fOn;

@@ -88,7 +88,7 @@ static NSDictionary* currencySymbol;
 static NSString* const historyFileName = @"history";
 
 NSString* historyPath(){
-	return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:historyFileName];
+	return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:historyFileName];
 }
 
 @implementation HistoryViewController{
@@ -96,8 +96,8 @@ NSString* historyPath(){
 	NSMutableArray* transactions;
 	__weak IBOutlet UIToolbar *toolbar;
 	__weak IBOutlet UIBarButtonItem *flexibleSpace;
-	NSArray* noToolBarItems;
-	NSArray* toolBarItems;
+	NSArray* defaultToolBarItems;
+	NSArray* editToolBarItems;
 	NSMutableArray* selectedCellsIndexPaths;
 }
 
@@ -125,9 +125,9 @@ NSString* historyPath(){
 	UIBarButtonItem* cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
 												   target:self
 												   action:@selector(cancelEditing)];
- 	noToolBarItems = @[flexibleSpace, editButton];
-	toolBarItems = @[cancelButton, flexibleSpace, editButton];
-	toolbar.items = noToolBarItems;
+ 	defaultToolBarItems = @[flexibleSpace, editButton];
+	editToolBarItems = @[cancelButton, flexibleSpace, editButton];
+	toolbar.items = defaultToolBarItems;
 }
 /*
 - (void)didReceiveMemoryWarning
@@ -142,9 +142,13 @@ NSString* historyPath(){
 	[self updateOnHeftClient:mainController.heftClient != nil];
 }
 
+#pragma mark TabBarItemProtocol
+
 - (void)updateOnHeftClient:(BOOL)fOn{
 	self.tableView.allowsSelection = fOn;
 }
+
+#pragma mark -
 
 - (void)addNewTransaction:(id<FinanceResponseInfo>)info sign:(UIImage*)sign{
 	NSDictionary* xml = info.xml;
@@ -280,7 +284,7 @@ NSString* historyPath(){
 	if(editing){
 		self.tableView.allowsMultipleSelectionDuringEditing = YES;
 		[super setEditing:editing animated:animated];
-		toolbar.items = toolBarItems;
+		toolbar.items = editToolBarItems;
 		selectedCellsIndexPaths = [NSMutableArray array];
 	}
 	else{
@@ -306,7 +310,7 @@ NSString* historyPath(){
 - (void)cancelEditing{
 	[super setEditing:NO animated:YES];
 	self.tableView.allowsMultipleSelectionDuringEditing = NO;
-	toolbar.items = noToolBarItems;
+	toolbar.items = defaultToolBarItems;
 	selectedCellsIndexPaths = nil;
 }
 

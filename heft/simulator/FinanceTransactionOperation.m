@@ -10,7 +10,10 @@
 #import "Shared/ResponseCommand.h"
 #include "HeftCmdIds.h"
 
-@implementation FinanceTransactionOperation
+@implementation FinanceTransactionOperation{
+	RequestCommand*	pRequestCommand;
+	__weak id<IResponseProcessor> processor;
+}
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
 	if(self = [super init]){
@@ -105,7 +108,7 @@
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
 	LOG(_T("Signature required request"));
-	int status = [processor processSign:[NSString stringWithUTF8String:pRequest->GetReceipt().c_str()]];
+	int status = [processor processSign:@(pRequest->GetReceipt().c_str())];
 	return new HostResponseCommand(CMD_STAT_SIGN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount(), status);
 }
 

@@ -38,8 +38,8 @@ NSString* kMpedLogName = @"mped_log.txt";
 	HtmlViewController* htmlViewController;
 	TextViewController* textViewController;
 	UIAlertView* signAlert;
-	NSArray* noBtTabsControllers;
-	NSArray* btTabsControllers;
+	NSArray* defaultTabsControllers;
+	NSArray* connectedTabsControllers;
 	UIImage* signImage;
 }
 
@@ -57,10 +57,10 @@ NSString* kMpedLogName = @"mped_log.txt";
 - (void)viewDidLoad{
     [super viewDidLoad];
 
-	btTabsControllers = self.viewControllers;
-	NSMutableArray* controllers = [btTabsControllers mutableCopy];
+	connectedTabsControllers = self.viewControllers;
+	NSMutableArray* controllers = [connectedTabsControllers mutableCopy];
 	[controllers removeObjectAtIndex:0];
-	noBtTabsControllers = [controllers copy];
+	defaultTabsControllers = [controllers copy];
 
 	[self hideNumPadViewBarButtonAnimated:NO];
 }
@@ -206,7 +206,7 @@ NSString* kMpedLogName = @"mped_log.txt";
 
 - (void)responseLogInfo:(id<LogInfo>)info{
 	LOG(@"responseLogInfo:%@", info.status);
-	[info.log writeToFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:kMpedLogName] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+	[info.log writeToFile:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:kMpedLogName] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 	[self dismissTransactionViewController];
 	[self showTextViewControllerWithString:info.log];
 }
@@ -225,11 +225,11 @@ NSString* kMpedLogName = @"mped_log.txt";
 #pragma mark - 
 
 - (void)showNumPadViewBarButtonAnimated:(BOOL)animated{
-	[self setViewControllers:btTabsControllers animated:animated];
+	[self setViewControllers:connectedTabsControllers animated:animated];
 }
 
 - (void)hideNumPadViewBarButtonAnimated:(BOOL)animated{
-	[self setViewControllers:noBtTabsControllers animated:animated];
+	[self setViewControllers:defaultTabsControllers animated:animated];
 }
 
 @end

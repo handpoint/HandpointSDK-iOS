@@ -81,7 +81,15 @@ enum eSignConditions{
 	, eSignCondition
 };
 
-@implementation MpedDevice
+@implementation MpedDevice{
+	HeftConnection* connection;
+	NSOperationQueue* queue;
+	//NSObject<HeftClientDelegate>* delegate;
+	NSData* sharedSecret;
+	__weak NSObject<HeftStatusReportDelegate>* delegate;
+	NSConditionLock* signLock;
+	BOOL signatureIsOk;
+}
 
 @synthesize mpedInfo;
 
