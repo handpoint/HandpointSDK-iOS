@@ -13,8 +13,6 @@
 		2D1A425616F746C300CD6781 /* BcdCoderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425516F746C300CD6781 /* BcdCoderTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
 		2D1A425C16F757CB00CD6781 /* FrameManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425B16F757CB00CD6781 /* FrameManagerTest.m */; };
-		2D1B8AD016A0A77600B11BC9 /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; };
-		2D1B8AD116A0A77600B11BC9 /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; };
 		2D1B8AD416A0AD5700B11BC9 /* RequestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */; };
 		2D1B8AD516A0AD5B00B11BC9 /* ResponseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */; };
 		2D1B8AD616A0AD6000B11BC9 /* FinanceTransactionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCAF169B2B5A00BA0D48 /* FinanceTransactionOperation.m */; };
@@ -34,7 +32,6 @@
 		2D1C0EAE16A9BBDA00D080DA /* transaction.init.3.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D1C0E9E16A9BBDA00D080DA /* transaction.init.3.png */; };
 		2D1C0EAF16A9BBDA00D080DA /* transaction.sale.0.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D1C0E9F16A9BBDA00D080DA /* transaction.sale.0.png */; };
 		2D1C0EB016A9BBDA00D080DA /* transaction.sale.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D1C0EA016A9BBDA00D080DA /* transaction.sale.1.png */; };
-		2D1E9B3A16B46BF300048609 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
 		2D2379E116B2C62300F834D4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D29E54316A8A73A00324510 /* QuartzCore.framework */; };
 		2D2379E416B2C76C00F834D4 /* HistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2379E316B2C76C00F834D4 /* HistoryViewController.m */; };
 		2D2379E616B2F17E00F834D4 /* logo_visa_electron.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D2379E516B2F17E00F834D4 /* logo_visa_electron.png */; };
@@ -64,7 +61,6 @@
 		2D5ACCB4169B2F6800BA0D48 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEAD200164020A5006E2429 /* Security.framework */; };
 		2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		2D90B99B16CECB4A00D412B3 /* HtmlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D90B99A16CECB4A00D412B3 /* HtmlViewController.m */; };
-		2D9C90BA16E27AA000229402 /* HeftStatusReportPublic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; };
 		2DC1BADE16E9337100585089 /* PickerElementView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC1BADD16E9337100585089 /* PickerElementView.m */; };
 		2DC1BAE016E9337E00585089 /* PickerElementView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC1BADF16E9337E00585089 /* PickerElementView.xib */; };
 		2DEDA3731628B0590043AFBC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3721628B0580043AFBC /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -87,6 +83,10 @@
 		2DFB463116945D9400E95CCC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DFB462E16945D9400E95CCC /* Default@2x.png */; };
 		2DFB463516945DD000E95CCC /* NumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFB463416945DD000E95CCC /* NumPadViewController.m */; };
 		2DFB463816946D7000E95CCC /* HeftTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFB463716946D7000E95CCC /* HeftTabBarViewController.m */; };
+		AD4C085C170C0C770005EDC0 /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AD4C085D170C0C7F0005EDC0 /* HeftManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AD4C085E170C0C870005EDC0 /* HeftStatusReportPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AD4C085F170C0C910005EDC0 /* CmdIds.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD75FBAD16FC92C90000446E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEAD200164020A5006E2429 /* Security.framework */; };
 		AD75FBAE16FC92F30000446E /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
 		AD75FBAF16FC93580000446E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3761628B0590043AFBC /* CoreGraphics.framework */; };
@@ -123,22 +123,6 @@
 			remoteInfo = headstart;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		2D398925165FF23D00F8FA29 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = include;
-			dstSubfolderSpec = 16;
-			files = (
-				2D9C90BA16E27AA000229402 /* HeftStatusReportPublic.h in CopyFiles */,
-				2D1E9B3A16B46BF300048609 /* CmdIds.h in CopyFiles */,
-				2D1B8AD016A0A77600B11BC9 /* HeftClient.h in CopyFiles */,
-				2D1B8AD116A0A77600B11BC9 /* HeftManager.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2D046A6C16F3186100948519 /* SignView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignView.h; sourceTree = "<group>"; };
@@ -606,6 +590,20 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		AD4C085A170C0C3D0005EDC0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD4C085F170C0C910005EDC0 /* CmdIds.h in Headers */,
+				AD4C085E170C0C870005EDC0 /* HeftStatusReportPublic.h in Headers */,
+				AD4C085C170C0C770005EDC0 /* HeftClient.h in Headers */,
+				AD4C085D170C0C7F0005EDC0 /* HeftManager.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		2D398926165FF23D00F8FA29 /* heft */ = {
 			isa = PBXNativeTarget;
@@ -613,7 +611,8 @@
 			buildPhases = (
 				2D398923165FF23D00F8FA29 /* Sources */,
 				2D398924165FF23D00F8FA29 /* Frameworks */,
-				2D398925165FF23D00F8FA29 /* CopyFiles */,
+				AD4C085A170C0C3D0005EDC0 /* Headers */,
+				ADDD488F1705F002009B57DC /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -788,6 +787,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+		ADDD488F1705F002009B57DC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1014,7 +1026,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
 			};
 			name = "Debug Simulator";
@@ -1116,6 +1128,7 @@
 					FinanceTransactionOperation.m,
 					"Shared/*",
 				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
@@ -1130,7 +1143,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
 			};
 			name = "Release Simulator";
@@ -1174,7 +1187,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1187,6 +1200,7 @@
 					"simulator/Shared/*",
 					"simulator/*",
 				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
@@ -1198,7 +1212,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

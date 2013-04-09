@@ -33,16 +33,4 @@
 	return self;
 }
 
-- (BOOL)isEqual:(HeftRemoteDevice*)other {
-    if (other == self)
-		return YES;
-    if (!other || ![other isKindOfClass:[self class]])
-		return NO;
- 	if (![self.address isEqual:other.address])
-		return NO;
-	if (![self.name isEqual:other.name])
-		return NO;
-    return YES;
-}
-
 @end
