@@ -66,7 +66,7 @@
 @property(nonatomic, weak) NSObject<HeftDiscoveryDelegate>* delegate;
 /**
  Start search for all available devices.
- @param fDiscoverAllDevices				Send didDiscoverDevice:(HeftRemoteDevice*)newDevice for found device, even if it's already in the stored array.
+ @param fDiscoverAllDevices Send didDiscoverDevice:(HeftRemoteDevice*)newDevice for found device, even if it's already in the stored array.
  */
 - (void)startDiscovery:(BOOL)fDiscoverAllDevices;
 /**
