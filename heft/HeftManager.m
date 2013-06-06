@@ -24,8 +24,11 @@ NSString* devicesFileName = @"devices_simulator";
 NSString* devicesFileName = @"devices";
 #endif
 
+NSString* eaProtocol = @"com.datecs.pinpad";
+
 @interface HeftRemoteDevice ()
 - (id)initWithName:(NSString*)aName address:(NSString*)aAddress;
+- (id)initWithAccessory:(EAAccessory*)aAccessory;
 @end
 
 
@@ -34,9 +37,10 @@ NSString* devicesFileName = @"devices";
 	BOOL hasBluetooth;
 	NSMutableArray* devices;
 	BOOL fNotifyForAllDevices;
+	NSMutableArray* eaDevices;
 }
 
-@synthesize devices, delegate;
+@synthesize devicesCopy, delegate;
 
 static HeftManager* instance = 0;
 
@@ -64,6 +68,7 @@ NSString* devicesPath(){
 		devices = [NSKeyedUnarchiver unarchiveObjectWithFile:devicesPath()];
 		if(!devices)
 			devices = [NSMutableArray new];
+		eaDevices = [NSMutableArray new];
 
 #if HEFT_SIMULATOR
 		[self performSelectorOnMainThread:@selector(asyncSimulatorInit) withObject:nil waitUntilDone:NO];
@@ -71,6 +76,23 @@ NSString* devicesPath(){
 		dtdev = [DTDevices sharedDevice];
 		[dtdev addDelegate:self];
 		[dtdev connect];
+		
+		NSNotificationCenter* defaultCenter = [NSNotificationCenter defaultCenter];
+		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidConnect:) name:EAAccessoryDidConnectNotification object:nil];
+		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidDisconnect:) name:EAAccessoryDidDisconnectNotification object:nil];
+
+		EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
+		[eaManager registerForLocalNotifications];
+
+		NSArray* accessories = eaManager.connectedAccessories;
+		[accessories indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop){
+			LOG(@"%@", accessory.protocolStrings);
+			if([accessory.protocolStrings containsObject:eaProtocol]){
+				HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
+				[eaDevices addObject:newDevice];
+			}
+			return NO;
+		}];
 #endif
 	}
 	return self;
@@ -87,6 +109,8 @@ NSString* devicesPath(){
 - (void)dealloc{
 	LOG(@"HeftManager::dealloc");
 	[dtdev disconnect];
+	[[EAAccessoryManager sharedAccessoryManager] unregisterForLocalNotifications];
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (BOOL)hasSources{
@@ -116,7 +140,14 @@ NSString* devicesPath(){
 #pragma mark property
 
 - (NSString*)version{
-	return @"1.0";
+	return @"2.0";
+}
+
+- (NSMutableArray*)devicesCopy{
+	NSMutableArray* result = [eaDevices mutableCopy];
+	if(hasBluetooth)
+		[result addObjectsFromArray:devices];
+	return result;
 }
 
 #pragma mark HeftDiscovery
@@ -168,7 +199,6 @@ const char* stateLabel[] = {"disconnected", "connecting", "connected"};
 	}
 }
 
-
 -(void)deviceFeatureSupported:(int)feature value:(int)value{
 	if(feature == FEAT_BLUETOOTH && value && !hasBluetooth){
 		LOG(@"bluetooth supported");
@@ -201,6 +231,31 @@ const char* stateLabel[] = {"disconnected", "connecting", "connected"};
 	}
 	else if(fNotifyForAllDevices){
 		[delegate didDiscoverDevice:devices[index]];
+	}
+}
+
+#pragma mark EAAccessory notifications
+
+- (void)EAAccessoryDidConnect:(NSNotification*)notification{
+	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
+	if([accessory.protocolStrings containsObject:eaProtocol]){
+		HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
+		[eaDevices addObject:newDevice];
+		[delegate didFindAccessoryDevice:newDevice];
+	}
+}
+
+- (void)EAAccessoryDidDisconnect:(NSNotification*)notification{
+	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
+	if([accessory.protocolStrings containsObject:eaProtocol]){
+		int index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop){
+			if(device.accessory == accessory)
+				*stop = YES;
+			return *stop;
+		}];
+		HeftRemoteDevice* eaDevice = eaDevices[index];
+		[delegate didLostAccessoryDevice:eaDevice];
+		[eaDevices removeObjectAtIndex:index];
 	}
 }
 

@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.6</string>
+	<string>2.0.7</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationExitsOnSuspend</key>
@@ -48,6 +48,7 @@
 	<key>UISupportedExternalAccessoryProtocols</key>
 	<array>
 		<string>com.datecs.iserial.communication</string>
+		<string>com.datecs.pinpad</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

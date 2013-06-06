@@ -7,6 +7,7 @@
 #ifdef __OBJC__
 	#import <UIKit/UIKit.h>
 	#import <Foundation/Foundation.h>
+	#import <ExternalAccessory/ExternalAccessory.h>
 #endif
 
 #import "debug.h"

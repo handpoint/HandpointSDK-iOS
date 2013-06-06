@@ -3,6 +3,8 @@
 //  headstart
 //
 
+#import <ExternalAccessory/ExternalAccessory.h>
+
 #import "ScanViewController.h"
 #import "HeftTabBarViewController.h"
 #import "PickerElementView.h"
@@ -23,7 +25,7 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 	NSMutableArray* devices;
 	__weak HeftTabBarViewController* mainController;
 	UINib* pickerElement;
-	NSString* currentDeviceName;
+	HeftRemoteDevice* currentDevice;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder{
@@ -39,16 +41,16 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 
 	HeftManager* manager = [HeftManager sharedManager];
 	manager.delegate = self;
+
+	devices = manager.devicesCopy;
+	BOOL enabled = [devices count] != 0;
+	connectButton.enabled = enabled;
+	
 	if(!manager.hasSources){
 		discoveryButton.enabled = NO;
-		connectButton.enabled = NO;
 		resetButton.enabled = NO;
 	}
 	else{
-		devices = [manager.devices mutableCopy];
-
-		BOOL enabled = [devices count] != 0;
-		connectButton.enabled = enabled;
 		resetButton.enabled = enabled;
 	}
 }
@@ -67,11 +69,22 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 	return UIInterfaceOrientationMaskPortrait;
 }
 
+- (void)updateDevices{
+	HeftManager* manager = [HeftManager sharedManager];
+	devices = manager.devicesCopy;
+	BOOL enabled = [devices count] != 0;
+	connectButton.enabled = enabled;
+	resetButton.enabled = enabled && manager.hasSources;
+	[deviceList reloadAllComponents];
+}
+
 #pragma mark IBAction
 
 - (IBAction)startDiscovery{
 	discoveryButton.enabled = NO;
-	[self disconnect];
+	if(currentDevice && !currentDevice.accessory)
+		[self disconnect];
+	connectButton.enabled = NO;
 	[spinner startAnimating];
 	[[HeftManager sharedManager] startDiscovery:NO];
 }
@@ -84,13 +97,8 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 }
 
 - (IBAction)resetDevices{
-	HeftManager* manager = [HeftManager sharedManager];
-	[manager resetDevices];
-	devices = [manager.devices mutableCopy];
-	BOOL enabled = [devices count] != 0;
-	connectButton.enabled = enabled;
-	resetButton.enabled = enabled;
-	[deviceList reloadAllComponents];
+	[[HeftManager sharedManager] resetDevices];
+	[self updateDevices];
 }
 
 #pragma mark TabBarItemProtocol
@@ -98,11 +106,11 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 - (void)updateOnHeftClient:(BOOL)fOn{
 	connectButton.enabled = YES;
 	if (fOn){
-		[[NSUserDefaults standardUserDefaults] setObject:currentDeviceName forKey:kCurrentDeviceName];
+		[[NSUserDefaults standardUserDefaults] setObject:currentDevice.name forKey:kCurrentDeviceName];
 		[deviceList reloadAllComponents];
 	}
 	else
-		currentDeviceName = nil;
+		currentDevice = nil;
 }
 
 #pragma mark UIPickerViewDataSource
@@ -125,7 +133,7 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 	
 	if (row < [devices count]){
 		view.viewText.text = [devices[row] name];
-		view.checkmarkPicture.hidden = ![[devices[row] name] isEqualToString:currentDeviceName];
+		view.checkmarkPicture.hidden = !mainController.heftClient || devices[row] != currentDevice;
 	}
 	else{
 		view.viewText.text = @"";
@@ -138,13 +146,11 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 
 - (void)hasSources{
 	discoveryButton.enabled = YES;
-	devices = [[HeftManager sharedManager].devices mutableCopy];
-	BOOL enabled = [devices count] != 0;
-	connectButton.enabled = enabled;
-	resetButton.enabled = enabled;
-	[deviceList reloadAllComponents];
 
-	currentDeviceName = [[NSUserDefaults standardUserDefaults] stringForKey:kCurrentDeviceName];
+	[self updateDevices];
+
+	Assert(!currentDevice);
+	NSString* currentDeviceName = [[NSUserDefaults standardUserDefaults] stringForKey:kCurrentDeviceName];
 	if(currentDeviceName){
 		int index = [devices indexOfObjectPassingTest:^(HeftRemoteDevice* obj, NSUInteger idx, BOOL *stop){
 			if([obj.name isEqualToString:currentDeviceName])
@@ -152,9 +158,7 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 			return *stop;
 		}];
 
-		if(index == NSNotFound)
-			currentDeviceName = nil;
-		else{
+		if(index != NSNotFound){
 			[deviceList selectRow:index inComponent:0 animated:NO];
 			[self executeConnect];
 		}
@@ -164,14 +168,15 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 - (void)noSources{
 	discoveryButton.enabled = NO;
 	[spinner stopAnimating];
-	connectButton.enabled = NO;
-	resetButton.enabled = NO;
-	mainController.heftClient = nil;
-	[mainController hideNumPadViewBarButtonAnimated:YES];
-	for(id vc in mainController.viewControllers)
-		[vc updateOnHeftClient:NO];
-	[devices removeAllObjects];
-	[deviceList reloadAllComponents];
+
+	[self updateDevices];
+
+	if(currentDevice && !currentDevice.accessory){
+		mainController.heftClient = nil;
+		[mainController hideNumPadViewBarButtonAnimated:YES];
+		for(id vc in mainController.viewControllers)
+			[vc updateOnHeftClient:NO];
+	}
 }
 
 - (void)didDiscoverDevice:(HeftRemoteDevice*)newDevice{
@@ -186,26 +191,48 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 	[spinner stopAnimating];
 }
 
+- (void)didFindAccessoryDevice:(HeftRemoteDevice*)newDevice{
+	connectButton.enabled = ![devices count] || connectButton.enabled;
+	resetButton.enabled = [HeftManager sharedManager].hasSources;
+	[devices addObject:newDevice];
+	[deviceList reloadAllComponents];
+}
+
+- (void)didLostAccessoryDevice:(HeftRemoteDevice*)oldDevice{
+	if(currentDevice && currentDevice.accessory){
+		mainController.heftClient = nil;
+		[mainController hideNumPadViewBarButtonAnimated:YES];
+		for(id vc in mainController.viewControllers)
+			[vc updateOnHeftClient:NO];
+	}
+
+	[devices removeObject:oldDevice];
+	BOOL enabled = [devices count] != 0;
+	connectButton.enabled = enabled && connectButton.enabled;
+	resetButton.enabled = enabled && [HeftManager sharedManager].hasSources;
+	[deviceList reloadAllComponents];
+}
+
 #pragma mark -
 
-- (void) disconnect{
-    NSUInteger index = [devices indexOfObjectPassingTest:^(HeftRemoteDevice* obj, NSUInteger idx, BOOL *stop){
-		if([obj.name isEqualToString:currentDeviceName])
-			*stop = YES;
-		return *stop;
-	}];
-    ((PickerElementView*)[deviceList viewForRow:index forComponent:0]).checkmarkPicture.hidden = YES;
-	mainController.heftClient = nil;
-	for(id vc in mainController.viewControllers)
-		[vc updateOnHeftClient:NO];
-	connectButton.enabled = NO;
-   	[mainController hideNumPadViewBarButtonAnimated:YES];
+- (void)disconnect{
+	if(currentDevice && mainController.heftClient){
+		NSUInteger index = [devices indexOfObjectIdenticalTo:currentDevice];
+		((PickerElementView*)[deviceList viewForRow:index forComponent:0]).checkmarkPicture.hidden = YES;
+
+		currentDevice = nil;
+		mainController.heftClient = nil;
+		for(id vc in mainController.viewControllers)
+			[vc updateOnHeftClient:NO];
+		[mainController hideNumPadViewBarButtonAnimated:YES];
+	}
 }
 
 - (void)executeConnect{
 	[self disconnect];
-	currentDeviceName = [devices[[deviceList selectedRowInComponent:0]] name];
-	[[HeftManager sharedManager] clientForDevice:devices[[deviceList selectedRowInComponent:0]] sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
+	connectButton.enabled = NO;
+	currentDevice = devices[[deviceList selectedRowInComponent:0]];
+	[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
 }
 
 @end

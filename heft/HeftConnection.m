@@ -9,6 +9,8 @@
 #import "HeftConnection.h"
 #import "HeftRemoteDevice.h"
 
+extern NSString* eaProtocol;
+
 const int ciDefaultMaxFrameSize = 2048;
 
 enum eBufferConditions{
@@ -21,6 +23,7 @@ enum eBufferConditions{
 
 @implementation HeftConnection{
 	HeftRemoteDevice* device;
+	EASession* session;
 	NSInputStream* inputStream;
 	NSOutputStream* outputStream;
     
@@ -33,14 +36,46 @@ enum eBufferConditions{
 
 - (id)initWithDevice:(HeftRemoteDevice*)aDevice{
 	NSError* error = nil;
-	DTDevices *dtdev = [DTDevices sharedDevice];
-	if([dtdev btConnect:aDevice.address pin:@"0000" error:&error]){
-		Assert(!error);
+	EASession* eaSession = nil;
+	NSInputStream* is = nil;
+	NSOutputStream* os = nil;
+	BOOL result = NO;
+	
+	if(aDevice.accessory){
+		LOG(@"%@", aDevice.accessory.protocolStrings);
+		eaSession = [[EASession alloc] initWithAccessory:aDevice.accessory forProtocol:eaProtocol];
+		result = eaSession != nil;
+		if(result){
+			NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
+			is = eaSession.inputStream;
+			[is scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+			[is open];
+			os = eaSession.outputStream;
+			[os scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+			[os open];
+		}
+		else
+			LOG(@"Connection to %@ failed", aDevice.name);
+	}
+	else{
+		DTDevices *dtdev = [DTDevices sharedDevice];
+		result = [dtdev btConnect:aDevice.address pin:@"0000" error:&error];
+		if(result){
+			os = dtdev.btOutputStream;
+			is = dtdev.btInputStream;
+		}
+		else
+			LOG(@"Connection to %@ error:%@", aDevice.name, error);
+	}
+	
+	if(result){
+		Assert(eaSession || !error);
 		if(self = [super init]){
 			LOG(@"Connected to %@", aDevice.name);
 			device = aDevice;
-			outputStream = dtdev.btOutputStream;
-			inputStream = dtdev.btInputStream;
+			session = eaSession;
+			outputStream = os;
+			inputStream = is;
 			inputStream.delegate = self;
 
 			maxBufferSize = ciDefaultMaxFrameSize;
@@ -50,8 +85,6 @@ enum eBufferConditions{
 		}
 		return self;
 	}
-	else
-		LOG(@"Connection to %@ error:%@", aDevice.name, error);
 
 	self = nil;
 	return self;
@@ -61,8 +94,17 @@ enum eBufferConditions{
 	LOG(@"Disconnection from %@", device.name);
 	free(tmpBuf);
 	NSError* error = nil;
-	if(device && ![[DTDevices sharedDevice] btDisconnect:device.address error:&error])
-		LOG(@"btDisconnect error: %@", error);
+	if(device){
+		if(device.accessory){
+			NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
+			[outputStream close];
+			[outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+			[inputStream close];
+			[inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+		}
+		else if(![[DTDevices sharedDevice] btDisconnect:device.address error:&error])
+			LOG(@"btDisconnect error: %@", error);
+	}
 }
 
 - (void)shutdown{
@@ -100,23 +142,29 @@ enum eBufferConditions{
 		throw communication_exception();
 }
 
+#pragma mark NSStreamDelegate
+
 - (void)stream:(NSInputStream*)aStream handleEvent:(NSStreamEvent)eventCode{
 	if(eventCode == NSStreamEventHasBytesAvailable){
-		uint8_t* buf = 0;
-		NSUInteger nread = 0;
+		Assert(aStream == inputStream);
+		//uint8_t* buf = 0;
+		NSUInteger nread = maxBufferSize;
 		[bufferLock lock];
-		if([aStream getBuffer:&buf length:&nread]){
-			LOG(@"stream:handleEvent: has bytes: %d", nread);
+		/*if([inputStream getBuffer:&buf length:&nread]){
 			Assert(nread);
-			double minread = fmin(nread, maxBufferSize - currentPosition);
+			double minread = fmin(nread, maxBufferSize - currentPosition);*/
+			double minread = maxBufferSize - currentPosition;
 			nread = [inputStream read:&tmpBuf[currentPosition] maxLength:minread];
-			Assert(nread == minread);
+			LOG(@"stream:handleEvent: has bytes: %d", nread);
+			//Assert(nread == minread);
 			currentPosition += nread;
-		}
+		//}
 		[bufferLock unlockWithCondition:currentPosition ? eHasDataCondition : eNoDataCondition];
 		//[NSThread sleepForTimeInterval:.1];
 	}
 }
+
+#pragma mark -
 
 - (int)readData:(vector<UINT8>&)buffer timeout:(eConnectionTimeout)timeout{
 	//vector<UINT8>& vBuf = *reinterpret_cast<vector<UINT8>*>(buffer);

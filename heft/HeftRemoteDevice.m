@@ -8,12 +8,19 @@
 
 @implementation HeftRemoteDevice
 
-@synthesize name, address;
+@synthesize name, address, accessory;
 
 - (id)initWithName:(NSString*)aName address:(NSString*)aAddress{
 	if(self = [super init]){
 		name = aName;
 		address = aAddress;
+	}
+	return self;
+}
+
+- (id)initWithAccessory:(EAAccessory*)aAccessory{
+	if(self = [super init]){
+		accessory = aAccessory;
 	}
 	return self;
 }
@@ -31,6 +38,12 @@
 		address = [aDecoder decodeObjectForKey:@"address"];
 	}
 	return self;
+}
+
+#pragma mark property
+
+- (NSString*)name{
+	return name ? name : accessory.name;
 }
 
 @end

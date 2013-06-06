@@ -43,6 +43,17 @@
  */
 - (void)didDiscoverFinished;
 
+/**
+ Notifies that new accessory device was connected.
+ @param newDevice				Contains information(name, adress) about discovered device.
+ */
+- (void)didFindAccessoryDevice:(HeftRemoteDevice*)newDevice;
+/**
+ Notifies that accessory device was disconnected.
+ @param oldDevice				Contains information(name) about disconnected device.
+ */
+- (void)didLostAccessoryDevice:(HeftRemoteDevice*)oldDevice;
+
 /**@}*/
 
 @end
@@ -59,14 +70,14 @@
 /** 
  @brief Stored array which contains all found devices.
  */
-@property(nonatomic, readonly) NSArray* devices;
+@property(nonatomic, readonly) NSMutableArray* devicesCopy;
 /** 
  Delegate object. Will handle notifications which contain in HeftDiscoveryDelegate protocol. 
  */
 @property(nonatomic, weak) NSObject<HeftDiscoveryDelegate>* delegate;
 /**
  Start search for all available devices.
- @param fDiscoverAllDevices Send didDiscoverDevice:(HeftRemoteDevice*)newDevice for found device, even if it's already in the stored array.
+ @param fDiscoverAllDevices				Send didDiscoverDevice:(HeftRemoteDevice*)newDevice for found device, even if it's already in the stored array.
  */
 - (void)startDiscovery:(BOOL)fDiscoverAllDevices;
 /**
