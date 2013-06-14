@@ -90,8 +90,10 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload) : Resp
 		manufacturer_code = pResponse->manufacturer_code;
 		model_code = pResponse->model_code;
 		app_name.assign(reinterpret_cast<const char*>(pResponse->app_name), sizeof(pResponse->app_name));
-		if(app_name != "EFCLIENT")
-			throw communication_exception();
+// Removed - this should not be in here!
+/*		if(app_name != "EFTCLIENT")
+			throw communication_exception(); */
+
 		app_ver = ntohs(pResponse->app_ver);
 		UINT32 xml_len = ntohl(pResponse->xml_details_length);
 		xml_details.assign(pResponse->xml_details, xml_len);
