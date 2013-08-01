@@ -11,7 +11,7 @@
 
 extern NSString* eaProtocol;
 
-const int ciDefaultMaxFrameSize = 2048;
+const int ciDefaultMaxFrameSize = 2046; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
 
 enum eBufferConditions{
 	eNoDataCondition
@@ -77,7 +77,6 @@ enum eBufferConditions{
 			outputStream = os;
 			inputStream = is;
 			inputStream.delegate = self;
-
 			maxBufferSize = ciDefaultMaxFrameSize;
 			tmpBuf = (uint8_t*)malloc(maxBufferSize);
 			Assert(tmpBuf);
@@ -198,7 +197,6 @@ enum eBufferConditions{
 
 - (UInt16)readAck{
 	UInt16 ack = 0;
-	
 	if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]]){
 		LOG(@"Ack timeout");
 		throw timeout1_exception();

@@ -32,7 +32,7 @@ const NSString* kAppNameInfoKey = @"AppName";
 const NSString* kAppVersionInfoKey = @"AppVersion";
 const NSString* kXMLDetailsInfoKey = @"XMLDetails";
 
-const int ciTimeout[] = {2, 15, 1, 45};
+const int ciTimeout[] = {20 , 15, 1, 45};
 
 NSString* statusMessages[] = {
 	@""
@@ -125,7 +125,7 @@ enum eSignConditions{
 				InitResponseCommand* pResponse = dynamic_cast<InitResponseCommand*>(reinterpret_cast<ResponseCommand*>(fm.ReadResponse<InitResponseCommand>(connection, false)));
 				if(!pResponse)
 					throw communication_exception();
-				connection.maxBufferSize = pResponse->GetBufferSize();
+				connection.maxBufferSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client. 
 				mpedInfo = @{
 					kSerialNumberInfoKey:@(pResponse->GetSerialNumber().c_str())
 					, kPublicKeyVersionInfoKey:@(pResponse->GetPublicKeyVer())
