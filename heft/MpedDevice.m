@@ -185,29 +185,59 @@ enum eSignConditions{
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
-	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@", amount, currency, present ? @"is present" : @"is not present");
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new SaleRequestCommand(string([currency UTF8String]), amount, present)
-																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+	return [self saleWithAmount:amount currency:currency cardholder:present reference:@""];
+}
+
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference{
+	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+    NSString *params = @"";
+    if(reference != NULL && reference.length != 0) {
+        params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                  @"<FinancialTransactionRequest>"
+                  @"<CustomerReference>"
+                  @"%@"
+                  @"</CustomerReference>"
+                  @"</FinancialTransactionRequest>",
+                  reference];
+    }
+	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
+                                                                                       connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
-	LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@", amount, currency, present ? @"is present" : @"is not present");
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new RefundRequestCommand(string([currency UTF8String]), amount, present)
+	return [self refundWithAmount:amount currency:currency cardholder:present reference:@""];
+}
+
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString *)reference{
+	LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+    NSString *params = @"";
+    if(reference != NULL && reference.length != 0) {
+        params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                  @"<FinancialTransactionRequest>"
+                  @"<CustomerReference>"
+                  @"%@"
+                  @"</CustomerReference>"
+                  @"</FinancialTransactionRequest>",
+                  reference];
+    }
+	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUND_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new SaleVRequestCommand(string([currency UTF8String]), amount, present, string([transaction UTF8String]))
+    // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
+	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALEV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new RefundVRequestCommand(string([currency UTF8String]), amount, present, string([transaction UTF8String]))
+    // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
+	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }

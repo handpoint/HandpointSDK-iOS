@@ -50,9 +50,11 @@ typedef enum{
  There are three special cases for "USD", "EUR" and "GBP"
  which can be set instead of numeric values.
  @param present	Indicates whether the cardholder is present or not during the transaction.
+ @param reference An optional reference id (max 25 characters) that can be associated with the authorization. Example value: 45678135.
  @return YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
 
 /** 
  Performs REFUND transaction.
@@ -67,9 +69,11 @@ typedef enum{
  There are three special cases for "USD", "EUR" and "GBP"
  which can be set instead of numeric values.
  @param present - Indicates whether the cardholder is present or not during the transaction.
+ @param reference An optional reference id (max 25 characters) that can be associated with the authorization. Example value: 45678135.
  @return YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
 
 /**
  Voids SALE transaction.
