@@ -49,6 +49,8 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 	case CMD_LOG_RST_INF_RSP:
 		ATLASSERT(buf.size() >= sizeof(ResponsePayload));
 		return new ResponseCommand(pResponse);
+	case CMD_XCMD_RSP:
+		return new XMLCommandResponseCommand(pResponse, buf.size());
 	default:
 		LOG(_T("Unknown command"));
 		throw communication_exception();
@@ -90,14 +92,15 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload) : Resp
 		manufacturer_code = pResponse->manufacturer_code;
 		model_code = pResponse->model_code;
 		app_name.assign(reinterpret_cast<const char*>(pResponse->app_name), sizeof(pResponse->app_name));
-// Removed - this should not be in here!
-/*		if(app_name != "EFTCLIENT")
-			throw communication_exception(); */
-
 		app_ver = ntohs(pResponse->app_ver);
 		UINT32 xml_len = ntohl(pResponse->xml_details_length);
 		xml_details.assign(pResponse->xml_details, xml_len);
 	}
+}
+
+XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size) : ResponseCommand(pPayload){
+		const XMLCommandPayload* pResponse = static_cast<const XMLCommandPayload*>(pPayload);
+		xml_return.assign(pResponse->xml_return, payload_size - sizeof(ResponsePayload));
 }
 
 IdleResponseCommand::IdleResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){

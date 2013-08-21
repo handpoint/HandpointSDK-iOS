@@ -51,51 +51,31 @@ public:
 	IdleRequestCommand();
 };
 
+class XMLCommandRequestCommand : public RequestCommand{
+protected:
+	struct XMLCommandPayload : RequestPayload{
+		char xml_parameters[];
+	} __attribute__((packed));
+
+public:
+	XMLCommandRequestCommand(const string& xml);
+};
+
 class FinanceRequestCommand : public RequestCommand{
-	static const int ciMinSize = 7;
+	static const int ciMinSize = 7; // customer reference field not included for it will not appear if it is empty ( support older EFT versions)
 protected:
 	struct FinancePayload : RequestPayload{
 		UINT8 currency_code[2];
 		UINT32 trans_amount;
 		UINT8 card_present;
-	} __attribute__((packed));
-
-public:
-	FinanceRequestCommand(int iCommandSize, UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present);
-};
-
-class SaleRequestCommand : public FinanceRequestCommand{
-	static const int ciMinSize = 0;
-public:
-	SaleRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present);
-};
-
-class RefundRequestCommand : public FinanceRequestCommand{
-	static const int ciMinSize = 0;
-public:
-	RefundRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present);
-};
-
-class FinanceVRequestCommand : public FinanceRequestCommand{
-	static const int ciMinSize = 1;
-protected:
-	struct FinanceVPayload : FinancePayload{
-		UINT8 trans_id_length;
+		UINT8 trans_id_length; // must be set to zero if xml exists and there is no trans_id
 		UINT8 trans_id[];
+		// UINT32 xml_length;
+		// UINT8 xml[];
 	} __attribute__((packed));
 
 public:
-	FinanceVRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
-};
-
-class SaleVRequestCommand : public FinanceVRequestCommand{
-public:
-	SaleVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
-};
-
-class RefundVRequestCommand : public FinanceVRequestCommand{
-public:
-	RefundVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
+	FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml);
 };
 
 class StartOfDayRequestCommand : public RequestCommand{

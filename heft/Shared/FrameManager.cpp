@@ -17,32 +17,55 @@ const UINT8 cuiNak = 0x15;
 const int ciMaxAttempts = 3;
 
 FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
-	max_frame_size -= Frame::ciMinSize;
-	const UINT8* pBuf = request.GetData();
-	int len = request.GetLength();
-	vector<UINT8> data(len);
-	vector<UINT8>::iterator pDest = data.begin();
-	// DLE doubling
-	int iDoubledDleCount = 0;
-	for(int i = 0; i < len; ++i){
-		UINT8 data_char = *pBuf++;
-		*pDest++ = data_char;
-		if(data_char == cuiDle){
-			pDest = data.insert(pDest, data_char);
-			++pDest;
-			++iDoubledDleCount;
-		}
-	}
-	len += iDoubledDleCount;
+    if( max_frame_size >= 2 )
+    {
+        // you should "step" through this code using a max_frame_size of 2
 
-	//splitting
-	pBuf = &data[0];
-	while(len > max_frame_size){
-		frames.push_back(Frame(pBuf, max_frame_size, true));
-		pBuf += max_frame_size;
-		len -= max_frame_size;
-	}
-	frames.push_back(Frame(pBuf, len, false));
+        UINT8 data_char;
+	    const UINT8 *pSrc, *pSrcEnd;
+        UINT8 *pFrameBegin, *pFrame, *pFrameEnd;
+        vector<UINT8> frame_data(max_frame_size);
+
+        pSrc        = request.GetData();
+        pSrcEnd     = pSrc + request.GetLength();
+
+        pFrameBegin = &frame_data[0];
+        pFrame      = pFrameBegin;
+        pFrameEnd   = pFrame + max_frame_size;
+
+        while( pSrc != pSrcEnd )
+        {
+            data_char = *pSrc++;
+            *pFrame++ = data_char;
+
+            if(data_char == cuiDle)
+            {
+                *pFrame++ = data_char;
+            }
+
+            if( ( pFrameEnd - pFrame ) < 2 )
+            {
+                if( ( pFrameEnd != pFrame ) && ( pSrc != pSrcEnd ) && ( ( data_char = *pSrc ) != cuiDle ) )
+                {
+                    ++pSrc;
+                    *pFrame++ = data_char; // we have now filled the frame completely
+                }
+                // else the frame is full OR there is no more data OR we found a DLE at the frame boundary
+
+                frames.push_back(Frame(pFrameBegin, pFrame - pFrameBegin, ( pSrc != pSrcEnd ) ? true : false));
+
+                if( pSrc == pSrcEnd )
+                {
+                    return;
+                }
+
+                pFrame = pFrameBegin;
+            }
+        }
+
+        // we will only ever get here if we haven't constructed the last frame yet.
+	    frames.push_back(Frame(pFrameBegin, pFrame - pFrameBegin, false));
+    }
 }
 
 void FrameManager::Write(HeftConnection* connection/*, volatile bool& bCancel*/){
@@ -166,7 +189,12 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 		FramePayload* pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
 		//ATLASSERT(nread >= sizeof(pCommand->StartSequence));
 		if(nread < sizeof(pCommand->StartSequence))
-			throw communication_exception();
+        {
+            // this is not an error ...
+            // ... it just means that more bytes are required
+			LOG(_T("FrameManager::Read I need more data. Read size: %i  Read bytes: %02X"),nread,buf[0]);
+            continue;
+        }
 		switch(pCommand->StartSequence){
 		case FRAME_START:
 			if(ReadFrames(connection, buf/*, bCancel*/))

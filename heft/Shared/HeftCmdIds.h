@@ -19,6 +19,7 @@
 #define NEGATIVE_ACK		0x1510
 
 // Command types
+#define CMD_XCMD()		C
 #define CMD_IDLE()		I
 #define CMD_PARAM()		P
 #define CMD_SOFT()		S
@@ -32,6 +33,8 @@
 #define CMD_RSP()		'1'
 
 // Commands
+#define CMD_XCMD_REQ		'C000'
+#define CMD_XCMD_RSP		'C001'
 #define CMD_INIT_REQ		'I000'
 #define CMD_INIT_RSP		'I001'
 #define CMD_IDLE_REQ		'I010'

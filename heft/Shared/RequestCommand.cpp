@@ -36,67 +36,96 @@ IdleRequestCommand::IdleRequestCommand() : RequestCommand(ciMinSize, CMD_IDLE_RE
 	AddCRC();
 }*/
 
-FinanceRequestCommand::FinanceRequestCommand(int iCommandSize, UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present) 
-	: RequestCommand(ciMinSize + iCommandSize, type)
+XMLCommandRequestCommand::XMLCommandRequestCommand(const string& xml) 
+	: RequestCommand(xml.size(), CMD_XCMD_REQ)
 {
-	const int currency_code_length = 4;
+	XMLCommandPayload* pRequest = GetPayload<XMLCommandPayload>();
+	memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
+}
 
-	static const struct CurrencyCode{
-		char name[4];
-		char code[currency_code_length + 1];
-	} ISO4217CurrencyCodes[] = {
-		  "USD", "0840"
-		, "EUR", "0978"
-		, "GBP", "0826"
-		, "ISK", "0352"
-	};
+bool isNumber(const string& str)
+{
+    string::const_iterator it = str.begin();
+    while (it != str.end() && isdigit(*it)) ++it;
+    return !str.empty() && it == str.end();
+}
 
-	bool fCheckCodeSize = true;
+FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml) 
+: RequestCommand(
+    ciMinSize
+    + (xml.length() // this conditional so the "if( trans_id_length || xml_length )" statement below won't corrupt the heap
+        ? (1 + 4 + xml.length() + trans_id.length())
+        : (trans_id.length()
+            ? (1 + trans_id.length())
+            : 0
+        )
+    )
+    , type)
+{
+	FinancePayload* pRequest;
+	UINT8* pData;
+	int xml_length;
+	int trans_id_length;
 	const char* code = currency_code.c_str();
-	for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-		CurrencyCode cc = ISO4217CurrencyCodes[i];
-		if(!currency_code.compare(cc.name)){
-			code = cc.code;
-			fCheckCodeSize = false;
-			break;
-		}
-	}
 
-	if(fCheckCodeSize && currency_code.length() != currency_code_length)
-		throw std::invalid_argument("invalid currency code");
+	if(!isNumber(code)){
 
-	FinancePayload* pRequest = GetPayload<FinancePayload>();
+	    const int currency_code_length = 4;
+
+	    static const struct CurrencyCode{
+		    char name[4];
+		    char code[currency_code_length + 1];
+	    } ISO4217CurrencyCodes[] = {
+		      "USD", "0840"
+		    , "EUR", "0978"
+		    , "GBP", "0826"
+		    , "ISK", "0352"
+	    };
+
+	    bool fCheckCodeSize = true;
+	    for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
+		    CurrencyCode cc = ISO4217CurrencyCodes[i];
+		    if(!currency_code.compare(cc.name)){
+			    code = cc.code;
+			    fCheckCodeSize = false;
+			    break;
+		    }
+	    }
+
+	    if(fCheckCodeSize && currency_code.length() != currency_code_length)
+		    throw std::invalid_argument("invalid currency code");
+
+    }
+	pRequest = GetPayload<FinancePayload>();
 	BCDCoder::Encode(code, pRequest->currency_code, sizeof(pRequest->currency_code));
 	pRequest->trans_amount = htonl(trans_amount);
 	pRequest->card_present = card_present;
+
+    // optional fields
+	trans_id_length = trans_id.length();	
+	xml_length = xml.length();
+
+    if( trans_id_length || xml_length )
+    {
+        // trans id length MUST be present if either of these is true:
+        //   trans_id is not empty
+        //   xml is not empty
+	    pRequest->trans_id_length = trans_id_length;
+	    memcpy(pRequest->trans_id, trans_id.c_str(), trans_id_length);
+
+	    if(xml_length > 0)
+	    {
+	        pData = &pRequest->trans_id[0] + trans_id_length;
+        	
+		    pData[0] = (UINT8)(xml_length >> 24);
+		    pData[1] = (UINT8)(xml_length >> 16);
+		    pData[2] = (UINT8)(xml_length >> 8);
+		    pData[3] = (UINT8)(xml_length >> 0);
+		    pData += sizeof(UINT32);
+		    memcpy(pData, xml.c_str(), xml_length);
+	    }	
+    }
 }
-
-SaleRequestCommand::SaleRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present) 
-	: FinanceRequestCommand(ciMinSize, CMD_FIN_SALE_REQ, currency_code, trans_amount, card_present)
-{}
-
-RefundRequestCommand::RefundRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present)
-	: FinanceRequestCommand(ciMinSize, CMD_FIN_REFUND_REQ, currency_code, trans_amount, card_present)
-{}
-
-FinanceVRequestCommand::FinanceVRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id)
-	: FinanceRequestCommand(ciMinSize + trans_id.length(), type, currency_code, trans_amount, card_present)
-{
-	int length = trans_id.length();
-	FinanceVPayload* pRequest = GetPayload<FinanceVPayload>();
-	pRequest->trans_id_length = length;
-	memcpy(pRequest->trans_id, trans_id.c_str(), length);
-}
-
-SaleVRequestCommand::SaleVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id) 
-	: FinanceVRequestCommand(CMD_FIN_SALEV_REQ, currency_code, trans_amount, card_present, trans_id)
-
-{}
-
-RefundVRequestCommand::RefundVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id)
-	: FinanceVRequestCommand(CMD_FIN_REFUNDV_REQ, currency_code, trans_amount, card_present, trans_id)
-
-{}
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()
 	: RequestCommand(0, CMD_FIN_STARTDAY_REQ)

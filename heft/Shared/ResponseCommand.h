@@ -79,6 +79,24 @@ public:
 	const string& GetXmlDetails(){return xml_details;}
 };
 
+class XMLCommandResponseCommand : public ResponseCommand{
+	string xml_return;
+
+#pragma pack(push, 1)
+	struct XMLCommandPayload : ResponsePayload{
+		char xml_return[];
+	};
+#pragma pack(pop)
+
+public:
+	XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size);
+	const string& GetXmlReturn(){return xml_return;}
+
+	//ResponseCommand
+	void ProcessResult(IResponseProcessor& processor){processor.ProcessResponse(*this);}
+};
+
+
 class IdleResponseCommand : public ResponseCommand{
 	string xml_details;
 
