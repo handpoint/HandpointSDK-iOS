@@ -18,15 +18,15 @@ const int ciMaxAttempts = 3;
 
 FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
     // max_frame_size is the total frame size, i.e. the combined length of [stx] [data] [ptx/etx] [crc]
-    if( max_frame_size >= ( Frame.GetMetaDataSize() + 2 ) ) // the +2 is because we need to be able to escape one DLE character into two DLE DLE
+    if( max_frame_size >= ( Frame::GetMetaDataSize() + 2 ) ) // the +2 is because we need to be able to escape one DLE character into two DLE DLE
     {
-        int max_data_size = max_frame_size - Frame.GetMetaDataSize();
+        int max_data_size = max_frame_size - Frame::GetMetaDataSize();
         // you should "step" through this code using a max_data_size of 2
 
         UINT8 data_char;
 	    const UINT8 *pSrc, *pSrcEnd;
         UINT8 *pDataBegin, *pData, *pDataEnd;
-        vector<UINT8> frame_data(max_data_size - Frame.GetMetaDataSize());
+        vector<UINT8> frame_data(max_data_size - Frame::GetMetaDataSize());
 
         pSrc        = request.GetData();
         pSrcEnd     = pSrc + request.GetLength();
