@@ -35,6 +35,7 @@ public:
 	Frame(const UINT8* pData, int len, bool partial);
 	int GetLength(){return write_data.size();}
 	UINT8* GetData(){return &write_data[0];}
+    static int GetMetaDataSize(){return ciMinSize;}
 
 	Frame(const UINT8* pData, int len);
 	bool isValidCrc();

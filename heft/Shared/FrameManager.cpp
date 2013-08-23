@@ -17,58 +17,60 @@ const UINT8 cuiNak = 0x15;
 const int ciMaxAttempts = 3;
 
 FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
-    if( max_frame_size >= 2 )
+    // max_frame_size is the total frame size, i.e. the combined length of [stx] [data] [ptx/etx] [crc]
+    if( max_frame_size >= ( Frame.GetMetaDataSize() + 2 ) ) // the +2 is because we need to be able to escape one DLE character into two DLE DLE
     {
-        // you should "step" through this code using a max_frame_size of 2
+        int max_data_size = max_frame_size - Frame.GetMetaDataSize();
+        // you should "step" through this code using a max_data_size of 2
 
         UINT8 data_char;
 	    const UINT8 *pSrc, *pSrcEnd;
-        UINT8 *pFrameBegin, *pFrame, *pFrameEnd;
-        vector<UINT8> frame_data(max_frame_size);
+        UINT8 *pDataBegin, *pData, *pDataEnd;
+        vector<UINT8> frame_data(max_data_size - Frame.GetMetaDataSize());
 
         pSrc        = request.GetData();
         pSrcEnd     = pSrc + request.GetLength();
 
-        pFrameBegin = &frame_data[0];
-        pFrame      = pFrameBegin;
-        pFrameEnd   = pFrame + max_frame_size;
+        pDataBegin  = &frame_data[0];
+        pData       = pDataBegin;
+        pDataEnd    = pData + max_data_size;
 
         while( pSrc != pSrcEnd )
         {
             data_char = *pSrc++;
-            *pFrame++ = data_char;
+            *pData++ = data_char;
 
             if(data_char == cuiDle)
             {
-                *pFrame++ = data_char;
+                *pData++ = data_char;
             }
 
-            if( ( pFrameEnd - pFrame ) < 2 )
+            if( ( pDataEnd - pData ) < 2 )
             {
-                if( ( pFrameEnd != pFrame ) && ( pSrc != pSrcEnd ) && ( ( data_char = *pSrc ) != cuiDle ) )
+                if( ( pDataEnd != pData ) && ( pSrc != pSrcEnd ) && ( ( data_char = *pSrc ) != cuiDle ) )
                 {
                     ++pSrc;
-                    *pFrame++ = data_char; // we have now filled the frame completely
+                    *pData++ = data_char; // we have now filled the frame completely
                 }
-                // else the frame is full OR there is no more data OR we found a DLE at the frame boundary
+                // else the frame is full OR there is no more data OR we found a DLE at the frame boundary that we can't escape (because there is only one byte left)
 
-                frames.push_back(Frame(pFrameBegin, pFrame - pFrameBegin, ( pSrc != pSrcEnd ) ? true : false));
+                frames.push_back(Frame(pDataBegin, pData - pDataBegin, ( pSrc != pSrcEnd ) ? true : false));
 
                 if( pSrc == pSrcEnd )
                 {
                     return;
                 }
 
-                pFrame = pFrameBegin;
+                pData = pDataBegin;
             }
         }
 
         // we will only ever get here if we haven't constructed the last frame yet.
-	    frames.push_back(Frame(pFrameBegin, pFrame - pFrameBegin, false));
+	    frames.push_back(Frame(pDataBegin, pData - pDataBegin, false));
     }
 }
 
-void FrameManager::Write(HeftConnection* connection/*, volatile bool& bCancel*/){
+void FrameManager::Write(IConnection& connection, volatile bool& bCancel){
 	for(vector<Frame>::iterator it = frames.begin(); it != frames.end(); ++it){
 		int i = 0;
 		for(; i < ciMaxAttempts; ++i){
@@ -187,7 +189,6 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 				throw timeout2_exception();
 		}
 		FramePayload* pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
-		//ATLASSERT(nread >= sizeof(pCommand->StartSequence));
 		if(nread < sizeof(pCommand->StartSequence))
         {
             // this is not an error ...
