@@ -70,7 +70,7 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
     }
 }
 
-void FrameManager::Write(IConnection& connection, volatile bool& bCancel){
+void FrameManager::Write(HeftConnection* connection/*, volatile bool& bCancel*/){
 	for(vector<Frame>::iterator it = frames.begin(); it != frames.end(); ++it){
 		int i = 0;
 		for(; i < ciMaxAttempts; ++i){
@@ -152,7 +152,7 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 				if(pData[j] == cuiDle)
 					++j;
 			}
-			
+
 			if(!frame.isPartial()){
 				ATLASSERT(buf.size() == len);
 				break;
