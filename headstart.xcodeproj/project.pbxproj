@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2D046A6E16F3186100948519 /* SignView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D046A6D16F3186100948519 /* SignView.m */; };
-		2D1208A5165E9729004C1AEC /* libdtdev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D1208A4165E9729004C1AEC /* libdtdev.a */; };
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
 		2D1A425616F746C300CD6781 /* BcdCoderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425516F746C300CD6781 /* BcdCoderTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
@@ -83,6 +82,8 @@
 		2DFB463116945D9400E95CCC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DFB462E16945D9400E95CCC /* Default@2x.png */; };
 		2DFB463516945DD000E95CCC /* NumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFB463416945DD000E95CCC /* NumPadViewController.m */; };
 		2DFB463816946D7000E95CCC /* HeftTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFB463716946D7000E95CCC /* HeftTabBarViewController.m */; };
+		806EE35317CCE78A0082E0FE /* DTDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 806EE35217CCE78A0082E0FE /* DTDevices.h */; };
+		806EE35517CCE7ED0082E0FE /* libdtdev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 806EE35417CCE7ED0082E0FE /* libdtdev.a */; };
 		AD4C085C170C0C770005EDC0 /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD4C085D170C0C7F0005EDC0 /* HeftManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD4C085E170C0C870005EDC0 /* HeftStatusReportPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -96,7 +97,6 @@
 		ADADA19516E5FCBE00DE265F /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = ADADA19316E5FCBE00DE265F /* check.png */; };
 		ADADA19616E5FCBE00DE265F /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ADADA19416E5FCBE00DE265F /* check@2x.png */; };
 		ADF06E8E16FC6AB200B50C8E /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398955165FF88800F8FA29 /* HeftRemoteDevice.m */; };
-		ADF06E9D16FC90F000B50C8E /* libdtdev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D1208A4165E9729004C1AEC /* libdtdev.a */; };
 		C31ECE5F16D30C5F00779EC2 /* TextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C31ECE5E16D30C5F00779EC2 /* TextViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -128,7 +128,6 @@
 		2D046A6C16F3186100948519 /* SignView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignView.h; sourceTree = "<group>"; };
 		2D046A6D16F3186100948519 /* SignView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignView.m; sourceTree = "<group>"; };
 		2D0D3F3B162C64450057301F /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
-		2D1208A4165E9729004C1AEC /* libdtdev.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdtdev.a; path = ../Library/libdtdev.a; sourceTree = "<group>"; };
 		2D1A425116F7448B00CD6781 /* CrcTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrcTest.h; sourceTree = "<group>"; };
 		2D1A425216F7448B00CD6781 /* CrcTest.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = CrcTest.m; sourceTree = "<group>"; };
 		2D1A425416F746C300CD6781 /* BcdCoderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BcdCoderTest.h; sourceTree = "<group>"; };
@@ -247,6 +246,8 @@
 		2DFB463416945DD000E95CCC /* NumPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NumPadViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		2DFB463616946D7000E95CCC /* HeftTabBarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftTabBarViewController.h; sourceTree = "<group>"; };
 		2DFB463716946D7000E95CCC /* HeftTabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeftTabBarViewController.m; sourceTree = "<group>"; };
+		806EE35217CCE78A0082E0FE /* DTDevices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTDevices.h; path = "../../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries/DTDevices.h"; sourceTree = "<group>"; };
+		806EE35417CCE7ED0082E0FE /* libdtdev.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdtdev.a; path = "../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries/libdtdev.a"; sourceTree = "<group>"; };
 		AD0AFCB316DB64A9008AC10D /* XmlViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlViewController.h; sourceTree = "<group>"; };
 		AD869C2D16DE66DE006A16EF /* XmlViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlViewController.m; sourceTree = "<group>"; };
 		AD87936016E09AEF00A2C326 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -255,7 +256,6 @@
 		ADA94C2A16F2053C0076F1F3 /* SignViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignViewController.m; sourceTree = "<group>"; };
 		ADADA19316E5FCBE00DE265F /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = check.png; path = images/check.png; sourceTree = "<group>"; };
 		ADADA19416E5FCBE00DE265F /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "check@2x.png"; path = "images/check@2x.png"; sourceTree = "<group>"; };
-		ADF06E9116FC700D00B50C8E /* DTDevices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DTDevices.h; path = ../../Library/DTDevices.h; sourceTree = "<group>"; };
 		C31ECE5D16D30C5F00779EC2 /* TextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextViewController.h; sourceTree = "<group>"; };
 		C31ECE5E16D30C5F00779EC2 /* TextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -266,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */,
+				806EE35517CCE7ED0082E0FE /* libdtdev.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,7 +277,6 @@
 				AD75FBAF16FC93580000446E /* CoreGraphics.framework in Frameworks */,
 				AD75FBAE16FC92F30000446E /* ExternalAccessory.framework in Frameworks */,
 				AD75FBAD16FC92C90000446E /* Security.framework in Frameworks */,
-				ADF06E9D16FC90F000B50C8E /* libdtdev.a in Frameworks */,
 				2D398936165FF23E00F8FA29 /* SenTestingKit.framework in Frameworks */,
 				2D398937165FF23E00F8FA29 /* UIKit.framework in Frameworks */,
 				2D398938165FF23E00F8FA29 /* Foundation.framework in Frameworks */,
@@ -290,7 +290,6 @@
 			files = (
 				AD87936116E09AEF00A2C326 /* MessageUI.framework in Frameworks */,
 				2D3DAAA91660089000FC0565 /* libheft.a in Frameworks */,
-				2D1208A5165E9729004C1AEC /* libdtdev.a in Frameworks */,
 				2DEDA3731628B0590043AFBC /* UIKit.framework in Frameworks */,
 				2DEDA3751628B0590043AFBC /* Foundation.framework in Frameworks */,
 				2DEDA3771628B0590043AFBC /* CoreGraphics.framework in Frameworks */,
@@ -380,7 +379,7 @@
 		2D39892A165FF23D00F8FA29 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				ADF06E9116FC700D00B50C8E /* DTDevices.h */,
+				806EE35217CCE78A0082E0FE /* DTDevices.h */,
 				2D39894C165FF88800F8FA29 /* debug.h */,
 				2D39892B165FF23D00F8FA29 /* heft-Prefix.pch */,
 			);
@@ -497,7 +496,7 @@
 		2DEDA3711628B0580043AFBC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2D1208A4165E9729004C1AEC /* libdtdev.a */,
+				806EE35417CCE7ED0082E0FE /* libdtdev.a */,
 				AD87936016E09AEF00A2C326 /* MessageUI.framework */,
 				2DEAD200164020A5006E2429 /* Security.framework */,
 				2D0D3F3B162C64450057301F /* ExternalAccessory.framework */,
@@ -599,6 +598,7 @@
 				AD4C085E170C0C870005EDC0 /* HeftStatusReportPublic.h in Headers */,
 				AD4C085C170C0C770005EDC0 /* HeftClient.h in Headers */,
 				AD4C085D170C0C7F0005EDC0 /* HeftManager.h in Headers */,
+				806EE35317CCE78A0082E0FE /* DTDevices.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1021,6 +1021,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
+					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1137,6 +1138,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
+					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1181,6 +1183,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
+					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1206,6 +1209,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
+					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
