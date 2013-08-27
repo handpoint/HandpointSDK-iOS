@@ -9,7 +9,7 @@ const int ciSignRequestAmount = 3000;
 
 ResponseCommand* RequestCommand::CreateResponse()const{return new FinanceResponseCommand(m_cmd);}
 
-FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present) 
+FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml)
 	: RequestCommand(type)
 	, state(eWaitingCard), amount(trans_amount)
 {
@@ -66,37 +66,6 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 
 ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const{return new FinanceResponseCommand(m_cmd, amount, EFT_PP_STATUS_USER_CANCELLED);}
 
-SaleRequestCommand::SaleRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present) 
-	: FinanceRequestCommand(CMD_FIN_SALE_REQ, currency_code, trans_amount, card_present)
-{}
-
-RefundRequestCommand::RefundRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present)
-	: FinanceRequestCommand(CMD_FIN_REFUND_REQ, currency_code, trans_amount, card_present)
-{}
-
-ResponseCommand* RefundRequestCommand::CreateResponse()const{
-	if(state == ePinInput)
-		++state;
-	return FinanceRequestCommand::CreateResponse();
-}
-
-FinanceVRequestCommand::FinanceVRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id)
-	: FinanceRequestCommand(type, currency_code, trans_amount, card_present), transaction_id(trans_id)
-{
-	state = eConnect;
-}
-
-ResponseCommand* FinanceVRequestCommand::CreateResponse()const{return new FinanceResponseCommand(m_cmd, GetCurrency(), GetAmount(), transaction_id);}
-
-SaleVRequestCommand::SaleVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id) 
-	: FinanceVRequestCommand(CMD_FIN_SALEV_REQ, currency_code, trans_amount, card_present, trans_id)
-
-{}
-
-RefundVRequestCommand::RefundVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id)
-	: FinanceVRequestCommand(CMD_FIN_REFUNDV_REQ, currency_code, trans_amount, card_present, trans_id)
-
-{}
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()
 	: RequestCommand(CMD_FIN_STARTDAY_REQ)

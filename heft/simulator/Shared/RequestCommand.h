@@ -27,14 +27,14 @@ protected:
 	mutable int state;
 
 public:
-	FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present);
+	FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml);
 	UINT32 GetAmount()const{return amount;}
 	const string& GetCurrency()const{return currency;}
 	ResponseCommand* CreateResponse()const;
 	ResponseCommand* CreateResponseOnCancel()const;
 };
 
-class SaleRequestCommand : public FinanceRequestCommand{
+/*class SaleRequestCommand : public FinanceRequestCommand{
 public:
 	SaleRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present);
 };
@@ -60,7 +60,7 @@ public:
 class RefundVRequestCommand : public FinanceVRequestCommand{
 public:
 	RefundVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
-};
+};*/
 
 class StartOfDayRequestCommand : public RequestCommand{
 public:

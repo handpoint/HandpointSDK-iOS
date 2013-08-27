@@ -9,6 +9,7 @@
 #import "HeftConnection.h"
 #import "HeftStatusReport.h"
 #import "ResponseParser.h"
+#include "HeftCmdIds.h"
 
 #if HEFT_SIMULATOR
 #import "simulator/Shared/RequestCommand.h"
