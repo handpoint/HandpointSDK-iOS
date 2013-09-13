@@ -164,6 +164,13 @@ NSString* devicesPath(){
 		//[dtdev btDiscoverDevicesInBackground:10 maxTime:200 codTypes:0 error:&error];
 #endif
 	}
+    else
+    {
+        EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
+        [eaManager showBluetoothAccessoryPickerWithNameFilter:nil completion:^(NSError* error){
+            [delegate didDiscoverFinished];
+        }];
+    }
 }
 
 #if HEFT_SIMULATOR

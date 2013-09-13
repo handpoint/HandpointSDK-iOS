@@ -46,13 +46,13 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 	BOOL enabled = [devices count] != 0;
 	connectButton.enabled = enabled;
 	
-	if(!manager.hasSources){
-		discoveryButton.enabled = NO;
-		resetButton.enabled = NO;
-	}
-	else{
-		resetButton.enabled = enabled;
-	}
+//	if(!manager.hasSources){
+//		discoveryButton.enabled = NO;
+//		resetButton.enabled = NO;
+//	}
+//	else{
+//		resetButton.enabled = enabled;
+//	}
 }
 
 /*- (void)didReceiveMemoryWarning
@@ -232,7 +232,23 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
 	[self disconnect];
 	connectButton.enabled = NO;
 	currentDevice = devices[[deviceList selectedRowInComponent:0]];
+    NSString* uxiSSStr = @"07110E8D964A4A2E66202EA6AD746F14536FBA0566E2E047B6A85E5B01349274";
+    NSData* uxiSS;
+    NSMutableData* ssTmp = [NSMutableData data];
+    
+    for (int i = 0 ; i < 32; i++)
+    {
+        NSRange range = NSMakeRange (i*2, 2);
+        NSString *bytes = [uxiSSStr substringWithRange:range];
+        NSScanner* scanner = [NSScanner scannerWithString:bytes];
+        unsigned int intValue;
+        [scanner scanHexInt:&intValue];
+        [ssTmp appendBytes:&intValue length:1];
+    }
+    uxiSS = ssTmp;
+    
 	[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
+    //[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:uxiSS delegate:mainController];
 }
 
 @end
