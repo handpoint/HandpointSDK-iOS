@@ -46,4 +46,8 @@
 	return name ? name : accessory.name;
 }
 
+- (EAAccessory*)accessory{
+    return accessory ? accessory : nil;
+}
+
 @end
