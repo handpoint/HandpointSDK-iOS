@@ -9,4 +9,8 @@
 @property(nonatomic, readonly) NSString* address;
 @property(nonatomic, readonly) EAAccessory* accessory;
 
+
+- (NSString*)name;
+- (EAAccessory*)accessory;
+
 @end

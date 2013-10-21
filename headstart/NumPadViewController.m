@@ -14,6 +14,7 @@ extern NSString* const currencyDidChangedNotification;
 extern NSString* currency[];
 
 NSString* currencySymbol[] = {@"₤", @"$", @"€"};
+UIPickerView *pickerView;
 
 NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	const unichar padding[] = {L'0', L'0', L'0'};
@@ -34,10 +35,13 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	__weak IBOutlet UIButton* saleButton;
 	__weak IBOutlet UIButton* refundButton;
 	__weak IBOutlet UITextField* amount;
+    __weak IBOutlet UITextField *monthsTextfield;
+    UIActionSheet *monthsSelector;
 	HeftTabBarViewController* __weak mainController;
 	NSMutableString* amountString;
 	BOOL amountUsed;
 	int currentCurrencyIndex;
+    NSArray *availableMonths;
 }
 
 //@synthesize heftClient;
@@ -58,6 +62,7 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 - (void)viewDidLoad{
     [super viewDidLoad];
 	[self currencyDidChanged:nil];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -68,6 +73,7 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	BOOL refund = [[NSUserDefaults standardUserDefaults] boolForKey:kRefundKey];
 	saleButton.hidden = refund;
 	refundButton.hidden = !refund;
+    availableMonths = [NSArray arrayWithObjects:@"01", @"03", @"06", @"09", @"12", @"18", @"24", nil];
 }
 
 /*- (void)didReceiveMemoryWarning
@@ -103,6 +109,7 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	if(!iAmount)
 		return;
 	[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
+    //[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] dividedByMonths:monthsString cardholder:YES];
 	[mainController showTransactionViewController:eTransactionSale];
 	amountUsed = YES;
 }
@@ -152,11 +159,99 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	}
 }
 
-#pragma mark UITextFieldDelegate
+-(void)createMonthsSelector{
+    
+    monthsSelector = [[UIActionSheet alloc] initWithTitle:@"Select months" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    
+    
+    CGRect pickerFrame = CGRectMake(10,40,300,0);
+    
+    UIPickerView *monthsPickerView = [[UIPickerView alloc] initWithFrame:pickerFrame];
+    monthsPickerView.showsSelectionIndicator = YES;
+    monthsPickerView.dataSource = self;
+    monthsPickerView.delegate = self;
+    [monthsSelector addSubview:monthsPickerView];
+    
+    CGRect pickerRect = monthsPickerView.bounds;
+    pickerRect.origin.y = -100;
+    monthsPickerView.bounds = pickerRect;
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-	[textField resignFirstResponder];
-	return YES;
 }
 
+- (IBAction)showMonthsSelector:(id)sender {
+
+    if (pickerView == nil) {
+        pickerView=[[UIPickerView alloc] initWithFrame:CGRectMake(190,20,150,150)];
+        pickerView.transform = CGAffineTransformMakeScale(0.75f, 0.75f);
+        pickerView.delegate = self;
+        pickerView.dataSource = self;
+        pickerView.showsSelectionIndicator = YES;
+        pickerView.backgroundColor = [UIColor clearColor];
+        pickerView.hidden = YES;
+        [self.view addSubview:pickerView];
+    }
+    if (![monthsTextfield.text isEqual: @""])
+    {
+        int selectedRow = [availableMonths indexOfObject:monthsTextfield.text];
+        [pickerView selectRow:selectedRow inComponent:0 animated:YES];
+    }
+    if([pickerView isHidden]) {
+        [pickerView setHidden:NO];
+    }
+    else {
+        [pickerView setHidden:YES];
+    }
+
+//    if(monthsSelector == nil)
+//    {
+//        [self createMonthsSelector];
+//    }
+//    
+//    [monthsSelector showInView:self.view];
+//    [monthsSelector setBounds:CGRectMake(0,0,320, 500)];
+    
+}
+#pragma mark UITextFieldDelegate
+
+- (void)viewDidUnload {
+    monthsTextfield = nil;
+    [super viewDidUnload];
+}
+
+#pragma mark UIPickerViewDataSource
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+	return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+	int count = [availableMonths count];
+	return count ? count : 1;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    if (availableMonths!=nil) {
+        return [availableMonths objectAtIndex:row];//assuming the array contains strings..
+    }
+    return @"";//or nil, depending how protective you are
+}
+
+-(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
+    monthsTextfield.text = [availableMonths objectAtIndex:row];
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == monthsSelector.firstOtherButtonIndex){
+        // set text to the selected item in picker.. how can I access picker?? monthsTextfield.text =;
+    }
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    return NO;
+}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    return NO;
+}
 @end
