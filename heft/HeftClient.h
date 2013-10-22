@@ -51,10 +51,12 @@ typedef enum{
  which can be set instead of numeric values.
  @param present	Indicates whether the cardholder is present or not during the transaction.
  @param reference An optional reference id (max 25 characters) that can be associated with the authorization. Example value: 45678135.
+ @param months Budget facility indicator. Decides how many months a payment can be divided into. Is required for budget transactions. Accepted values are:  03, 06, 12, 18, 24, 30, 36, 42, 48, 54, 60 
  @return YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString*)months;
 
 /** 
  Performs REFUND transaction.

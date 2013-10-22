@@ -1004,47 +1004,6 @@
         <image name="tab_numpad.png" width="29" height="30"/>
         <image name="tab_settings.png" width="30" height="27"/>
     </resources>
-    <classes>
-        <class className="HeftTabBarViewController" superclassName="UITabBarController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/HeftTabBarViewController.h"/>
-        </class>
-        <class className="HistoryCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryCell.h"/>
-        </class>
-        <class className="HistoryViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryViewController.h"/>
-        </class>
-        <class className="HtmlViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/HtmlViewController.h"/>
-        </class>
-        <class className="NumPadViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NumPadViewController.h"/>
-        </class>
-        <class className="ScanViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScanViewController.h"/>
-        </class>
-        <class className="SettingsViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SettingsViewController.h"/>
-        </class>
-        <class className="SignView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SignView.h"/>
-        </class>
-        <class className="SignViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SignViewController.h"/>
-        </class>
-        <class className="TextViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TextViewController.h"/>
-        </class>
-        <class className="TransactionViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransactionViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="cancel"/>
-            </relationships>
-        </class>
-        <class className="XmlViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/XmlViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

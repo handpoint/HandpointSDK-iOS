@@ -73,7 +73,7 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	BOOL refund = [[NSUserDefaults standardUserDefaults] boolForKey:kRefundKey];
 	saleButton.hidden = refund;
 	refundButton.hidden = !refund;
-    availableMonths = [NSArray arrayWithObjects:@"01", @"03", @"06", @"09", @"12", @"18", @"24", nil];
+    availableMonths = [NSArray arrayWithObjects:@"", @"03", @"06", @"12", @"18", @"24", @"30", @"36", @"42", @"48", @"54", @"60", nil];
 }
 
 /*- (void)didReceiveMemoryWarning
@@ -108,8 +108,8 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	int iAmount = [amountString intValue];
 	if(!iAmount)
 		return;
-	[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
-    //[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] dividedByMonths:monthsString cardholder:YES];
+	//[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
+    [mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES reference:nil divideBy:[monthsTextfield text]];
 	[mainController showTransactionViewController:eTransactionSale];
 	amountUsed = YES;
 }

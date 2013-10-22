@@ -206,6 +206,40 @@ enum eSignConditions{
 	return [self postOperationToQueueIfNew:operation];
 }
 
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString *)months{
+	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+    NSString *params = @"";
+    NSString *refrenceString = @"";
+    NSString *monthsString = @"";
+    if(reference != NULL && reference.length != 0) {
+        refrenceString = [NSString stringWithFormat:
+                        @"<CustomerReference>"
+                        @"%@"
+                        @"</CustomerReference>",
+                        reference];
+    }
+    if(months != NULL && months.length != 0) {
+        monthsString = [NSString stringWithFormat:
+                        @"<BudgetNumber>"
+                        @"%@"
+                        @"</BudgetNumber>",
+                        months];
+    }
+    if( refrenceString.length != 0 || monthsString.length != 0) {
+        params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                  @"<FinancialTransactionRequest>"
+                  @"%@"
+                  @"%@"
+                  @"</FinancialTransactionRequest>",
+                  refrenceString, monthsString];
+    }
+    
+	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
+                                                                                       connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+	return [self postOperationToQueueIfNew:operation];
+}
+
+
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
 	return [self refundWithAmount:amount currency:currency cardholder:present reference:@""];
 }
