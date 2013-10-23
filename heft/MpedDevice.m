@@ -207,7 +207,7 @@ enum eSignConditions{
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString *)months{
-	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months", amount, currency, present ? @"is present" : @"is not present", reference, months);
     NSString *params = @"";
     NSString *refrenceString = @"";
     NSString *monthsString = @"";

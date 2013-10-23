@@ -80,6 +80,7 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
 		    , "EUR", "0978"
 		    , "GBP", "0826"
 		    , "ISK", "0352"
+            , "ZAR", "0710"
 	    };
 
 	    bool fCheckCodeSize = true;

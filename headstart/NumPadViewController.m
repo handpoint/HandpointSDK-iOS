@@ -109,7 +109,7 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 	if(!iAmount)
 		return;
 	//[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
-    [mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES reference:nil divideBy:[monthsTextfield text]];
+    [mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES reference:NULL divideBy:[monthsTextfield text]];
 	[mainController showTransactionViewController:eTransactionSale];
 	amountUsed = YES;
 }
