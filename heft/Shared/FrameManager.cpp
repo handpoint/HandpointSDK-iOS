@@ -176,26 +176,35 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 }
 
 ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_timeout){
+    FramePayload* pCommand;
+    int nread;
 	vector<UINT8> buf;
 	data.clear();
 	while(true){
 	//while(!bCancel){
 		//int nread = connection.Read(buf, finance_timeout ? eFinanceTimeout : eResponseTimeout);
-		int nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
-		if(!nread){
-			if(finance_timeout)
-				throw timeout4_exception();
-			else
-				throw timeout2_exception();
-		}
-		FramePayload* pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
-		if(nread < sizeof(pCommand->StartSequence))
+        if(buf.size() < sizeof(pCommand->StartSequence))
         {
-            // this is not an error ...
-            // ... it just means that more bytes are required
-			LOG(_T("FrameManager::Read I need more data. Read size: %i  Read bytes: %02X"),nread,buf[0]);
-            continue;
+            nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
+            if(!nread){
+                if(finance_timeout)
+                    throw timeout4_exception();
+                else
+                    throw timeout2_exception();
+            }
+            if(nread < sizeof(pCommand->StartSequence))
+            {
+                // this is not an error ...
+                // ... it just means that more bytes are required
+                LOG(_T("FrameManager::Read I need more data. Read size: %i  Read bytes: %02X"),nread,buf[0]);
+                continue;
+            }
         }
+        else
+        {
+            nread = buf.size();
+        }
+		pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
 		switch(pCommand->StartSequence){
 		case FRAME_START:
 			if(ReadFrames(connection, buf/*, bCancel*/))

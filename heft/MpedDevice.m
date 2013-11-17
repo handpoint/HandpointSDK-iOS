@@ -121,12 +121,12 @@ enum eSignConditions{
 			connection = aConnection;
 			sharedSecret = aSharedSecret;
 			try{
-				FrameManager fm(InitRequestCommand(), connection.maxBufferSize);
+				FrameManager fm(InitRequestCommand(), connection.maxFrameSize);
 				fm.Write(connection);
 				InitResponseCommand* pResponse = dynamic_cast<InitResponseCommand*>(reinterpret_cast<ResponseCommand*>(fm.ReadResponse<InitResponseCommand>(connection, false)));
 				if(!pResponse)
 					throw communication_exception();
-				connection.maxBufferSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client. 
+				connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
 				mpedInfo = @{
 					kSerialNumberInfoKey:@(pResponse->GetSerialNumber().c_str())
 					, kPublicKeyVersionInfoKey:@(pResponse->GetPublicKeyVer())
@@ -170,7 +170,7 @@ enum eSignConditions{
 #if HEFT_SIMULATOR
 	[queue cancelAllOperations];
 #else
-	FrameManager fm(IdleRequestCommand(), connection.maxBufferSize);
+	FrameManager fm(IdleRequestCommand(), connection.maxFrameSize);
 	fm.WriteWithoutAck(connection);
 #endif
 	LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");

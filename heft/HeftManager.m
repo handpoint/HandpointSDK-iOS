@@ -73,9 +73,9 @@ NSString* devicesPath(){
 #if HEFT_SIMULATOR
 		[self performSelectorOnMainThread:@selector(asyncSimulatorInit) withObject:nil waitUntilDone:NO];
 #else
-		dtdev = [DTDevices sharedDevice];
-		[dtdev addDelegate:self];
-		[dtdev connect];
+//		dtdev = [DTDevices sharedDevice];
+//		[dtdev addDelegate:self];
+//		[dtdev connect];
 		
 		NSNotificationCenter* defaultCenter = [NSNotificationCenter defaultCenter];
 		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidConnect:) name:EAAccessoryDidConnectNotification object:nil];
@@ -93,6 +93,7 @@ NSString* devicesPath(){
 			}
 			return NO;
 		}];
+
 #endif
 	}
 	return self;

@@ -15,7 +15,8 @@ typedef enum{
 
 @interface HeftConnection : NSObject
 
-@property(nonatomic) int maxBufferSize;
+@property(nonatomic) int maxFrameSize;
+@property(nonatomic) int ourBufferSize;
 
 - (id)initWithDevice:(HeftRemoteDevice*)aDevice;
 - (void)shutdown;

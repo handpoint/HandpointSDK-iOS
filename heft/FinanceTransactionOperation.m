@@ -59,7 +59,7 @@ enum eConnectCondition{
 			
 			while(true){
 				//LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
-				FrameManager fm(*currentRequest, connection.maxBufferSize);
+				FrameManager fm(*currentRequest, connection.maxFrameSize);
 				fm.Write(connection);
 				
 				if(pRequestCommand != currentRequest){
@@ -165,7 +165,7 @@ enum eConnectCondition{
 	LOG(_T("Recv :%d bytes, %ds timeout"), pRequest->GetDataLen(), pRequest->GetTimeout());
 
 	vector<UINT8> data;
-	int stepSize = connection.maxBufferSize;
+	int stepSize = 4096	;
 	int nrecv = 0;
 	//while([recvStream hasBytesAvailable]){
 	do{
