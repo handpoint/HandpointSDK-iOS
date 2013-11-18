@@ -73,9 +73,10 @@ NSString* devicesPath(){
 #if HEFT_SIMULATOR
 		[self performSelectorOnMainThread:@selector(asyncSimulatorInit) withObject:nil waitUntilDone:NO];
 #else
-//		dtdev = [DTDevices sharedDevice];
-//		[dtdev addDelegate:self];
-//		[dtdev connect];
+        //iPod does not work with PPAD when the DTDevices lib is used. Dtdev is not able to connect to our EFT client, the thread is not able to finish and the app becomes unresponsive.
+        //dtdev = [DTDevices sharedDevice];
+        //[dtdev addDelegate:self];
+        //[dtdev connect];
 		
 		NSNotificationCenter* defaultCenter = [NSNotificationCenter defaultCenter];
 		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidConnect:) name:EAAccessoryDidConnectNotification object:nil];

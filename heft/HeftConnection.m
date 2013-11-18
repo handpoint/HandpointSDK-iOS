@@ -58,7 +58,8 @@ enum eBufferConditions{
 		else
 			LOG(@"Connection to %@ failed", aDevice.name);
 	}
-	else{
+/*	else{
+        //The DTDevices SDK was used for the BT dongleand is not used anymore.
 		DTDevices *dtdev = [DTDevices sharedDevice];
 		result = [dtdev btConnect:aDevice.address pin:@"0000" error:&error];
 		if(result){
@@ -68,7 +69,7 @@ enum eBufferConditions{
 		else
 			LOG(@"Connection to %@ error:%@", aDevice.name, error);
 	}
-	
+*/
 	if(result){
 		Assert(eaSession || !error);
 		if(self = [super init]){
@@ -130,12 +131,10 @@ enum eBufferConditions{
 	while(len){
 		while(![outputStream hasSpaceAvailable]);
 		int nwritten = [outputStream write:data maxLength:fmin(len, maxFrameSize)];
-		LOG(@"HeftConnection::writeData %d: %c%c%c%c", nwritten, data[2], data[3], data[4], data[5]);
-        LOG(@"%@",::dump(@"WriteData write: ", data, len));
-
+        LOG(@"%@", dump(@"HeftConnection::WriteData : ", data, len));
+        
 		if(nwritten <= 0)
 			throw communication_exception();
-
 
 		len -= nwritten;
 		data += nwritten;
@@ -143,10 +142,9 @@ enum eBufferConditions{
 }
 
 - (void)writeAck:(UInt16)ack{
-	//LOG(@"HeftConnection::writeAck %04X", ack_n);
 	while(![outputStream hasSpaceAvailable]);
 	int nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
-    LOG(@"%@",::dump(@"writeAck data write: ", &ack, sizeof(ack)));
+    LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));
 	if(nwritten != sizeof(ack))
 		throw communication_exception();
 }
@@ -158,9 +156,9 @@ enum eBufferConditions{
 		Assert(aStream == inputStream);
 
 		NSUInteger nread;
-        LOG(@"stream waiting for read lock");
+        //LOG(@"stream waiting for read lock");
 		[bufferLock lock];
-        LOG(@"stream got read lock");
+        //LOG(@"stream got read lock");
         do {
             if(ourBufferSize == currentPosition)
             {
@@ -171,18 +169,13 @@ enum eBufferConditions{
                 tmpBuf = temp;
             }
 			double minread = ourBufferSize - currentPosition;
-            LOG(@"stream: ourBufferSize:%d, currentPosition:%d, minread:%f", ourBufferSize, currentPosition, minread);
 			nread = [inputStream read:&tmpBuf[currentPosition] maxLength:minread];
-            LOG(@"%@",::dump(@"stream data read: ", &tmpBuf[currentPosition], nread));
-            LOG(@"hasBytesAvailable:%d",[inputStream hasBytesAvailable]);
-            LOG(@"stream:handleEvent: has bytes: %d", nread);
-
+            LOG(@"%@",dump(@"HeftConnection::ReadDataStream : ", &tmpBuf[currentPosition], nread));
             currentPosition += nread;
             
         } while ([inputStream hasBytesAvailable]);
 
 		[bufferLock unlockWithCondition:currentPosition ? eHasDataCondition : eNoDataCondition];
-        LOG(@"stream released lock (currentPosition: %d)", currentPosition);
 	}
     else
     {
@@ -196,10 +189,9 @@ enum eBufferConditions{
 	//vector<UINT8>& vBuf = *reinterpret_cast<vector<UINT8>*>(buffer);
 	int initSize = buffer.size();
 
-  //  [NSThread sleepForTimeInterval:1];
-    LOG(@"readData waiting for read lock");
+    //LOG(@"readData waiting for read lock");
 	if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]]){
-        LOG(@"readData read lock timed out");
+        //LOG(@"readData read lock timed out");
 		if(timeout == eFinanceTimeout){
 			LOG(@"Finance timeout");
 			throw timeout4_exception();
@@ -210,7 +202,7 @@ enum eBufferConditions{
 		}
 	}
 	
-    LOG(@"readData got read lock");
+    //LOG(@"readData got read lock");
 	buffer.resize(initSize + currentPosition);
 	memcpy(&buffer[initSize], tmpBuf, currentPosition);
 
@@ -218,7 +210,7 @@ enum eBufferConditions{
 	currentPosition = 0;
 	
 	[bufferLock unlockWithCondition:eNoDataCondition];
-    LOG(@"readData released lock");
+    //LOG(@"readData released lock");
 
 	if(nread > 6)
 		LOG(@"HeftConnection::readData %d: %c%c%c%c", nread, tmpBuf[2], tmpBuf[3], tmpBuf[4], tmpBuf[5]);
@@ -228,12 +220,12 @@ enum eBufferConditions{
 
 - (UInt16)readAck{
 	UInt16 ack = 0;
-    LOG(@"readAck waiting for lock");
+    //LOG(@"readAck waiting for lock");
 	if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]]){
 		LOG(@"Ack timeout");
 		throw timeout1_exception();
 	}
-    LOG(@"readAck got read lock");
+    //LOG(@"readAck got read lock");
 
 	Assert(currentPosition >= sizeof(ack));
 	memcpy(&ack, tmpBuf, sizeof(ack));
@@ -241,8 +233,7 @@ enum eBufferConditions{
 	memcpy(tmpBuf, tmpBuf + sizeof(ack), currentPosition);
 	
 	[bufferLock unlockWithCondition:currentPosition ? eHasDataCondition : eNoDataCondition];
-    LOG(@"readAck released lock (currentPosition: %d)", currentPosition);
-
+    //LOG(@"readAck released lock (currentPosition: %d)", currentPosition);
 	//LOG(@"HeftConnection::readAck %04X", ack);
 	return ack;
 }
@@ -252,7 +243,6 @@ enum eBufferConditions{
 - (void)setMaxBufferSize:(int)aMaxBufferSize{
 	if(maxFrameSize != aMaxBufferSize){
 		maxFrameSize = aMaxBufferSize;
-        LOG(@"maxBufferSize: %d", aMaxBufferSize);
 		free(tmpBuf);
 		tmpBuf = (uint8_t*)malloc(maxFrameSize);
 		Assert(tmpBuf);
