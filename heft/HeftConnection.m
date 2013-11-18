@@ -170,7 +170,7 @@ enum eBufferConditions{
             }
 			double minread = ourBufferSize - currentPosition;
 			nread = [inputStream read:&tmpBuf[currentPosition] maxLength:minread];
-            LOG(@"%@",dump(@"HeftConnection::ReadDataStream : ", &tmpBuf[currentPosition], nread));
+            LOG(@"%@",::dump(@"HeftConnection::ReadDataStream : ", &tmpBuf[currentPosition], nread));
             currentPosition += nread;
             
         } while ([inputStream hasBytesAvailable]);
