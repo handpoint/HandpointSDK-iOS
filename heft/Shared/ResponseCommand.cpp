@@ -15,7 +15,7 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 	switch(ntohl(pResponse->command)){
 	case CMD_INIT_RSP:
 		ATLASSERT(buf.size() >= sizeof(ResponsePayload));
-		return new InitResponseCommand(pResponse);
+		return new InitResponseCommand(pResponse, buf.size());
 	case CMD_FIN_SALE_RSP:
 	case CMD_FIN_REFUND_RSP:
 	case CMD_FIN_SALEV_RSP:
@@ -24,31 +24,31 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 	case CMD_FIN_ENDDAY_RSP:
 	case CMD_FIN_INIT_RSP:
 		ATLASSERT(buf.size() >= sizeof(ResponsePayload));
-		return new FinanceResponseCommand(pResponse);
+		return new FinanceResponseCommand(pResponse, buf.size());
 	case CMD_HOST_CONN_REQ:
 	case CMD_HOST_SEND_REQ:
 	case CMD_HOST_RECV_REQ:
 	case CMD_HOST_DISC_REQ:
-		return reinterpret_cast<ResponseCommand*>(HostRequestCommand::Create(pResponse));
+		return reinterpret_cast<ResponseCommand*>(HostRequestCommand::Create(pResponse, buf.size()));
 	case CMD_STAT_SIGN_REQ:
-		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse));
+		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse, buf.size()));
 	case CMD_STAT_CHALENGE_REQ:
-		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse));
+		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse, buf.size()));
 	/*case CMD_DBG_INFO_RSP:
 		return new DebugInfoResponseCommand(pResponse);*/
 	case CMD_LOG_GET_INF_RSP:
-		return new GetLogInfoResponseCommand(pResponse);
+		return new GetLogInfoResponseCommand(pResponse, buf.size());
 	case CMD_STAT_INFO_RSP:
-		return new EventInfoResponseCommand(pResponse);
+		return new EventInfoResponseCommand(pResponse, buf.size());
 	case CMD_IDLE_RSP:
-		return new IdleResponseCommand(pResponse);
+		return new IdleResponseCommand(pResponse, buf.size());
 	case CMD_DBG_ENABLE_RSP:
 	case CMD_DBG_DISABLE_RSP:
 	case CMD_DBG_RESET_RSP:
 	case CMD_LOG_SET_LEV_RSP:
 	case CMD_LOG_RST_INF_RSP:
 		ATLASSERT(buf.size() >= sizeof(ResponsePayload));
-		return new ResponseCommand(pResponse);
+		return new ResponseCommand(pResponse, buf.size());
 	case CMD_XCMD_RSP:
 		return new XMLCommandResponseCommand(pResponse, buf.size());
 	default:
@@ -58,7 +58,11 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 	return 0;
 }
 
-ResponseCommand::ResponseCommand(const ResponsePayload* pPayload) : command_hsb(pPayload->command), iStatus(ReadStatus(pPayload)), length(ReadLength(pPayload)){
+ResponseCommand::ResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize) : command_hsb(pPayload->command), iStatus(ReadStatus(pPayload)), length(ReadLength(pPayload)){
+    if ((payloadSize - 4 - 4 - 6) != length) {
+        LOG(_T("Invalid response command buffer detected"));
+        throw communication_exception();
+    }
 }
 
 int ResponseCommand::ReadLength(const ResponsePayload* pResponse){
@@ -80,7 +84,7 @@ bool ResponseCommand::isResponseTo(const RequestCommand& request){
 	return !memcmp(&command_hsb, request.GetData(), sizeof(command_hsb) - 1);
 }
 
-InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
+InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize) : ResponseCommand(pPayload, payloadSize){
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS){
 		const InitPayload* pResponse = static_cast<const InitPayload*>(pPayload);
 		//ATLASSERT(ReadLength(pResponse) == sizeof(InitPayload) - sizeof(ResponsePayload));
@@ -94,16 +98,21 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload) : Resp
 		app_name.assign(reinterpret_cast<const char*>(pResponse->app_name), sizeof(pResponse->app_name));
 		app_ver = ntohs(pResponse->app_ver);
 		UINT32 xml_len = ntohl(pResponse->xml_details_length);
+        if(xml_len > GetLength())
+        {
+            LOG(_T("Invalid xml data length in command detected"));
+            throw communication_exception();
+        }
 		xml_details.assign(pResponse->xml_details, xml_len);
 	}
 }
 
-XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size) : ResponseCommand(pPayload){
+XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size) : ResponseCommand(pPayload, payload_size){
 		const XMLCommandPayload* pResponse = static_cast<const XMLCommandPayload*>(pPayload);
 		xml_return.assign(pResponse->xml_return, payload_size - sizeof(ResponsePayload));
 }
 
-IdleResponseCommand::IdleResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
+IdleResponseCommand::IdleResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize) : ResponseCommand(pPayload, payloadSize){
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS){
 		const IdlePayload* pResponse = static_cast<const IdlePayload*>(pPayload);
 		//ATLASSERT(ReadLength(pResponse) == sizeof(IdlePayload) - sizeof(ResponsePayload));
@@ -112,15 +121,15 @@ IdleResponseCommand::IdleResponseCommand(const ResponsePayload* pPayload) : Resp
 	}
 }
 
-EventInfoResponseCommand::EventInfoResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
+EventInfoResponseCommand::EventInfoResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize) : ResponseCommand(pPayload, payloadSize){
 	const EventInfoPayload* pResponse = static_cast<const EventInfoPayload*>(pPayload);
 	//ATLASSERT(ReadLength(pResponse) == sizeof(EventInfoPayload) - sizeof(ResponsePayload));
 	UINT32 xml_len = ntohl(pResponse->xml_details_length);
 	xml_details.assign(pResponse->xml_details, xml_len);
 }
 
-FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload) 
-	: ResponseCommand(pPayload)
+FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize)
+	: ResponseCommand(pPayload, payloadSize)
 	, financial_status(0), authorised_amount(0)
 {
 	if(GetLength() > sizeof(FinancePayload) - sizeof(ResponsePayload)){
@@ -150,7 +159,7 @@ FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload)
 	}
 }*/
 
-GetLogInfoResponseCommand::GetLogInfoResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
+GetLogInfoResponseCommand::GetLogInfoResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize) : ResponseCommand(pPayload, payloadSize){
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS){
 		const GetLogInfoPayload* pResponse = static_cast<const GetLogInfoPayload*>(pPayload);
 		data.assign(pResponse->data, &pResponse->data[ntohl(pResponse->data_len)]);

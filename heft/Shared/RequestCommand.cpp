@@ -10,6 +10,22 @@ RequestCommand::RequestCommand(int iCommandSize, UINT32 type) : data(ciMinSize +
 	FormatLength<RequestPayload>(iCommandSize);
 }
 
+RequestCommand::RequestCommand(const void* payload, UINT32 payloadSize){
+    const RequestPayload* pRequest = reinterpret_cast<const RequestPayload*>(payload);
+    int length = ReadLength(pRequest);
+    if ((payloadSize - 4 - 6) != length) {
+        LOG(_T("Invalid request command buffer detected"));
+        throw communication_exception();
+    }
+}
+
+int RequestCommand::ReadLength(const RequestPayload* pRequest){
+	UINT32 len_msb = 0;
+	int dest_len = sizeof(len_msb) - 1;
+	AtlHexDecode(reinterpret_cast<LPCSTR>(pRequest->length), sizeof(pRequest->length), reinterpret_cast<UINT8*>(&len_msb) + 1, &dest_len);
+	return ntohl(len_msb);
+}
+
 InitRequestCommand::InitRequestCommand() : RequestCommand(ciMinSize, CMD_INIT_REQ){
 	/*USES_CONVERSION;
 	string date;
@@ -140,17 +156,20 @@ FinanceInitRequestCommand::FinanceInitRequestCommand()
 	: RequestCommand(0, CMD_FIN_INIT_REQ)
 {}
 
-HostRequestCommand* HostRequestCommand::Create(const void* payload){
+HostRequestCommand::HostRequestCommand(const void* payload, UINT32 payloadSize) : RequestCommand(payload, payloadSize)
+{}
+
+HostRequestCommand* HostRequestCommand::Create(const void* payload, UINT32 payloadSize){
 	const RequestPayload* pRequestPayload = reinterpret_cast<const RequestPayload*>(payload);
 	switch(ntohl(pRequestPayload->command)){
 	case CMD_HOST_CONN_REQ:
-		return new ConnectRequestCommand(payload);
+		return new ConnectRequestCommand(payload, payloadSize);
 	case CMD_HOST_SEND_REQ:
-		return new SendRequestCommand(payload);
+		return new SendRequestCommand(payload, payloadSize);
 	case CMD_HOST_RECV_REQ:
-		return new ReceiveRequestCommand(payload);
+		return new ReceiveRequestCommand(payload, payloadSize);
 	case CMD_HOST_DISC_REQ:
-		return new DisconnectRequestCommand(payload);
+		return new DisconnectRequestCommand(payload, payloadSize);
 	}
 	LOG(_T("Unknown host packet"));
 	throw communication_exception();
@@ -170,7 +189,7 @@ void HostResponseCommand::WriteStatus(UINT16 status){
 	AtlHexEncode(reinterpret_cast<UINT8*>(&status_msb), sizeof(status_msb), reinterpret_cast<LPSTR>(&pPayload->status), &dest_len);
 }
 
-ConnectRequestCommand::ConnectRequestCommand(const void* payload){
+ConnectRequestCommand::ConnectRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
 	const ConnectPayload* pRequest = reinterpret_cast<const ConnectPayload*>(payload);
 	ATLASSERT(pRequest->remote_add_length);
 	remote_add.assign(reinterpret_cast<const char*>(pRequest->remote_add), pRequest->remote_add_length);
@@ -180,14 +199,14 @@ ConnectRequestCommand::ConnectRequestCommand(const void* payload){
 	timeout = *pWord << 8 | *(pWord + 1);
 }
 
-SendRequestCommand::SendRequestCommand(const void* payload){
+SendRequestCommand::SendRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
 	const SendPayload* pRequest = reinterpret_cast<const SendPayload*>(payload);
 	timeout = htons(pRequest->timeout);
 	data.resize(htons(pRequest->data_len));
 	memcpy(&data[0], pRequest->data, data.size());
 }
 
-ReceiveRequestCommand::ReceiveRequestCommand(const void* payload){
+ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
 	const ReceivePayload* pRequest = reinterpret_cast<const ReceivePayload*>(payload);
 	timeout = htons(pRequest->timeout);
 	data_len = htons(pRequest->data_len);
@@ -199,10 +218,10 @@ ReceiveResponseCommand::ReceiveResponseCommand(const vector<UINT8>& payload) : H
 	memcpy(pPayload->data, &payload[0], payload.size());
 }
 
-DisconnectRequestCommand::DisconnectRequestCommand(const void* payload){
+DisconnectRequestCommand::DisconnectRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
 }
 
-SignatureRequestCommand::SignatureRequestCommand(const void* payload){
+SignatureRequestCommand::SignatureRequestCommand(const void* payload, UINT32 payloadSize) : RequestCommand(payload, payloadSize){
 	const SignatureRequestPayload* pRequest = reinterpret_cast<const SignatureRequestPayload*>(payload);
 	UINT16 receipt_length = htons(pRequest->receipt_length);
 	receipt.assign(pRequest->receipt, receipt_length);
@@ -212,7 +231,7 @@ SignatureRequestCommand::SignatureRequestCommand(const void* payload){
 	xml_details.assign(pXml, xml_len);
 }
 
-ChallengeRequestCommand::ChallengeRequestCommand(const void* payload){
+ChallengeRequestCommand::ChallengeRequestCommand(const void* payload, UINT32 payloadSize) : RequestCommand(payload, payloadSize){
 	const ChallengeRequestPayload* pRequest = reinterpret_cast<const ChallengeRequestPayload*>(payload);
 	UINT16 random_num_length = ntohs(pRequest->random_num_length);
 	random_num.reserve(random_num_length);

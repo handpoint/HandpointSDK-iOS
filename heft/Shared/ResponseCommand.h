@@ -19,7 +19,7 @@ protected:
 	};
 #pragma pack(pop)
 
-	ResponseCommand(const ResponsePayload* pPayload);
+	ResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
 
 	int ReadLength(const ResponsePayload* pResponse);
 	int ReadStatus(const ResponsePayload* pResponse);
@@ -66,7 +66,7 @@ class InitResponseCommand : public ResponseCommand{
 #pragma pack(pop)
 
 public:
-	InitResponseCommand(const ResponsePayload* pPayload);
+	InitResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
 	int GetBufferSize(){return com_buffer_size;}
 	string GetSerialNumber(){return serial_number;}
 	int GetPublicKeyVer(){return public_key_ver;}
@@ -108,7 +108,7 @@ class IdleResponseCommand : public ResponseCommand{
 #pragma pack(pop)
 
 public:
-	IdleResponseCommand(const ResponsePayload* pPayload);
+	IdleResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
 	const string& GetXmlDetails(){return xml_details;}
 };
 
@@ -123,7 +123,7 @@ class EventInfoResponseCommand : public ResponseCommand{
 #pragma pack(pop)
 
 public:
-	EventInfoResponseCommand(const ResponsePayload* pPayload);
+	EventInfoResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
 	const string& GetXmlDetails(){return xml_details;}
 
 	//ResponseCommand
@@ -148,7 +148,7 @@ class FinanceResponseCommand : public ResponseCommand{
 #pragma pack(pop)
 
 public:
-	FinanceResponseCommand(const ResponsePayload* pPayload);
+	FinanceResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
 	eTransactionStatus GetFinancialStatus(){return eTransactionStatus(financial_status);}
 	UINT32 GetAmount(){return authorised_amount;}
 	const string& GetCustomerReceipt(){return customer_receipt;}
@@ -189,7 +189,7 @@ class GetLogInfoResponseCommand : public ResponseCommand{
 #pragma pack(pop)
 
 public:
-	GetLogInfoResponseCommand(const ResponsePayload* pPayload);
+	GetLogInfoResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
 	const string& GetData(){return data;}
 
 	//ResponseCommand

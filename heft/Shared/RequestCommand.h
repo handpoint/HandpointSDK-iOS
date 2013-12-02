@@ -12,6 +12,7 @@ protected:
 	} __attribute__((packed));
 
 	RequestCommand(int iCommandSize, UINT32 type);
+	RequestCommand(const void* payload, UINT32 payloadSize);
 	RequestCommand(){}
 	template<class T>
 	T* GetPayload(){return reinterpret_cast<T*>(&data[0]);}
@@ -22,6 +23,8 @@ protected:
 		int dest_len = sizeof(pRequest->length) + 1;
 		AtlHexEncode(reinterpret_cast<UINT8*>(&len_msb) + 1, sizeof(len_msb) - 1, reinterpret_cast<LPSTR>(pRequest->length), &dest_len);
 	}
+
+	int ReadLength(const RequestPayload* pRequest);
 
 public:
 	//Command
@@ -97,7 +100,8 @@ public:
 
 class HostRequestCommand : public RequestCommand, public IRequestProcess{
 public:
-	static HostRequestCommand* Create(const void* payload);
+    HostRequestCommand(const void* payload, UINT32 payloadSize);
+	static HostRequestCommand* Create(const void* payload, UINT32 payloadSize);
 };
 
 class HostResponseCommand : public RequestCommand{
@@ -130,7 +134,7 @@ protected:
 	} __attribute__((packed));
 
 public:
-	ConnectRequestCommand(const void* payload);
+	ConnectRequestCommand(const void* payload, UINT32 payloadSize);
 	RequestCommand* Process(id<IHostProcessor> handler){return [handler processConnect:this];}
 	const string& GetAddr(){return remote_add;}
 	int GetPort(){return port;}
@@ -148,7 +152,7 @@ protected:
 	} __attribute__((packed));
 
 public:
-	SendRequestCommand(const void* payload);
+	SendRequestCommand(const void* payload, UINT32 payloadSize);
 	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSend:this];}
 	int GetTimeout(){return timeout;}
 };
@@ -164,7 +168,7 @@ protected:
 	} __attribute__((packed));
 
 public:
-	ReceiveRequestCommand(const void* payload);
+	ReceiveRequestCommand(const void* payload, UINT32 payloadSize);
 	RequestCommand* Process(id<IHostProcessor> handler){return [handler processReceive:this];}
 	int GetTimeout(){return timeout;}
 	UINT16 GetDataLen(){return data_len;}
@@ -183,7 +187,7 @@ public:
 
 class DisconnectRequestCommand : public HostRequestCommand{
 public:
-	DisconnectRequestCommand(const void* payload);
+	DisconnectRequestCommand(const void* payload, UINT32 payloadSize);
 	RequestCommand* Process(id<IHostProcessor> handler){return [handler processDisconnect:this];}
 };
 
@@ -198,7 +202,7 @@ protected:
 	} __attribute__((packed));
 
 public:
-	SignatureRequestCommand(const void* payload);
+	SignatureRequestCommand(const void* payload, UINT32 payloadSize);
 	const string& GetReceipt(){return receipt;}
 	const string& GetXmlDetails(){return xml_details;}
 
@@ -217,7 +221,7 @@ protected:
 	} __attribute__((packed));
 
 public:
-	ChallengeRequestCommand(const void* payload);
+	ChallengeRequestCommand(const void* payload, UINT32 payloadSize);
 	const vector<UINT8>& GetRandomNum(){return random_num;}
 	const string& GetXmlDetails(){return xml_details;}
 
