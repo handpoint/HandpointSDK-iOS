@@ -33,7 +33,8 @@ typedef enum{
 //- (void)setDelegate:(NSObject<HeftClientDelegate>*)aDelegate;
 
 /**
- Cancels current finance transaction if it's possible.
+ Cancels current operation if it's possible.
+ That is financial transaction or scanner mode. 
  */
 - (void)cancel;
 
@@ -112,6 +113,25 @@ typedef enum{
  @return YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction;
+
+/**
+ Places the card reader in a scan only mode.
+ *The card reader then waits for the scan button(s) to be pressed and once detected will activate the scanner hardware.
+ *When a scanned code is detected the card reader will emit scan event notifications back to the caller, which the caller application can catch and display to the operator.
+ *To cancel scan mode call cancel.
+ *Scan mode is automatically disabled after a period of inactivity, on the card reader.
+ @param multi_scan      true - [default] multiple scan codes can be scanned, resulting in multiple scan events. Scan mode must be esplicitly cancelled.
+ *                      false - scan mode will be disabled as soon as one barcode has been detected
+ @param buttonless_mode true - [default] The operator needs to press the scan buttons to activate the scanner (during scan mode).
+ *                      false - The scanner will be turned on immediately and kept on for the duration of the scan mode.
+ @param timeoutSeconds         0 - [default] The card reader will determine when scanning should time out.
+ *                      x - The scanner will time out if x seconds of inactivity occur.
+ @return YES if request is sent and No if there is already an active operation running. 
+ */
+-(BOOL)enableScanner;
+-(BOOL)enableScanner:(BOOL)multiScan;
+-(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode;
+-(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds;
 
 /**
  Performs start of the day request.

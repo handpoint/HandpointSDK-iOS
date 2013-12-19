@@ -8,6 +8,12 @@
 @interface ResponseInfo : NSObject<ResponseInfo>
 @end
 
+@interface ScannerEventInfo : ResponseInfo<ScannerEventInfo>
+@end
+
+@interface EnableScannerResponseInfo : ResponseInfo<EnableScannerResponseInfo>
+@end
+
 @interface FinanceResponseInfo : ResponseInfo<FinanceResponseInfo>
 @end
 

@@ -20,7 +20,7 @@
 #import "Frame.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
-#import "FinanceTransactionOperation.h"
+#import "MPosOperation.h"
 #endif
 
 const NSString* kSerialNumberInfoKey = @"SerialNumber";
@@ -148,7 +148,7 @@ enum eSignConditions{
 #if !HEFT_SIMULATOR
 	}
 	else{
-		[self sendResponseError:@"Cann't create bluetooth connection"];
+		[self sendResponseError:@"Can't create bluetooth connection"];
 		self = nil;
 	}
 #endif
@@ -176,7 +176,7 @@ enum eSignConditions{
 	LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
 }
 
-- (BOOL)postOperationToQueueIfNew:(FinanceTransactionOperation*)operation{
+- (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation{
 	if([queue operationCount])
 		return NO;
 
@@ -201,7 +201,7 @@ enum eSignConditions{
                   @"</FinancialTransactionRequest>",
                   reference];
     }
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
                                                                                        connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
@@ -234,7 +234,7 @@ enum eSignConditions{
                   refrenceString, monthsString];
     }
     
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
                                                                                        connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
@@ -256,7 +256,7 @@ enum eSignConditions{
                   @"</FinancialTransactionRequest>",
                   reference];
     }
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUND_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUND_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
@@ -264,7 +264,7 @@ enum eSignConditions{
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALEV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALEV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
@@ -272,43 +272,91 @@ enum eSignConditions{
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
+-(BOOL)enableScanner{
+    return [self enableScanner:TRUE buttonMode:TRUE timeoutSeconds:0];
+}
+-(BOOL)enableScanner:(BOOL)multiScan{
+    return [self enableScanner:multiScan buttonMode:TRUE timeoutSeconds:0];
+}
+-(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
+    return [self enableScanner:multiScan buttonMode:buttonMode timeoutSeconds:0];
+}
+-(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
+    LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
+    //NSString *params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><enableScanner></enableScanner>";
+    NSString *params = @"";
+    NSString *multiScanString = @"";
+    NSString *buttonModeString = @"";
+    NSString *timeoutSecondsString = @"";
+    if(!multiScan) {
+        multiScanString = [NSString stringWithFormat:
+                          @"<multiScan>"
+                          @"false"
+                          @"</multiScan>"];
+    }
+    if(!buttonMode) {
+        buttonModeString = [NSString stringWithFormat:
+                        @"<buttonMode>"
+                        @"false"
+                        @"</buttonMode>"];
+    }
+    if(timeoutSeconds) {
+        timeoutSecondsString = [NSString stringWithFormat:
+                        @"<timeoutSeconds>"
+                        @"%d"
+                        @"</timeoutSeconds>",
+                        timeoutSeconds];
+    }
+    params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                  @"<enableScanner>"
+                  @"%@"
+                  @"%@"
+                  @"%@"
+                  @"</enableScanner>",
+                  multiScanString, buttonModeString, timeoutSecondsString];
+    
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest: new XMLCommandRequestCommand(string([params UTF8String])) connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    
+    return [self postOperationToQueueIfNew:operation];
+}
+
 - (BOOL)financeStartOfDay{
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new StartOfDayRequestCommand()
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeEndOfDay{
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new EndOfDayRequestCommand()
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeInit{
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new FinanceInitRequestCommand()
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logSetLevel:(eLogLevel)level{
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logReset{
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logGetInfo{
-	FinanceTransactionOperation* operation = [[FinanceTransactionOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
 	return [self postOperationToQueueIfNew:operation];
 }
@@ -334,7 +382,23 @@ enum eSignConditions{
 }
 
 #pragma mark IResponseProcessor
-
+- (void)sendScannerEvent:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
+    ScannerEventInfo* info = [ScannerEventInfo new];
+    info.statusCode = code;
+    info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+    info.scanCode = xml ? [xml objectForKey:@"code"] : @"";
+    LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
+	[delegate performSelectorOnMainThread:@selector(scannerEvent:) withObject:info waitUntilDone:NO];
+}
+-(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
+    EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
+	info.statusCode = code;
+	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+	info.xml = xml;
+	LOG_RELEASE(Logger::eFine, @"Scanner disabled");
+	[delegate performSelectorOnMainThread:@selector(enableScannerResponse:) withObject:info waitUntilDone:NO];
+ 
+}
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
 	ResponseInfo* info = [ResponseInfo new];
 	info.statusCode = code;
@@ -377,13 +441,41 @@ enum eSignConditions{
 	}
 }
 
--(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse{
+-(void)processXMLCommandResponseCommand:(XMLCommandResponseCommand*)pResponse{
 	int status = pResponse->GetStatus();
 	NSString* statusMessage = status < dim(statusMessages) ? statusMessages[status] : @"Unknown status";
-	[self sendResponseInfo:statusMessage code:status xml:[self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]];
+    //if enableScannerResponse
+    NSDictionary* xml;
+    if([(xml = [self getValuesFromXml:@(pResponse->GetXmlReturn().c_str()) path:@"enableScannerResponse"]) count]> 0)
+    {
+        [self sendEnableScannerResponse:statusMessage code:status xml:xml];
+    }
+
 #if HEFT_SIMULATOR
 	[NSThread sleepForTimeInterval:1.];
 #endif
+}
+
+-(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse{
+	int status = pResponse->GetStatus();
+    NSString* statusMessage = status < dim(statusMessages) ? statusMessages[status] : @"Unknown status";
+    NSDictionary* xml;
+    if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]) count]> 0)
+    {
+        [self sendResponseInfo:statusMessage code:status xml:xml];
+    }
+    else if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"]) count]> 0)
+    {
+        [self sendScannerEvent:statusMessage code:status xml:xml];
+    }
+    else if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"enableScannerResponse"]) count]> 0)
+    {
+        [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"];
+    }
+#if HEFT_SIMULATOR
+    [NSThread sleepForTimeInterval:1.];
+#endif
+    return;
 }
 
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse{

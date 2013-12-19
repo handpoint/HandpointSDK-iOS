@@ -75,6 +75,34 @@
 /**@}*/
 
 @end
+/**
+ @brief Feedback for scanner event.
+ */
+@protocol ScannerEventInfo<ResponseInfo>
+/**
+ @defgroup SEI_PROTOCOL ScannerventInfo Protocol
+ Feedback for any scanner events.
+ @{
+ */
+
+/**
+ @brief	The code that was scanned.
+ */
+@property(nonatomic,strong) NSString* scanCode;
+/**@}*/
+@end
+
+/**
+ @brief Feedback for enable scanner response.
+ */
+@protocol EnableScannerResponseInfo<ResponseInfo>
+/**
+ @defgroup SSEI_PROTOCOL EnableScannerResponseInfo Protocol
+ Feedback for any scanner events.
+ @{
+ */
+/**@}*/
+@end
 
 /**
  @brief Feedback for log request.
@@ -118,6 +146,17 @@
  */
 - (void)responseStatus:(id<ResponseInfo>)info;
 
+/**
+ Notifies that a scan has been performed. 
+ @param info    Includes scanned code, status code, status text and detatailed xml.
+ */
+- (void)scannerEvent:(id<ScannerEventInfo>)info;
+
+/**
+ Notifies that scanner has been disabled.
+ @param info    Includes status code, status text and detailed xml.
+ */
+- (void)enableScannerResponse:(id<EnableScannerResponseInfo>)info;
 /**
  Notifies about error during transaction.
  @param info	Information about current transaction status.

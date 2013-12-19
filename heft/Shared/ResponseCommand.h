@@ -93,7 +93,7 @@ public:
 	const string& GetXmlReturn(){return xml_return;}
 
 	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor){[processor processResponse:this];}
+	void ProcessResult(id<IResponseProcessor> processor){[processor processXMLCommandResponseCommand:this];}
 };
 
 

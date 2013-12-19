@@ -9,7 +9,7 @@
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
 
-#import "FinanceTransactionOperation.h"
+#import "MPosOperation.h"
 #import "HeftConnection.h"
 
 #import <CommonCrypto/CommonHMAC.h>
@@ -19,10 +19,10 @@ enum eConnectCondition{
 	, eReadyStateCondition
 };
 
-@interface FinanceTransactionOperation()<NSStreamDelegate>
+@interface MPosOperation()<NSStreamDelegate>
 @end
 
-@implementation FinanceTransactionOperation{
+@implementation MPosOperation{
 	RequestCommand*	pRequestCommand;
 	HeftConnection* connection;
 	//int maxFrameSize;
@@ -35,7 +35,7 @@ enum eConnectCondition{
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
 	if(self = [super init]){
-		LOG(@"FinanceTransactionOperation started");
+		LOG(@"mPos Operation started.");
 		pRequestCommand = aRequest;
 		connection = aConnection;
 		//maxFrameSize = frameSize;
@@ -47,7 +47,7 @@ enum eConnectCondition{
 }
 
 - (void)dealloc{
-	LOG(@"FinanceTransactionOperation ended");
+	LOG(@"mPos Operation ended.");
 	delete pRequestCommand;
 }
 
@@ -74,7 +74,7 @@ enum eConnectCondition{
 					if(pResponse->isResponse()){
 						pResponse->ProcessResult(processor);
 						if(pResponse->isResponseTo(*pRequestCommand)){
-							LOG_RELEASE(Logger::eInfo, _T("Current financial transaction completed."));
+							LOG_RELEASE(Logger::eInfo, _T("Current mPos operation completed."));
 							return;
 						}
 						continue;

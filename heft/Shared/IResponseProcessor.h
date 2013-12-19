@@ -2,6 +2,7 @@
 
 class ResponseCommand;
 class EventInfoResponseCommand;
+class XMLCommandResponseCommand;
 class FinanceResponseCommand;
 //class DebugInfoResponseCommand;
 class GetLogInfoResponseCommand;
@@ -13,6 +14,7 @@ class GetLogInfoResponseCommand;
 -(int)processSign:(NSString*)receipt;
 -(void)processResponse:(ResponseCommand*)pResponse;
 -(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse;
+-(void)processXMLCommandResponseCommand:(XMLCommandResponseCommand*)pResponse;
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse;
 //-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse;
 -(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse;
