@@ -37,6 +37,7 @@ NSString* kMpedLogName = @"mped_log.txt";
 	TransactionViewController* transactionViewController;
 	HtmlViewController* htmlViewController;
 	TextViewController* textViewController;
+    
 	UIAlertView* signAlert;
 	NSArray* defaultTabsControllers;
 	NSArray* connectedTabsControllers;
@@ -175,8 +176,17 @@ NSString* kMpedLogName = @"mped_log.txt";
 
 - (void)responseStatus:(id<ResponseInfo>)info{
 	LOG(@"responseStatus:%@", info.xml);
-	[self setTransactionStatus:info.status];
+    [self setTransactionStatus:info.status];
 	[transactionViewController allowCancel:[info.xml[@"CancelAllowed"] boolValue]];
+}
+
+- (void)scannerEvent:(id<ScannerEventInfo>)info{
+    LOG(@"scanCode:%@", info.scanCode);
+    [self setTransactionStatus:info.scanCode];
+}
+
+-(void)enableScannerResponse:(id<ResponseInfo>)info{
+    LOG(@"enableScannerResponse:%@", info.xml);
 }
 
 - (void)responseError:(id<ResponseInfo>)info{

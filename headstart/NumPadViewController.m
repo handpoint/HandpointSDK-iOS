@@ -103,6 +103,15 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 }
 
 #pragma mark IBAction
+- (IBAction)startScan {
+    [mainController.heftClient enableScanner:FALSE buttonMode:FALSE timeoutSeconds:100];
+    [mainController showTransactionViewController:eTransactionScanner];
+}
+
+- (IBAction)stopScan {
+    [mainController.heftClient cancel];
+    [mainController dismissTransactionViewController];
+}
 
 - (IBAction)sale{
 	int iAmount = [amountString intValue];

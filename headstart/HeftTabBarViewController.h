@@ -14,7 +14,8 @@ typedef enum{
 	, eTransactionVoid
 	, eTransactionFinInit
 	, eTransactionGetLog
-	, eTransactionNum
+    , eTransactionScanner
+    , eTransactionNum
 } eTransactionType;
 
 @interface HeftTabBarViewController : UITabBarController<HeftStatusReportDelegate>
@@ -22,6 +23,7 @@ typedef enum{
 @property(nonatomic, strong) id<HeftClient> heftClient;
 
 - (void)showTransactionViewController:(eTransactionType)type;
+- (void)dismissTransactionViewController;
 - (void)setTransactionStatus:(NSString*)status;
 - (void)dismissHtmlViewController;
 - (void)showTextViewControllerWithString:(NSString*)text;

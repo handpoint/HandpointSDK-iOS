@@ -37,7 +37,7 @@
 - (void)dealloc{
 }*/
 
-NSString* sufix[eTransactionNum] = {@"dsc", @"sale", @"sale", @"init", @"init", @"init"};
+NSString* sufix[eTransactionNum] = {@"dsc", @"sale", @"sale", @"init", @"init", @"init", @"init"};
 
 const int imagesCount[eTransactionNum] = {4, 2, 2, 4, 4, 4};
 
@@ -54,7 +54,9 @@ const int imagesCount[eTransactionNum] = {4, 2, 2, 4, 4, 4};
 	statusImage.animationImages = images;
 	statusImage.animationDuration = 1;
 	[statusImage startAnimating];
-	
+    
+    [self allowCancel:(type == eTransactionScanner ? TRUE : FALSE)];
+    [cancelButton setTitle:(type == eTransactionScanner ? @"Stop Scanner" : @"Cancel") forState:UIControlStateNormal];
 	cancelButton.layer.cornerRadius = 10;
 }
 
@@ -75,8 +77,16 @@ const int imagesCount[eTransactionNum] = {4, 2, 2, 4, 4, 4};
 #pragma mark IBAction
 
 - (IBAction)cancel{
-	//[(HeftTabBarViewController*)self.view.superview.nextResponder dismissTransactionViewController];
+
 	[((HeftTabBarViewController*)self.view.superview.nextResponder).heftClient cancel];
+    if(type == eTransactionScanner)
+    {
+        [self dismissViewViewController:self];
+
+    }
 }
 
+-(void)dismissViewViewController:(UIViewController*)viewController{
+    [viewController.view removeFromSuperview];
+}
 @end
