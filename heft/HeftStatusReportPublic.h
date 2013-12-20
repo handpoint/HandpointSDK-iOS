@@ -156,7 +156,7 @@
  Notifies that scanner has been disabled.
  @param info    Includes status code, status text and detailed xml.
  */
-- (void)enableScannerResponse:(id<EnableScannerResponseInfo>)info;
+- (void)responseEnableScanner:(id<EnableScannerResponseInfo>)info;
 /**
  Notifies about error during transaction.
  @param info	Information about current transaction status.

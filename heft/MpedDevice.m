@@ -396,7 +396,7 @@ enum eSignConditions{
 	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"Scanner disabled");
-	[delegate performSelectorOnMainThread:@selector(enableScannerResponse:) withObject:info waitUntilDone:NO];
+	[delegate performSelectorOnMainThread:@selector(responseEnableScanner:) withObject:info waitUntilDone:NO];
  
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
@@ -444,7 +444,7 @@ enum eSignConditions{
 -(void)processXMLCommandResponseCommand:(XMLCommandResponseCommand*)pResponse{
 	int status = pResponse->GetStatus();
 	NSString* statusMessage = status < dim(statusMessages) ? statusMessages[status] : @"Unknown status";
-    //if enableScannerResponse
+    //if responseEnableScanner
     NSDictionary* xml;
     if([(xml = [self getValuesFromXml:@(pResponse->GetXmlReturn().c_str()) path:@"enableScannerResponse"]) count]> 0)
     {
