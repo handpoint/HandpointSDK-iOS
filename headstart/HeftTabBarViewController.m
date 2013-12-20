@@ -187,6 +187,7 @@ NSString* kMpedLogName = @"mped_log.txt";
 
 -(void)enableScannerResponse:(id<ResponseInfo>)info{
     LOG(@"enableScannerResponse:%@", info.xml);
+    [self dismissTransactionViewController];
 }
 
 - (void)responseError:(id<ResponseInfo>)info{
