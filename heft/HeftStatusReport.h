@@ -8,7 +8,7 @@
 @interface ResponseInfo : NSObject<ResponseInfo>
 @end
 
-@interface ScannerEventInfo : ResponseInfo<ScannerEventInfo>
+@interface ScannerEventResponseInfo : ResponseInfo<ScannerEventResponseInfo>
 @end
 
 @interface EnableScannerResponseInfo : ResponseInfo<EnableScannerResponseInfo>

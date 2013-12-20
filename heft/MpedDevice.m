@@ -72,6 +72,19 @@ NSString* statusMessages[] = {
 	,@"Sending"
 	,@"Receiving"
 	,@"Disconnecting"
+    ,@"PIN entry completed"
+    ,@"Merchant cancelled the transaction"
+    ,@"Request invalid"
+    ,@"Card cancelled the transaction"
+    ,@"Blocked card"
+    ,@"Request for authorisation timed out"
+    ,@"Request for payment timed out"
+    ,@"Response to authorisation request timed out"
+    ,@"Response to payment request timed out"
+    ,@"Please insert card in chip reader"
+    ,@"Remove the card from the reader"
+    ,@"This device does not have a scanner"
+    ,@"Scanner event"
 };
 
 @interface MpedDevice ()<IResponseProcessor>
@@ -383,12 +396,12 @@ enum eSignConditions{
 
 #pragma mark IResponseProcessor
 - (void)sendScannerEvent:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
-    ScannerEventInfo* info = [ScannerEventInfo new];
+    ScannerEventResponseInfo* info = [ScannerEventResponseInfo new];
     info.statusCode = code;
     info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
     info.scanCode = xml ? [xml objectForKey:@"code"] : @"";
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
-	[delegate performSelectorOnMainThread:@selector(scannerEvent:) withObject:info waitUntilDone:NO];
+	[delegate performSelectorOnMainThread:@selector(responseScannerEvent:) withObject:info waitUntilDone:NO];
 }
 -(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
     EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
@@ -467,10 +480,6 @@ enum eSignConditions{
     else if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"]) count]> 0)
     {
         [self sendScannerEvent:statusMessage code:status xml:xml];
-    }
-    else if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"enableScannerResponse"]) count]> 0)
-    {
-        [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"];
     }
 #if HEFT_SIMULATOR
     [NSThread sleepForTimeInterval:1.];

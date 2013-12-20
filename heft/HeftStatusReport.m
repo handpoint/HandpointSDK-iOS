@@ -9,7 +9,7 @@
 @synthesize statusCode, status, xml;
 @end
 
-@implementation ScannerEventInfo
+@implementation ScannerEventResponseInfo
 @synthesize scanCode;
 @end
 

@@ -78,7 +78,7 @@
 /**
  @brief Feedback for scanner event.
  */
-@protocol ScannerEventInfo<ResponseInfo>
+@protocol ScannerEventResponseInfo<ResponseInfo>
 /**
  @defgroup SEI_PROTOCOL ScannerventInfo Protocol
  Feedback for any scanner events.
@@ -150,7 +150,7 @@
  Notifies that a scan has been performed. 
  @param info    Includes scanned code, status code, status text and detatailed xml.
  */
-- (void)scannerEvent:(id<ScannerEventInfo>)info;
+- (void)responseScannerEvent:(id<ScannerEventResponseInfo>)info;
 
 /**
  Notifies that scanner has been disabled.
