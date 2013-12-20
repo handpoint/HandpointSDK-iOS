@@ -185,8 +185,8 @@ NSString* kMpedLogName = @"mped_log.txt";
     [self setTransactionStatus:info.scanCode];
 }
 
--(void)enableScannerResponse:(id<ResponseInfo>)info{
-    LOG(@"enableScannerResponse:%@", info.xml);
+-(void)responseEnableScanner:(id<ResponseInfo>)info{
+    LOG(@"responseEnableScanner:%@", info.xml);
     [self dismissTransactionViewController];
 }
 
