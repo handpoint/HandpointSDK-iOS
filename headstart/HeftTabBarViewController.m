@@ -180,7 +180,7 @@ NSString* kMpedLogName = @"mped_log.txt";
 	[transactionViewController allowCancel:[info.xml[@"CancelAllowed"] boolValue]];
 }
 
-- (void)scannerEvent:(id<ScannerEventInfo>)info{
+- (void)responseScannerEvent:(id<ScannerEventResponseInfo>)info{
     LOG(@"scanCode:%@", info.scanCode);
     [self setTransactionStatus:info.scanCode];
 }
