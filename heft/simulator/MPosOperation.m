@@ -1,23 +1,23 @@
 //
-//  FinanceTransactionOperation.m
+//  MPosOperation.m
 //  headstart
 //
 
-#import "FinanceTransactionOperation.h"
+#import "MPosOperation.h"
 
 #import "StdAfx.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
 #include "HeftCmdIds.h"
 
-@implementation FinanceTransactionOperation{
+@implementation MPosOperation{
 	RequestCommand*	pRequestCommand;
 	__weak id<IResponseProcessor> processor;
 }
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
 	if(self = [super init]){
-		LOG(@"FinanceTransactionOperation started");
+		LOG(@"Operation started");
 		pRequestCommand = aRequest;
 		processor = aProcessor;
 	}
@@ -25,7 +25,7 @@
 }
 
 - (void)dealloc{
-	LOG(@"FinanceTransactionOperation ended");
+	LOG(@"Operation ended");
 	delete pRequestCommand;
 }
 
@@ -49,7 +49,7 @@
 					if(pResponse->isResponse()){
 						pResponse->ProcessResult(processor);
 						if(pResponse->isResponseTo(*pRequestCommand)){
-							LOG_RELEASE(Logger::eInfo, _T("Current financial transaction completed."));
+							LOG_RELEASE(Logger::eInfo, _T("Current operation completed."));
 							return;
 						}
 						continue;

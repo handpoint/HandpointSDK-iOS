@@ -23,6 +23,7 @@ public:
 	int GetStatus(){return iStatus;}
 };
 
+
 class EventInfoResponseCommand : public ResponseCommand{
 	string xml_details;
 
@@ -32,6 +33,17 @@ public:
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor){[processor processEventInfoResponse:this];}
+};
+
+class XMLCommandResponseCommand : public ResponseCommand{
+	string xml_details;
+    
+public:
+	XMLCommandResponseCommand(int status);
+    const string& GetXmlReturn(){return xml_details;}
+    
+	//ResponseCommand
+	void ProcessResult(id<IResponseProcessor> processor){[processor processXMLCommandResponseCommand:this];}
 };
 
 class FinanceResponseCommand : public ResponseCommand{

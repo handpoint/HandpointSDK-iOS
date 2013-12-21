@@ -34,6 +34,12 @@ public:
 	ResponseCommand* CreateResponseOnCancel()const;
 };
 
+class XMLCommandRequestCommand : public RequestCommand{
+protected:
+    /**/
+public:
+	XMLCommandRequestCommand(const string& xml);
+};
 /*class SaleRequestCommand : public FinanceRequestCommand{
 public:
 	SaleRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present);
