@@ -14,7 +14,7 @@
 #if HEFT_SIMULATOR
 #import "simulator/Shared/RequestCommand.h"
 #import "simulator/Shared/ResponseCommand.h"
-#import "simulator/FinanceTransactionOperation.h"
+#import "simulator/MPosOperation.h"
 #else
 #import "FrameManager.h"
 #import "Frame.h"
