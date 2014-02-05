@@ -153,7 +153,7 @@ public:
 
 	//IRequestProcess
 	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSignature:this];}
-	ResponseCommand* CreateResponse()const{ATLASSERT(false);return false;}
+	ResponseCommand* CreateResponse()const{ATLASSERT(false);return 0;}
 };
 
 /*class DebugEnableRequestCommand : public RequestCommand{
