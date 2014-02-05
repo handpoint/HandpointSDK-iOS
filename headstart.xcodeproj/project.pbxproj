@@ -82,7 +82,6 @@
 		2DFB463516945DD000E95CCC /* NumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFB463416945DD000E95CCC /* NumPadViewController.m */; };
 		2DFB463816946D7000E95CCC /* HeftTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFB463716946D7000E95CCC /* HeftTabBarViewController.m */; };
 		8019B1CB1836581D004C6742 /* MpedDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398959165FF88800F8FA29 /* MpedDevice.m */; };
-		80403F75184F986800742DC8 /* DTDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 80403F74184F986800742DC8 /* DTDevices.h */; };
 		80403F7C184F997D00742DC8 /* libdtdev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 80403F7B184F997D00742DC8 /* libdtdev.a */; };
 		809FF0691864D45900572A04 /* MPosOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 809FF0671864D45900572A04 /* MPosOperation.h */; };
 		809FF06A1864D45900572A04 /* MPosOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 809FF0681864D45900572A04 /* MPosOperation.m */; };
@@ -246,7 +245,6 @@
 		2DFB463416945DD000E95CCC /* NumPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NumPadViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		2DFB463616946D7000E95CCC /* HeftTabBarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftTabBarViewController.h; sourceTree = "<group>"; };
 		2DFB463716946D7000E95CCC /* HeftTabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeftTabBarViewController.m; sourceTree = "<group>"; };
-		80403F74184F986800742DC8 /* DTDevices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTDevices.h; sourceTree = "<group>"; };
 		80403F7B184F997D00742DC8 /* libdtdev.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libdtdev.a; sourceTree = "<group>"; };
 		809FF0671864D45900572A04 /* MPosOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPosOperation.h; path = simulator/MPosOperation.h; sourceTree = "<group>"; };
 		809FF0681864D45900572A04 /* MPosOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPosOperation.m; path = simulator/MPosOperation.m; sourceTree = "<group>"; };
@@ -381,7 +379,6 @@
 		2D39892A165FF23D00F8FA29 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				80403F74184F986800742DC8 /* DTDevices.h */,
 				2D39894C165FF88800F8FA29 /* debug.h */,
 				2D39892B165FF23D00F8FA29 /* heft-Prefix.pch */,
 			);
@@ -600,7 +597,6 @@
 				AD4C085E170C0C870005EDC0 /* HeftStatusReportPublic.h in Headers */,
 				AD4C085C170C0C770005EDC0 /* HeftClient.h in Headers */,
 				AD4C085D170C0C7F0005EDC0 /* HeftManager.h in Headers */,
-				80403F75184F986800742DC8 /* DTDevices.h in Headers */,
 				809FF0691864D45900572A04 /* MPosOperation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -974,11 +970,13 @@
 		2D38903B169F629E00720A15 /* Debug Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
 				INFOPLIST_FILE = "headstart/headstart-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -987,7 +985,7 @@
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug Simulator";
@@ -1012,6 +1010,7 @@
 		2D38903D169F629E00720A15 /* Debug Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
@@ -1027,6 +1026,7 @@
 					"simulator/Shared/*",
 					"simulator/*",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -1041,7 +1041,7 @@
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
 			name = "Debug Simulator";
 		};
@@ -1100,11 +1100,13 @@
 		2D389041169F62B800720A15 /* Release Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
 				INFOPLIST_FILE = "headstart/headstart-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -1113,7 +1115,7 @@
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release Simulator";
@@ -1138,6 +1140,7 @@
 		2D389043169F62B800720A15 /* Release Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
@@ -1155,6 +1158,7 @@
 					"simulator/Shared/*",
 					"simulator/*",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -1170,7 +1174,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
 			name = "Release Simulator";
 		};
@@ -1197,6 +1201,7 @@
 		2D398946165FF23E00F8FA29 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
@@ -1208,6 +1213,7 @@
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
 				INCLUDED_SOURCE_FILE_NAMES = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -1222,13 +1228,14 @@
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
 			name = Debug;
 		};
 		2D398947165FF23E00F8FA29 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
@@ -1242,6 +1249,7 @@
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
 				INCLUDED_SOURCE_FILE_NAMES = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -1257,7 +1265,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
 			name = Release;
 		};
@@ -1369,11 +1377,13 @@
 		2DEDA3AB1628B0590043AFBC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
 				INFOPLIST_FILE = "headstart/headstart-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -1382,7 +1392,7 @@
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1390,11 +1400,13 @@
 		2DEDA3AC1628B0590043AFBC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "headstart/headstart-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
 				INFOPLIST_FILE = "headstart/headstart-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
@@ -1402,7 +1414,7 @@
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
-				VALID_ARCHS = "armv7 armv7s i386";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

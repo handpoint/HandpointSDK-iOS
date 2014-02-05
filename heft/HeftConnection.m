@@ -4,7 +4,6 @@
 //
 
 #import "StdAfx.h"
-#import <DTDevices.h>
 
 #import "HeftConnection.h"
 #import "HeftRemoteDevice.h"
@@ -36,7 +35,7 @@ enum eBufferConditions{
 @synthesize ourBufferSize;
 
 - (id)initWithDevice:(HeftRemoteDevice*)aDevice{
-    NSError* error = nil;
+    //NSError* error = nil;
     EASession* eaSession = nil;
     NSInputStream* is = nil;
     NSOutputStream* os = nil;
@@ -95,7 +94,6 @@ enum eBufferConditions{
 - (void)dealloc{
     LOG(@"Disconnection from %@", device.name);
     free(tmpBuf);
-    NSError* error = nil;
     if(device){
         if(device.accessory){
             NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
@@ -104,8 +102,6 @@ enum eBufferConditions{
             [inputStream close];
             [inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
         }
-        else if(![[DTDevices sharedDevice] btDisconnect:device.address error:&error])
-            LOG(@"btDisconnect error: %@", error);
     }
 }
 

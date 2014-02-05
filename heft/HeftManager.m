@@ -3,7 +3,6 @@
 //  headstart
 //
 
-#import <DTDevices.h>
 
 #import "StdAfx.h"
 
@@ -101,16 +100,16 @@ NSString* devicesPath(){
 }
 
 #if HEFT_SIMULATOR
-- (void)asyncSimulatorInit{
-	[self connectionState:CONN_CONNECTING];
-	[self connectionState:CONN_CONNECTED];
-	[self deviceFeatureSupported:FEAT_BLUETOOTH value:YES];
-}
+// Depended on DTDevices.h
+//- (void)asyncSimulatorInit{
+//	[self connectionState:CONN_CONNECTING];
+//	[self connectionState:CONN_CONNECTED];
+//	[self deviceFeatureSupported:FEAT_BLUETOOTH value:YES];
+//}
 #endif
 
 - (void)dealloc{
 	LOG(@"HeftManager::dealloc");
-	[dtdev disconnect];
 	[[EAAccessoryManager sharedAccessoryManager] unregisterForLocalNotifications];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -162,8 +161,6 @@ NSString* devicesPath(){
 		[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 #else
 		NSError* error = NULL;
-		[dtdev btDiscoverPinpadsInBackground:&error];
-		//[dtdev btDiscoverDevicesInBackground:10 maxTime:200 codTypes:0 error:&error];
 #endif
 	}
     else
@@ -191,33 +188,33 @@ NSString* devicesPath(){
 
 const char* stateLabel[] = {"disconnected", "connecting", "connected"};
 
--(void)connectionState:(int)state {
-	LOG(@"connectionState: %s", stateLabel[state]);
-	switch (state) {
-		case CONN_DISCONNECTED:
-			break;
-		case CONN_CONNECTING:
-			hasBluetooth = NO;
-			[delegate noSources];
-			break;
-		case CONN_CONNECTED:{
-			/*NSError* __autoreleasing error = nil;
-			BOOL b = [dtdev btEnableWriteCaching:NO error:&error];
-			LOG(@"caching success:%d error: %@", b, error);*/
-		}
-	}
-}
-
--(void)deviceFeatureSupported:(int)feature value:(int)value{
-	if(feature == FEAT_BLUETOOTH && value && !hasBluetooth){
-		LOG(@"bluetooth supported");
-		hasBluetooth = YES;
-		[delegate hasSources];
-		/*NSError* __autoreleasing error = nil;
-		BOOL b = [dtdev setActiveDeviceType:DEVICE_TYPE_PINPAD error:&error];
-		LOG(@"setActiveDeviceType:DEVICE_TYPE_PINPAD success:%d error: %@", b, error);*/
-	}
-}
+//-(void)connectionState:(int)state {
+//	LOG(@"connectionState: %s", stateLabel[state]);
+//	switch (state) {
+//		case CONN_DISCONNECTED:
+//			break;
+//		case CONN_CONNECTING:
+//			hasBluetooth = NO;
+//			[delegate noSources];
+//			break;
+//		case CONN_CONNECTED:{
+//			/*NSError* __autoreleasing error = nil;
+//			BOOL b = [dtdev btEnableWriteCaching:NO error:&error];
+//			LOG(@"caching success:%d error: %@", b, error);*/
+//		}
+//	}
+//}
+//
+//-(void)deviceFeatureSupported:(int)feature value:(int)value{
+//	if(feature == FEAT_BLUETOOTH && value && !hasBluetooth){
+//		LOG(@"bluetooth supported");
+//		hasBluetooth = YES;
+//		[delegate hasSources];
+//		/*NSError* __autoreleasing error = nil;
+//		BOOL b = [dtdev setActiveDeviceType:DEVICE_TYPE_PINPAD error:&error];
+//		LOG(@"setActiveDeviceType:DEVICE_TYPE_PINPAD success:%d error: %@", b, error);*/
+//	}
+//}
 
 -(void)bluetoothDiscoverComplete:(BOOL)success{
 	Assert(success);
