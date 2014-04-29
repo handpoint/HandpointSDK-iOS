@@ -32,7 +32,7 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 
 
 @implementation HeftManager{
-	DTDevices *dtdev;
+	//DTDevices *dtdev;
 	BOOL hasBluetooth;
 	NSMutableArray* devices;
 	BOOL fNotifyForAllDevices;
@@ -141,7 +141,7 @@ NSString* devicesPath(){
 #pragma mark property
 
 - (NSString*)version{
-	return @"2.0.1";
+	return @"2.2.2";
 }
 
 - (NSMutableArray*)devicesCopy{
@@ -188,34 +188,6 @@ NSString* devicesPath(){
 
 const char* stateLabel[] = {"disconnected", "connecting", "connected"};
 
-//-(void)connectionState:(int)state {
-//	LOG(@"connectionState: %s", stateLabel[state]);
-//	switch (state) {
-//		case CONN_DISCONNECTED:
-//			break;
-//		case CONN_CONNECTING:
-//			hasBluetooth = NO;
-//			[delegate noSources];
-//			break;
-//		case CONN_CONNECTED:{
-//			/*NSError* __autoreleasing error = nil;
-//			BOOL b = [dtdev btEnableWriteCaching:NO error:&error];
-//			LOG(@"caching success:%d error: %@", b, error);*/
-//		}
-//	}
-//}
-//
-//-(void)deviceFeatureSupported:(int)feature value:(int)value{
-//	if(feature == FEAT_BLUETOOTH && value && !hasBluetooth){
-//		LOG(@"bluetooth supported");
-//		hasBluetooth = YES;
-//		[delegate hasSources];
-//		/*NSError* __autoreleasing error = nil;
-//		BOOL b = [dtdev setActiveDeviceType:DEVICE_TYPE_PINPAD error:&error];
-//		LOG(@"setActiveDeviceType:DEVICE_TYPE_PINPAD success:%d error: %@", b, error);*/
-//	}
-//}
-
 -(void)bluetoothDiscoverComplete:(BOOL)success{
 	Assert(success);
 	LOG(@"bluetooth discovery completed");
@@ -254,7 +226,7 @@ const char* stateLabel[] = {"disconnected", "connecting", "connected"};
 - (void)EAAccessoryDidDisconnect:(NSNotification*)notification{
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
 	if([accessory.protocolStrings containsObject:eaProtocol]){
-		int index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop){
+		NSUInteger index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop){
 			if(device.accessory == accessory)
 				*stop = YES;
 			return *stop;

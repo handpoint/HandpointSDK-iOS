@@ -35,7 +35,6 @@ enum eBufferConditions{
 @synthesize ourBufferSize;
 
 - (id)initWithDevice:(HeftRemoteDevice*)aDevice{
-    //NSError* error = nil;
     EASession* eaSession = nil;
     NSInputStream* is = nil;
     NSOutputStream* os = nil;
@@ -57,20 +56,7 @@ enum eBufferConditions{
         else
             LOG(@"Connection to %@ failed", aDevice.name);
     }
-/*  else{
-        //The DTDevices SDK was used for the BT dongleand is not used anymore.
-        DTDevices *dtdev = [DTDevices sharedDevice];
-        result = [dtdev btConnect:aDevice.address pin:@"0000" error:&error];
-        if(result){
-            os = dtdev.btOutputStream;
-            is = dtdev.btInputStream;
-        }
-        else
-            LOG(@"Connection to %@ error:%@", aDevice.name, error);
-    }
-*/
     if(result){
-        Assert(eaSession || !error);
         if(self = [super init]){
             LOG(@"Connected to %@", aDevice.name);
             device = aDevice;
@@ -126,7 +112,7 @@ enum eBufferConditions{
 
     while(len){
         while(![outputStream hasSpaceAvailable]);
-        int nwritten = [outputStream write:data maxLength:fmin(len, maxFrameSize)];
+        NSInteger nwritten = [outputStream write:data maxLength:fmin(len, maxFrameSize)];
         LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, len));
 
         if(nwritten <= 0)
@@ -139,7 +125,7 @@ enum eBufferConditions{
 
 - (void)writeAck:(UInt16)ack{
     while(![outputStream hasSpaceAvailable]);
-    int nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
+    NSInteger nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
     LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));
     if(nwritten != sizeof(ack))
         throw communication_exception();
@@ -166,7 +152,7 @@ enum eBufferConditions{
             }
             double minread = ourBufferSize - currentPosition;
             nread = [inputStream read:&tmpBuf[currentPosition] maxLength:minread];
-            LOG(@"%@",::dump(@"HeftConnection::ReadDataStream : ", &tmpBuf[currentPosition], nread));
+            LOG(@"%@",::dump(@"HeftConnection::ReadDataStream : ", &tmpBuf[currentPosition], (int)nread));
             currentPosition += nread;
 
         } while ([inputStream hasBytesAvailable]);
@@ -175,7 +161,7 @@ enum eBufferConditions{
     }
     else
     {
-        LOG(@"stream eventCode:%d", eventCode);
+        LOG(@"stream eventCode:%d", (int)eventCode);
     }
 }
 
@@ -183,7 +169,7 @@ enum eBufferConditions{
 
 - (int)readData:(vector<UINT8>&)buffer timeout:(eConnectionTimeout)timeout{
     //vector<UINT8>& vBuf = *reinterpret_cast<vector<UINT8>*>(buffer);
-    int initSize = buffer.size();
+    NSUInteger initSize = buffer.size();
 
     //LOG(@"readData waiting for read lock");
     if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]]){

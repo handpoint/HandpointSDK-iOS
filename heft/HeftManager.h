@@ -14,7 +14,6 @@
 @protocol HeftClient;
 @protocol HeftStatusReportDelegate;
 @class HeftRemoteDevice;
-@class DTDevices;
 
 /** 
  @brief HeftDiscoveryDelegate protocol methods
@@ -34,23 +33,23 @@
  */
 - (void)noSources;
 /**
- Notifies that new device was discovered.
- @param newDevice				Contains information(name, adress) about discovered device.
+ Notifies that new BT device was discovered.
+ @param newDevice   Contains information(name, adress) about discovered device.
  */
 - (void)didDiscoverDevice:(HeftRemoteDevice*)newDevice;
 /**
- Notifies that search of all available devices was completed.
+ Notifies that search of all available BT devices was completed.
  */
 - (void)didDiscoverFinished;
 
 /**
  Notifies that new accessory device was connected.
- @param newDevice				Contains information(name, adress) about discovered device.
+ @param newDevice   Contains information(name, adress) about discovered device.
  */
 - (void)didFindAccessoryDevice:(HeftRemoteDevice*)newDevice;
 /**
  Notifies that accessory device was disconnected.
- @param oldDevice				Contains information(name) about disconnected device.
+ @param oldDevice   Contains information(name) about disconnected device.
  */
 - (void)didLostAccessoryDevice:(HeftRemoteDevice*)oldDevice;
 
@@ -76,8 +75,8 @@
  */
 @property(nonatomic, weak) NSObject<HeftDiscoveryDelegate>* delegate;
 /**
- Start search for all available devices.
- @param fDiscoverAllDevices				Send didDiscoverDevice:(HeftRemoteDevice*)newDevice for found device, even if it's already in the stored array.
+ Start search for all available BT devices.
+ @param fDiscoverAllDevices Send didDiscoverDevice:(HeftRemoteDevice*)newDevice for found device, even if it's already in the stored array.
  */
 - (void)startDiscovery:(BOOL)fDiscoverAllDevices;
 /**
