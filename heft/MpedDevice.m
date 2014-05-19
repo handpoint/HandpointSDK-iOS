@@ -67,7 +67,7 @@ NSString* statusMessages[] = {
 	,@"Tip input"
 	,@"Shared secret invalid"
 	,@""
-	,@"Waiting for signature"
+	,@""
 	,@"Connecting"
 	,@"Sending"
 	,@"Receiving"
@@ -432,8 +432,8 @@ enum eSignConditions{
 	int result = EFT_PP_STATUS_PROCESSING_ERROR;
 
 	[delegate performSelectorOnMainThread:@selector(requestSignature:) withObject:receipt waitUntilDone:NO];
-    //If signature has not been accepted or declined after 420 sek (7 minutes) the transaction will be cancelled
-	if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:420]]){
+
+	if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eFinanceTimeout]]]){
 		result = signatureIsOk ? EFT_PP_STATUS_SUCCESS : EFT_PP_STATUS_INVALID_SIGNATURE;
 		signatureIsOk = NO;
 		[signLock unlockWithCondition:eNoSignCondition];
