@@ -146,17 +146,8 @@
  */
 - (void)responseStatus:(id<ResponseInfo>)info;
 
-/**
- Notifies that a scan has been performed. 
- @param info    Includes scanned code, status code, status text and detatailed xml.
- */
-- (void)responseScannerEvent:(id<ScannerEventResponseInfo>)info;
 
-/**
- Notifies that scanner has been disabled.
- @param info    Includes status code, status text and detailed xml.
- */
-- (void)responseEnableScanner:(id<EnableScannerResponseInfo>)info;
+
 /**
  Notifies about error during transaction.
  @param info	Information about current transaction status.
@@ -188,5 +179,27 @@
 - (void)cancelSignature;
 
 /**@}*/
+
+@optional
+
+/**
+ Notifies that a scan has been performed.
+ @param info    Includes scanned code, status code, status text and detatailed xml.
+ */
+- (void)responseScannerEvent:(id<ScannerEventResponseInfo>)info;
+
+/**
+ Notifies that the scanner mode has been disabled.
+ @param info    Includes status code, status text and detailed xml.
+ */
+-(void)responseScannerDisabled:(id<EnableScannerResponseInfo>)info;
+
+/**
+ DEPRECATED: use -(void)responseScannerDisabled:(id<EnableScannerResponseInfo>)info;
+ 
+ Notifies that the scanner mode has been disabled.
+ @param info    Includes status code, status text and detailed xml.
+ */
+- (void)responseEnableScanner:(id<EnableScannerResponseInfo>)info DEPRECATED_ATTRIBUTE;
 
 @end

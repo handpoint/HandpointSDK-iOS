@@ -179,7 +179,7 @@ enum eSignConditions{
 - (void)cancel{
 	if(![queue operationCount])
 		return;
-	LOG_RELEASE(Logger::eFine, @"Cancelling current financial transaction");
+	LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
 #if HEFT_SIMULATOR
 	[queue cancelAllOperations];
 #else
@@ -338,6 +338,9 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
+-(void)disableScanner{
+    [self cancel];
+}
 - (BOOL)financeStartOfDay{
 	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
@@ -401,7 +404,10 @@ enum eSignConditions{
     info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
     info.scanCode = xml ? [xml objectForKey:@"code"] : @"";
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
-	[delegate performSelectorOnMainThread:@selector(responseScannerEvent:) withObject:info waitUntilDone:NO];
+    if([delegate respondsToSelector:@selector(responseScannerEvent:)])
+    {
+        [delegate performSelectorOnMainThread:@selector(responseScannerEvent:) withObject:info waitUntilDone:NO];
+    }
 }
 -(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
     EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
@@ -409,8 +415,14 @@ enum eSignConditions{
 	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"Scanner disabled");
-	[delegate performSelectorOnMainThread:@selector(responseEnableScanner:) withObject:info waitUntilDone:NO];
- 
+    if([delegate respondsToSelector:@selector(responseEnableScanner:)])
+    {
+        [delegate performSelectorOnMainThread:@selector(responseEnableScanner:) withObject:info waitUntilDone:NO];
+    }
+    if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
+    {
+        [delegate performSelectorOnMainThread:@selector(responseScannerDisabled:) withObject:info waitUntilDone:NO];
+    }
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
 	ResponseInfo* info = [ResponseInfo new];

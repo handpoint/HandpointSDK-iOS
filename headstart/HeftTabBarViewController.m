@@ -168,7 +168,7 @@ NSString* kMpedLogName = @"mped_log.txt";
 		[vc updateOnHeftClient:heftClient != nil];
 
 	if(heftClient){
-		[heftClient logSetLevel:[[NSUserDefaults standardUserDefaults] integerForKey:kLogLevel]];
+		[heftClient logSetLevel:eLogDebug];
 		[self showNumPadViewBarButtonAnimated:YES];
 		self.selectedIndex = eNumPadTab;
 	}
@@ -182,11 +182,17 @@ NSString* kMpedLogName = @"mped_log.txt";
 
 - (void)responseScannerEvent:(id<ScannerEventResponseInfo>)info{
     LOG(@"scanCode:%@", info.scanCode);
-    [self setTransactionStatus:info.scanCode];
+    NSString* string = [NSString stringWithFormat:@"Code: %@",info.scanCode];
+    [self setTransactionStatus: string];
 }
 
--(void)responseEnableScanner:(id<ResponseInfo>)info{
+/*-(void)responseEnableScanner:(id<ResponseInfo>)info{
     LOG(@"responseEnableScanner:%@", info.xml);
+    [self dismissTransactionViewController];
+}*/
+
+-(void)responseScannerDisabled:(id<ResponseInfo>)info{
+    LOG(@"responseScannerDisabled:%@", info.xml);
     [self dismissTransactionViewController];
 }
 

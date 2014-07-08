@@ -109,16 +109,15 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 }
 
 - (IBAction)stopScan {
-    [mainController.heftClient cancel];
-    [mainController dismissTransactionViewController];
+    [mainController.heftClient disableScanner];
+    //[mainController dismissTransactionViewController];
 }
 
 - (IBAction)sale{
 	int iAmount = [amountString intValue];
 	if(!iAmount)
 		return;
-	//[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
-    [mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES reference:NULL divideBy:[monthsTextfield text]];
+	[mainController.heftClient saleWithAmount:iAmount currency:currency[[[NSUserDefaults standardUserDefaults] integerForKey:kUserCurrencyKey]] cardholder:YES];
 	[mainController showTransactionViewController:eTransactionSale];
 	amountUsed = YES;
 }
