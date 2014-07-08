@@ -118,7 +118,7 @@ typedef enum{
  Places the card reader in a scan only mode.
  *The card reader then waits for the scan button(s) to be pressed and once detected will activate the scanner hardware.
  *When a scanned code is detected the card reader will emit scan event notifications back to the caller, which the caller application can catch and display to the operator.
- *To cancel scan mode call disableScanner.
+ *To stop scan mode call disableScanner.
  *Scan mode is automatically disabled after a period of inactivity, on the card reader.
  @param multi_scan      true - [default] multiple scan codes can be scanned, resulting in multiple scan events. Scan mode must be esplicitly cancelled.
  *                      false - scan mode will be disabled as soon as one barcode has been detected
