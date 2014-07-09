@@ -410,17 +410,22 @@ enum eSignConditions{
     }
 }
 -(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
-    EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
-	info.statusCode = code;
-	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-	info.xml = xml;
-	LOG_RELEASE(Logger::eFine, @"Scanner disabled");
+    LOG_RELEASE(Logger::eFine, @"Scanner disabled");
+    
     if([delegate respondsToSelector:@selector(responseEnableScanner:)])
     {
+        EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
+        info.statusCode = code;
+        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+        info.xml = xml;
         [delegate performSelectorOnMainThread:@selector(responseEnableScanner:) withObject:info waitUntilDone:NO];
     }
     if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
     {
+        ScannerDisabledResponseInfo* info = [ScannerDisabledResponseInfo new];
+        info .statusCode =  code;
+        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+        info.xml = xml;
         [delegate performSelectorOnMainThread:@selector(responseScannerDisabled:) withObject:info waitUntilDone:NO];
     }
 }

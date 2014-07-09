@@ -11,7 +11,11 @@
 @interface ScannerEventResponseInfo : ResponseInfo<ScannerEventResponseInfo>
 @end
 
+DEPRECATED_ATTRIBUTE
 @interface EnableScannerResponseInfo : ResponseInfo<EnableScannerResponseInfo>
+@end
+
+@interface ScannerDisabledResponseInfo : ResponseInfo<ScannerDisabledResponseInfo>
 @end
 
 @interface FinanceResponseInfo : ResponseInfo<FinanceResponseInfo>

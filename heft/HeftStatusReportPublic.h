@@ -93,11 +93,24 @@
 @end
 
 /**
- @brief Feedback for enable scanner response.
+ @brief Deprecated: Feedback for enable scanner response.
  */
+DEPRECATED_ATTRIBUTE
 @protocol EnableScannerResponseInfo<ResponseInfo>
 /**
  @defgroup SSEI_PROTOCOL EnableScannerResponseInfo Protocol
+ Feedback for any scanner events.
+ @{
+ */
+/**@}*/
+@end
+
+/**
+ @brief Feedback for enable scanner response.
+ */
+@protocol ScannerDisabledResponseInfo<ResponseInfo>
+/**
+ @defgroup SSEI_PROTOCOL ScannerDisabledResponseInfo Protocol
  Feedback for any scanner events.
  @{
  */
@@ -192,10 +205,10 @@
  Notifies that the scanner mode has been disabled.
  @param info    Includes status code, status text and detailed xml.
  */
--(void)responseScannerDisabled:(id<EnableScannerResponseInfo>)info;
+-(void)responseScannerDisabled:(id<ScannerDisabledResponseInfo>)info;
 
 /**
- DEPRECATED: use -(void)responseScannerDisabled:(id<EnableScannerResponseInfo>)info;
+ DEPRECATED: use -(void)responseScannerDisabled:(id<ScannerDisabledResponseInfo>)info;
  
  Notifies that the scanner mode has been disabled.
  @param info    Includes status code, status text and detailed xml.

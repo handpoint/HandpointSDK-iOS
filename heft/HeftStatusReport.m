@@ -16,6 +16,9 @@
 @implementation EnableScannerResponseInfo
 @end
 
+@implementation ScannerDisabledResponseInfo
+@end
+
 @implementation FinanceResponseInfo
 @synthesize authorisedAmount, transactionId, customerReceipt, merchantReceipt;
 @end
