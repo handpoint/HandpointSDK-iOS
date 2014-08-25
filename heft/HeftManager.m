@@ -144,6 +144,14 @@ NSString* devicesPath(){
 	return @"2.2.3";
 }
 
+- (NSString*)getSDKVersion{
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+}
+
+- (NSString*)GetBuildNumber{
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
+}
+
 - (NSMutableArray*)devicesCopy{
 	NSMutableArray* result = [eaDevices mutableCopy];
 	if(hasBluetooth)

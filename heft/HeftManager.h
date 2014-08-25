@@ -96,9 +96,20 @@
 + (HeftManager*)sharedManager;
 
 /** 
+ DEPRECATED: use -(NSString*)getSDKVersion;
  @brief Current HeftManager version. 
  */
-@property(nonatomic, readonly) NSString* version;
+@property(nonatomic, readonly) NSString* version DEPRECATED_ATTRIBUTE;
+
+/**
+ @brief Current Handpoint SDK version.
+ */
+@property(nonatomic, readonly) NSString* getSDKVersion;
+
+/**
+ @brief Current build number.
+ */
+@property(nonatomic, readonly) NSString* getBuildNumber;
 
 /**
  Performs hasSources request.
