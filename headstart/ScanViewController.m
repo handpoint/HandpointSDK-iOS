@@ -22,6 +22,8 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 	__weak IBOutlet UIButton* connectButton;
 	__weak IBOutlet UIButton* resetButton;
 	__weak IBOutlet UIPickerView* deviceList;
+    __weak IBOutlet UILabel *versionNumber;
+    __weak IBOutlet UILabel *buildNumber;
 	NSMutableArray* devices;
 	__weak HeftTabBarViewController* mainController;
 	UINib* pickerElement;
@@ -45,6 +47,9 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 	devices = manager.devicesCopy;
 	BOOL enabled = [devices count] != 0;
 	connectButton.enabled = enabled;
+    versionNumber.text = [manager getSDKVersion];
+    buildNumber.text = [manager getBuildNumber];
+    
 	
 //	if(!manager.hasSources){
 //		discoveryButton.enabled = NO;
