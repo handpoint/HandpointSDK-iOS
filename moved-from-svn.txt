@@ -1,0 +1,3 @@
+This repository was moved from svn to git.
+The old svn repository can be found here: https://fisheye.handpoint.com/fisheye/browse/headstart/headstart-iOS
+
