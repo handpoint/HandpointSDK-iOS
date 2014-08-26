@@ -104,7 +104,7 @@ NSMutableString* formatAmountString(NSString* currency, NSString* amountString){
 
 #pragma mark IBAction
 - (IBAction)startScan {
-    [mainController.heftClient enableScanner:multiScan.on buttonMode:buttonMode.on];
+    [mainController.heftClient enableScannerWithMultiScan:[multiScan isOn] buttonMode:[buttonMode isOn]];
     [mainController showTransactionViewController:eTransactionScanner];
 }
 
