@@ -238,23 +238,9 @@ NSString* ssString = @"010203040506070809101112131415161718192021222324252627282
 	[self disconnect];
 	connectButton.enabled = NO;
 	currentDevice = devices[[deviceList selectedRowInComponent:0]];
-    NSString* uxiSSStr = @"07110E8D964A4A2E66202EA6AD746F14536FBA0566E2E047B6A85E5B01349274";
-    NSData* uxiSS;
-    NSMutableData* ssTmp = [NSMutableData data];
-    
-    for (int i = 0 ; i < 32; i++)
-    {
-        NSRange range = NSMakeRange (i*2, 2);
-        NSString *bytes = [uxiSSStr substringWithRange:range];
-        NSScanner* scanner = [NSScanner scannerWithString:bytes];
-        unsigned int intValue;
-        [scanner scanHexInt:&intValue];
-        [ssTmp appendBytes:&intValue length:1];
-    }
-    uxiSS = ssTmp;
+
     [[HeftManager sharedManager] clientForDevice:currentDevice sharedSecretString:ssString delegate:mainController];
 	//[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
-    //[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:uxiSS delegate:mainController];
 }
 
 @end
