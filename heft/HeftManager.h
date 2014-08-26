@@ -109,7 +109,7 @@
 /**
  @brief Current build number.
  */
-@property(nonatomic, readonly) NSString* getBuildNumber;
+@property(nonatomic, readonly) NSString* getSDKBuildNumber;
 
 /**
  Performs hasSources request.

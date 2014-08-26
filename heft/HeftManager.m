@@ -148,7 +148,7 @@ NSString* devicesPath(){
     return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 }
 
-- (NSString*)getBuildNumber{
+- (NSString*)getSDKBuildNumber{
     return [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey];
 }
 
