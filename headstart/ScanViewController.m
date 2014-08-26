@@ -96,6 +96,7 @@ NSString*  const kCurrentDeviceName = @"currentDeviceName";
 
 uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
 				, 0x17, 0x18, 0x19, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30, 0x31, 0x32};
+NSString* ssString = @"0102030405060708091011121314151617181920212223242526272829303132";
 
 - (IBAction)connect{
 	[self executeConnect];
@@ -251,8 +252,8 @@ uint8_t ss[32] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x
         [ssTmp appendBytes:&intValue length:1];
     }
     uxiSS = ssTmp;
-    
-	[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
+    [[HeftManager sharedManager] clientForDevice:currentDevice sharedSecretString:ssString delegate:mainController];
+	//[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
     //[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:uxiSS delegate:mainController];
 }
 
