@@ -116,6 +116,7 @@ typedef enum{
 
 /**
  Places the card reader in a scan only mode.
+ Please use the enableScannerWithMultiScan: instead of enableScanner:
  *The card reader then waits for the scan button(s) to be pressed and once detected will activate the scanner hardware.
  *When a scanned code is detected the card reader will emit scan event notifications back to the caller, which the caller application can catch and display to the operator.
  *To stop scan mode call disableScanner.
@@ -129,9 +130,13 @@ typedef enum{
  @return YES if request is sent and No if there is already an active operation running. 
  */
 -(BOOL)enableScanner;
--(BOOL)enableScanner:(BOOL)multiScan;
--(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode;
--(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds;
+-(BOOL)enableScanner:(BOOL)multiScan DEPRECATED_ATTRIBUTE;
+-(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode DEPRECATED_ATTRIBUTE;
+-(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds DEPRECATED_ATTRIBUTE;
+
+-(BOOL)enableScannerWithMultiScan:(BOOL)multiScan;
+-(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode;
+-(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds;
 
 /**
  Disables the scan mode on the card reader if it's possible.
