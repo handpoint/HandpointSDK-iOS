@@ -145,11 +145,11 @@ NSString* devicesPath(){
 }
 
 - (NSString*)getSDKVersion{
-    return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+	return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 }
 
 - (NSString*)getSDKBuildNumber{
-    return [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey];
+	return [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey];
 }
 
 - (NSMutableArray*)devicesCopy{
