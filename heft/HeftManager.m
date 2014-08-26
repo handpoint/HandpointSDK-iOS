@@ -137,6 +137,10 @@ NSString* devicesPath(){
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
 	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:) toTarget:self withObject:@[device, sharedSecret, aDelegate]];
 }
+- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
+	NSData* sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
+	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:) toTarget:self withObject:@[device, sharedSecretData, aDelegate]];
+}
 
 #pragma mark property
 
@@ -244,5 +248,32 @@ const char* stateLabel[] = {"disconnected", "connecting", "connected"};
 		[eaDevices removeObjectAtIndex:index];
 	}
 }
+
+#pragma mark Utilities
+
+// Convert Shared secret from NSString to NSData
+-(NSData*)SharedSecretDataFromString:(NSString*)sharedSecretString;
+{
+	NSInteger sharedSecretLength = 64; //Shared secret string length
+	NSMutableData* data = [NSMutableData data];
+	//Check if shared secret has correct length, othervise we create a string of zeros with the correct length. That will result in a "shared secret invalid"
+	if ([sharedSecretString length] != sharedSecretLength)
+	{
+		LOG(@"Shared secret string must be exactly %ld characters.", (long)sharedSecretLength);
+		sharedSecretString = [@"0" stringByPaddingToLength:sharedSecretLength withString:@"0" startingAtIndex:0];
+	}
+	
+	for (int i = 0 ; i < 32; i++) {
+		NSRange range = NSMakeRange (i*2, 2);
+		NSString *bytes = [sharedSecretString substringWithRange:range];
+		NSScanner* scanner = [NSScanner scannerWithString:bytes];
+		unsigned int intValue;
+		[scanner scanHexInt:&intValue];
+		[data appendBytes:&intValue length:1];
+	}
+    return data;
+}
+
+
 
 @end
