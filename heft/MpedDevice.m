@@ -291,24 +291,24 @@ enum eSignConditions{
 }
 
 -(BOOL)enableScanner{
-    return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
+	return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
+	return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
+	return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 
 //Deprecated enable scanner function names
 -(BOOL)enableScannerWith:(BOOL)multiScan{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
+	return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
+	return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
+	return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
 }
 
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
