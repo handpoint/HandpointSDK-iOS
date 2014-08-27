@@ -239,7 +239,7 @@ NSString* ssString = @"010203040506070809101112131415161718192021222324252627282
 	connectButton.enabled = NO;
 	currentDevice = devices[[deviceList selectedRowInComponent:0]];
 
-    [[HeftManager sharedManager] clientForDevice:currentDevice sharedSecretString:ssString delegate:mainController];
+	[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecretString:ssString delegate:mainController];
 	//[[HeftManager sharedManager] clientForDevice:currentDevice sharedSecret:[[NSData alloc] initWithBytes:ss length:sizeof(ss)] delegate:mainController];
 }
 

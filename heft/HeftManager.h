@@ -119,17 +119,17 @@
 
 /**
  Starts creation of a connection to the specified device.
- @param device				Device to be connected.
- @param sharedSecret		Shared Secret information in NSData format
- @param aDelegate			Delegate which will be perform HeftStatusReportDelegate notifications.
+ @param device					Device to be connected.
+ @param sharedSecret			Shared Secret information in NSData format
+ @param aDelegate				Delegate which will be perform HeftStatusReportDelegate notifications.
  */
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
 
 /**
  Starts creation of a connection to the specified device.
- @param device				Device to be connected.
- @param sharedSecretString	Shared Secret information in string format
- @param aDelegate			Delegate which will be perform HeftStatusReportDelegate notifications.
+ @param device					Device to be connected.
+ @param sharedSecretString		Shared Secret information in string format
+ @param aDelegate				Delegate which will be perform HeftStatusReportDelegate notifications.
  */
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
 
