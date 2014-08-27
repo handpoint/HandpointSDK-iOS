@@ -301,7 +301,7 @@ enum eSignConditions{
 }
 
 //Deprecated enable scanner function names
--(BOOL)enableScannerWith:(BOOL)multiScan{
+-(BOOL)enableScanner:(BOOL)multiScan{
 	return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
