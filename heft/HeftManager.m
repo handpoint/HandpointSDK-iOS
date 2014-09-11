@@ -145,15 +145,33 @@ NSString* devicesPath(){
 #pragma mark property
 
 - (NSString*)version{
-	return @"2.2.3";
+	return @"2.3.0";
 }
 
 - (NSString*)getSDKVersion{
-	return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+	
+	NSString* SDKVersion;
+	if([[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"]) {
+			SDKVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+	}
+	else {
+		SDKVersion = [self version];
+	}
+	
+	return SDKVersion;
 }
 
 - (NSString*)getSDKBuildNumber{
-	return [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey];
+	NSString* SDKBuildNumber;
+	
+	if([[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey]) {
+		SDKBuildNumber = [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey];
+	}
+	else
+	{
+		SDKBuildNumber = @"n/a";
+	}
+	return SDKBuildNumber;
 }
 
 - (NSMutableArray*)devicesCopy{
