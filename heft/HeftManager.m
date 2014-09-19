@@ -70,7 +70,7 @@ NSString* devicesPath(){
 		eaDevices = [NSMutableArray new];
 
 #if HEFT_SIMULATOR
-		[self performSelectorOnMainThread:@selector(asyncSimulatorInit) withObject:nil waitUntilDone:NO];
+		//[self performSelectorOnMainThread:@selector(asyncSimulatorInit) withObject:nil waitUntilDone:NO];
 #else
         //iPod does not work with PPAD when the DTDevices lib is used. Dtdev is not able to connect to our EFT client, the thread is not able to finish and the app becomes unresponsive.
         //dtdev = [DTDevices sharedDevice];
@@ -184,14 +184,14 @@ NSString* devicesPath(){
 #pragma mark HeftDiscovery
 
 - (void)startDiscovery:(BOOL)fDiscoverAllDevices{
+#if HEFT_SIMULATOR
+	[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
+#else
+	NSError* error = NULL;
+
 	if(hasBluetooth){
 		LOG(@"bluetooth discovery started");
 		fNotifyForAllDevices = fDiscoverAllDevices;
-#if HEFT_SIMULATOR
-		[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
-#else
-		NSError* error = NULL;
-#endif
 	}
     else
     {
@@ -200,6 +200,7 @@ NSString* devicesPath(){
             [delegate didDiscoverFinished];
         }];
     }
+#endif
 }
 
 #if HEFT_SIMULATOR
