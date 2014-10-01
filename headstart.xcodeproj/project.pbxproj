@@ -548,9 +548,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../Library\"",
-					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
-					"\"$(SRCROOT)/extLibraries\"",
 					"\"$(SRCROOT)\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -640,9 +637,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../Library\"",
-					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
-					"\"$(SRCROOT)/extLibraries\"",
 					"\"$(SRCROOT)\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -695,9 +689,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../Library\"",
-					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
-					"\"$(SRCROOT)/extLibraries\"",
 					"\"$(SRCROOT)\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -731,9 +722,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../Library\"",
-					"\"$(SRCROOT)/../../../../Desktop/Handpoint-iOS-SDK-v2.0.0/extLibraries\"",
-					"\"$(SRCROOT)/extLibraries\"",
 					"\"$(SRCROOT)\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
