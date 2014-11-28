@@ -15,7 +15,7 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 	switch(ntohl(pResponse->command)){
 	case CMD_INIT_RSP:
 		ATLASSERT(buf.size() >= sizeof(ResponsePayload));
-		return new InitResponseCommand(pResponse, buf.size());
+		return new InitResponseCommand(pResponse, (UINT32)buf.size());
 	case CMD_FIN_SALE_RSP:
 	case CMD_FIN_REFUND_RSP:
 	case CMD_FIN_SALEV_RSP:
@@ -24,31 +24,34 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 	case CMD_FIN_ENDDAY_RSP:
 	case CMD_FIN_INIT_RSP:
 		ATLASSERT(buf.size() >= sizeof(ResponsePayload));
-		return new FinanceResponseCommand(pResponse, buf.size());
+		return new FinanceResponseCommand(pResponse, (UINT32)buf.size(), NO);
+    case CMD_FIN_RCVRD_TXN_RSLT_RSP:
+        ATLASSERT(buf.size() >= sizeof(ResponsePayload));
+        return new FinanceResponseCommand(pResponse, (UINT32)buf.size(), YES);
 	case CMD_HOST_CONN_REQ:
 	case CMD_HOST_SEND_REQ:
 	case CMD_HOST_RECV_REQ:
 	case CMD_HOST_DISC_REQ:
-		return reinterpret_cast<ResponseCommand*>(HostRequestCommand::Create(pResponse, buf.size()));
+		return reinterpret_cast<ResponseCommand*>(HostRequestCommand::Create(pResponse, (UINT32)buf.size()));
 	case CMD_STAT_SIGN_REQ:
-		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse, buf.size()));
+		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse, (UINT32)buf.size()));
 	case CMD_STAT_CHALENGE_REQ:
-		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse, buf.size()));
+		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse, (UINT32)buf.size()));
 	/*case CMD_DBG_INFO_RSP:
 		return new DebugInfoResponseCommand(pResponse);*/
 	case CMD_LOG_GET_INF_RSP:
-		return new GetLogInfoResponseCommand(pResponse, buf.size());
+		return new GetLogInfoResponseCommand(pResponse, (UINT32)buf.size());
 	case CMD_STAT_INFO_RSP:
-		return new EventInfoResponseCommand(pResponse, buf.size());
+		return new EventInfoResponseCommand(pResponse, (UINT32)buf.size());
 	case CMD_IDLE_RSP:
-		return new IdleResponseCommand(pResponse, buf.size());
+		return new IdleResponseCommand(pResponse, (UINT32)buf.size());
 	case CMD_DBG_ENABLE_RSP:
 	case CMD_DBG_DISABLE_RSP:
 	case CMD_DBG_RESET_RSP:
 	case CMD_LOG_SET_LEV_RSP:
 	case CMD_LOG_RST_INF_RSP:
 		ATLASSERT(buf.size() >= sizeof(ResponsePayload));
-		return new ResponseCommand(pResponse, buf.size());
+		return new ResponseCommand(pResponse, (UINT32)buf.size());
 	case CMD_XCMD_RSP:
 		return new XMLCommandResponseCommand(pResponse, buf.size());
 	default:
@@ -107,7 +110,7 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, UINT32
 	}
 }
 
-XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size) : ResponseCommand(pPayload, payload_size){
+XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size) : ResponseCommand(pPayload, (UINT32)payload_size){
 		const XMLCommandPayload* pResponse = static_cast<const XMLCommandPayload*>(pPayload);
 		xml_return.assign(pResponse->xml_return, payload_size - sizeof(ResponsePayload));
 }
@@ -128,9 +131,11 @@ EventInfoResponseCommand::EventInfoResponseCommand(const ResponsePayload* pPaylo
 	xml_details.assign(pResponse->xml_details, xml_len);
 }
 
-FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize)
+FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize, BOOL recoveredTransaction)
 	: ResponseCommand(pPayload, payloadSize)
-	, financial_status(0), authorised_amount(0)
+	, financial_status(0)
+    , authorised_amount(0)
+    , recovered_transaction(recoveredTransaction)
 {
 	if(GetLength() > sizeof(FinancePayload) - sizeof(ResponsePayload)){
 		const FinancePayload* pResponse = static_cast<const FinancePayload*>(pPayload);

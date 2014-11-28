@@ -35,14 +35,6 @@ typedef SInt64 __int64;
 //#define LOG_RELEASE(x, ...) NSLog(__VA_ARGS__)
 #define _T(x) @ x
 
-enum eTransactionStatus{
-	eTransactionNone
-	, eTransactionApproved
-	, eTransactionDeclined
-	, eTransactionProcessed
-	, eTransactionNotProcessed
-};
-
 //NSString* dump(NSString* prefix, const void* const pData, int len);
 #import "Logger.h"
 #import "Exception.h"

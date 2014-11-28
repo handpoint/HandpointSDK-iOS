@@ -1,10 +1,9 @@
 #pragma once
+#include "CmdIds.h"
 #include "Command.h"
 #include "IResponseProcessor.h"
 
 class RequestCommand;
-
-enum eTransactionStatus;
 
 class ResponseCommand : public Command{
 	UINT32 command_hsb;
@@ -137,6 +136,7 @@ class FinanceResponseCommand : public ResponseCommand{
 	string merchant_receipt;
 	string customer_receipt;
 	string xml_details;
+    BOOL recovered_transaction;
 
 #pragma pack(push, 1)
 	struct FinancePayload : ResponsePayload{
@@ -148,13 +148,15 @@ class FinanceResponseCommand : public ResponseCommand{
 #pragma pack(pop)
 
 public:
-	FinanceResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
-	eTransactionStatus GetFinancialStatus(){return eTransactionStatus(financial_status);}
+	FinanceResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize, BOOL recoveredTransaction);
+    UINT8 GetFinancialStatus(){return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;}
+    BOOL isRestarting(){return financial_status & EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK ? YES : NO;}
 	UINT32 GetAmount(){return authorised_amount;}
 	const string& GetCustomerReceipt(){return customer_receipt;}
 	const string& GetMerchantReceipt(){return merchant_receipt;}
 	const string& GetTransID(){return trans_id;}
 	const string& GetXmlDetails(){return xml_details;}
+    BOOL isRecoveredTransaction(){return recovered_transaction;}
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor){[processor processFinanceResponse:this];}

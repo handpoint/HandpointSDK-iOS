@@ -115,6 +115,13 @@ typedef enum{
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction;
 
 /**
+ Fetches a pending transaction result from the card reader.
+ Note: A pending transaction result is retained by the card reader if a disconnect occurs between card reader and app before the transaction result can be delivered during a SALE, REFUND or VOID processing.
+ @return YES if request is sent and NO if there is active transaction already.
+ */
+- (BOOL)retrievePendingTransaction;
+
+/**
  Places the card reader in a scan only mode.
  Please use the enableScannerWithMultiScan: instead of enableScanner:
  *The card reader then waits for the scan button(s) to be pressed and once detected will activate the scanner hardware.
@@ -191,6 +198,12 @@ typedef enum{
  */
 @property(nonatomic, readonly) NSDictionary* mpedInfo;
 
+/**
+ Indicates whether a transaction result is pending on the card reader.
+ Note: A pending transaction result is retained by the card reader if a disconnect occurs between card reader and app before the transaction result can be delivered during a SALE, REFUND or VOID processing.
+ */
+@property(nonatomic, readonly) BOOL isTransactionResultPending;
+
 /**@}*/
 
 @end
@@ -231,8 +244,8 @@ extern const NSString* kAppNameInfoKey;
  */
 extern const NSString* kAppVersionInfoKey;
 /** 
- XML Details.
+ XML Details as text.
  */
-extern const NSString* kXMLDetailsInfoKey;
+extern const NSString* kXMLDetailsInfoKey DEPRECATED_ATTRIBUTE;
 
 /**@}*/

@@ -20,7 +20,7 @@
 @end
 
 @implementation FinanceResponseInfo
-@synthesize authorisedAmount, transactionId, customerReceipt, merchantReceipt;
+@synthesize financialResult, isRestarting, authorisedAmount, transactionId, customerReceipt, merchantReceipt;
 @end
 
 @implementation LogInfo

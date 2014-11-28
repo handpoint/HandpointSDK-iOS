@@ -53,7 +53,7 @@ IdleRequestCommand::IdleRequestCommand() : RequestCommand(ciMinSize, CMD_IDLE_RE
 }*/
 
 XMLCommandRequestCommand::XMLCommandRequestCommand(const string& xml) 
-	: RequestCommand(xml.size(), CMD_XCMD_REQ)
+	: RequestCommand((int)xml.size(), CMD_XCMD_REQ)
 {
 	XMLCommandPayload* pRequest = GetPayload<XMLCommandPayload>();
 	memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
@@ -69,7 +69,7 @@ bool isNumber(const string& str)
 FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml) 
 : RequestCommand(
     ciMinSize
-    + (xml.length() // this conditional so the "if( trans_id_length || xml_length )" statement below won't corrupt the heap
+    + (int)(xml.length() // this conditional so the "if( trans_id_length || xml_length )" statement below won't corrupt the heap
         ? (1 + 4 + xml.length() + trans_id.length())
         : (trans_id.length()
             ? (1 + trans_id.length())
@@ -119,8 +119,8 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
 	pRequest->card_present = card_present;
 
     // optional fields
-	trans_id_length = trans_id.length();	
-	xml_length = xml.length();
+	trans_id_length = (int)trans_id.length();
+	xml_length = (int)xml.length();
 
     if( trans_id_length || xml_length )
     {
@@ -212,7 +212,7 @@ ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, UINT32 payload
 	data_len = htons(pRequest->data_len);
 }
 
-ReceiveResponseCommand::ReceiveResponseCommand(const vector<UINT8>& payload) : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + payload.size()){
+ReceiveResponseCommand::ReceiveResponseCommand(const vector<UINT8>& payload) : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)payload.size()){
 	ReceiveResponsePayload* pPayload = GetPayload<ReceiveResponsePayload>();
 	pPayload->data_len = htonl(payload.size());
 	memcpy(pPayload->data, &payload[0], payload.size());
@@ -243,7 +243,7 @@ ChallengeRequestCommand::ChallengeRequestCommand(const void* payload, UINT32 pay
 }
 
 ChallengeResponseCommand::ChallengeResponseCommand(const vector<UINT8>& mx, const vector<UINT8>& zx) 
-	: HostResponseCommand(CMD_STAT_CHALENGE_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + mx.size() + zx.size())
+	: HostResponseCommand(CMD_STAT_CHALENGE_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)mx.size() + (int)zx.size())
 {
 	ChallengeResponsePayload* pPayload = GetPayload<ChallengeResponsePayload>();
 	pPayload->mx_len = ntohs(mx.size());

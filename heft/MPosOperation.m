@@ -165,11 +165,11 @@ enum eConnectCondition{
 	LOG(_T("Recv :%d bytes, %ds timeout"), pRequest->GetDataLen(), pRequest->GetTimeout());
 
 	vector<UINT8> data;
-	int stepSize = 4096	;
-	int nrecv = 0;
+	int stepSize = 4096;
+	long nrecv = 0;
 	//while([recvStream hasBytesAvailable]){
 	do{
-		int old_size = data.size();
+        vector<UINT8>::size_type old_size = data.size();
 		data.resize(old_size + stepSize);
 		nrecv = [recvStream read:&data[old_size] maxLength:stepSize];
 		if(nrecv < 0)
@@ -179,7 +179,7 @@ enum eConnectCondition{
 	}while(nrecv);
 
 	LOG_RELEASE(Logger::eFine, _T("Response from bureau (length:%d): "), data.size());
-	return data.size() && nrecv >= 0 ? new ReceiveResponseCommand(data) : new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVEING_ERROR);
+	return data.size() && nrecv >= 0 ? new ReceiveResponseCommand(data) : new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVING_ERROR);
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{

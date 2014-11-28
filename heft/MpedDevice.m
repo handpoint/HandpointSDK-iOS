@@ -106,6 +106,7 @@ enum eSignConditions{
 }
 
 @synthesize mpedInfo;
+@synthesize isTransactionResultPending;
 
 - (id)initWithConnection:(HeftConnection*)aConnection sharedSecret:(NSData*)aSharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
 #if !HEFT_SIMULATOR
@@ -140,7 +141,23 @@ enum eSignConditions{
 				if(!pResponse)
 					throw communication_exception();
 				connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
-				mpedInfo = @{
+
+                NSDictionary* xml;
+                if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"InitResponse"]) count]> 0)
+                {
+                    NSString* trp = [xml objectForKey:@"TransactionResultPending"];
+                    isTransactionResultPending = ((trp != nil) && [trp isEqualToString:@"true"]) ? YES : NO;
+                }
+                else
+                {
+                    isTransactionResultPending = NO;
+                }
+                /*
+                 I´ve seriously debated whether or not to create a new dictionary object in the MpedDevice interface, to hold the xml details from the above xml details parse, and reached the conclusion that currently there is no need for it as mpedInfo already provides all important information.
+                 But, in preparation for the future, I´ve decided that we should deprecate the kXMLDetailsInfoKey tag.
+                 */
+
+                mpedInfo = @{
 					kSerialNumberInfoKey:@(pResponse->GetSerialNumber().c_str())
 					, kPublicKeyVersionInfoKey:@(pResponse->GetPublicKeyVer())
 					, kEMVParamVersionInfoKey:@(pResponse->GetEmvParamVer())
@@ -214,8 +231,9 @@ enum eSignConditions{
                   @"</FinancialTransactionRequest>",
                   reference];
     }
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), (UINT32)amount, present, string(), string([params UTF8String]))
                                                                                        connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
@@ -247,8 +265,11 @@ enum eSignConditions{
                   refrenceString, monthsString];
     }
     
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
-                                                                                       connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, string([currency UTF8String]), (UINT32)amount, present, string(), string([params UTF8String]))
+                                                           connection:connection
+                                                     resultsProcessor:self
+                                                         sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
@@ -269,25 +290,45 @@ enum eSignConditions{
                   @"</FinancialTransactionRequest>",
                   reference];
     }
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUND_REQ, string([currency UTF8String]), amount, present, string(), string([params UTF8String]))
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUND_REQ, string([currency UTF8String]), (UINT32)amount, present, string(), string([params UTF8String]))
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALEV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALEV_REQ, string([currency UTF8String]), (UINT32)amount, present, string([transaction UTF8String]), string())
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
 	LOG_RELEASE(Logger::eInfo, @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ, string([currency UTF8String]), amount, present, string([transaction UTF8String]), string())
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ, string([currency UTF8String]), (UINT32)amount, present, string([transaction UTF8String]), string())
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
+}
+
+- (BOOL)retrievePendingTransaction{
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT
+                                                                                                , "0" // must be like this or we throw an invalid currency exception
+                                                                                                , 0
+                                                                                                , YES
+                                                                                                , string()
+                                                                                                , string())
+                                                           connection:connection
+                                                     resultsProcessor:self
+                                                         sharedSecret:sharedSecret];
+    BOOL return_value = [self postOperationToQueueIfNew:operation];
+    if(return_value){
+        isTransactionResultPending = NO;
+    }
+    return return_value;
 }
 
 -(BOOL)enableScanner{
@@ -333,9 +374,9 @@ enum eSignConditions{
     if(timeoutSeconds) {
         timeoutSecondsString = [NSString stringWithFormat:
                         @"<timeoutSeconds>"
-                        @"%d"
+                        @"%ld"
                         @"</timeoutSeconds>",
-                        timeoutSeconds];
+                        (long)timeoutSeconds];
     }
     params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                   @"<enableScanner>"
@@ -356,18 +397,21 @@ enum eSignConditions{
 - (BOOL)financeStartOfDay{
 	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeEndOfDay{
 	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeInit{
 	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
 																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
@@ -519,6 +563,8 @@ enum eSignConditions{
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse{
 	int status = pResponse->GetStatus();
 	FinanceResponseInfo* info = [FinanceResponseInfo new];
+    info.financialResult = pResponse->GetFinancialStatus();
+    info.isRestarting = pResponse->isRestarting();
 	info.statusCode = status;
 	NSDictionary* xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"FinancialTransactionResponse"];
 	info.xml = xmlDetails;
@@ -527,8 +573,17 @@ enum eSignConditions{
 	info.transactionId = @(pResponse->GetTransID().c_str());
 	info.customerReceipt = @(pResponse->GetCustomerReceipt().c_str());
 	info.merchantReceipt = @(pResponse->GetMerchantReceipt().c_str());
+    
+    NSString* rt = [xmlDetails objectForKey:@"RecoveredTransaction"];
+    BOOL transactionResultPending = ((rt != nil) && [rt isEqualToString:@"true"]) ? YES : NO;
+    
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
-	[delegate performSelectorOnMainThread:@selector(responseFinanceStatus:) withObject:info waitUntilDone:NO];
+    if(!pResponse->isRecoveredTransaction()){
+        [delegate performSelectorOnMainThread:@selector(responseFinanceStatus:) withObject:info waitUntilDone:NO];
+    } else {
+        info = transactionResultPending ? info : nil;
+        [delegate performSelectorOnMainThread:@selector(responseRecoveredTransactionStatus:) withObject:info waitUntilDone:NO];
+    }
 }
 
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{

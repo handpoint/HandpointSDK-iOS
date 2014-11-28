@@ -30,7 +30,7 @@ public:
 	//Command
 	bool isResponse(){return false;}
 
-	int GetLength()const{return data.size();}
+	int GetLength()const{return (int)data.size();}
 	const UINT8* GetData()const{return &data[0];}
 #ifdef HEFT_EXPORTS
 	CString dump(const CString& prefix)const{return ::dump(prefix, &data[0], data.size());}

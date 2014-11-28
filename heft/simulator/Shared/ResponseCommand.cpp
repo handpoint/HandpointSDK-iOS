@@ -25,11 +25,12 @@ string transactID(){
 	return [[NSString stringWithFormat:@"transactID%d", ++trans_id_seed] cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
-FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, eTransactionStatus status) 
+FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, UINT8 status, BOOL recoveredTransaction)
 	: ResponseCommand(cmd), 
 	financial_status(status), authorised_amount(amount), trans_id(transactID())
+    , recovered_transaction(recoveredTransaction)
 {
-	static NSString* fin_status[] = {@"", @"Approved", @"Declined", @"Processed", @"Not Processed"};
+	static NSString* fin_status[] = {@"", @"Approved", @"Declined", @"Processed", @"Not Processed", @"Cancelled"};
 
 	NSString* buf = [NSString stringWithFormat:@"<p>Financial transaction #<b>%s</b></p>"
 					"<p>Type: <b>%@</b></p>"
@@ -61,7 +62,7 @@ FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurren
 
 FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, UINT32 amount, int status)
 	: ResponseCommand(cmd, status),
-	financial_status(eTransactionNotProcessed), authorised_amount(amount), trans_id(transactID())
+	financial_status(EFT_FINANC_STATUS_TRANS_NOT_PROCESSED), authorised_amount(amount), trans_id(transactID())
 {
 	NSString* buf = [NSString stringWithFormat:@"<p>Financial transaction #<b>%s</b></p>"
 					 "<p>Type: <b>%@</b></p>"
@@ -81,7 +82,7 @@ FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, UINT32 amount, int st
 
 FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, const string& transaction_id)
 	: ResponseCommand(cmd),
-	financial_status(eTransactionNotProcessed), authorised_amount(amount), trans_id(transactID())
+	financial_status(EFT_FINANC_STATUS_TRANS_NOT_PROCESSED), authorised_amount(amount), trans_id(transactID())
 {
 	NSString* buf = [NSString stringWithFormat:@"<p>Financial transaction #<b>%s</b></p>"
 					 "<p>Type: <b>%@</b></p>"

@@ -6,6 +6,7 @@
 const int ciTransactionDeclinedAmount = 1000;
 const int ciUserCancelAmount = 2000;
 const int ciSignRequestAmount = 3000;
+const int ciRecoveredTransactionAmount = 9999;
 
 ResponseCommand* RequestCommand::CreateResponse()const{return new FinanceResponseCommand(m_cmd);}
 
@@ -99,12 +100,15 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
 		break;
 	case CMD_HOST_DISC_RSP:
 			if(amount == ciTransactionDeclinedAmount){
-				FinanceResponseCommand* pResponse = new FinanceResponseCommand(fin_cmd, amount, EFT_PP_STATUS_RECEIVEING_ERROR);
-				pResponse->SetFinancialStatus(eTransactionDeclined);
+				FinanceResponseCommand* pResponse = new FinanceResponseCommand(fin_cmd, amount, EFT_PP_STATUS_RECEIVING_ERROR);
+				pResponse->SetFinancialStatus(EFT_FINANC_STATUS_TRANS_DECLINED);
 				return pResponse;
 			}
-			else
-				return new FinanceResponseCommand(fin_cmd, currency, amount, eTransactionApproved);
+            else if(amount == ciRecoveredTransactionAmount) {
+				return new FinanceResponseCommand(fin_cmd, currency, amount, EFT_FINANC_STATUS_TRANS_APPROVED, YES);
+            } else {
+                return new FinanceResponseCommand(fin_cmd, currency, amount, EFT_FINANC_STATUS_TRANS_APPROVED, NO);
+            }
 	case CMD_STAT_SIGN_RSP:
 		if(status == EFT_PP_STATUS_SUCCESS)
 			result = new ConnectRequestCommand(currency, amount, fin_cmd);

@@ -49,6 +49,23 @@
  */
 
 /**
+ @brief The result of the financial transaction as one of:
+   EFT_FINANC_STATUS_UNDEFINED                0x00
+   EFT_FINANC_STATUS_TRANS_APPROVED           0x01
+   EFT_FINANC_STATUS_TRANS_DECLINED           0x02
+   EFT_FINANC_STATUS_TRANS_PROCESSED          0x03
+   EFT_FINANC_STATUS_TRANS_NOT_PROCESSED      0x04
+   EFT_FINANC_STATUS_TRANS_CANCELLED          0x05
+ */
+@property(nonatomic) NSInteger financialResult;
+
+/**
+ @brief indicates whether the card reader is about to restart or not (usually indicated after an update).
+ If a restart is indicated then you have 2 seconds to start fetching the logs (before the card reader restarts).
+ */
+@property(nonatomic) BOOL isRestarting;
+
+/**
  @brief	The authorisedAmount - in the smallest unit for the given
  CurrencyCode - for the transaction. ISO 4217 defines number of digits in
  fractional part of currency for every currency code. Example
@@ -75,6 +92,7 @@
 /**@}*/
 
 @end
+
 /**
  @brief Feedback for scanner event.
  */
@@ -194,6 +212,12 @@ DEPRECATED_ATTRIBUTE
 /**@}*/
 
 @optional
+
+/**
+ Notifies that a previously lost transaction result has been recovered.
+ @param info				Complete information about the recovered transaction. nil if no lost transaction was found.
+ */
+- (void)responseRecoveredTransactionStatus:(id<FinanceResponseInfo>)info;
 
 /**
  Notifies that a scan has been performed.

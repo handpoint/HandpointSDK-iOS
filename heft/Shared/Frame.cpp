@@ -43,7 +43,7 @@ NSString* Frame::dump(NSString* prefix)const{
 	int len = m_len;
 	if(!pBegin){
 		pBegin = &write_data[0];
-		len = write_data.size();
+		len = (int)write_data.size();
 	}
 	return ::dump(prefix, pBegin, len);
 }

@@ -145,14 +145,14 @@ NSString* devicesPath(){
 #pragma mark property
 
 - (NSString*)version{
-	return @"2.3.0";
+	return @"2.4.0";
 }
 
 - (NSString*)getSDKVersion{
 	
 	NSString* SDKVersion;
 	if([[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"]) {
-			SDKVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+        SDKVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 	}
 	else {
 		SDKVersion = [self version];
@@ -187,14 +187,13 @@ NSString* devicesPath(){
 #if HEFT_SIMULATOR
 	[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 #else
-	NSError* error = NULL;
-
 	if(hasBluetooth){
 		LOG(@"bluetooth discovery started");
 		fNotifyForAllDevices = fDiscoverAllDevices;
 	}
     else
     {
+        NSError* error = NULL;
         EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
         [eaManager showBluetoothAccessoryPickerWithNameFilter:nil completion:^(NSError* error){
             [delegate didDiscoverFinished];

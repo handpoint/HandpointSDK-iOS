@@ -54,7 +54,7 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
                 }
                 // else the frame is full OR there is no more data OR we found a DLE at the frame boundary that we can't escape (because there is only one byte left)
 
-                frames.push_back(Frame(pDataBegin, pData - pDataBegin, ( pSrc != pSrcEnd ) ? true : false));
+                frames.push_back(Frame(pDataBegin, (int)(pData - pDataBegin), ( pSrc != pSrcEnd ) ? true : false));
 
                 if( pSrc == pSrcEnd )
                 {
@@ -66,7 +66,7 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
         }
 
         // we will only ever get here if we haven't constructed the last frame yet.
-	    frames.push_back(Frame(pDataBegin, pData - pDataBegin, false));
+	    frames.push_back(Frame(pDataBegin, (int)(pData - pDataBegin), false));
     }
 }
 
@@ -127,7 +127,7 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 	int pos = 0;
 	do{
 		UINT8* pData = &buf[0];
-		int len = buf.size();
+		int len = (int)buf.size();
 
 		int frame_len = EndPos(pData, pos, len);
 		if(frame_len != -1){
@@ -202,7 +202,7 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
         }
         else
         {
-            nread = buf.size();
+            nread = (int)buf.size();
         }
 		pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
 		switch(pCommand->StartSequence){
