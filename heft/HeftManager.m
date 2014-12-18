@@ -17,12 +17,6 @@
 //NSString* file = nil;
 //NSMutableString* log2file = nil;
 
-#if HEFT_SIMULATOR
-NSString* devicesFileName = @"devices_simulator";
-#else
-NSString* devicesFileName = @"devices";
-#endif
-
 NSString* eaProtocol = @"com.datecs.pinpad";
 
 @interface HeftRemoteDevice ()
@@ -78,9 +72,6 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 #endif
 
 @implementation HeftManager{
-	//DTDevices *dtdev;
-	BOOL hasBluetooth;
-	NSMutableArray* devices;
 	BOOL fNotifyForAllDevices;
 	NSMutableArray* eaDevices;
 }
@@ -103,26 +94,12 @@ static HeftManager* instance = 0;
 	return instance;
 }
 
-NSString* devicesPath(){
-	return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:devicesFileName];
-}
-
 - (id)init{
 	if(self = [super init]){
 		LOG(@"HeftManager::init");
-		devices = [NSKeyedUnarchiver unarchiveObjectWithFile:devicesPath()];
-		if(!devices)
-			devices = [NSMutableArray new];
 		eaDevices = [NSMutableArray new];
 
-#if HEFT_SIMULATOR
-		//[self performSelectorOnMainThread:@selector(asyncSimulatorInit) withObject:nil waitUntilDone:NO];
-#else
-        //iPod does not work with PPAD when the DTDevices lib is used. Dtdev is not able to connect to our EFT client, the thread is not able to finish and the app becomes unresponsive.
-        //dtdev = [DTDevices sharedDevice];
-        //[dtdev addDelegate:self];
-        //[dtdev connect];
-		
+#ifndef HEFT_SIMULATOR
 		NSNotificationCenter* defaultCenter = [NSNotificationCenter defaultCenter];
 		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidConnect:) name:EAAccessoryDidConnectNotification object:nil];
 		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidDisconnect:) name:EAAccessoryDidDisconnectNotification object:nil];
@@ -132,7 +109,6 @@ NSString* devicesPath(){
 
 		NSArray* accessories = eaManager.connectedAccessories;
 		[accessories indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop){
-			LOG(@"%@", accessory.protocolStrings);
 			if([accessory.protocolStrings containsObject:eaProtocol]){
 				HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
 				[eaDevices addObject:newDevice];
@@ -145,15 +121,6 @@ NSString* devicesPath(){
 	return self;
 }
 
-#if HEFT_SIMULATOR
-// Depended on DTDevices.h
-//- (void)asyncSimulatorInit{
-//	[self connectionState:CONN_CONNECTING];
-//	[self connectionState:CONN_CONNECTED];
-//	[self deviceFeatureSupported:FEAT_BLUETOOTH value:YES];
-//}
-#endif
-
 - (void)dealloc{
 	LOG(@"HeftManager::dealloc");
 	[[EAAccessoryManager sharedAccessoryManager] unregisterForLocalNotifications];
@@ -161,7 +128,7 @@ NSString* devicesPath(){
 }
 
 - (BOOL)hasSources{
-	return hasBluetooth;
+	return NO;
 }
 
 - (void)asyncClientForDevice:(NSArray*)params{
@@ -222,8 +189,6 @@ NSString* devicesPath(){
 
 - (NSMutableArray*)devicesCopy{
 	NSMutableArray* result = [eaDevices mutableCopy];
-	if(hasBluetooth)
-		[result addObjectsFromArray:devices];
 	return result;
 }
 
@@ -233,18 +198,11 @@ NSString* devicesPath(){
 #if HEFT_SIMULATOR
 	[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 #else
-	if(hasBluetooth){
-		LOG(@"bluetooth discovery started");
-		fNotifyForAllDevices = fDiscoverAllDevices;
-	}
-    else
-    {
-        NSError* error = NULL;
-        EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
-        [eaManager showBluetoothAccessoryPickerWithNameFilter:nil completion:^(NSError* error){
-            [delegate didDiscoverFinished];
-        }];
-    }
+    NSError* error = NULL;
+    EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
+    [eaManager showBluetoothAccessoryPickerWithNameFilter:nil completion:^(NSError* error){
+        [delegate didDiscoverFinished];
+    }];
 #endif
 }
 
@@ -272,36 +230,6 @@ static EAAccessory* simulatorAccessory = nil;
 #endif
 
 - (void)resetDevices{
-	devices = [NSMutableArray new];
-	[NSKeyedArchiver archiveRootObject:devices toFile:devicesPath()];
-}
-
-#pragma mark DTDeviceDelegate
-
-const char* stateLabel[] = {"disconnected", "connecting", "connected"};
-
--(void)bluetoothDiscoverComplete:(BOOL)success{
-	Assert(success);
-	LOG(@"bluetooth discovery completed");
-	[NSKeyedArchiver archiveRootObject:devices toFile:devicesPath()];
-	[delegate didDiscoverFinished];
-}
-
--(void)bluetoothDeviceDiscovered:(NSString *)btAddress name:(NSString *)btName{
-	LOG(@"bluetooth device %@ with address %@ is discovered", btName, btAddress);
-	NSUInteger index = [devices indexOfObjectPassingTest:^(HeftRemoteDevice* obj, NSUInteger idx, BOOL *stop){
-		if([obj.address isEqualToString:btAddress])
-			*stop = YES;
-		return *stop;
-	}];
-	if(index == NSNotFound){
-		HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithName:btName address:btAddress];
-		[devices addObject:newDevice];
-		[delegate didDiscoverDevice:newDevice];
-	}
-	else if(fNotifyForAllDevices){
-		[delegate didDiscoverDevice:devices[index]];
-	}
 }
 
 #pragma mark EAAccessory notifications

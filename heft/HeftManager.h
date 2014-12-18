@@ -25,24 +25,6 @@
  */
 
 /**
- Notifies that Bluetooth is available.
- */
-- (void)hasSources;
-/**
- Notifies that Bluetooth isn't available anymore.
- */
-- (void)noSources;
-/**
- Notifies that new BT device was discovered.
- @param newDevice   Contains information(name, adress) about discovered device.
- */
-- (void)didDiscoverDevice:(HeftRemoteDevice*)newDevice;
-/**
- Notifies that search of all available BT devices was completed.
- */
-- (void)didDiscoverFinished;
-
-/**
  Notifies that new accessory device was connected.
  @param newDevice   Contains information(name, adress) about discovered device.
  */
@@ -52,6 +34,28 @@
  @param oldDevice   Contains information(name) about disconnected device.
  */
 - (void)didLostAccessoryDevice:(HeftRemoteDevice*)oldDevice;
+/**
+ Notifies that search of all available BT devices was completed.
+ */
+- (void)didDiscoverFinished;
+
+@optional
+/**
+ Notifies that Bluetooth is available.
+ @deprecated This delegate method is deprecated starting from version 2.2.2
+ */
+- (void)hasSources DEPRECATED_ATTRIBUTE;
+/**
+ Notifies that Bluetooth isn't available anymore.
+ @deprecated This delegate method is deprecated starting from version 2.2.2
+ */
+- (void)noSources DEPRECATED_ATTRIBUTE;
+/**
+ Notifies that new BT device was discovered.
+ @param newDevice   Contains information(name, adress) about discovered device.
+ @deprecated This delegate method is deprecated starting from version 2.2.2
+ */
+- (void)didDiscoverDevice:(HeftRemoteDevice*)newDevice DEPRECATED_ATTRIBUTE;
 
 /**@}*/
 
@@ -115,7 +119,7 @@
  Performs hasSources request.
  @return YES if Bluetooth is available and NO if it isn't.
  */
-- (BOOL)hasSources;
+- (BOOL)hasSources DEPRECATED_ATTRIBUTE;
 
 /**
  Starts creation of a connection to the specified device.
