@@ -162,24 +162,6 @@ public:
 	void ProcessResult(id<IResponseProcessor> processor){[processor processFinanceResponse:this];}
 };
 
-/*class DebugInfoResponseCommand : public ResponseCommand{
-	string data;
-
-#pragma pack(push, 1)
-	struct DebugInfoPayload : ResponsePayload{
-		UINT16 data_len;
-		UINT8 data[];
-	};
-#pragma pack(pop)
-
-public:
-	DebugInfoResponseCommand(const ResponsePayload* pPayload);
-	const string& GetData(){return data;}
-
-	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor){[processor processDebugInfoResponse:this];}
-};*/
-
 class GetLogInfoResponseCommand : public ResponseCommand{
 	string data;
 

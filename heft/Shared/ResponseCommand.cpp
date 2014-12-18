@@ -1,4 +1,7 @@
 #include "StdAfx.h"
+
+#if !HEFT_SIMULATOR
+
 #include "ResponseCommand.h"
 #include "RequestCommand.h"
 #include "BCDCoder.h"
@@ -37,8 +40,6 @@ ResponseCommand* ResponseCommand::Create(const vector<UINT8>& buf){
 		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse, (UINT32)buf.size()));
 	case CMD_STAT_CHALENGE_REQ:
 		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse, (UINT32)buf.size()));
-	/*case CMD_DBG_INFO_RSP:
-		return new DebugInfoResponseCommand(pResponse);*/
 	case CMD_LOG_GET_INF_RSP:
 		return new GetLogInfoResponseCommand(pResponse, (UINT32)buf.size());
 	case CMD_STAT_INFO_RSP:
@@ -157,16 +158,11 @@ FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload, 
 	}
 }
 
-/*DebugInfoResponseCommand::DebugInfoResponseCommand(const ResponsePayload* pPayload) : ResponseCommand(pPayload){
-	if(GetStatus() == EFT_PP_STATUS_SUCCESS){
-		const DebugInfoPayload* pResponse = static_cast<const DebugInfoPayload*>(pPayload);
-		data.assign(pResponse->data, &pResponse->data[ntohs(pResponse->data_len)]);
-	}
-}*/
-
 GetLogInfoResponseCommand::GetLogInfoResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize) : ResponseCommand(pPayload, payloadSize){
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS){
 		const GetLogInfoPayload* pResponse = static_cast<const GetLogInfoPayload*>(pPayload);
 		data.assign(pResponse->data, &pResponse->data[ntohl(pResponse->data_len)]);
 	}
 }
+
+#endif

@@ -36,42 +36,42 @@ const NSString* kXMLDetailsInfoKey = @"XMLDetails";
 const int ciTimeout[] = {20 , 15, 1, 45};
 
 NSString* statusMessages[] = {
-	@""
+	@"Undefined"
 	,@"Success"
 	,@"Invalid data"
 	,@"Processing error"
-	,@"Not allowed"
-	,@"Not initialized"
-	,@"Connect timeout"
-	,@"Connect error"
-	,@"Sending error"
-	,@"Receiveing error"
+	,@"Command not allowed"
+	,@"Device is not initialized"
+	,@"Connection timeout detected"
+	,@"Connection error"
+	,@"Send error"
+	,@"Receiving error"
 	,@"No data available"
 	,@"Transaction not allowed"
-	,@"Unsupported currency"
-	,@"No host available"
+	,@"Currency not supported"
+	,@"No host configuration found"
 	,@"Card reader error"
-	,@"Card reading failed"
+	,@"Failed to read card data"
 	,@"Invalid card"
-	,@"Input timeout"
-	,@"User cancelled"
+	,@"Timeout waiting for user input"
+	,@"User cancelled the transaction"
 	,@"Invalid signature"
-	,@"Waiting card"
-	,@"Card inserted"
-	,@"Application selection"
-	,@"Application confirmation"
-	,@"Amount validation"
-	,@"PIN input"
-	,@"Manual card input"
-	,@"Waiting card removal"
-	,@"Tip input"
+	,@"Waiting for card"
+	,@"Card detected"
+	,@"Waiting for application selection"
+	,@"Waiting for application confirmation"
+	,@"Waiting for amount validation"
+	,@"Waiting for PIN entry"
+	,@"Waiting for manual card data"
+	,@"Waiting for card removal"
+	,@"Waiting for gratuity"
 	,@"Shared secret invalid"
-	,@""
-	,@""
-	,@"Connecting"
-	,@"Sending"
-	,@"Receiving"
-	,@"Disconnecting"
+	,@"Authenticating POS"
+	,@"Waiting for signature"
+	,@"Connecting to host"
+	,@"Sending data to host"
+	,@"Waiting for data from host"
+	,@"Disconnecting from host"
     ,@"PIN entry completed"
     ,@"Merchant cancelled the transaction"
     ,@"Request invalid"
@@ -84,7 +84,10 @@ NSString* statusMessages[] = {
     ,@"Please insert card in chip reader"
     ,@"Remove the card from the reader"
     ,@"This device does not have a scanner"
-    ,@"Scanner event"
+    ,@""
+    ,@"Operation cancelled, the battery is too low. Please charge."
+    ,@"Waiting for accoutn type selection"
+    ,@"Bluetooth is not supported on this device"
 };
 
 @interface MpedDevice ()<IResponseProcessor>
@@ -121,16 +124,18 @@ enum eSignConditions{
 
 #if HEFT_SIMULATOR
 			mpedInfo = @{
-				kSerialNumberInfoKey:@"0123456789AB"
+				kSerialNumberInfoKey:@"000123400123"
 				, kPublicKeyVersionInfoKey:@1
 				, kEMVParamVersionInfoKey:@1
 				, kGeneralParamInfoKey:@1
 				, kManufacturerCodeInfoKey:@0
 				, kModelCodeInfoKey:@0
-				, kAppNameInfoKey:@"EFTSimul"
-				, kAppVersionInfoKey:@0x0100
+				, kAppNameInfoKey:@"Simulator"
+				, kAppVersionInfoKey:@0x0107
 				, kXMLDetailsInfoKey:@""
 			};
+            
+            isTransactionResultPending = simulatorState.isInException();
 #else
 			connection = aConnection;
 			sharedSecret = aSharedSecret;

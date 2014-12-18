@@ -3,12 +3,16 @@
 //  headstart
 //
 
-#import "MPosOperation.h"
-
 #import "StdAfx.h"
+
+#if HEFT_SIMULATOR
+
+#import "MPosOperation.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
 #include "HeftCmdIds.h"
+
+void simulateDeviceDisconnect();
 
 @implementation MPosOperation{
 	RequestCommand*	pRequestCommand;
@@ -39,7 +43,7 @@
 				
 				auto_ptr<ResponseCommand> pResponse;
 				while(true){
-					pResponse.reset([self isCancelled] ? static_cast<FinanceRequestCommand*>(pRequestCommand)->CreateResponseOnCancel() : currentRequest->CreateResponse());
+					pResponse.reset([self isCancelled] ? pRequestCommand->CreateResponseOnCancel() : currentRequest->CreateResponse());
 					
 					if(pRequestCommand != currentRequest){
 						delete currentRequest;
@@ -65,6 +69,7 @@
 		}
 		catch(heft_exception& exception){
 			[processor sendResponseError:exception.stringId()];
+            simulateDeviceDisconnect();
 		}
 	}
 }
@@ -74,7 +79,7 @@
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest{
 	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: connecting to bureau"));
 
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_CONNECTING));
+	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_CONNECTING, false));
 	spStatus->ProcessResult(processor);
 	
 	return new HostResponseCommand(CMD_HOST_CONN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
@@ -83,7 +88,7 @@
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
 	LOG_RELEASE(Logger::eFine, _T("Request to bureau (length:?):"));
 	
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_SENDING));
+	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_SENDING, false));
 	spStatus->ProcessResult(processor);
 
 	return new HostResponseCommand(CMD_HOST_SEND_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
@@ -92,14 +97,14 @@
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest{
 	LOG(_T("Recv :? bytes, ?s timeout"));
 	
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_RECEIVEING));
+	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_RECEIVEING, false));
 	spStatus->ProcessResult(processor);
 	
 	return new HostResponseCommand(CMD_HOST_RECV_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_DISCONNECTING));
+	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_DISCONNECTING, false));
 	spStatus->ProcessResult(processor);
 	
 	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: disconnected"));
@@ -118,3 +123,5 @@
 }
 
 @end
+
+#endif

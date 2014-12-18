@@ -1,4 +1,7 @@
 #include "StdAfx.h"
+
+#if !HEFT_SIMULATOR
+
 #include "RequestCommand.h"
 #include "BCDCoder.h"
 #include "HeftCmdIds.h"
@@ -59,7 +62,7 @@ XMLCommandRequestCommand::XMLCommandRequestCommand(const string& xml)
 	memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
 }
 
-bool isNumber(const string& str)
+static bool isNumber(const string& str)
 {
     string::const_iterator it = str.begin();
     while (it != str.end() && isdigit(*it)) ++it;
@@ -283,3 +286,5 @@ ResetLogInfoRequestCommand::ResetLogInfoRequestCommand()
 GetLogInfoRequestCommand::GetLogInfoRequestCommand()
 	: RequestCommand(0, CMD_LOG_GET_INF_REQ)
 {}
+
+#endif

@@ -1,53 +1,138 @@
 #include "../../Shared/StdAfx.h"
+
+#if HEFT_SIMULATOR
+
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
 #include "HeftCmdIds.h"
 
-const int ciTransactionDeclinedAmount = 1000;
-const int ciUserCancelAmount = 2000;
-const int ciSignRequestAmount = 3000;
-const int ciRecoveredTransactionAmount = 9999;
+#include "ResponseParser.h"
 
-ResponseCommand* RequestCommand::CreateResponse()const{return new FinanceResponseCommand(m_cmd);}
+const int ciTransactionDeclinedAmount = 1000;
+const int ciUserCancelAmount          = 2000;
+const int ciSignRequestAmount         = 3000;
+
+const int ciExceptionLimitLower       = 8000;
+
+const int ciExceptionTimeoutLowerLim  = 8000;
+const int ciExceptionTimeoutUpperLim  = 8099;
+
+const int ciExceptionTimeout1         = 9001;
+const int ciExceptionTimeout2         = 9002;
+const int ciExceptionTimeout4         = 9003;
+const int ciExceptionCommunication    = 9004;
+const int ciExceptionConnectionBroken = 9005;
+
+const int ciExceptionLimitUpper       = 9999;
+
+SimulatorState simulatorState;
+
+ResponseCommand* RequestCommand::CreateResponse()const{return new ResponseCommand(m_cmd);}
+ResponseCommand* RequestCommand::CreateResponseOnCancel()const{return new ResponseCommand(m_cmd, EFT_PP_STATUS_USER_CANCELLED);}
+
+static bool isNumber(const string& str)
+{
+    string::const_iterator it = str.begin();
+    while (it != str.end() && isdigit(*it)) ++it;
+    return !str.empty() && it == str.end();
+}
 
 FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml)
 	: RequestCommand(type)
 	, state(eWaitingCard), amount(trans_amount)
 {
-	const int currency_code_length = 4;
-	
-	static const struct CurrencyCode{
-		char name[4];
-		char code[currency_code_length + 1];
-	} ISO4217CurrencyCodes[] = {
-		"USD", "0840"
-		, "EUR", "0978"
-		, "GBP", "0826"
-		, "ISK", "0352"
-	};
-	
-	bool fCheckCodeSize = true;
-	const char* code = currency_code.c_str();
-	for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-		CurrencyCode cc = ISO4217CurrencyCodes[i];
-		if(!currency_code.compare(cc.name)){
-			code = cc.code;
-			fCheckCodeSize = false;
-			break;
-		}
-	}
-	
-	if(fCheckCodeSize && currency_code.length() != currency_code_length)
-		throw std::invalid_argument("invalid currency code");
-	
-	currency = code;
+    const int currency_code_length = 4;
+    
+    static const struct CurrencyCode{
+        char name[4];
+        char code[currency_code_length + 1];
+    } ISO4217CurrencyCodes[] = { // in the simulator we want to return the currency code with out the leading zero
+          "USD", "840"
+        , "EUR", "978"
+        , "GBP", "826"
+        , "ISK", "352"
+        , "ZAR", "710"
+    };
+    
+    const char* code = currency_code.c_str();
+    string abbr;
+    
+    if(!isNumber(code)){
+        bool fCheckCodeSize = true;
+        for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
+            CurrencyCode cc = ISO4217CurrencyCodes[i];
+            if(!currency_code.compare(cc.name)){
+                code = cc.code;
+                fCheckCodeSize = false;
+                break;
+            }
+        }
+
+        if(fCheckCodeSize && currency_code.length() != currency_code_length)
+            throw std::invalid_argument("invalid currency code");
+        
+        abbr = currency_code;
+    }
+    else{
+        for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
+            CurrencyCode cc = ISO4217CurrencyCodes[i];
+            if(!currency_code.compare(cc.code)){
+                abbr = cc.name;
+                break;
+            }
+        }
+        
+        if(!abbr.length()){
+            abbr = "???";
+        }
+    }
+
+    currency = code;
+    
+    if(GetType() != CMD_FIN_RCVRD_TXN_RSLT)
+    {
+        simulatorState.clearException();
+        
+        simulatorState.setAmount(amount);
+        simulatorState.setType(type);
+        simulatorState.setCurrency(currency);
+        simulatorState.setCurrencyAbbreviation(abbr);
+        simulatorState.setAsDeclined();
+        simulatorState.setTransUID(trans_id);
+        simulatorState.setUsingIcc();
+    }
 }
 
 ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 	ResponseCommand* result = 0;
 	switch(state++){
 	case eWaitingCard:
-		result = new EventInfoResponseCommand(EFT_PP_STATUS_WAITING_CARD);
+        switch (GetType()) {
+            default:
+            case CMD_FIN_SALE_REQ:
+            case CMD_FIN_REFUND_REQ:
+                simulatorState.inc_trans_id();
+                result = new EventInfoResponseCommand(EFT_PP_STATUS_WAITING_CARD);
+                break;
+            case CMD_FIN_SALEV_REQ:
+            case CMD_FIN_REFUNDV_REQ:
+                simulatorState.inc_trans_id();
+                // result = new FinanceResponseCommand(GetType(), currency, amount, !(amount % 2) ? EFT_FINANC_STATUS_TRANS_APPROVED : EFT_FINANC_STATUS_TRANS_DECLINED, NO);
+                result = reinterpret_cast<ResponseCommand*>(new ConnectRequestCommand(currency, amount, GetType()));
+                break;
+            case CMD_FIN_STARTDAY_REQ:
+            case CMD_FIN_ENDDAY_REQ:
+            case CMD_FIN_INIT_REQ:
+                result = new FinanceResponseCommand(GetType(), "0", 0, EFT_FINANC_STATUS_TRANS_PROCESSED, NO);
+                break;
+            case CMD_FIN_RCVRD_TXN_RSLT:
+                if(simulatorState.isInException()) {
+                    result = new FinanceResponseCommand(GetType(), simulatorState.getCurrency(), simulatorState.getAmount(), simulatorState.isAuthorized() ? EFT_FINANC_STATUS_TRANS_APPROVED : EFT_FINANC_STATUS_TRANS_DECLINED, YES);
+                } else {
+                    result = new FinanceResponseCommand(GetType(), "0", 0, EFT_FINANC_STATUS_TRANS_NOT_PROCESSED, YES);
+                }
+                break;
+        }
 		break;
 	case eCardInserted:
 		result = new EventInfoResponseCommand(EFT_PP_STATUS_CARD_INSERTED);
@@ -56,8 +141,13 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 		result = new EventInfoResponseCommand(EFT_PP_STATUS_APPLICATION_SELECTION);
 		break;
 	case ePinInput:
-		result = amount == ciSignRequestAmount ? reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(currency, amount, GetType())) : new EventInfoResponseCommand(EFT_PP_STATUS_PIN_INPUT);
-		break;
+        if(amount != ciSignRequestAmount)
+        {
+            result = new EventInfoResponseCommand(EFT_PP_STATUS_PIN_INPUT, false);
+            break;
+        } // else skip to next state
+        state = eConnect;
+        // fall through
 	case eConnect:
 		result = amount == ciUserCancelAmount ? CreateResponseOnCancel() : reinterpret_cast<ResponseCommand*>(new ConnectRequestCommand(currency, amount, GetType()));
 		break;
@@ -65,20 +155,23 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 	return result;
 }
 
-ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const{return new FinanceResponseCommand(m_cmd, amount, EFT_PP_STATUS_USER_CANCELLED);}
+ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const{return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);}
 
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()
-	: RequestCommand(CMD_FIN_STARTDAY_REQ)
-{}
+	: FinanceRequestCommand(CMD_FIN_STARTDAY_REQ, "0", 0, 0, "", "")
+{
+}
 
 EndOfDayRequestCommand::EndOfDayRequestCommand()
-	: RequestCommand(CMD_FIN_ENDDAY_REQ)
-{}
+    : FinanceRequestCommand(CMD_FIN_ENDDAY_REQ, "0", 0, 0, "", "")
+{
+}
 
 FinanceInitRequestCommand::FinanceInitRequestCommand()
-	: RequestCommand(CMD_FIN_INIT_REQ)
-{}
+    : FinanceRequestCommand(CMD_FIN_INIT_REQ, "0", 0, 0, "", "")
+{
+}
 
 HostResponseCommand::HostResponseCommand(UINT32 command, UINT32 aFin_cmd, const string& aCurrency, UINT32 aAmount, int aStatus) 
 	: RequestCommand(command)
@@ -99,21 +192,66 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
 		result = new DisconnectRequestCommand(currency, amount, fin_cmd);
 		break;
 	case CMD_HOST_DISC_RSP:
-			if(amount == ciTransactionDeclinedAmount){
-				FinanceResponseCommand* pResponse = new FinanceResponseCommand(fin_cmd, amount, EFT_PP_STATUS_RECEIVING_ERROR);
-				pResponse->SetFinancialStatus(EFT_FINANC_STATUS_TRANS_DECLINED);
-				return pResponse;
-			}
-            else if(amount == ciRecoveredTransactionAmount) {
-				return new FinanceResponseCommand(fin_cmd, currency, amount, EFT_FINANC_STATUS_TRANS_APPROVED, YES);
-            } else {
-                return new FinanceResponseCommand(fin_cmd, currency, amount, EFT_FINANC_STATUS_TRANS_APPROVED, NO);
+            simulatorState.setAsAuthorized();
+            simulatorState.setOrgTransUID(simulatorState.getTransUID());
+            simulatorState.setTransUID([[[[NSUUID UUID] UUIDString] lowercaseString] cStringUsingEncoding:NSUTF8StringEncoding]);
+            
+            if((fin_cmd != CMD_FIN_SALEV_REQ) && (fin_cmd != CMD_FIN_REFUNDV_REQ)) {
+                if(amount == ciSignRequestAmount) {
+                    simulatorState.setUsingMsr();
+                    result = new SignatureRequestCommand(currency, amount, fin_cmd);
+                }
+                else if(amount == ciTransactionDeclinedAmount){
+                    simulatorState.setAsDeclined();
+                    FinanceResponseCommand* pResponse = new FinanceResponseCommand(fin_cmd, currency, amount, EFT_PP_STATUS_RECEIVING_ERROR, NO);
+                    pResponse->SetFinancialStatus(EFT_FINANC_STATUS_TRANS_DECLINED);
+                    return pResponse;
+                }
+                else if((amount >= ciExceptionLimitLower) && (amount <= ciExceptionLimitUpper)) {
+                    simulatorState.flagException();
+                    if((amount >= ciExceptionTimeoutLowerLim) && (amount <= ciExceptionTimeoutUpperLim)) {
+                        NSTimeInterval timeoutDelay = amount - ciExceptionTimeoutLowerLim;
+                        [NSThread sleepForTimeInterval:timeoutDelay];
+                        throw timeout2_exception();
+                    }
+                    else if(amount == ciExceptionTimeout1) {
+                        [NSThread sleepForTimeInterval:20];
+                        throw timeout1_exception();
+                    }
+                    else if(amount == ciExceptionTimeout2) {
+                        [NSThread sleepForTimeInterval:15];
+                        throw timeout2_exception();
+                    }
+                    else if(amount == ciExceptionTimeout4) {
+                        [NSThread sleepForTimeInterval:45];
+                        throw timeout4_exception();
+                    }
+                    else if(amount == ciExceptionCommunication) {
+                        [NSThread sleepForTimeInterval:1];
+                        throw communication_exception();
+                    }
+                    else if(amount == ciExceptionConnectionBroken) {
+                        [NSThread sleepForTimeInterval:1];
+                        throw connection_broken_exception();
+                    }
+                    
+                    // if we get here the user used an amount that has not yet been defined for exceptions, but is in our range, in that case we will just handle it as a communication exception
+                    
+                    simulatorState.setAsDeclined(); // we will also make it into a declined transaction
+                    
+                    [NSThread sleepForTimeInterval:1];
+                    throw communication_exception();
+                }
             }
+            return new FinanceResponseCommand(fin_cmd, currency, amount, EFT_FINANC_STATUS_TRANS_APPROVED);
+            break;
 	case CMD_STAT_SIGN_RSP:
-		if(status == EFT_PP_STATUS_SUCCESS)
-			result = new ConnectRequestCommand(currency, amount, fin_cmd);
-		else
-			return new FinanceResponseCommand(fin_cmd, amount, EFT_PP_STATUS_INVALID_SIGNATURE);
+        if(status == EFT_PP_STATUS_SUCCESS){
+            simulatorState.setAsAuthorized();
+        } else {
+            simulatorState.setAsDeclined();
+        }
+        return new FinanceResponseCommand(fin_cmd, currency, amount, status, NO);
 	}
 	return reinterpret_cast<ResponseCommand*>(result);
 }
@@ -138,41 +276,20 @@ DisconnectRequestCommand::DisconnectRequestCommand(const string& aCurrency, UINT
 {
 }
 
-SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aType) 
+SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aType)
 	: RequestCommand(CMD_STAT_SIGN_REQ), currency(aCurrency), amount(aAmount), type(aType)
 {
-	NSString* trans_id = [NSString stringWithFormat:@"transactID%d", trans_id_seed];
-
-	NSString* buf = [NSString stringWithFormat:@"<p>Financial transaction #<b>%@</b></p>"
-					 "<p>Type: <b>%@</b></p>"
-					 "<p>Time: <b>%@</b></p>"
-					 "<p>Amount: <b>%.2f</b></p>"
-					 "<p>Card number: <b>**** **** **** ****</b></p>"
-					 "<p>Please sign: ___________________</p>"
-					 , trans_id
-					 , fin_type[(type >> 8) & 0xf]
-					 , [NSDateFormatter localizedStringFromDate:[NSDate date] dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterMediumStyle]
-					 , double(amount / 100)];
-	receipt = [buf cStringUsingEncoding:NSUTF8StringEncoding];
+    NSMutableDictionary* xmlDict = [[NSMutableDictionary alloc] init];
+    
+    // Basic (always) tags
+    xmlDict[@"timeout"]     = @"90";
+    
+    xml_details = ConvertDictionaryToXML(xmlDict, @"SignatureRequiredRequest");
+    
+    simulatorState.setAsAuthorized();
+    
+    receipt = simulatorState.generateReceipt(true);
 }
-
-/*DebugEnableRequestCommand::DebugEnableRequestCommand()
-	: RequestCommand(CMD_DBG_ENABLE_REQ)
-{}
-
-DebugDisableRequestCommand::DebugDisableRequestCommand()
-	: RequestCommand(CMD_DBG_DISABLE_REQ)
-{}
-
-DebugResetRequestCommand::DebugResetRequestCommand()
-	: RequestCommand(CMD_DBG_RESET_REQ)
-{}
-
-DebugInfoRequestCommand::DebugInfoRequestCommand()
-	: RequestCommand(CMD_DBG_INFO_REQ)
-{}
-
-ResponseCommand* DebugInfoRequestCommand::CreateResponse()const{return new DebugInfoResponseCommand;}*/
 
 SetLogLevelRequestCommand::SetLogLevelRequestCommand(UINT8 log_level) 
 	: RequestCommand(CMD_LOG_SET_LEV_REQ)
@@ -188,3 +305,65 @@ GetLogInfoRequestCommand::GetLogInfoRequestCommand()
 {}
 
 ResponseCommand* GetLogInfoRequestCommand::CreateResponse()const{return new GetLogInfoResponseCommand;}
+
+NSDictionary* getValuesFromXml(NSString* xml, NSString* path){
+    NSXMLParser* xmlParser = [[NSXMLParser alloc] initWithData:[[NSData alloc] initWithBytesNoCopy:(void*)[xml UTF8String] length:[xml length] freeWhenDone:NO]];
+    ResponseParser* parser = [[ResponseParser alloc] initWithPath:path];
+    xmlParser.delegate = parser;
+
+    [xmlParser parse];
+
+    return parser.result;
+}
+
+XMLCommandRequestCommand::XMLCommandRequestCommand(const string& xml)
+    : RequestCommand(CMD_XCMD_REQ)
+    , xml_data(xml)
+{
+}
+
+ResponseCommand* XMLCommandRequestCommand::CreateResponse()const{
+    NSString* xmlArg = [NSString stringWithCString:xml_data.c_str()
+                                          encoding:[NSString defaultCStringEncoding]];
+    NSDictionary* xmlDict = getValuesFromXml(xmlArg, @"enableScanner");
+    if (xmlDict) {
+        NSString* buf = [NSString stringWithFormat:@"<enableScannerResponse>"
+                         "<StatusMessage>Success</StatusMessage>"
+                         "<SerialNumber>000123400123</SerialNumber>"
+                         "<BatteryStatus>57%%</BatteryStatus>"
+                         "<BatterymV>4300</BatterymV>"
+                         "<BatteryCharging>true</BatteryCharging>"
+                         "<ExternalPower>true</ExternalPower>"
+                         "</enableScannerResponse>"
+                         ];
+        string xml = [buf cStringUsingEncoding:NSUTF8StringEncoding];
+        
+        return new XMLCommandResponseCommand(EFT_PP_STATUS_SUCCESS, xml);
+    }
+    
+    return new XMLCommandResponseCommand(EFT_PP_STATUS_SUCCESS, nil);
+}
+
+ResponseCommand* XMLCommandRequestCommand::CreateResponseOnCancel()const{
+    NSString* xmlArg = [NSString stringWithCString:xml_data.c_str()
+                                          encoding:[NSString defaultCStringEncoding]];
+    NSDictionary* xmlDict = getValuesFromXml(xmlArg, @"enableScanner");
+    if (xmlDict) {
+        NSString* buf = [NSString stringWithFormat:@"<enableScannerResponse>"
+                         "<StatusMessage>Success</StatusMessage>"
+                         "<SerialNumber>000123400123</SerialNumber>"
+                         "<BatteryStatus>57%%</BatteryStatus>"
+                         "<BatterymV>4300</BatterymV>"
+                         "<BatteryCharging>true</BatteryCharging>"
+                         "<ExternalPower>true</ExternalPower>"
+                         "</enableScannerResponse>"
+                         ];
+        string xml = [buf cStringUsingEncoding:NSUTF8StringEncoding];
+        
+        return new XMLCommandResponseCommand(EFT_PP_STATUS_POS_CANCELLED, xml);
+    }
+    
+    return new XMLCommandResponseCommand(EFT_PP_STATUS_POS_CANCELLED, nil);
+}
+
+#endif

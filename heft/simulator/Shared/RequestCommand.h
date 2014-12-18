@@ -14,6 +14,7 @@ public:
 	//Command
 	bool isResponse(){return false;}
 	virtual ResponseCommand* CreateResponse()const;
+    virtual ResponseCommand* CreateResponseOnCancel()const;
 
 	UINT32 GetType()const{return m_cmd;}
 };
@@ -35,52 +36,33 @@ public:
 };
 
 class XMLCommandRequestCommand : public RequestCommand{
-protected:
-    /**/
+    string xml_data;
+
 public:
 	XMLCommandRequestCommand(const string& xml);
-};
-/*class SaleRequestCommand : public FinanceRequestCommand{
-public:
-	SaleRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present);
-};
-
-class RefundRequestCommand : public FinanceRequestCommand{
-public:
-	RefundRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present);
-	ResponseCommand* CreateResponse()const;
+    
+    ResponseCommand* CreateResponse()const;
+    ResponseCommand* CreateResponseOnCancel()const;
 };
 
-class FinanceVRequestCommand : public FinanceRequestCommand{
-	string transaction_id;
-public:
-	FinanceVRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
-	ResponseCommand* CreateResponse()const;
-};
-
-class SaleVRequestCommand : public FinanceVRequestCommand{
-public:
-	SaleVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
-};
-
-class RefundVRequestCommand : public FinanceVRequestCommand{
-public:
-	RefundVRequestCommand(const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id);
-};*/
-
-class StartOfDayRequestCommand : public RequestCommand{
+class StartOfDayRequestCommand : public FinanceRequestCommand{
 public:
 	StartOfDayRequestCommand();
 };
 
-class EndOfDayRequestCommand : public RequestCommand{
+class EndOfDayRequestCommand : public FinanceRequestCommand{
 public:
 	EndOfDayRequestCommand();
 };
 
-class FinanceInitRequestCommand : public RequestCommand{
+class FinanceInitRequestCommand : public FinanceRequestCommand{
 public:
 	FinanceInitRequestCommand();
+};
+
+class FinanceRecoverTransactionRequestCommand : public FinanceRequestCommand{
+public:
+    FinanceRecoverTransactionRequestCommand();
 };
 
 #include "../../Shared/IHostProcessor.h"
@@ -140,6 +122,7 @@ public:
 
 class SignatureRequestCommand : public RequestCommand, public IRequestProcess{
 	string receipt;
+    string xml_details;
 	string currency;
 	UINT32 amount;
 	UINT32 type;
@@ -147,6 +130,7 @@ class SignatureRequestCommand : public RequestCommand, public IRequestProcess{
 public:
 	SignatureRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aType);
 	const string& GetReceipt(){return receipt;}
+    const string& GetXmlDetails(){return xml_details;}
 	const string& GetCurrency(){return currency;}
 	UINT32 GetAmount(){return amount;}
 	UINT32 GetFinCommand(){return type;}
@@ -155,27 +139,6 @@ public:
 	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSignature:this];}
 	ResponseCommand* CreateResponse()const{ATLASSERT(false);return 0;}
 };
-
-/*class DebugEnableRequestCommand : public RequestCommand{
-public:
-	DebugEnableRequestCommand();
-};
-
-class DebugDisableRequestCommand : public RequestCommand{
-public:
-	DebugDisableRequestCommand();
-};
-
-class DebugResetRequestCommand : public RequestCommand{
-public:
-	DebugResetRequestCommand();
-};
-
-class DebugInfoRequestCommand : public RequestCommand{
-public:
-	DebugInfoRequestCommand();
-	ResponseCommand* CreateResponse()const;
-};*/
 
 class SetLogLevelRequestCommand : public RequestCommand{
 public:

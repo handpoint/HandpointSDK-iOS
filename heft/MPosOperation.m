@@ -4,6 +4,9 @@
 //
 
 #import "StdAfx.h"
+
+#if !HEFT_SIMULATOR
+
 #import "FrameManager.h"
 #import "Frame.h"
 #import "Shared/RequestCommand.h"
@@ -217,3 +220,5 @@ enum eConnectCondition{
 }
 
 @end
+
+#endif

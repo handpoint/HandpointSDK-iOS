@@ -30,6 +30,52 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 - (id)initWithAccessory:(EAAccessory*)aAccessory;
 @end
 
+#ifdef HEFT_SIMULATOR
+@interface SimulatorAccessory: EAAccessory
+
+@property(nonatomic, readonly, getter=isConnected) BOOL connected;
+@property(nonatomic, readonly) NSUInteger connectionID;
+@property(nonatomic, readonly) NSString *manufacturer;
+@property(nonatomic, readonly) NSString *name;
+@property(nonatomic, readonly) NSString *modelNumber;
+@property(nonatomic, readonly) NSString *serialNumber;
+@property(nonatomic, readonly) NSString *firmwareRevision;
+@property(nonatomic, readonly) NSString *hardwareRevision;
+
+// array of strings representing the protocols supported by the accessory
+@property(nonatomic, readonly) NSArray *protocolStrings;
+
+@end
+
+@implementation SimulatorAccessory
+
+@synthesize connected, connectionID, manufacturer, name, modelNumber, serialNumber, firmwareRevision, hardwareRevision, protocolStrings;
+
+-(id) initWithConnectionID:(NSUInteger)newConnectionID manufacturer:(NSString*)newManufacturer name:(NSString*)newName modelNumber:(NSString*)newModelNumber serialNumber:(NSString*)newSerialNumber firmwareRevision:(NSString*)newFirmwareRevision hardwareRevision:(NSString*)newHardwareRevision protocolStrings:(NSArray*)newProtocolStrings;
+{
+/*    if(!(self = [super init])){
+        return nil;
+    }
+*/
+    self->connectionID      = newConnectionID;
+    self->manufacturer      = newManufacturer;
+    self->name              = newName;
+    self->modelNumber       = newModelNumber;
+    self->serialNumber      = newSerialNumber;
+    self->firmwareRevision  = newFirmwareRevision;
+    self->hardwareRevision  = newHardwareRevision;
+    self->protocolStrings   = newProtocolStrings;
+    
+    return self;
+}
+
+-(BOOL)isConnected
+{
+    return YES;
+}
+@end
+
+#endif
 
 @implementation HeftManager{
 	//DTDevices *dtdev;
@@ -203,9 +249,25 @@ NSString* devicesPath(){
 }
 
 #if HEFT_SIMULATOR
+static EAAccessory* simulatorAccessory = nil;
+
 - (void)simulateDiscovery{
-	[self bluetoothDeviceDiscovered:@"" name:@"Simulator"];
-	[self bluetoothDiscoverComplete:YES];
+    if(simulatorAccessory == nil) {
+        simulatorAccessory = [[SimulatorAccessory alloc] initWithConnectionID:24373085 manufacturer:@"Handpoint" name:@"Simulator" modelNumber:@"" serialNumber:@"123400123" firmwareRevision:@"2.2.7" hardwareRevision:@"1.0.0" protocolStrings:@[eaProtocol]];
+        NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithObjects:@[simulatorAccessory] forKeys:@[EAAccessoryKey]];
+        NSNotification* notification = [[NSNotification alloc] initWithName:@"EAAccessoryDidConnectNotification" object:nil userInfo:dictionary];
+        [self EAAccessoryDidConnect:notification];
+        [delegate didDiscoverFinished];
+    }
+}
+
+- (void)simulateDisconnect{
+    if(simulatorAccessory != nil) {
+        NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithObjects:@[simulatorAccessory] forKeys:@[EAAccessoryKey]];
+        NSNotification* notification = [[NSNotification alloc] initWithName:@"EAAccessoryDidDisconnectNotification" object:nil userInfo:dictionary];
+        [self EAAccessoryDidDisconnect:notification];
+        simulatorAccessory = nil;
+    }
 }
 #endif
 
@@ -292,6 +354,12 @@ const char* stateLabel[] = {"disconnected", "connecting", "connected"};
     return data;
 }
 
-
-
 @end
+
+#ifdef HEFT_SIMULATOR
+void simulateDeviceDisconnect()
+{
+    HeftManager* manager = [HeftManager sharedManager];
+    [manager simulateDisconnect];
+}
+#endif
