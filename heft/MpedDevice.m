@@ -506,12 +506,16 @@ enum eSignConditions{
 	[delegate performSelectorOnMainThread:@selector(responseError:) withObject:info waitUntilDone:NO];
 }
 
-- (int)processSign:(NSString*)receipt{
+- (int)processSign:(SignatureRequestCommand*)pRequest{
 	int result = EFT_PP_STATUS_PROCESSING_ERROR;
 
-	[delegate performSelectorOnMainThread:@selector(requestSignature:) withObject:receipt waitUntilDone:NO];
+	[delegate performSelectorOnMainThread:@selector(requestSignature:) withObject:@(pRequest->GetReceipt().c_str()) waitUntilDone:NO];
+    
+    NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str()) path:@"SignatureRequiredRequest"];
+    
+    double wait_time = [xml[@"timeout"] doubleValue];
 
-	if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eFinanceTimeout]]]){
+	if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:wait_time]]){
 		result = signatureIsOk ? EFT_PP_STATUS_SUCCESS : EFT_PP_STATUS_INVALID_SIGNATURE;
 		signatureIsOk = NO;
 		[signLock unlockWithCondition:eNoSignCondition];

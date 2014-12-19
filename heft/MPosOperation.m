@@ -196,7 +196,7 @@ enum eConnectCondition{
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
 	LOG(_T("Signature required request"));
-	int status = [processor processSign:@(pRequest->GetReceipt().c_str())];
+	int status = [processor processSign:pRequest];
 	return new HostResponseCommand(CMD_STAT_SIGN_RSP, status);
 }
 

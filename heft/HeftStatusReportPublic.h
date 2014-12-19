@@ -199,8 +199,8 @@ DEPRECATED_ATTRIBUTE
 
 /**
  Notifies when cardholder's signature verification is needed.<br/> 
-	It should be typically used to print receipt and accept customer sign. Handler has to call acceptSignature:(BOOL)flag with YES if sign is valid and NO otherwise. If handler doesn't process message for 45s transaction will be declined and cancelSignature called.
- @param receipt				The receipt of transaction in html format.
+	It should be typically used to print the merchant receipt and accept the customer signature. Handler has to call acceptSignature:(BOOL)flag with YES if the signature is valid and NO otherwise. If the handler doesn't process the message in a timely manner (as dictated by the card reader) then the transaction will be declined and cancelSignature called (note: the typical configured time period on the card reader is 90s).
+ @param receipt				The merchant receipt of the transaction in html format.
  */
 - (void)requestSignature:(NSString*)receipt;
 

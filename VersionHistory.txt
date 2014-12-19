@@ -1,0 +1,8 @@
+*** v2.4.0 ***
+
+New features
+
+Updates
+
+Bugfixes
+- HeftStatusReportDelegate:requestSignature will now honor the timeout period dictated by the card reader (was previously hardcoded to 45s).
