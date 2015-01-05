@@ -11,6 +11,7 @@
 extern NSString* eaProtocol;
 
 const int ciDefaultMaxFrameSize = 2046; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
+const int ciTimeout[] = {20, 15, 1, 5*60};
 
 enum eBufferConditions{
     eNoDataCondition

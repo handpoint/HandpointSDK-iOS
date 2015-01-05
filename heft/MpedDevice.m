@@ -33,8 +33,6 @@ const NSString* kAppNameInfoKey = @"AppName";
 const NSString* kAppVersionInfoKey = @"AppVersion";
 const NSString* kXMLDetailsInfoKey = @"XMLDetails";
 
-const int ciTimeout[] = {20 , 15, 1, 45};
-
 NSString* statusMessages[] = {
 	@"Undefined"
 	,@"Success"
@@ -207,6 +205,7 @@ enum eSignConditions{
 	if(![queue operationCount])
 		return;
 	LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
+    cancelAllowed = NO;
 #if HEFT_SIMULATOR
 	[queue cancelAllOperations];
 #else
@@ -505,7 +504,7 @@ enum eSignConditions{
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
 	[delegate performSelectorOnMainThread:@selector(responseStatus:) withObject:info waitUntilDone:NO];
-    cancelAllowed = NO;
+    //cancelAllowed is already set in the caller
 }
 
 -(void)sendResponseError:(NSString*)status{
@@ -626,6 +625,15 @@ enum eSignConditions{
 		info.log = @(pResponse->GetData().c_str());
 	[delegate performSelectorOnMainThread:@selector(responseLogInfo:) withObject:info waitUntilDone:NO];
     cancelAllowed = NO;
+}
+
+-(BOOL)cancelIfPossible{
+    if(cancelAllowed){
+        [self cancel];
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 @end

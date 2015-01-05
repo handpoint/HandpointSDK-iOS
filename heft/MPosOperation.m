@@ -85,8 +85,22 @@ enum eConnectCondition{
 				}
 				
 				auto_ptr<ResponseCommand> pResponse;
+                BOOL retry;
+                BOOL already_cancelled = NO;
 				while(true){
-					pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
+                    do{
+                        retry = NO;
+                        try {
+                            pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
+                        } catch (timeout4_exception& to4) {
+                            // to be nice we will try to send a cancel to the card reader
+                            retry = !already_cancelled ? [processor cancelIfPossible] : NO;
+                            already_cancelled = retry;
+                            if(!retry){
+                                throw to4;
+                            }
+                        }
+                    } while (retry);                    
 					
 					if(pResponse->isResponse()){
 						pResponse->ProcessResult(processor);

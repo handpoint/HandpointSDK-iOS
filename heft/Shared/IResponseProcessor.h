@@ -21,4 +21,6 @@ class SignatureRequestCommand;
 //-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse;
 -(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse;
 
+-(BOOL)cancelIfPossible;
+
 @end
