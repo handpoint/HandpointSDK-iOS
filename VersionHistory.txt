@@ -2,7 +2,20 @@
 
 New features
 
+- Introduced a new feature that allows applications to optionally retrieve transaction results from the card reader when connectivity is lost between card reader and phone during a transaction (e.g. if the application crashes, the phone turns off due to low battery, etc.), this includes:
+-- A new flag to check for when connecting to the card reader.
+-- A new function to trigger retrieval of the a lost transaction.
+-- A new event that contains the retrieved transaction, as a result of the above trigger.
+
 Updates
 
+- The simulator has been updated to:
+-- Return results and status messages more in line with what the latest version of the card reader software produces.
+-- Generate many common error conditions via specific amount triggers (8000-8999:timeouts in sec (8123 is 123 sec), 9001-9006:various exceptions, many of whom will result in a pending transaction result).
+-- Supporting retrieval of lost transaction results.
+
 Bugfixes
+
+- When sending/receiving data to/from the gateway the SDK doesn't honor timeout values dictated by the card reader.
+- When sending data, from the card reader to the gateway, there is a very small, but real, chance that the data will be truncated, causing an immediate send failure.
 - HeftStatusReportDelegate:requestSignature will now honor the timeout period dictated by the card reader (was previously hardcoded to 45s).
