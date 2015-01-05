@@ -16,6 +16,7 @@ Updates
 
 Bugfixes
 
+- It is possible to send a cancel to the card reader, even when the card reader has previously indicated that it won't accept it.
 - When sending/receiving data to/from the gateway the SDK doesn't honor timeout values dictated by the card reader.
 - When sending data, from the card reader to the gateway, there is a very small, but real, chance that the data will be truncated, causing an immediate send failure.
 - HeftStatusReportDelegate:requestSignature will now honor the timeout period dictated by the card reader (was previously hardcoded to 45s).

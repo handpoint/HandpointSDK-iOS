@@ -101,11 +101,11 @@ enum eSignConditions{
 @implementation MpedDevice{
 	HeftConnection* connection;
 	NSOperationQueue* queue;
-	//NSObject<HeftClientDelegate>* delegate;
 	NSData* sharedSecret;
 	__weak NSObject<HeftStatusReportDelegate>* delegate;
 	NSConditionLock* signLock;
 	BOOL signatureIsOk;
+    BOOL cancelAllowed;
 }
 
 @synthesize mpedInfo;
@@ -121,6 +121,7 @@ enum eSignConditions{
 			[queue setMaxConcurrentOperationCount:1];
 			delegate = aDelegate;
 			signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
+            cancelAllowed = NO; // cancel is only allowed when an operation is under way.
 
 #if HEFT_SIMULATOR
 			mpedInfo = @{
@@ -199,6 +200,10 @@ enum eSignConditions{
 #pragma mark HeftClient
 
 - (void)cancel{
+    if(!cancelAllowed){
+        LOG_RELEASE(Logger::eFine, @"Cancelling is not allowed at this stage.");
+        return;
+    }
 	if(![queue operationCount])
 		return;
 	LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
@@ -215,6 +220,8 @@ enum eSignConditions{
 	if([queue operationCount])
 		return NO;
 
+    cancelAllowed = YES; // always at the start of an operation
+    
 	[queue addOperation:operation];
 
 	return YES;
@@ -489,6 +496,7 @@ enum eSignConditions{
         info.xml = xml;
         [delegate performSelectorOnMainThread:@selector(responseScannerDisabled:) withObject:info waitUntilDone:NO];
     }
+    cancelAllowed = NO;
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
 	ResponseInfo* info = [ResponseInfo new];
@@ -497,6 +505,7 @@ enum eSignConditions{
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
 	[delegate performSelectorOnMainThread:@selector(responseStatus:) withObject:info waitUntilDone:NO];
+    cancelAllowed = NO;
 }
 
 -(void)sendResponseError:(NSString*)status{
@@ -504,11 +513,14 @@ enum eSignConditions{
 	info.status = status;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
 	[delegate performSelectorOnMainThread:@selector(responseError:) withObject:info waitUntilDone:NO];
+    cancelAllowed = NO;
 }
 
 - (int)processSign:(SignatureRequestCommand*)pRequest{
 	int result = EFT_PP_STATUS_PROCESSING_ERROR;
 
+    // note: cancelAllowed = NO; // is not needed here as the card reader will send us a status message with the flag set correctly just before
+    
 	[delegate performSelectorOnMainThread:@selector(requestSignature:) withObject:@(pRequest->GetReceipt().c_str()) waitUntilDone:NO];
     
     NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str()) path:@"SignatureRequiredRequest"];
@@ -522,7 +534,7 @@ enum eSignConditions{
 	}
 	else
 		[delegate performSelectorOnMainThread:@selector(cancelSignature) withObject:nil waitUntilDone:NO];
-
+    
 	return result;
 }
 
@@ -557,10 +569,16 @@ enum eSignConditions{
     NSDictionary* xml;
     if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]) count]> 0)
     {
+        NSString* ca = [xml objectForKey:@"CancelAllowed"];
+        cancelAllowed = ((ca != nil) && [ca isEqualToString:@"true"]) ? YES : NO;
+        
         [self sendResponseInfo:statusMessage code:status xml:xml];
     }
     else if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"]) count]> 0)
     {
+        // the card reader scannerEvent message doesn't include a CancelAllowed flag, but we know the card reader accepts a cancel at this stage
+        NSString* ca = [xml objectForKey:@"CancelAllowed"];
+        cancelAllowed = ((ca == nil) || [ca isEqualToString:@"true"]) ? YES : NO; // i.e. NO if not there or not set to "true" (e.g. if set to "false")
         [self sendScannerEvent:statusMessage code:status xml:xml];
     }
 #if HEFT_SIMULATOR
@@ -593,6 +611,7 @@ enum eSignConditions{
         info = transactionResultPending ? info : nil;
         [delegate performSelectorOnMainThread:@selector(responseRecoveredTransactionStatus:) withObject:info waitUntilDone:NO];
     }
+    cancelAllowed = NO;
 }
 
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
@@ -606,6 +625,7 @@ enum eSignConditions{
 	if(status == EFT_PP_STATUS_SUCCESS)
 		info.log = @(pResponse->GetData().c_str());
 	[delegate performSelectorOnMainThread:@selector(responseLogInfo:) withObject:info waitUntilDone:NO];
+    cancelAllowed = NO;
 }
 
 @end
