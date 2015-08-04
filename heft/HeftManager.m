@@ -158,32 +158,21 @@ static HeftManager* instance = 0;
 #pragma mark property
 
 - (NSString*)version{
-	return @"2.4.0";
+	return @"2.4.1";
 }
 
+- (NSString*)buildNumber {
+	return @"1";
+}
+
+// A real kludge, need to automate this so it can be independent of Xcode project settings
 - (NSString*)getSDKVersion{
-	
-	NSString* SDKVersion;
-	if([[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"]) {
-        SDKVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
-	}
-	else {
-		SDKVersion = [self version];
-	}
-	
+	NSString* SDKVersion = [self version];
 	return SDKVersion;
 }
 
 - (NSString*)getSDKBuildNumber{
-	NSString* SDKBuildNumber;
-	
-	if([[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey]) {
-		SDKBuildNumber = [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleVersionKey];
-	}
-	else
-	{
-		SDKBuildNumber = @"n/a";
-	}
+	NSString* SDKBuildNumber = [self buildNumber];
 	return SDKBuildNumber;
 }
 

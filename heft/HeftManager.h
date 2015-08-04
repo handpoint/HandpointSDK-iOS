@@ -103,7 +103,7 @@
  DEPRECATED: use -(NSString*)getSDKVersion;
  @brief Current HeftManager version. 
  */
-@property(nonatomic, readonly) NSString* version DEPRECATED_ATTRIBUTE;
+@property(nonatomic, readonly) NSString* version;
 
 /**
  @brief Current Handpoint SDK version.
