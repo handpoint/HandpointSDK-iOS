@@ -252,8 +252,8 @@ static EAAccessory* simulatorAccessory = nil;
 			return *stop;
 		}];
 		HeftRemoteDevice* eaDevice = eaDevices[index];
-		[delegate didLostAccessoryDevice:eaDevice];
 		[eaDevices removeObjectAtIndex:index];
+		[delegate didLostAccessoryDevice:eaDevice];
 	}
 }
 
