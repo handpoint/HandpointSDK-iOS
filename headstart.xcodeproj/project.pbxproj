@@ -372,8 +372,8 @@
 		2DEDA3651628B0580043AFBC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastTestingUpgradeCheck = 0610;
-				LastUpgradeCheck = 0600;
+				LastTestingUpgradeCheck = 0640;
+				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = zdv;
 			};
 			buildConfigurationList = 2DEDA3681628B0580043AFBC /* Build configuration list for PBXProject "headstart" */;
@@ -529,7 +529,10 @@
 		2D38903D169F629E00720A15 /* Debug Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = (
+					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
+					armv7s,
+				);
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
@@ -616,7 +619,10 @@
 		2D389043169F62B800720A15 /* Release Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = (
+					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
+					armv7s,
+				);
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
@@ -674,7 +680,10 @@
 		2D398946165FF23E00F8FA29 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = (
+					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
+					armv7s,
+				);
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
@@ -705,7 +714,10 @@
 		2D398947165FF23E00F8FA29 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = (
+					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
+					armv7s,
+				);
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
