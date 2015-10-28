@@ -207,7 +207,8 @@ enum eConnectCondition{
 
                 if(connectionSendData.size()){
                     written = [sendStream write:connectionSendData.data() maxLength:connectionSendData.size()];
-                    if(written < connectionSendData.size()){
+                    if(written < connectionSendData.size())
+                    {
                         connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);
                         [connectLock unlock];
                     } else {
@@ -221,6 +222,9 @@ enum eConnectCondition{
                             [sendStream setDelegate:nil];
                             
                             connectionState = eConnectionClosed;
+                            
+                            [connectLock unlock];
+                            // TODO: deadlocked?
                             return;
                         }
                     
@@ -358,7 +362,8 @@ enum eConnectCondition{
 	LOG(_T("Recv :%d bytes, %ds timeout"), pRequest->GetDataLen(), pRequest->GetTimeout());
     
     if(recvStream) {
-        if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]]){
+        if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
+        {
             if(connectionState == eConnectionReceivingComplete)
             {
                 [connectLock unlockWithCondition:eNoConnectStateCondition];

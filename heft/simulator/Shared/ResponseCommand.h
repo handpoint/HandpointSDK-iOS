@@ -26,10 +26,16 @@ class EventInfoResponseCommand : public ResponseCommand{
 
 public:
 	EventInfoResponseCommand(int status, bool cancel_allowed = true);
-	const string& GetXmlDetails(){return xml_details;}
+	const string& GetXmlDetails()
+    {
+        return xml_details;
+    }
 
 	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor){[processor processEventInfoResponse:this];}
+	void ProcessResult(id<IResponseProcessor> processor)
+    {
+        [processor processEventInfoResponse:this];
+    }
 };
 
 class XMLCommandResponseCommand : public ResponseCommand{

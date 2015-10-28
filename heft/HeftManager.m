@@ -131,6 +131,10 @@ static HeftManager* instance = 0;
 	return NO;
 }
 
+// this is a thread function, params is an array:
+//                                params[0] = device
+//                                params[1] = sharedSecret
+//                                params[2] = delegate
 - (void)asyncClientForDevice:(NSArray*)params{
 	@autoreleasepool{
 		id<HeftClient> result = nil;
@@ -148,11 +152,15 @@ static HeftManager* instance = 0;
 }
 
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
-	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:) toTarget:self withObject:@[device, sharedSecret, aDelegate]];
+	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
+                             toTarget:self
+                           withObject:@[device, sharedSecret, aDelegate]];
 }
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
 	NSData* sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
-	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:) toTarget:self withObject:@[device, sharedSecretData, aDelegate]];
+	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
+                             toTarget:self
+                           withObject:@[device, sharedSecretData, aDelegate]];
 }
 
 #pragma mark property
