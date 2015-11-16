@@ -3,9 +3,9 @@
 //  headstart
 //
 
-#import "StdAfx.h"
+// #import "StdAfx.h"
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 
 #import "MPosOperation.h"
 #import "Shared/RequestCommand.h"

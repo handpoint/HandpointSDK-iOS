@@ -3,6 +3,12 @@
 //  headstart
 //
 
+#include <vector>
+#include <cstdint>
+
+#import <Foundation/Foundation.h>
+
+
 @class HeftRemoteDevice;
 
 typedef enum{
@@ -24,7 +30,7 @@ typedef enum{
 
 - (void)writeData:(uint8_t*)data length:(int)len;
 - (void)writeAck:(UInt16)ack;
-- (int)readData:(vector<UINT8>&)buffer timeout:(eConnectionTimeout)timeout;
+- (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout;
 - (UInt16)readAck;
 
 @end

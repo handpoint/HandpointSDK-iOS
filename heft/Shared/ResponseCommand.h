@@ -3,22 +3,25 @@
 #include "Command.h"
 #include "IResponseProcessor.h"
 
+#include <vector>
+#include <string>
+
 class RequestCommand;
 
 class ResponseCommand : public Command{
-	UINT32 command_hsb;
+	std::uint32_t command_hsb;
 	int iStatus;
 	int length;
 
 protected:
 #pragma pack(push, 1)
 	struct ResponsePayload : CommandPayload{
-		UINT32 status;
-		UINT8 length[6];
+		std::uint32_t status;
+        std::uint8_t length[6];
 	};
 #pragma pack(pop)
 
-	ResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
+	ResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
 
 	int ReadLength(const ResponsePayload* pResponse);
 	int ReadStatus(const ResponsePayload* pResponse);
@@ -33,53 +36,53 @@ public:
 	int GetStatus(){return iStatus;}
 	int GetLength(){return length;}
 
-	static ResponseCommand* Create(const vector<UINT8>& buf);
+    static ResponseCommand* Create(const std::vector<std::uint8_t>& buf);
 };
 
 class InitResponseCommand : public ResponseCommand{
-	UINT16 com_buffer_size;
-	string serial_number;
-	UINT16 public_key_ver;
-	UINT16 emv_param_ver;
-	UINT16 general_param_ver;
-	UINT8 manufacturer_code;
-	UINT8 model_code;
-	string app_name;
-	UINT16 app_ver;
-	string xml_details;
+	std::uint16_t com_buffer_size;
+    std::string serial_number;
+	std::uint16_t public_key_ver;
+	std::uint16_t emv_param_ver;
+	std::uint16_t general_param_ver;
+	std::uint8_t manufacturer_code;
+	std::uint8_t model_code;
+    std::string app_name;
+	std::uint16_t app_ver;
+    std::string xml_details;
 
 #pragma pack(push, 1)
 	struct InitPayload : ResponsePayload{
-		UINT16 com_buffer_size;
-		UINT8 serial_number[6];
-		UINT16 public_key_ver;
-		UINT16 emv_param_ver;
-		UINT16 general_param_ver;
-		UINT8 manufacturer_code;
-		UINT8 model_code;
-		UINT8 app_name[8];
-		UINT16 app_ver;
-		UINT32 xml_details_length;
+		std::uint16_t com_buffer_size;
+		std::uint8_t serial_number[6];
+		std::uint16_t public_key_ver;
+		std::uint16_t emv_param_ver;
+		std::uint16_t general_param_ver;
+		std::uint8_t manufacturer_code;
+		std::uint8_t model_code;
+		std::uint8_t app_name[8];
+		std::uint16_t app_ver;
+		std::uint32_t xml_details_length;
 		char xml_details[];
 	};
 #pragma pack(pop)
 
 public:
-	InitResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
+	InitResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
 	int GetBufferSize(){return com_buffer_size;}
-	string GetSerialNumber(){return serial_number;}
+    std::string GetSerialNumber(){return serial_number;}
 	int GetPublicKeyVer(){return public_key_ver;}
 	int GetEmvParamVer(){return emv_param_ver;}
 	int GetGeneralParamVer(){return general_param_ver;}
 	int GetManufacturerCode(){return manufacturer_code;}
 	int GetModelCode(){return model_code;}
-	string GetAppName(){return app_name;}
+    std::string GetAppName(){return app_name;}
 	int GetAppVer(){return app_ver;}
-	const string& GetXmlDetails(){return xml_details;}
+    const std::string& GetXmlDetails(){return xml_details;}
 };
 
 class XMLCommandResponseCommand : public ResponseCommand{
-	string xml_return;
+    std::string xml_return;
 
 #pragma pack(push, 1)
 	struct XMLCommandPayload : ResponsePayload{
@@ -89,7 +92,7 @@ class XMLCommandResponseCommand : public ResponseCommand{
 
 public:
 	XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size);
-	const string& GetXmlReturn(){return xml_return;}
+    const std::string& GetXmlReturn(){return xml_return;}
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor){[processor processXMLCommandResponseCommand:this];}
@@ -97,65 +100,65 @@ public:
 
 
 class IdleResponseCommand : public ResponseCommand{
-	string xml_details;
+    std::string xml_details;
 
 #pragma pack(push, 1)
 	struct IdlePayload : ResponsePayload{
-		UINT32 xml_details_length;
+		std::uint32_t xml_details_length;
 		char xml_details[];
 	};
 #pragma pack(pop)
 
 public:
-	IdleResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
-	const string& GetXmlDetails(){return xml_details;}
+	IdleResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
+    const std::string& GetXmlDetails(){return xml_details;}
 };
 
 class EventInfoResponseCommand : public ResponseCommand{
-	string xml_details;
+    std::string xml_details;
 
 #pragma pack(push, 1)
 	struct EventInfoPayload : ResponsePayload{
-		UINT32 xml_details_length;
+		std::uint32_t xml_details_length;
 		char xml_details[];
 	};
 #pragma pack(pop)
 
 public:
-	EventInfoResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
-	const string& GetXmlDetails(){return xml_details;}
+	EventInfoResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
+    const std::string& GetXmlDetails(){return xml_details;}
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor){[processor processEventInfoResponse:this];}
 };
 
 class FinanceResponseCommand : public ResponseCommand{
-	UINT8 financial_status;
-	UINT32 authorised_amount;
-	string trans_id;
-	string merchant_receipt;
-	string customer_receipt;
-	string xml_details;
+	std::uint8_t financial_status;
+	std::uint32_t authorised_amount;
+	std::string trans_id;
+	std::string merchant_receipt;
+	std::string customer_receipt;
+	std::string xml_details;
     BOOL recovered_transaction;
 
 #pragma pack(push, 1)
 	struct FinancePayload : ResponsePayload{
-		UINT8 financial_status;
-		UINT32 authorised_amount;
-		UINT8 trans_id_length;
+		std::uint8_t financial_status;
+		std::uint32_t authorised_amount;
+		std::uint8_t trans_id_length;
 		char trans_id[];
 	};
 #pragma pack(pop)
 
 public:
-	FinanceResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize, BOOL recoveredTransaction);
-    UINT8 GetFinancialStatus(){return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;}
+	FinanceResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize, BOOL recoveredTransaction);
+    std::uint8_t GetFinancialStatus(){return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;}
     BOOL isRestarting(){return financial_status & EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK ? YES : NO;}
-	UINT32 GetAmount(){return authorised_amount;}
-	const string& GetCustomerReceipt(){return customer_receipt;}
-	const string& GetMerchantReceipt(){return merchant_receipt;}
-	const string& GetTransID(){return trans_id;}
-	const string& GetXmlDetails(){return xml_details;}
+	std::uint32_t GetAmount(){return authorised_amount;}
+    const std::string& GetCustomerReceipt(){return customer_receipt;}
+    const std::string& GetMerchantReceipt(){return merchant_receipt;}
+    const std::string& GetTransID(){return trans_id;}
+    const std::string& GetXmlDetails(){return xml_details;}
     BOOL isRecoveredTransaction(){return recovered_transaction;}
 
 	//ResponseCommand
@@ -163,18 +166,18 @@ public:
 };
 
 class GetLogInfoResponseCommand : public ResponseCommand{
-	string data;
+    std::string data;
 
 #pragma pack(push, 1)
 	struct GetLogInfoPayload : ResponsePayload{
-		UINT32 data_len;
-		UINT8 data[];
+		std::uint32_t data_len;
+		std::uint8_t data[];
 	};
 #pragma pack(pop)
 
 public:
-	GetLogInfoResponseCommand(const ResponsePayload* pPayload, UINT32 payloadSize);
-	const string& GetData(){return data;}
+	GetLogInfoResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
+    const std::string& GetData(){return data;}
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor){[processor processLogInfoResponse:this];}

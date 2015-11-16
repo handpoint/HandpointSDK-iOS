@@ -4,12 +4,14 @@
 //
 
 
-#import "StdAfx.h"
+// #import "StdAfx.h"
 
 #import "HeftManager.h"
 #import "HeftConnection.h"
 #import "MpedDevice.h"
 #import "HeftRemoteDevice.h"
+
+#import "debug.h"
 
 //#define NSLog(...) [log2file appendFormat:@"%f:", CFAbsoluteTimeGetCurrent()];[log2file appendFormat:__VA_ARGS__];[log2file appendString:@"\n"]; \
 //[log2file writeToFile:file atomically:YES encoding:NSUTF8StringEncoding error:NULL]
@@ -140,7 +142,7 @@ static HeftManager* instance = 0;
 		id<HeftClient> result = nil;
 		NSData* sharedSecret = params[1];
 		NSObject<HeftStatusReportDelegate>* aDelegate = params[2];
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 		[NSThread sleepForTimeInterval:2];
 		result = [[MpedDevice alloc] initWithConnection:nil sharedSecret:sharedSecret delegate:aDelegate];
 #else
@@ -192,18 +194,25 @@ static HeftManager* instance = 0;
 #pragma mark HeftDiscovery
 
 - (void)startDiscovery:(BOOL)fDiscoverAllDevices{
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 	[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 #else
-    NSError* error = NULL;
+    // NSError* error = NULL;
     EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
-    [eaManager showBluetoothAccessoryPickerWithNameFilter:nil completion:^(NSError* error){
-        [delegate didDiscoverFinished];
-    }];
+    [eaManager showBluetoothAccessoryPickerWithNameFilter:nil
+                                               completion:^(NSError* error) {
+                                                   if (error) {
+                                                       NSLog(@"showBluetoothAccessoryPickerWithNameFilter error :%@", error);
+                                                   }
+                                                   else{
+                                                       NSLog(@"showBluetoothAccessoryPickerWithNameFilter working");
+                                                   }
+                                                   [delegate didDiscoverFinished];
+                                               }];
 #endif
 }
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 static EAAccessory* simulatorAccessory = nil;
 
 - (void)simulateDiscovery{

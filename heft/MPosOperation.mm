@@ -3,12 +3,13 @@
 //  headstart
 //
 
-#import "StdAfx.h"
+// #import "StdAfx.h"
 
-#if !HEFT_SIMULATOR
+#ifndef HEFT_SIMULATOR
 
 #import "FrameManager.h"
 #import "Frame.h"
+
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
 
@@ -16,6 +17,13 @@
 #import "HeftConnection.h"
 
 #import <CommonCrypto/CommonHMAC.h>
+
+#include "Exception.h"
+#include "Logger.h"
+#import "debug.h"
+
+#include <vector>
+#include <memory>
 
 enum eConnectCondition{
 	eNoConnectStateCondition
@@ -43,8 +51,8 @@ enum eConnectCondition{
         eConnectionReceiving,
         eConnectionReceivingComplete,
     } connectionState;
-    vector<UINT8> connectionSendData;
-    vector<UINT8> connectionReceiveData;
+    std::vector<std::uint8_t> connectionSendData;
+    std::vector<std::uint8_t> connectionReceiveData;
 }
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
@@ -84,7 +92,7 @@ enum eConnectCondition{
 					currentRequest = 0;
 				}
 				
-				auto_ptr<ResponseCommand> pResponse;
+                std::shared_ptr<ResponseCommand> pResponse;
                 BOOL retry;
                 BOOL already_cancelled = NO;
 				while(true){
@@ -105,7 +113,7 @@ enum eConnectCondition{
 					if(pResponse->isResponse()){
 						pResponse->ProcessResult(processor);
 						if(pResponse->isResponseTo(*pRequestCommand)){
-							LOG_RELEASE(Logger::eInfo, _T("Current mPos operation completed."));
+							LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
 							return;
 						}
 						continue;
@@ -115,7 +123,7 @@ enum eConnectCondition{
 				}
 				
 				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
-				ATLASSERT(pHostRequest);
+				// ATLASSERT(pHostRequest);
 				currentRequest = pHostRequest->Process(self);
 			}
 		}
@@ -169,7 +177,7 @@ enum eConnectCondition{
         if(aStream == recvStream){
             // note: this event will not be generated again until the server sends us more data
             NSInteger nrecv;
-            vector<UINT8>::size_type old_size = connectionReceiveData.size();
+            std::vector<std::uint8_t>::size_type old_size = connectionReceiveData.size();
             NSUInteger stepSize = 65536; // during testing we used a really small value here (i.e. 1)
 
             do {
@@ -253,7 +261,7 @@ enum eConnectCondition{
 }
 
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest{
-	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: connecting to bureau %s:%d timeout:%d"), pRequest->GetAddr().c_str(), pRequest->GetPort(), pRequest->GetTimeout());
+	LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: connecting to bureau %s:%d timeout:%d", pRequest->GetAddr().c_str(), pRequest->GetPort(), pRequest->GetTimeout());
     
     int status = EFT_PP_STATUS_CONNECT_ERROR;
     
@@ -285,18 +293,18 @@ enum eConnectCondition{
             if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]]){
                 [connectLock unlockWithCondition:eNoConnectStateCondition];
                 if(recvStream.streamStatus == NSStreamStatusOpen){
-                    LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: connected to bureau"));
+                    LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: connected to bureau");
                     return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
                 }else{
-                    LOG_RELEASE(Logger::eWarning, _T("Error connecting bureau."));
+                    LOG_RELEASE(Logger::eWarning, @"Error connecting bureau.");
                     status = EFT_PP_STATUS_CONNECT_ERROR;
                 }
             }else{
-                LOG_RELEASE(Logger::eWarning, _T("Error connecting bureau (timeout)."));
+                LOG_RELEASE(Logger::eWarning, @"Error connecting bureau (timeout).");
                 status = EFT_PP_STATUS_CONNECT_TIMEOUT;
             }
         }else{
-            LOG_RELEASE(Logger::eWarning, _T("Error connecting bureau."));
+            LOG_RELEASE(Logger::eWarning, @"Error connecting bureau.");
             status = EFT_PP_STATUS_CONNECT_ERROR;
         }
         
@@ -317,7 +325,12 @@ enum eConnectCondition{
 }
 
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
-	LOG_RELEASE(Logger::eFine, _T("Request to bureau (length:%d): %@"), pRequest->GetLength(), [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSUTF8StringEncoding]);
+	LOG_RELEASE(Logger::eFine,
+                @"Request to bureau (length:%d): %@",
+                pRequest->GetLength(),
+                [[NSString alloc] initWithBytes:pRequest->GetData()
+                                         length:pRequest->GetLength()
+                                       encoding:NSUTF8StringEncoding]);
     
     if(sendStream) {
         //connectionState = eConnectionSending;
@@ -359,7 +372,7 @@ enum eConnectCondition{
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest{
-	LOG(_T("Recv :%d bytes, %ds timeout"), pRequest->GetDataLen(), pRequest->GetTimeout());
+	LOG(@"Recv :%d bytes, %ds timeout", pRequest->GetDataLen(), pRequest->GetTimeout());
     
     if(recvStream) {
         if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
@@ -367,7 +380,7 @@ enum eConnectCondition{
             if(connectionState == eConnectionReceivingComplete)
             {
                 [connectLock unlockWithCondition:eNoConnectStateCondition];
-                LOG_RELEASE(Logger::eFine, _T("Response from bureau (length:%d): "), connectionReceiveData.size());
+                LOG_RELEASE(Logger::eFine, @"Response from bureau (length:%d): ", connectionReceiveData.size());
                 return new ReceiveResponseCommand(connectionReceiveData);
             } // else receive error
             
@@ -383,23 +396,23 @@ enum eConnectCondition{
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
     [self cleanUpConnection];
-	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: disconnected"));
+	LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: disconnected");
 	return new HostResponseCommand(CMD_HOST_DISC_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
-	LOG(_T("Signature required request"));
+	LOG(@"Signature required request");
 	int status = [processor processSign:pRequest];
 	return new HostResponseCommand(CMD_STAT_SIGN_RSP, status);
 }
 
 - (RequestCommand*)processChallenge:(ChallengeRequestCommand*)pRequest{
-	LOG(_T("Challenge required request"));
+	LOG(@"Challenge required request");
 
 	CCHmacContext hmacContext;
-	vector<uint8_t> mx([sharedSecret length]);
-	vector<uint8_t> zx(mx.size());
-	vector<uint8_t> msg(pRequest->GetRandomNum());
+	std::vector<std::uint8_t> mx([sharedSecret length]);
+    std::vector<std::uint8_t> zx(mx.size());
+    std::vector<std::uint8_t> msg(pRequest->GetRandomNum());
 
 	SecRandomCopyBytes(kSecRandomDefault, mx.size(), &mx[0]);
 	msg.resize(mx.size() * 2);

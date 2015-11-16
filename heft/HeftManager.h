@@ -11,6 +11,9 @@
  *
  **/
 
+#import <Foundation/Foundation.h>
+
+
 @protocol HeftClient;
 @protocol HeftStatusReportDelegate;
 @class HeftRemoteDevice;

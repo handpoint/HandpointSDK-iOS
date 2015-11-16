@@ -3,6 +3,9 @@
 //  headstart
 //
 
+#include <Foundation/Foundation.h>
+#import <ExternalAccessory/ExternalAccessory.h>
+
 @interface HeftRemoteDevice : NSObject<NSCoding>
 
 @property(nonatomic, readonly) NSString* name;

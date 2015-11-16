@@ -186,6 +186,7 @@
 #define EFT_TRANS_PROCESSED 					0x0003
 #define EFT_TRANS_NOT_PROCESSED 				0x0004
 #define EFT_TRANS_CANCELLED						0x0005
+#define EFT_TRANS_PARTIALLY_APPROVED			0x0006
 
 //general transaction types
 #define EFT_FINANC_UNDEFINED                        0x00

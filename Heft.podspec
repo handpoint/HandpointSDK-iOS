@@ -1,0 +1,1 @@
+/Users/matti/.cocoapods/repos/handpoint/Specs/Heft/2.4.0/Heft.podspec

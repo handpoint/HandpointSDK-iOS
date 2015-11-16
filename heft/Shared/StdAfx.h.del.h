@@ -1,25 +1,20 @@
 #pragma once
 
-#import <string>
-#import <vector>
+#include <stdint.h>
 
-using std::string;
-using std::vector;
-using std::auto_ptr;
-using std::exception;
 
-typedef UInt8 BYTE;
+typedef uint8_t BYTE;
 typedef BYTE* LPBYTE;
-typedef UInt8 UINT8;
+typedef uint8_t UINT8;
 typedef const char *PCSTR;
 typedef PCSTR LPCSTR;
 typedef char* LPSTR;
 typedef unsigned short USHORT;
 typedef short SHORT;
-typedef UInt16 UINT16;
-typedef UInt32 UINT32;
-typedef SInt32 INT32;
-typedef SInt64 __int64;
+typedef uint16_t UINT16;
+typedef uint32_t UINT32;
+typedef int32_t INT32;
+typedef int64_t __int64;
 
 #define ATLASSERT(x) NSCAssert(x, @"ATLASSERT")
 //#define makechar(x) #@x
