@@ -547,7 +547,6 @@
 		};
 		2D38903D169F629E00720A15 /* Debug Simulator */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9AD0F47DCA7651B04120F222 /* Pods-heft.debug simulator.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DSTROOT = /tmp/heft.dst;
@@ -636,7 +635,6 @@
 		};
 		2D389043169F62B800720A15 /* Release Simulator */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EDB3B45339F876E9E84EBF3C /* Pods-heft.release simulator.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -727,7 +725,6 @@
 		};
 		2D398947165FF23E00F8FA29 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 283D2AE0D17B51B9CE673CA5 /* Pods-heft.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";

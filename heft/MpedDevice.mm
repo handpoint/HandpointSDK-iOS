@@ -504,6 +504,7 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
+
 #pragma mark -
 
 - (NSDictionary*)getValuesFromXml:(NSString*)xml path:(NSString*)path{
@@ -575,7 +576,7 @@ enum eSignConditions{
         [delegate performSelectorOnMainThread:@selector(responseEMVReport:) withObject:report waitUntilDone:NO];
     }
     else{
-        LOG_RELEASE(Logger::eFine, @"%@", "responseEMVReport not implemented in delegate. Report not returned to client");
+        LOG_RELEASE(Logger::eFine, @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
     }
 }
 
@@ -612,17 +613,15 @@ enum eSignConditions{
 }
 
 -(void)processXMLCommandResponseCommand:(XMLCommandResponseCommand*)pResponse{
-	int status = pResponse->GetStatus();
-	NSString* statusMessage = status < ([statusMessages count]-1) ? statusMessages[status] : @"Unknown status";
-    //if responseEnableScanner
     NSDictionary* xml;
-    
-    // the XML response can be of various types, here we must check the types (perhaps just best/fastest
-    // to search for a string in the start of the XML response string instead of trying to parse
-    
+    // the XML response can be of various types, here we must check the type (perhaps just best/fastest
+    // to search for a string in the start of the XML response string instead of trying to parse)
+    // the type of the xml is always at the top (first two lines)
     xml = [self getValuesFromXml:@(pResponse->GetXmlReturn().c_str()) path:@"enableScannerResponse"];
     if([xml count]> 0)
     {
+        int status = pResponse->GetStatus();
+        NSString* statusMessage = status < ([statusMessages count]-1) ? statusMessages[status] : @"Unknown status";
         [self sendEnableScannerResponse:statusMessage code:status xml:xml];
     }
     else
@@ -630,7 +629,8 @@ enum eSignConditions{
         xml = [self getValuesFromXml:@(pResponse->GetXmlReturn().c_str()) path:@"getReportResponse"];
         if([xml count]> 0)
         {
-            NSString* xml_status = xml[@"StatusMesssage"];
+            // NSString* xml_status = xml[@"StatusMesssage"];
+            // LOG(@"xml_status: %@", xml_status);
             NSString* report_data = xml[@"Data"];
             // call some method with these parameters
             [self sendReportResult:report_data];

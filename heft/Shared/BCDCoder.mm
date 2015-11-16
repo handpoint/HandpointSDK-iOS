@@ -5,7 +5,7 @@
 #include <cstdint>
 
 
-void BCDCoder::Encode(const char* pStr, std::uint8_t* pBuf, int size){
+void BCDCoder::Encode(const char* pStr, std::uint8_t* pBuf, int size) {
 	const char* p = pStr;
 	for(int i = 0; i < size; ++i){
 		unsigned char c_hi = (*p++ - '0') & 0x0f;
@@ -14,7 +14,7 @@ void BCDCoder::Encode(const char* pStr, std::uint8_t* pBuf, int size){
 	}
 }
 
-std::string BCDCoder::Decode(const std::uint8_t* pBuf, int size){
+std::string BCDCoder::Decode(const std::uint8_t* pBuf, int size) {
     std::string result;
     const std::uint8_t* p = pBuf;
 	for(int i = 0; i < size; ++i){

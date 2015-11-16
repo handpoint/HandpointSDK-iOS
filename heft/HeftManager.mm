@@ -73,7 +73,7 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 
 #endif
 
-@implementation HeftManager{
+@implementation HeftManager {
 	BOOL fNotifyForAllDevices;
 	NSMutableArray* eaDevices;
 }
@@ -83,7 +83,7 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 static HeftManager* instance = 0;
 
 + (void)initialize{
-	if(self == [HeftManager class]){
+	if(self == [HeftManager class]) {
 		//file = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"log.txt"];
 		//log2file = [NSMutableString string];
 		//freopen([file cStringUsingEncoding:NSASCIIStringEncoding], "w+", stderr);
@@ -96,8 +96,8 @@ static HeftManager* instance = 0;
 	return instance;
 }
 
-- (id)init{
-	if(self = [super init]){
+- (id)init {
+	if(self = [super init]) {
 		LOG(@"HeftManager::init");
 		eaDevices = [NSMutableArray new];
 
