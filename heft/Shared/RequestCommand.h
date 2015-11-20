@@ -36,15 +36,6 @@ protected:
                      &dest_len);
 	}
     
-    /*
-     
-     inline bool AtlHexEncode(
-        const std::uint8_t *pbSrcData,
-        int nSrcLen,
-        char* szDest,
-        int *pnDestLen) throw()
-     */
-
 	int ReadLength(const RequestPayload* pRequest);
 
 public:

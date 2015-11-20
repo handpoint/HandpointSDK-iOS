@@ -244,7 +244,7 @@ enum eBufferConditions{
 
     [bufferLock unlockWithCondition:currentPosition ? eHasDataCondition : eNoDataCondition];
     //LOG(@"readAck released lock (currentPosition: %d)", currentPosition);
-    //LOG(@"HeftConnection::readAck %04X", ack);
+    LOG(@"HeftConnection::readAck %04X %04X", ack, ntohs(ack));
     return ack;
 }
 

@@ -79,7 +79,7 @@ public:
         return authorised_amount;
     }
     
-	const string& GetCustomerReceipt()
+    const string& GetCustomerReceipt()
     {
         return customer_receipt;
     }
@@ -105,7 +105,7 @@ public:
     }
 
 	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor)
+    void ProcessResult(id<IResponseProcessor> processor)
     {
         [processor processFinanceResponse:this];
     }

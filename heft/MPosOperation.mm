@@ -180,13 +180,17 @@ enum eConnectCondition{
             std::vector<std::uint8_t>::size_type old_size = connectionReceiveData.size();
             NSUInteger stepSize = 65536; // during testing we used a really small value here (i.e. 1)
 
-            do {
+            do
+            {
                 connectionReceiveData.resize(old_size + stepSize);
                 nrecv = [recvStream read:&connectionReceiveData[old_size] maxLength:stepSize];
                 // it is possible that we didn't read all available data due to our buffer being too small
-                if(nrecv >= 0){
+                if(nrecv >= 0)
+                {
                     old_size += nrecv;
-                }else{
+                }
+                else
+                {
                     // first remove us as the streams event handler so that we don't accidentally get more events
                     [recvStream setDelegate:nil];
                     [sendStream setDelegate:nil];
@@ -206,24 +210,30 @@ enum eConnectCondition{
         } // else there are bytes on the sendStream? ... which makes no sense! ... but if so ... then we just ignore this event
     }
     
-    if(eventCode & NSStreamEventHasSpaceAvailable){
+    if(eventCode & NSStreamEventHasSpaceAvailable)
+    {
         if(aStream == sendStream){
             // note: this event will not be generated again until we write something to the stream
             [connectLock lock];
-            if(connectionState == eConnectionSending){
+            if(connectionState == eConnectionSending) {
                 NSInteger written;
 
-                if(connectionSendData.size()){
+                if(connectionSendData.size())
+                {
                     written = [sendStream write:connectionSendData.data() maxLength:connectionSendData.size()];
                     if(written < connectionSendData.size())
                     {
                         connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);
                         [connectLock unlock];
-                    } else {
-                        if(written == connectionSendData.size()){
+                    } else
+                    {
+                        if(written == connectionSendData.size())
+                        {
                             connectionSendData.clear();
                             connectionState = eConnectionSendingComplete;
-                        }else{
+                        }
+                        else
+                        {
                             // error:
                             // first remove us as the streams event handler so that we don't accidentally get more events
                             [recvStream setDelegate:nil];
@@ -233,6 +243,7 @@ enum eConnectCondition{
                             
                             [connectLock unlock];
                             // TODO: deadlocked?
+                            LOG_RELEASE(Logger::eFine, @"Error writing data, closing connection.");
                             return;
                         }
                     

@@ -2,8 +2,8 @@
 
 #include <Foundation/Foundation.h>
 
-#if 1
-class Logger{
+class Logger
+{
 public:
 	enum eLevel{eAll, eFinest, eFiner, eFine, eConfig, eInfo, eWarning, eSevere, eOff};
 
@@ -33,7 +33,6 @@ private:
 	NSMutableString* logStr;
 	eLevel m_level;
 };
-#endif
 
 
 // Objective C rewrite would look something like this, with a C++ wrapper
@@ -49,7 +48,6 @@ typedef NS_ENUM(NSUInteger, eLevel) {eAll, eFinest, eFiner, eFine, eConfig, eInf
 
 @property NSString *fileName;
 @property eLevel level;
-
  */
 
 

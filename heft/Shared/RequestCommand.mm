@@ -12,6 +12,25 @@
 
 #include <cstdint>
 
+
+namespace {
+    const int currency_code_length = 4;
+    
+    struct CurrencyCode{
+        char name[4];
+        char code[currency_code_length + 1];
+    };
+    
+    
+    CurrencyCode ISO4217CurrencyCodes[] = {
+          "USD", "0840"
+        , "EUR", "0978"
+        , "GBP", "0826"
+        , "ISK", "0352"
+        , "ZAR", "0710"
+    };
+}
+
 RequestCommand::RequestCommand(int iCommandSize, std::uint32_t type) : data(ciMinSize + iCommandSize)
 {
 	RequestPayload* pRequest = GetPayload<RequestPayload>();
@@ -39,15 +58,8 @@ int RequestCommand::ReadLength(const RequestPayload* pRequest){
 }
 
 
-InitRequestCommand::InitRequestCommand() : RequestCommand(ciMinSize, CMD_INIT_REQ){
-	/*USES_CONVERSION;
-	string date;
-	char buf[ciMinSize * 2 + 1];
-	__time64_t aclock;
-	_time64(&aclock);
-	tm time;
-	_localtime64_s(&time, &aclock);*/
-	//strftime(buf, sizeof buf, "%Y%m%d%H%M%S", &time);
+InitRequestCommand::InitRequestCommand() : RequestCommand(ciMinSize, CMD_INIT_REQ)
+{
 	NSDateFormatter* df = [NSDateFormatter new];
 	[df setDateFormat:@"yyyyMMddHHmmss"];
 	NSString* curDate = [df stringFromDate:[NSDate new]];
@@ -58,12 +70,6 @@ InitRequestCommand::InitRequestCommand() : RequestCommand(ciMinSize, CMD_INIT_RE
 IdleRequestCommand::IdleRequestCommand() : RequestCommand(ciMinSize, CMD_IDLE_REQ)
 {}
 
-/*StartParamRequestCommand::StartParamRequestCommand(std::uint16_t total_blocks, std::uint8_t update_type) : RequestCommand(ciMinSize, CMD_START_PARAM_REQ){
-	StartParamPayload* pRequest = GetPayload<StartParamPayload>();
-	pRequest->total_blocks = htons(total_blocks);
-	pRequest->update_type = update_type;
-	AddCRC();
-}*/
 
 XMLCommandRequestCommand::XMLCommandRequestCommand(const std::string& xml)
 	: RequestCommand((int)xml.size(), CMD_XCMD_REQ)
@@ -97,27 +103,13 @@ FinanceRequestCommand::FinanceRequestCommand(std::uint32_t type, const std::stri
 	int trans_id_length;
 	const char* code = currency_code.c_str();
 
-	if(!isNumber(code)){
-
-	    const int currency_code_length = 4;
-
-	    static const struct CurrencyCode{
-		    char name[4];
-		    char code[currency_code_length + 1];
-	    } ISO4217CurrencyCodes[] = {
-		      "USD", "0840"
-		    , "EUR", "0978"
-		    , "GBP", "0826"
-		    , "ISK", "0352"
-            , "ZAR", "0710"
-	    };
-
+	if(!isNumber(code))
+    {
 	    bool fCheckCodeSize = true;
-// 	    for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-        for (CurrencyCode cc : ISO4217CurrencyCodes)
+        for (CurrencyCode& cc : ISO4217CurrencyCodes)
         {
-		    // CurrencyCode cc = ISO4217CurrencyCodes[i];
-		    if(!currency_code.compare(cc.name)){
+		    if(!currency_code.compare(cc.name))
+            {
 			    code = cc.code;
 			    fCheckCodeSize = false;
 			    break;

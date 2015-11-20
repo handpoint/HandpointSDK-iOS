@@ -3,8 +3,6 @@
 //  headstart
 //
 
-// #import "StdAfx.h"
-
 #ifdef HEFT_SIMULATOR
 
 #import "MPosOperation.h"
