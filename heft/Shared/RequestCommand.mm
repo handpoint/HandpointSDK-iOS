@@ -1,75 +1,91 @@
-#include "StdAfx.h"
+// #include "StdAfx.h"
 
-#if !HEFT_SIMULATOR
+#ifndef HEFT_SIMULATOR
 
 #include "RequestCommand.h"
 #include "BCDCoder.h"
 #include "HeftCmdIds.h"
 #include "api/CmdIds.h"
+#include "debug.h"
 
-RequestCommand::RequestCommand(int iCommandSize, UINT32 type) : data(ciMinSize + iCommandSize){
+#include "Exception.h"
+
+#include <cstdint>
+
+
+namespace {
+    const int currency_code_length = 4;
+    
+    struct CurrencyCode{
+        char name[4];
+        char code[currency_code_length + 1];
+    };
+    
+    
+    CurrencyCode ISO4217CurrencyCodes[] = {
+          "USD", "0840"
+        , "EUR", "0978"
+        , "GBP", "0826"
+        , "ISK", "0352"
+        , "ZAR", "0710"
+    };
+}
+
+RequestCommand::RequestCommand(int iCommandSize, std::uint32_t type) : data(ciMinSize + iCommandSize)
+{
 	RequestPayload* pRequest = GetPayload<RequestPayload>();
 	pRequest->command = htonl(type);
 	FormatLength<RequestPayload>(iCommandSize);
 }
 
-RequestCommand::RequestCommand(const void* payload, UINT32 payloadSize){
+RequestCommand::RequestCommand(const void* payload, std::uint32_t payloadSize){
     const RequestPayload* pRequest = reinterpret_cast<const RequestPayload*>(payload);
     int length = ReadLength(pRequest);
     if ((payloadSize - 4 - 6) != length) {
-        LOG(_T("Invalid request command buffer detected"));
+        LOG(@"Invalid request command buffer detected");
         throw communication_exception();
     }
 }
 
 int RequestCommand::ReadLength(const RequestPayload* pRequest){
-	UINT32 len_msb = 0;
+	std::uint32_t len_msb = 0;
 	int dest_len = sizeof(len_msb) - 1;
-	AtlHexDecode(reinterpret_cast<LPCSTR>(pRequest->length), sizeof(pRequest->length), reinterpret_cast<UINT8*>(&len_msb) + 1, &dest_len);
+	AtlHexDecode(reinterpret_cast<const char*>(pRequest->length),
+                 sizeof(pRequest->length),
+                 reinterpret_cast<std::uint8_t*>(&len_msb) + 1,
+                 &dest_len);
 	return ntohl(len_msb);
 }
 
-InitRequestCommand::InitRequestCommand() : RequestCommand(ciMinSize, CMD_INIT_REQ){
-	/*USES_CONVERSION;
-	string date;
-	char buf[ciMinSize * 2 + 1];
-	__time64_t aclock;
-	_time64(&aclock);
-	tm time;
-	_localtime64_s(&time, &aclock);*/
-	//strftime(buf, sizeof buf, "%Y%m%d%H%M%S", &time);
+
+InitRequestCommand::InitRequestCommand() : RequestCommand(ciMinSize, CMD_INIT_REQ)
+{
 	NSDateFormatter* df = [NSDateFormatter new];
 	[df setDateFormat:@"yyyyMMddHHmmss"];
 	NSString* curDate = [df stringFromDate:[NSDate new]];
-	ATLASSERT([curDate length] == ciMinSize * 2);
+	// ATLASSERT([curDate length] == ciMinSize * 2);
 	BCDCoder::Encode([curDate UTF8String], GetPayload<InitPayload>()->data, ciMinSize);
 }
 
 IdleRequestCommand::IdleRequestCommand() : RequestCommand(ciMinSize, CMD_IDLE_REQ)
 {}
 
-/*StartParamRequestCommand::StartParamRequestCommand(UINT16 total_blocks, UINT8 update_type) : RequestCommand(ciMinSize, CMD_START_PARAM_REQ){
-	StartParamPayload* pRequest = GetPayload<StartParamPayload>();
-	pRequest->total_blocks = htons(total_blocks);
-	pRequest->update_type = update_type;
-	AddCRC();
-}*/
 
-XMLCommandRequestCommand::XMLCommandRequestCommand(const string& xml) 
+XMLCommandRequestCommand::XMLCommandRequestCommand(const std::string& xml)
 	: RequestCommand((int)xml.size(), CMD_XCMD_REQ)
 {
 	XMLCommandPayload* pRequest = GetPayload<XMLCommandPayload>();
 	memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
 }
 
-static bool isNumber(const string& str)
+static bool isNumber(const std::string str)
 {
-    string::const_iterator it = str.begin();
+    std::string::const_iterator it = str.begin();
     while (it != str.end() && isdigit(*it)) ++it;
     return !str.empty() && it == str.end();
 }
 
-FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml) 
+FinanceRequestCommand::FinanceRequestCommand(std::uint32_t type, const std::string& currency_code, std::uint32_t trans_amount, std::uint8_t card_present, const std::string& trans_id, const std::string& xml)
 : RequestCommand(
     ciMinSize
     + (int)(xml.length() // this conditional so the "if( trans_id_length || xml_length )" statement below won't corrupt the heap
@@ -82,30 +98,18 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
     , type)
 {
 	FinancePayload* pRequest;
-	UINT8* pData;
+	std::uint8_t* pData;
 	int xml_length;
 	int trans_id_length;
 	const char* code = currency_code.c_str();
 
-	if(!isNumber(code)){
-
-	    const int currency_code_length = 4;
-
-	    static const struct CurrencyCode{
-		    char name[4];
-		    char code[currency_code_length + 1];
-	    } ISO4217CurrencyCodes[] = {
-		      "USD", "0840"
-		    , "EUR", "0978"
-		    , "GBP", "0826"
-		    , "ISK", "0352"
-            , "ZAR", "0710"
-	    };
-
+	if(!isNumber(code))
+    {
 	    bool fCheckCodeSize = true;
-	    for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-		    CurrencyCode cc = ISO4217CurrencyCodes[i];
-		    if(!currency_code.compare(cc.name)){
+        for (CurrencyCode& cc : ISO4217CurrencyCodes)
+        {
+		    if(!currency_code.compare(cc.name))
+            {
 			    code = cc.code;
 			    fCheckCodeSize = false;
 			    break;
@@ -137,11 +141,11 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
 	    {
 	        pData = &pRequest->trans_id[0] + trans_id_length;
         	
-		    pData[0] = (UINT8)(xml_length >> 24);
-		    pData[1] = (UINT8)(xml_length >> 16);
-		    pData[2] = (UINT8)(xml_length >> 8);
-		    pData[3] = (UINT8)(xml_length >> 0);
-		    pData += sizeof(UINT32);
+		    pData[0] = (std::uint8_t)(xml_length >> 24);
+		    pData[1] = (std::uint8_t)(xml_length >> 16);
+		    pData[2] = (std::uint8_t)(xml_length >> 8);
+		    pData[3] = (std::uint8_t)(xml_length >> 0);
+		    pData += sizeof(std::uint32_t);
 		    memcpy(pData, xml.c_str(), xml_length);
 	    }	
     }
@@ -159,10 +163,12 @@ FinanceInitRequestCommand::FinanceInitRequestCommand()
 	: RequestCommand(0, CMD_FIN_INIT_REQ)
 {}
 
-HostRequestCommand::HostRequestCommand(const void* payload, UINT32 payloadSize) : RequestCommand(payload, payloadSize)
+HostRequestCommand::HostRequestCommand(const void* payload, std::uint32_t payloadSize)
+    : RequestCommand(payload, payloadSize)
 {}
 
-HostRequestCommand* HostRequestCommand::Create(const void* payload, UINT32 payloadSize){
+HostRequestCommand* HostRequestCommand::Create(const void* payload, std::uint32_t payloadSize)
+{
 	const RequestPayload* pRequestPayload = reinterpret_cast<const RequestPayload*>(payload);
 	switch(ntohl(pRequestPayload->command)){
 	case CMD_HOST_CONN_REQ:
@@ -174,84 +180,104 @@ HostRequestCommand* HostRequestCommand::Create(const void* payload, UINT32 paylo
 	case CMD_HOST_DISC_REQ:
 		return new DisconnectRequestCommand(payload, payloadSize);
 	}
-	LOG(_T("Unknown host packet"));
+	LOG(@"Unknown host packet");
 	throw communication_exception();
 }
 
-HostResponseCommand::HostResponseCommand(UINT32 command, int status, int cmd_size) : RequestCommand(ciMinSize + cmd_size, command){
+HostResponseCommand::HostResponseCommand(std::uint32_t command, int status, int cmd_size)
+    : RequestCommand(ciMinSize + cmd_size, command)
+{
 	HostResponsePayload* pPayload = GetPayload<HostResponsePayload>();
 	WriteStatus(status);
 	memset(pPayload->length, '0', sizeof pPayload->length);
 	FormatLength<HostResponsePayload>(cmd_size);
 }
 
-void HostResponseCommand::WriteStatus(UINT16 status){
-	UINT16 status_msb = htons(status);
+void HostResponseCommand::WriteStatus(std::uint16_t status)
+{
+	std::uint16_t status_msb = htons(status);
 	HostResponsePayload* pPayload = GetPayload<HostResponsePayload>();
 	int dest_len = sizeof(pPayload->status) + 1;
-	AtlHexEncode(reinterpret_cast<UINT8*>(&status_msb), sizeof(status_msb), reinterpret_cast<LPSTR>(&pPayload->status), &dest_len);
+	AtlHexEncode(reinterpret_cast<std::uint8_t*>(&status_msb),
+                 sizeof(status_msb),
+                 reinterpret_cast<char*>(&pPayload->status),
+                 &dest_len);
 }
 
-ConnectRequestCommand::ConnectRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
+ConnectRequestCommand::ConnectRequestCommand(const void* payload, std::uint32_t payloadSize)
+    : HostRequestCommand(payload, payloadSize)
+{
 	const ConnectPayload* pRequest = reinterpret_cast<const ConnectPayload*>(payload);
-	ATLASSERT(pRequest->remote_add_length);
+	// ATLASSERT(pRequest->remote_add_length);
 	remote_add.assign(reinterpret_cast<const char*>(pRequest->remote_add), pRequest->remote_add_length);
-	const UINT8* pWord = &pRequest->remote_add[pRequest->remote_add_length];
+	const std::uint8_t* pWord = &pRequest->remote_add[pRequest->remote_add_length];
 	port = *pWord << 8 | *(pWord + 1);
 	pWord += sizeof port;
 	timeout = *pWord << 8 | *(pWord + 1);
 }
 
-SendRequestCommand::SendRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
+SendRequestCommand::SendRequestCommand(const void* payload, std::uint32_t payloadSize)
+    : HostRequestCommand(payload, payloadSize)
+{
 	const SendPayload* pRequest = reinterpret_cast<const SendPayload*>(payload);
 	timeout = htons(pRequest->timeout);
 	data.resize(htons(pRequest->data_len));
 	memcpy(&data[0], pRequest->data, data.size());
 }
 
-ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
+ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, std::uint32_t payloadSize)
+    : HostRequestCommand(payload, payloadSize)
+{
 	const ReceivePayload* pRequest = reinterpret_cast<const ReceivePayload*>(payload);
 	timeout = htons(pRequest->timeout);
 	data_len = htons(pRequest->data_len);
 }
 
-ReceiveResponseCommand::ReceiveResponseCommand(const vector<UINT8>& payload) : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)payload.size()){
+ReceiveResponseCommand::ReceiveResponseCommand(const std::vector<std::uint8_t>& payload)
+    : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)payload.size())
+{
 	ReceiveResponsePayload* pPayload = GetPayload<ReceiveResponsePayload>();
 	pPayload->data_len = htonl(payload.size());
 	memcpy(pPayload->data, &payload[0], payload.size());
 }
 
-DisconnectRequestCommand::DisconnectRequestCommand(const void* payload, UINT32 payloadSize) : HostRequestCommand(payload, payloadSize){
+DisconnectRequestCommand::DisconnectRequestCommand(const void* payload, std::uint32_t payloadSize)
+    : HostRequestCommand(payload, payloadSize)
+{
 }
 
-SignatureRequestCommand::SignatureRequestCommand(const void* payload, UINT32 payloadSize) : RequestCommand(payload, payloadSize){
+SignatureRequestCommand::SignatureRequestCommand(const void* payload, std::uint32_t payloadSize)
+    : RequestCommand(payload, payloadSize)
+{
 	const SignatureRequestPayload* pRequest = reinterpret_cast<const SignatureRequestPayload*>(payload);
-	UINT16 receipt_length = htons(pRequest->receipt_length);
+	std::uint16_t receipt_length = htons(pRequest->receipt_length);
 	receipt.assign(pRequest->receipt, receipt_length);
 	const char* pXml = pRequest->receipt + receipt_length;
-	UINT32 xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
+	std::uint32_t xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
 	pXml += sizeof xml_len;
 	xml_details.assign(pXml, xml_len);
 }
 
-ChallengeRequestCommand::ChallengeRequestCommand(const void* payload, UINT32 payloadSize) : RequestCommand(payload, payloadSize){
+ChallengeRequestCommand::ChallengeRequestCommand(const void* payload, std::uint32_t payloadSize)
+    : RequestCommand(payload, payloadSize)
+{
 	const ChallengeRequestPayload* pRequest = reinterpret_cast<const ChallengeRequestPayload*>(payload);
-	UINT16 random_num_length = ntohs(pRequest->random_num_length);
+	std::uint16_t random_num_length = ntohs(pRequest->random_num_length);
 	random_num.reserve(random_num_length);
 	random_num.assign(pRequest->random_num, &pRequest->random_num[random_num_length]);
 	const char* pXml = reinterpret_cast<const char*>(pRequest->random_num + random_num_length);
-	UINT32 xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
+	std::uint32_t xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
 	pXml += sizeof xml_len;
 	xml_details.assign(pXml, xml_len);
 }
 
-ChallengeResponseCommand::ChallengeResponseCommand(const vector<UINT8>& mx, const vector<UINT8>& zx) 
+ChallengeResponseCommand::ChallengeResponseCommand(const std::vector<std::uint8_t>& mx, const std::vector<std::uint8_t>& zx)
 	: HostResponseCommand(CMD_STAT_CHALENGE_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)mx.size() + (int)zx.size())
 {
 	ChallengeResponsePayload* pPayload = GetPayload<ChallengeResponsePayload>();
 	pPayload->mx_len = ntohs(mx.size());
 	memcpy(pPayload->mx, &mx[0], mx.size());
-	UINT16* pZx = reinterpret_cast<UINT16*>(&pPayload->mx[mx.size()]);
+	std::uint16_t* pZx = reinterpret_cast<std::uint16_t*>(&pPayload->mx[mx.size()]);
 	*pZx++ = ntohs(zx.size());
 	memcpy(pZx, &zx[0], zx.size());
 }
@@ -272,7 +298,7 @@ DebugInfoRequestCommand::DebugInfoRequestCommand()
 	: RequestCommand(0, CMD_DBG_INFO_REQ)
 {}*/
 
-SetLogLevelRequestCommand::SetLogLevelRequestCommand(UINT8 log_level) 
+SetLogLevelRequestCommand::SetLogLevelRequestCommand(std::uint8_t log_level) 
 	: RequestCommand(ciMinSize, CMD_LOG_SET_LEV_REQ)
 {
 	SetLogLevelPayload* pRequest = GetPayload<SetLogLevelPayload>();

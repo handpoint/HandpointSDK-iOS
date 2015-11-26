@@ -3,10 +3,14 @@
 //  headstart
 //
 
-#import "StdAfx.h"
+// #import "StdAfx.h"
 
 #import "HeftConnection.h"
 #import "HeftRemoteDevice.h"
+
+#import "Exception.h"
+#import "Logger.h"
+#import "debug.h"
 
 extern NSString* eaProtocol;
 
@@ -41,7 +45,7 @@ enum eBufferConditions{
     NSOutputStream* os = nil;
     BOOL result = NO;
 
-    if(aDevice.accessory){
+    if(aDevice.accessory) {
         LOG(@"%@", aDevice.accessory.protocolStrings);
         eaSession = [[EASession alloc] initWithAccessory:aDevice.accessory forProtocol:eaProtocol];
         result = eaSession != nil;
@@ -57,8 +61,8 @@ enum eBufferConditions{
         else
             LOG(@"Connection to %@ failed", aDevice.name);
     }
-    if(result){
-        if(self = [super init]){
+    if(result) {
+        if(self = [super init]) {
             LOG(@"Connected to %@", aDevice.name);
             device = aDevice;
             session = eaSession;
@@ -81,8 +85,8 @@ enum eBufferConditions{
 - (void)dealloc{
     LOG(@"Disconnection from %@", device.name);
     free(tmpBuf);
-    if(device){
-        if(device.accessory){
+    if(device) {
+        if(device.accessory) {
             NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
             [outputStream close];
             [outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
@@ -98,7 +102,8 @@ enum eBufferConditions{
 
 - (void)resetData{
 
-    if(currentPosition){
+    if(currentPosition)
+    {
         LOG(@"resetData waiting for read lock");
         [bufferLock lockWhenCondition:eHasDataCondition];
         LOG(@"resetData got read lock");
@@ -106,26 +111,48 @@ enum eBufferConditions{
         [bufferLock unlockWithCondition:eNoDataCondition];
         LOG(@"resetData released read lock");
     }
-
 }
 
 - (void)writeData:(uint8_t*)data length:(int)len{
 
-    while(len){
-        while(![outputStream hasSpaceAvailable]);
+    while (len) {
+        while(![outputStream hasSpaceAvailable])
+        {
+            // empty loop - never ever hide it like that!
+            // store the data in a local buffer and wait for an
+            // event on the outputstream
+            // or at least put a sleep in here - this is running on mobile!
+            ;
+        }
+        
         NSInteger nwritten = [outputStream write:data maxLength:fmin(len, maxFrameSize)];
         LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, len));
 
-        if(nwritten <= 0)
+        if(nwritten <= 0) {
+            NSError* streamError = outputStream.streamError;
+            if (streamError != nil)
+            {
+                LOG(@"StreamError: %@", streamError.localizedDescription);
+            }
             throw communication_exception();
+        }
+        
+        
 
         len -= nwritten;
         data += nwritten;
     }
 }
 
-- (void)writeAck:(UInt16)ack{
-    while(![outputStream hasSpaceAvailable]);
+- (void)writeAck:(UInt16)ack {
+    while(![outputStream hasSpaceAvailable])
+    {
+        // empty loop - never ever hide it like that!
+        // store the data in a local buffer and wait for an
+        // event on the outputstream
+        // or at least put a sleep in here - this is running on mobile!
+        ;
+    }
     NSInteger nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
     LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));
     if(nwritten != sizeof(ack))
@@ -151,7 +178,7 @@ enum eBufferConditions{
                 free(tmpBuf);
                 tmpBuf = temp;
             }
-            double minread = ourBufferSize - currentPosition;
+            NSInteger minread = ourBufferSize - currentPosition;
             nread = [inputStream read:&tmpBuf[currentPosition] maxLength:minread];
             LOG(@"%@",::dump(@"HeftConnection::ReadDataStream : ", &tmpBuf[currentPosition], (int)nread));
             currentPosition += nread;
@@ -168,7 +195,7 @@ enum eBufferConditions{
 
 #pragma mark -
 
-- (int)readData:(vector<UINT8>&)buffer timeout:(eConnectionTimeout)timeout{
+- (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout{
     //vector<UINT8>& vBuf = *reinterpret_cast<vector<UINT8>*>(buffer);
     NSUInteger initSize = buffer.size();
 
@@ -217,7 +244,7 @@ enum eBufferConditions{
 
     [bufferLock unlockWithCondition:currentPosition ? eHasDataCondition : eNoDataCondition];
     //LOG(@"readAck released lock (currentPosition: %d)", currentPosition);
-    //LOG(@"HeftConnection::readAck %04X", ack);
+    LOG(@"HeftConnection::readAck %04X %04X", ack, ntohs(ack));
     return ack;
 }
 

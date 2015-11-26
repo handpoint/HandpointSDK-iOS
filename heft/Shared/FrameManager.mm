@@ -1,20 +1,31 @@
-#include "StdAfx.h"
+
+// #include "StdAfx.h"
 #include "FrameManager.h"
 #include "Frame.h"
 //#include "IConnection.h"
-#import "HeftConnection.h"
+#include "../HeftConnection.h"
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
+#include "debug.h"
 
-const UINT8 cuiDle = 0x10;
-const UINT8 cuiEtx = 0x03;
-const UINT8 cuiEtb = 0x17;
-const UINT8 cuiStx = 0x02;
-const UINT8 cuiEot = 0x04;
-const UINT8 cuiEnq = 0x05;
-const UINT8 cuiAck = 0x06;
-const UINT8 cuiNak = 0x15;
-const int ciMaxAttempts = 3;
+#import <Foundation/Foundation.h>
+
+#include "Logger.h"
+#include "Exception.h"
+
+#include <vector>
+
+const std::uint8_t cuiDle = 0x10;
+const std::uint8_t cuiEtx = 0x03;
+const std::uint8_t cuiEtb = 0x17;
+/*
+const std::uint8_t cuiStx = 0x02;
+const std::uint8_t cuiEot = 0x04;
+const std::uint8_t cuiEnq = 0x05;
+const std::uint8_t cuiAck = 0x06;
+const std::uint8_t cuiNak = 0x15;
+ */
+const int MAX_ATTEMPTS = 3;
 
 FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
     // max_frame_size is the total frame size, i.e. the combined length of [stx] [data] [ptx/etx] [crc]
@@ -23,10 +34,10 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
         int max_data_size = max_frame_size - Frame::GetMetaDataSize();
         // you should "step" through this code using a max_data_size of 2
 
-        UINT8 data_char;
-	    const UINT8 *pSrc, *pSrcEnd;
-        UINT8 *pDataBegin, *pData, *pDataEnd;
-        vector<UINT8> frame_data(max_data_size);
+        std::uint8_t data_char;
+	    const std::uint8_t *pSrc, *pSrcEnd;
+        std::uint8_t *pDataBegin, *pData, *pDataEnd;
+        std::vector<std::uint8_t> frame_data(max_data_size);
 
         pSrc        = request.GetData();
         pSrcEnd     = pSrc + request.GetLength();
@@ -70,44 +81,42 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
     }
 }
 
-void FrameManager::Write(HeftConnection* connection/*, volatile bool& bCancel*/){
-	for(vector<Frame>::iterator it = frames.begin(); it != frames.end(); ++it){
+void FrameManager::Write(HeftConnection* connection){
+    for(auto& frame : frames) {
 		int i = 0;
-		for(; i < ciMaxAttempts; ++i){
-			//if(bCancel)
-			//	return;
-
-			[connection writeData:it->GetData() length:it->GetLength()];
-			LOG_RELEASE(Logger::eFinest, it->dump(_T("Frame sent:")));
-			UINT16 ack = [connection readAck];
-			if(ack == POSITIVE_ACK){
-				LOG_RELEASE(Logger::eFinest, _T("Acknowledgment received: ACK"));
+		for(; i < MAX_ATTEMPTS; ++i) {
+            [connection writeData:frame.GetData() length:frame.GetLength()];
+            LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame sent:"));
+			std::uint16_t ack = [connection readAck];
+			if(ack == POSITIVE_ACK) {
+				LOG_RELEASE(Logger::eFinest, @"Acknowledgment received: ACK");
 				break;
 			}
-			else if(ack == NEGATIVE_ACK){
-				LOG_RELEASE(Logger::eFinest, _T("Acknowledgment received: NAK"));
+			else if(ack == NEGATIVE_ACK) {
+				LOG_RELEASE(Logger::eFinest, @"Acknowledgment received: NAK");
 				continue;
 			}
-			LOG(_T("Instead of ACK: %04x"), ack);
+			LOG(@"Instead of ACK: %04x", ack);
 			throw communication_exception();
 		}
-		if(i == ciMaxAttempts){
+		if(i == MAX_ATTEMPTS) {
 			[connection writeAck:SESSION_END];
-			LOG(_T("Session end sent"));
+			LOG(@"Session end sent");
 			throw communication_exception();
 		}
 	}
 }
 
-void FrameManager::WriteWithoutAck(HeftConnection* connection/*, volatile bool& bCancel*/){
-	ATLASSERT(frames.size() == 1);
-	for(vector<Frame>::iterator it = frames.begin(); it != frames.end(); ++it){
-		[connection writeData:it->GetData() length:it->GetLength()];
-		LOG_RELEASE(Logger::eFinest, it->dump(_T("Frame sent:")));
+void FrameManager::WriteWithoutAck(HeftConnection* connection){
+	// ATLASSERT(frames.size() == 1);
+    // for(vector<Frame>::iterator it = frames.begin(); it != frames.end(); ++it){
+    for(auto& frame: frames){
+		[connection writeData:frame.GetData() length:frame.GetLength()];
+		LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame sent:"));
 	}
 }
 
-int FrameManager::EndPos(const UINT8* pData, int pos, int len){
+int FrameManager::EndPos(const std::uint8_t* pData, int pos, int len){
 	for(int i = pos; i <= len - 4; ++i){
 		if(pData[i] == cuiDle){
 			switch(pData[i + 1]){
@@ -123,10 +132,10 @@ int FrameManager::EndPos(const UINT8* pData, int pos, int len){
 	return -1;
 }
 
-bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
+bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8_t>& buf){
 	int pos = 0;
 	do{
-		UINT8* pData = &buf[0];
+		std::uint8_t* pData = &buf[0];
 		int len = (int)buf.size();
 
 		int frame_len = EndPos(pData, pos, len);
@@ -135,15 +144,15 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 			Frame frame(pData, len);
 
 			if(!frame.isValidCrc()){
-				LOG_RELEASE(Logger::eWarning, frame.dump(_T("Received invalid frame:")));
+				LOG_RELEASE(Logger::eWarning, frame.dump(@"Received invalid frame:"));
 				[connection writeAck:NEGATIVE_ACK];
-				LOG_RELEASE(Logger::eFinest, _T("Acknowledgment sent: NAK"));
+				LOG_RELEASE(Logger::eFinest, @"Acknowledgment sent: NAK");
 				buf.erase(buf.begin(), buf.begin() + len);
 				return false;
 			}
-			LOG_RELEASE(Logger::eFinest, frame.dump(_T("Frame received:")));
+			LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame received:"));
 			[connection writeAck:POSITIVE_ACK];
-			LOG_RELEASE(Logger::eFinest, _T("Acknowledgment sent: ACK"));
+			LOG_RELEASE(Logger::eFinest, @"Acknowledgment sent: ACK");
 
 			//remove DLE doubles
 			data.reserve(data.size() + len - Frame::ciMinSize);
@@ -154,7 +163,7 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 			}
 
 			if(!frame.isPartial()){
-				ATLASSERT(buf.size() == len);
+				// ATLASSERT(buf.size() == len);
 				break;
 			}
 
@@ -166,27 +175,22 @@ bool FrameManager::ReadFrames(HeftConnection* connection, vector<UINT8>& buf){
 		else
 			pos = std::max(static_cast<int>(buf.size()) - 4, 0);
 
-		//connection.Read(buf, eResponseTimeout);
 		[connection readData:buf timeout:eResponseTimeout];
 	}while(true);
-	//}while(!bCancel);
 
 	return true;
-	//return !bCancel;
 }
 
-ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_timeout){
+ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_timeout) {
     FramePayload* pCommand;
     int nread;
-	vector<UINT8> buf;
+	std::vector<std::uint8_t> buf;
 	data.clear();
 	while(true){
-	//while(!bCancel){
-		//int nread = connection.Read(buf, finance_timeout ? eFinanceTimeout : eResponseTimeout);
         if(buf.size() < sizeof(pCommand->StartSequence))
         {
             nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
-            if(!nread){
+            if(!nread) {
                 if(finance_timeout)
                     throw timeout4_exception();
                 else
@@ -196,7 +200,7 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
             {
                 // this is not an error ...
                 // ... it just means that more bytes are required
-                LOG(_T("FrameManager::Read I need more data. Read size: %i  Read bytes: %02X"),nread,buf[0]);
+                LOG(@"FrameManager::Read I need more data. Read size: %i  Read bytes: %02X",nread,buf[0]);
                 continue;
             }
         }
@@ -211,14 +215,14 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 				return ResponseCommand::Create(data);
 			break;
 		case SESSION_END:
-			LOG(_T("FrameManager::Read SESSION_END"));
+			LOG(@"FrameManager::Read SESSION_END");
 			throw connection_broken_exception();
 		case POSITIVE_ACK:
-			LOG_RELEASE(Logger::eWarning, _T("Acknowledgement received instead of data frame, this is only OK in case of transaction cancelling"));
+			LOG_RELEASE(Logger::eWarning, @"Acknowledgement received instead of data frame, this is only OK in case of transaction cancelling");
 			buf.erase(buf.begin(), buf.begin() + sizeof(pCommand->StartSequence));
 			continue;
 		case NEGATIVE_ACK:
-			LOG(_T("FrameManager::Read NEGATIVE_ACK"));
+			LOG(@"FrameManager::Read NEGATIVE_ACK");
 		case POLLING_SEQ:
 		default:
 			throw communication_exception();

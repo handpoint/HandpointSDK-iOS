@@ -3,5 +3,8 @@
 //  headstart
 //
 
-@interface BCDCoderTest : SenTestCase
+#import <XCTest/XCTest.h>
+
+
+@interface BCDCoderTest : XCTestCase
 @end

@@ -1,6 +1,6 @@
 #include "../../Shared/StdAfx.h"
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
@@ -103,7 +103,8 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
     }
 }
 
-ResponseCommand* FinanceRequestCommand::CreateResponse()const{
+ResponseCommand* FinanceRequestCommand::CreateResponse() const
+{
 	ResponseCommand* result = 0;
 	switch(state++){
 	case eWaitingCard:
@@ -155,7 +156,10 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 	return result;
 }
 
-ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const{return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);}
+ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const
+{
+    return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);
+}
 
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()

@@ -5,7 +5,7 @@
 #import "../heft/heft-Prefix.pch"
 
 #ifdef __OBJC__
-	#import <SenTestingKit/SenTestingKit.h>
+//	#import <SenTestingKit/SenTestingKit.h>
 #endif
 
 #import "StdAfx.h"

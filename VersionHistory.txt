@@ -1,3 +1,17 @@
+*** v2.4.1 ***
+
+New features
+-- New method (getEMVConfiguration) to get EMV configuration report from the card reader.
+-- New event that contains the retrieved EMV report.
+-- Updated documentation
+
+Updates
+-- Refactoring of code, removal of StdAfx.h
+-- Renaming of implementation files so that they correctly reflect the language used (Objective C++)
+-- Cococapods spec added
+-- support ios version 7.0+
+-- enable bitcode 
+
 *** v2.4.0 ***
 
 New features

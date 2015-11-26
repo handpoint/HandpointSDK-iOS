@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cstdint>
+
 class Command{
 protected:
 	static const int ciMinSize = 4;
 
 #pragma pack(push, 1)
 	struct CommandPayload{
-		UINT32 command;
+        std::uint32_t command;
 	};
 #pragma pack(pop)
 

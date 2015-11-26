@@ -1,9 +1,12 @@
-#include "StdAfx.h"
+// #include "StdAfx.h"
 #include "BCDCoder.h"
 
-void BCDCoder::Encode(const PCSTR pStr, UINT8* pBuf, int size){
-	ATLASSERT(!size || pBuf);
-	PCSTR p = pStr;
+#include <string>
+#include <cstdint>
+
+
+void BCDCoder::Encode(const char* pStr, std::uint8_t* pBuf, int size) {
+	const char* p = pStr;
 	for(int i = 0; i < size; ++i){
 		unsigned char c_hi = (*p++ - '0') & 0x0f;
 		unsigned char c_lo = *p ? (*p++ - '0') & 0x0f : 0;
@@ -11,10 +14,9 @@ void BCDCoder::Encode(const PCSTR pStr, UINT8* pBuf, int size){
 	}
 }
 
-string BCDCoder::Decode(const UINT8* pBuf, int size){
-	ATLASSERT(!size || pBuf);
-	string result;
-	const UINT8* p = pBuf;
+std::string BCDCoder::Decode(const std::uint8_t* pBuf, int size) {
+    std::string result;
+    const std::uint8_t* p = pBuf;
 	for(int i = 0; i < size; ++i){
 		unsigned char c_hi = (*p >> 4) + '0';
 		unsigned char c_lo = (*p++ & 0x0f) + '0';

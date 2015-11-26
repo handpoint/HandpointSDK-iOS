@@ -4,12 +4,14 @@
 //
 
 
-#import "StdAfx.h"
+// #import "StdAfx.h"
 
 #import "HeftManager.h"
 #import "HeftConnection.h"
 #import "MpedDevice.h"
 #import "HeftRemoteDevice.h"
+
+#import "debug.h"
 
 //#define NSLog(...) [log2file appendFormat:@"%f:", CFAbsoluteTimeGetCurrent()];[log2file appendFormat:__VA_ARGS__];[log2file appendString:@"\n"]; \
 //[log2file writeToFile:file atomically:YES encoding:NSUTF8StringEncoding error:NULL]
@@ -71,7 +73,7 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 
 #endif
 
-@implementation HeftManager{
+@implementation HeftManager {
 	BOOL fNotifyForAllDevices;
 	NSMutableArray* eaDevices;
 }
@@ -81,7 +83,7 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 static HeftManager* instance = 0;
 
 + (void)initialize{
-	if(self == [HeftManager class]){
+	if(self == [HeftManager class]) {
 		//file = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"log.txt"];
 		//log2file = [NSMutableString string];
 		//freopen([file cStringUsingEncoding:NSASCIIStringEncoding], "w+", stderr);
@@ -94,8 +96,8 @@ static HeftManager* instance = 0;
 	return instance;
 }
 
-- (id)init{
-	if(self = [super init]){
+- (id)init {
+	if(self = [super init]) {
 		LOG(@"HeftManager::init");
 		eaDevices = [NSMutableArray new];
 
@@ -131,12 +133,16 @@ static HeftManager* instance = 0;
 	return NO;
 }
 
+// this is a thread function, params is an array:
+//                                params[0] = device
+//                                params[1] = sharedSecret
+//                                params[2] = delegate
 - (void)asyncClientForDevice:(NSArray*)params{
 	@autoreleasepool{
 		id<HeftClient> result = nil;
 		NSData* sharedSecret = params[1];
 		NSObject<HeftStatusReportDelegate>* aDelegate = params[2];
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 		[NSThread sleepForTimeInterval:2];
 		result = [[MpedDevice alloc] initWithConnection:nil sharedSecret:sharedSecret delegate:aDelegate];
 #else
@@ -148,11 +154,15 @@ static HeftManager* instance = 0;
 }
 
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
-	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:) toTarget:self withObject:@[device, sharedSecret, aDelegate]];
+	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
+                             toTarget:self
+                           withObject:@[device, sharedSecret, aDelegate]];
 }
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
 	NSData* sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
-	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:) toTarget:self withObject:@[device, sharedSecretData, aDelegate]];
+	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
+                             toTarget:self
+                           withObject:@[device, sharedSecretData, aDelegate]];
 }
 
 #pragma mark property
@@ -184,18 +194,25 @@ static HeftManager* instance = 0;
 #pragma mark HeftDiscovery
 
 - (void)startDiscovery:(BOOL)fDiscoverAllDevices{
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 	[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 #else
-    NSError* error = NULL;
+    // NSError* error = NULL;
     EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
-    [eaManager showBluetoothAccessoryPickerWithNameFilter:nil completion:^(NSError* error){
-        [delegate didDiscoverFinished];
-    }];
+    [eaManager showBluetoothAccessoryPickerWithNameFilter:nil
+                                               completion:^(NSError* error) {
+                                                   if (error) {
+                                                       NSLog(@"showBluetoothAccessoryPickerWithNameFilter error :%@", error);
+                                                   }
+                                                   else{
+                                                       NSLog(@"showBluetoothAccessoryPickerWithNameFilter working");
+                                                   }
+                                                   [delegate didDiscoverFinished];
+                                               }];
 #endif
 }
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 static EAAccessory* simulatorAccessory = nil;
 
 - (void)simulateDiscovery{

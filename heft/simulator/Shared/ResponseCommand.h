@@ -26,10 +26,16 @@ class EventInfoResponseCommand : public ResponseCommand{
 
 public:
 	EventInfoResponseCommand(int status, bool cancel_allowed = true);
-	const string& GetXmlDetails(){return xml_details;}
+	const string& GetXmlDetails()
+    {
+        return xml_details;
+    }
 
 	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor){[processor processEventInfoResponse:this];}
+	void ProcessResult(id<IResponseProcessor> processor)
+    {
+        [processor processEventInfoResponse:this];
+    }
 };
 
 class XMLCommandResponseCommand : public ResponseCommand{
@@ -54,18 +60,55 @@ class FinanceResponseCommand : public ResponseCommand{
 
 public:
 	FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, UINT8 status = EFT_FINANC_STATUS_TRANS_APPROVED, BOOL recoveredTransaction = NO);
-    UINT8 GetFinancialStatus(){return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;}
-    BOOL isRestarting(){return financial_status & EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK ? YES : NO;}
-	void SetFinancialStatus(UINT8 status){financial_status = status;}
-	UINT32 GetAmount(){return authorised_amount;}
-	const string& GetCustomerReceipt(){return customer_receipt;}
-	const string& GetMerchantReceipt(){return merchant_receipt;}
-	const string& GetTransID(){return trans_id;}
-	const string& GetXmlDetails(){return xml_details;}
-    BOOL isRecoveredTransaction(){return recovered_transaction;}
+    UINT8 GetFinancialStatus()
+    {
+        return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;
+    }
+    BOOL isRestarting()
+    {
+        return financial_status & EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK ? YES : NO;
+    }
+	
+    void SetFinancialStatus(UINT8 status)
+    {
+        financial_status = status;
+    }
+	
+    UINT32 GetAmount()
+    {
+        return authorised_amount;
+    }
+    
+    const string& GetCustomerReceipt()
+    {
+        return customer_receipt;
+    }
+	
+    const string& GetMerchantReceipt()
+    {
+        return merchant_receipt;
+    }
+    
+	const string& GetTransID()
+    {
+        return trans_id;
+    }
+	
+    const string& GetXmlDetails()
+    {
+        return xml_details;
+    }
+    
+    BOOL isRecoveredTransaction()
+    {
+        return recovered_transaction;
+    }
 
 	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor){[processor processFinanceResponse:this];}    
+    void ProcessResult(id<IResponseProcessor> processor)
+    {
+        [processor processFinanceResponse:this];
+    }
 };
 
 class GetLogInfoResponseCommand : public ResponseCommand{

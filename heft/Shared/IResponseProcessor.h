@@ -1,5 +1,7 @@
 #pragma once
 
+#import <Foundation/Foundation.h>
+
 class ResponseCommand;
 class EventInfoResponseCommand;
 class XMLCommandResponseCommand;

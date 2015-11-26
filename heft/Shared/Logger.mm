@@ -1,14 +1,17 @@
-#include "StdAfx.h"
-#include "Logger.h"
+// #include "StdAfx.h"
 
+#include "Logger.h"
+#include <cstdint>
 Logger Logger::logger;
 
-Logger::Logger() : m_level(eFiner){
+Logger::Logger() : m_level(eFiner)
+{
 	fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"release_log.txt"];
 	logStr = [NSMutableString new];
 }
 
-void Logger::setFileName(NSString* filename){
+void Logger::setFileName(NSString* filename)
+{
 	if(m_level != eOff && !fileName){
 		[[NSFileManager defaultManager] removeItemAtPath:fileName error:NULL];
 		fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:filename];
@@ -16,7 +19,8 @@ void Logger::setFileName(NSString* filename){
 	}
 }
 
-void Logger::log(NSString* format, ...){
+void Logger::log(NSString* format, ...)
+{
 	va_list vlist;
 	va_start(vlist, format);
 
@@ -32,8 +36,9 @@ void Logger::log(NSString* format, ...){
 #endif
 }
 
-NSString* dump(NSString* prefix, const void* const pData, int len){
-	const UINT8* const p = reinterpret_cast<const UINT8* const>(pData);
+NSString* dump(NSString* prefix, const void* const pData, int len)
+{
+    const std::uint8_t* const p = reinterpret_cast<const std::uint8_t* const>(pData);
 	NSMutableString* result = [prefix mutableCopy];
 	for(int i = 0; i < len; ++i)
 		[result appendFormat:@" %02X", p[i]];

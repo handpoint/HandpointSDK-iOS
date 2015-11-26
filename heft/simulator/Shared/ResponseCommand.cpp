@@ -1,6 +1,6 @@
 #include "../../Shared/StdAfx.h"
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 
 #include "ResponseCommand.h"
 #include "RequestCommand.h"
