@@ -344,27 +344,39 @@ enum eConnectCondition{
                                        encoding:NSUTF8StringEncoding]);
     
     if(sendStream) {
-        //connectionState = eConnectionSending;
+        connectionState = eConnectionSending;
         connectionSendData.assign(pRequest->GetData(), pRequest->GetData() + pRequest->GetLength());
         
         [connectLock lock];
-        if(connectionState == eConnectionSending){
+        if(connectionState == eConnectionSending)
+        {
             // the stream is already waiting for data from us
             NSInteger written;
 
             written = [sendStream write:connectionSendData.data() maxLength:connectionSendData.size()];
-            if(written < connectionSendData.size()){
+            if(written < connectionSendData.size())
+            {
+                LOG_RELEASE(Logger::eFine,
+                            @"%d bytes send to bureau, %d bytes left.",
+                            written, pRequest->GetLength()-written);
+                
                 connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);
                 [connectLock unlockWithCondition:eNoConnectStateCondition];
 
-                if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]]){
-                    if(connectionState == eConnectionSendingComplete){
+                if([connectLock lockWhenCondition:eReadyStateCondition
+                                       beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
+                {
+                    if(connectionState == eConnectionSendingComplete)
+                    {
                         [connectLock unlockWithCondition:eNoConnectStateCondition];
                         return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
                     } // else send error
                 } // else send timeout
-            }else{
-                if(written == connectionSendData.size()){
+            }
+            else
+            {
+                if(written == connectionSendData.size())
+                {
                     connectionSendData.clear();
                     connectionState = eConnectionSendingComplete;
                     [connectLock unlock];
