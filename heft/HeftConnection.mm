@@ -123,7 +123,7 @@ enum eBufferConditions{
     while (len) {
         while(![outputStream hasSpaceAvailable])
         {
-            [NSThread sleepForTimeInterval:.05];
+            [NSThread sleepForTimeInterval:.025];
         }
         
         NSInteger nwritten = [outputStream write:data maxLength:fmin(len, maxFrameSize)];
@@ -140,7 +140,7 @@ enum eBufferConditions{
 - (void)writeAck:(UInt16)ack {
     while(![outputStream hasSpaceAvailable])
     {
-        [NSThread sleepForTimeInterval:.05];
+        [NSThread sleepForTimeInterval:.025];
     }
     NSInteger nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
     LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));

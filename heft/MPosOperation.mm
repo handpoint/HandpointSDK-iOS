@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <memory>
+#include <map>
 
 enum eConnectCondition{
 	eNoConnectStateCondition
@@ -55,7 +56,11 @@ enum eConnectCondition{
     std::vector<std::uint8_t> connectionReceiveData;
 }
 
-- (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
+- (id)initWithRequest:(RequestCommand*)aRequest
+           connection:(HeftConnection*)aConnection
+     resultsProcessor:(id<IResponseProcessor>)aProcessor
+         sharedSecret:(NSData*)aSharedSecret
+{
 	if(self = [super init]){
 		LOG(@"mPos Operation started.");
 		pRequestCommand = aRequest;
@@ -78,41 +83,53 @@ enum eConnectCondition{
 
 - (void)main{
 	@autoreleasepool {
-		try{
+		try
+        {
 			RequestCommand* currentRequest = pRequestCommand;
 			[connection resetData];
 			
-			while(true){
+			while(true)
+            {
 				//LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
 				FrameManager fm(*currentRequest, connection.maxFrameSize);
 				fm.Write(connection);
 				
-				if(pRequestCommand != currentRequest){
+				if(pRequestCommand != currentRequest)
+                {
 					delete currentRequest;
 					currentRequest = 0;
 				}
 				
-                std::shared_ptr<ResponseCommand> pResponse;
+                // std::shared_ptr<ResponseCommand> pResponse;
+                std::unique_ptr<ResponseCommand> pResponse;
                 BOOL retry;
                 BOOL already_cancelled = NO;
-				while(true){
-                    do{
+				while(true)
+                {
+                    do
+                    {
                         retry = NO;
-                        try {
+                        try
+                        {
                             pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
-                        } catch (timeout4_exception& to4) {
+                        }
+                        catch (timeout4_exception& to4)
+                        {
                             // to be nice we will try to send a cancel to the card reader
                             retry = !already_cancelled ? [processor cancelIfPossible] : NO;
                             already_cancelled = retry;
-                            if(!retry){
+                            if(!retry)
+                            {
                                 throw to4;
                             }
                         }
                     } while (retry);                    
 					
-					if(pResponse->isResponse()){
+					if(pResponse->isResponse())
+                    {
 						pResponse->ProcessResult(processor);
-						if(pResponse->isResponseTo(*pRequestCommand)){
+						if(pResponse->isResponseTo(*pRequestCommand))
+                        {
 							LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
 							return;
 						}
@@ -127,7 +144,8 @@ enum eConnectCondition{
 				currentRequest = pHostRequest->Process(self);
 			}
 		}
-		catch(heft_exception& exception){
+		catch(heft_exception& exception)
+        {
 			[processor sendResponseError:exception.stringId()];
 		}
 	}
@@ -151,10 +169,23 @@ enum eConnectCondition{
 
 #pragma mark IHostProcessor
 
-- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode{
-    LOG(@"stream:aStream handleEvent:%lu", (unsigned long)eventCode);
+namespace {
+    std::map<unsigned long, NSString*> eventCodes = {
+        {0, @"NSStreamEventNone"},
+        {1, @"NSStreamEventOpenCompleted"},
+        {2, @"NSStreamEventHasBytesAvailable"},
+        {4, @"NSStreamEventHasSpaceAvailable"},
+        {8, @"NSStreamEventErrorOccurred"},
+        {16, @"NSStreamEventEndEncountered"}
+    };
+}
 
-    if(eventCode & NSStreamEventErrorOccurred){
+- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
+{
+    LOG(@"stream:aStream handleEvent:%@", eventCodes[(unsigned long)eventCode]);
+
+    if(eventCode & NSStreamEventErrorOccurred)
+    {
         // first remove us as the streams event handler so that we don't accidentally get more events
         [recvStream setDelegate:nil];
         [sendStream setDelegate:nil];
@@ -165,19 +196,23 @@ enum eConnectCondition{
         return;
     }
     
-    if(eventCode & NSStreamEventOpenCompleted){
-        if(connectionState == eConnectionConnecting){
+    if(eventCode & NSStreamEventOpenCompleted)
+    {
+        if(connectionState == eConnectionConnecting)
+        {
             [connectLock lock];
             connectionState = eConnectionConnected;
             [connectLock unlockWithCondition:eReadyStateCondition];
         }
     }
     
-    if(eventCode & NSStreamEventHasBytesAvailable){
-        if(aStream == recvStream){
+    if(eventCode & NSStreamEventHasBytesAvailable)
+    {
+        if(aStream == recvStream)
+        {
             // note: this event will not be generated again until the server sends us more data
             NSInteger nrecv;
-            std::vector<std::uint8_t>::size_type old_size = connectionReceiveData.size();
+            auto old_size = connectionReceiveData.size();
             NSUInteger stepSize = 65536; // during testing we used a really small value here (i.e. 1)
 
             do
@@ -185,6 +220,7 @@ enum eConnectCondition{
                 connectionReceiveData.resize(old_size + stepSize);
                 nrecv = [recvStream read:&connectionReceiveData[old_size] maxLength:stepSize];
                 // it is possible that we didn't read all available data due to our buffer being too small
+                LOG(@"read %d bytes from tcp stream.", nrecv);
                 if(nrecv >= 0)
                 {
                     old_size += nrecv;
@@ -207,7 +243,12 @@ enum eConnectCondition{
             
             // note: for this event we don't touch the connectionState state variable, or the lock, as it will be handled in the NSSteamEventEndEncountered condition below.
             
-        } // else there are bytes on the sendStream? ... which makes no sense! ... but if so ... then we just ignore this event
+        }
+        else
+        {
+            // else there are bytes on the sendStream? ... which makes no sense! ... but if so ... then we just ignore this event
+            LOG(@"NSStreamEventHasBytesAvailable, aStream != recvStream");
+        }
     }
     
     if(eventCode & NSStreamEventHasSpaceAvailable)
@@ -225,7 +266,8 @@ enum eConnectCondition{
                     {
                         connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);
                         [connectLock unlock];
-                    } else
+                    }
+                    else
                     {
                         if(written == connectionSendData.size())
                         {
@@ -241,7 +283,7 @@ enum eConnectCondition{
                             
                             connectionState = eConnectionClosed;
                             
-                            [connectLock unlock];
+                            // [connectLock unlock];
                             // TODO: deadlocked?
                             LOG_RELEASE(Logger::eFine, @"Error writing data, closing connection.");
                             return;
@@ -263,7 +305,10 @@ enum eConnectCondition{
         } // else there is space available on the recvStream ... which we just ignore
     }
     
-    if(eventCode & NSStreamEventEndEncountered){
+    if(eventCode & NSStreamEventEndEncountered)
+    {
+        LOG_RELEASE(Logger::eFine, @"NSStreamEventEndEncountered - server closed connection.");
+        
         // note: it is entirely possible for the server to close the connection prematurely, before it has received anything from us (e.g.  due to some error server site).
         [connectLock lock];
         connectionState = eConnectionReceivingComplete;
@@ -271,13 +316,20 @@ enum eConnectCondition{
     }
 }
 
-- (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest{
-	LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: connecting to bureau %s:%d timeout:%d", pRequest->GetAddr().c_str(), pRequest->GetPort(), pRequest->GetTimeout());
+- (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest
+{
+	LOG_RELEASE(Logger::eFine,
+                @"State of financial transaction changed: connecting to bureau %s:%d timeout:%d",
+                pRequest->GetAddr().c_str(),
+                pRequest->GetPort(),
+                pRequest->GetTimeout()
+    );
     
     int status = EFT_PP_STATUS_CONNECT_ERROR;
     
     [connectLock lock];
-    if(connectionState == eConnectionClosed){
+    if(connectionState == eConnectionClosed)
+    {
         connectionState = eConnectionConnecting;
         connectionSendData.clear();
         connectionReceiveData.clear();
@@ -286,11 +338,18 @@ enum eConnectCondition{
         NSString* host = @(pRequest->GetAddr().c_str());
         CFReadStreamRef readStream;
         CFWriteStreamRef writeStream;
-        CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault, (__bridge CFStringRef)host, pRequest->GetPort(), &readStream, &writeStream);
+        CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault,
+                                           (__bridge CFStringRef)host,
+                                           pRequest->GetPort(),
+                                           &readStream,
+                                           &writeStream
+        );
+        
         recvStream = (NSInputStream*)CFBridgingRelease(readStream);
         sendStream = (NSOutputStream*)CFBridgingRelease(writeStream);
 
-        if(sendStream && recvStream){
+        if(sendStream && recvStream)
+        {
             [recvStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
             //[sendStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
             [recvStream setDelegate:self];
@@ -301,27 +360,38 @@ enum eConnectCondition{
             [recvStream open];
             [sendStream open];
             
-            if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]]){
+            if([connectLock lockWhenCondition:eReadyStateCondition
+                                   beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
+            {
                 [connectLock unlockWithCondition:eNoConnectStateCondition];
-                if(recvStream.streamStatus == NSStreamStatusOpen){
+                if(recvStream.streamStatus == NSStreamStatusOpen)
+                {
                     LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: connected to bureau");
                     return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
-                }else{
+                }
+                else
+                {
                     LOG_RELEASE(Logger::eWarning, @"Error connecting bureau.");
                     status = EFT_PP_STATUS_CONNECT_ERROR;
                 }
-            }else{
+            }
+            else
+            {
                 LOG_RELEASE(Logger::eWarning, @"Error connecting bureau (timeout).");
                 status = EFT_PP_STATUS_CONNECT_TIMEOUT;
             }
-        }else{
+        }
+        else
+        {
             LOG_RELEASE(Logger::eWarning, @"Error connecting bureau.");
             status = EFT_PP_STATUS_CONNECT_ERROR;
         }
         
         // if we get to here then we encountered an error
         [self cleanUpConnection];
-    }else{
+    }
+    else
+    {
         [connectLock unlock];
         // not sure how or what happened on the card reader side ...
         // ... but we are apparently already serving a server connection from the card reader ?!!!
@@ -335,7 +405,8 @@ enum eConnectCondition{
     return new HostResponseCommand(CMD_HOST_CONN_RSP, status);
 }
 
-- (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
+- (RequestCommand*)processSend:(SendRequestCommand*)pRequest
+{
 	LOG_RELEASE(Logger::eFine,
                 @"Request to bureau (length:%d): %@",
                 pRequest->GetLength(),
@@ -343,8 +414,9 @@ enum eConnectCondition{
                                          length:pRequest->GetLength()
                                        encoding:NSUTF8StringEncoding]);
     
-    if(sendStream) {
-        connectionState = eConnectionSending;
+    if(sendStream)
+    {
+        // connectionState = eConnectionSending;  //TODO: skoða þetta betur, sjá hvað er að gerast.
         connectionSendData.assign(pRequest->GetData(), pRequest->GetData() + pRequest->GetLength());
         
         [connectLock lock];
@@ -394,10 +466,12 @@ enum eConnectCondition{
     return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SENDING_ERROR);
 }
 
-- (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest{
+- (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest
+{
 	LOG(@"Recv :%d bytes, %ds timeout", pRequest->GetDataLen(), pRequest->GetTimeout());
     
-    if(recvStream) {
+    if(recvStream)
+    {
         if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
         {
             if(connectionState == eConnectionReceivingComplete)
