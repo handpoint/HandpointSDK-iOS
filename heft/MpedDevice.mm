@@ -111,14 +111,13 @@ enum eSignConditions{
 	NSConditionLock* signLock;
 	BOOL signatureIsOk;
     BOOL cancelAllowed;
-    NSString* doesThisVariableExist; // TODO: remove
 }
 
 @synthesize mpedInfo;
 @synthesize isTransactionResultPending;
 
-- (id)initWithConnection:(HeftConnection*)aConnection sharedSecret:(NSData*)aSharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
-    doesThisVariableExist = @"yes";
+- (id)initWithConnection:(HeftConnection*)aConnection sharedSecret:(NSData*)aSharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
+{
 #ifndef HEFT_SIMULATOR
 	if(aConnection){
 #endif
@@ -166,7 +165,9 @@ enum eSignConditions{
                     isTransactionResultPending = NO;
                 }
                 /*
-                 I´ve seriously debated whether or not to create a new dictionary object in the MpedDevice interface, to hold the xml details from the above xml details parse, and reached the conclusion that currently there is no need for it as mpedInfo already provides all important information.
+                 I´ve seriously debated whether or not to create a new dictionary object in the MpedDevice interface, 
+                 to hold the xml details from the above xml details parse, and reached the conclusion that currently 
+                 there is no need for it as mpedInfo already provides all important information.
                  But, in preparation for the future, I´ve decided that we should deprecate the kXMLDetailsInfoKey tag.
                  */
 
@@ -182,7 +183,8 @@ enum eSignConditions{
 					, kXMLDetailsInfoKey:@(pResponse->GetXmlDetails().c_str())
 				};
 			}
-			catch(heft_exception& exception){
+			catch(heft_exception& exception)
+            {
 				[self sendResponseError:exception.stringId()];
 				self = nil;
 			}
@@ -199,14 +201,23 @@ enum eSignConditions{
 	return self;
 }
 
-- (void)dealloc{
+- (void)dealloc
+{
 	LOG(@"MpedDevice::dealloc");
-	[connection shutdown];
+    [self shutdown];
+}
+
+- (void)shutdown
+{
+    LOG(@"MpedDevice::shutdown");
+    [connection shutdown];
+    connection = nil;
 }
 
 #pragma mark HeftClient
 
-- (void)cancel{
+- (void)cancel
+{
     if(!cancelAllowed){
         LOG_RELEASE(Logger::eFine, @"Cancelling is not allowed at this stage.");
         return;
@@ -224,7 +235,8 @@ enum eSignConditions{
 	LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
 }
 
-- (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation{
+- (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation
+{
 	if([queue operationCount])
 		return NO;
 
@@ -235,7 +247,8 @@ enum eSignConditions{
 	return YES;
 }
 
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present
+{
 	return [self saleWithAmount:amount currency:currency cardholder:present reference:@""];
 }
 
@@ -520,7 +533,8 @@ enum eSignConditions{
 }
 
 #pragma mark IResponseProcessor
-- (void)sendScannerEvent:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
+- (void)sendScannerEvent:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+{
     ScannerEventResponseInfo* info = [ScannerEventResponseInfo new];
     info.statusCode = code;
     info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
@@ -528,10 +542,13 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
     if([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
-        [delegate performSelectorOnMainThread:@selector(responseScannerEvent:) withObject:info waitUntilDone:NO];
+        [delegate performSelectorOnMainThread:@selector(responseScannerEvent:)
+                                   withObject:info
+                                waitUntilDone:NO];
     }
 }
--(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
+-(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+{
     LOG_RELEASE(Logger::eFine, @"Scanner disabled");
     
     if([delegate respondsToSelector:@selector(responseEnableScanner:)])
@@ -540,7 +557,9 @@ enum eSignConditions{
         info.statusCode = code;
         info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
         info.xml = xml;
-        [delegate performSelectorOnMainThread:@selector(responseEnableScanner:) withObject:info waitUntilDone:NO];
+        [delegate performSelectorOnMainThread:@selector(responseEnableScanner:)
+                                   withObject:info
+                                waitUntilDone:NO];
     }
     if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
     {
@@ -548,17 +567,22 @@ enum eSignConditions{
         info .statusCode =  code;
         info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
         info.xml = xml;
-        [delegate performSelectorOnMainThread:@selector(responseScannerDisabled:) withObject:info waitUntilDone:NO];
+        [delegate performSelectorOnMainThread:@selector(responseScannerDisabled:)
+                                   withObject:info
+                                waitUntilDone:NO];
     }
     cancelAllowed = NO;
 }
-- (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml{
+- (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+{
 	ResponseInfo* info = [ResponseInfo new];
 	info.statusCode = code;
 	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
-	[delegate performSelectorOnMainThread:@selector(responseStatus:) withObject:info waitUntilDone:NO];
+	[delegate performSelectorOnMainThread:@selector(responseStatus:)
+                               withObject:info
+                            waitUntilDone:NO];
     //cancelAllowed is already set in the caller
 }
 
@@ -566,16 +590,21 @@ enum eSignConditions{
 	ResponseInfo* info = [ResponseInfo new];
 	info.status = status;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
-	[delegate performSelectorOnMainThread:@selector(responseError:) withObject:info waitUntilDone:NO];
+	[delegate performSelectorOnMainThread:@selector(responseError:)
+                               withObject:info
+                            waitUntilDone:NO];
     cancelAllowed = NO;
 }
 
 -(void)sendReportResult:(NSString*)report{
     if([delegate respondsToSelector: @selector(responseEMVReport:)])
     {
-        [delegate performSelectorOnMainThread:@selector(responseEMVReport:) withObject:report waitUntilDone:NO];
+        [delegate performSelectorOnMainThread:@selector(responseEMVReport:)
+                                   withObject:report
+                                waitUntilDone:NO];
     }
-    else{
+    else
+    {
         LOG_RELEASE(Logger::eFine, @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
     }
 }
@@ -585,7 +614,9 @@ enum eSignConditions{
 
     // note: cancelAllowed = NO; // is not needed here as the card reader will send us a status message with the flag set correctly just before
     
-	[delegate performSelectorOnMainThread:@selector(requestSignature:) withObject:@(pRequest->GetReceipt().c_str()) waitUntilDone:NO];
+	[delegate performSelectorOnMainThread:@selector(requestSignature:)
+                               withObject:@(pRequest->GetReceipt().c_str())
+                            waitUntilDone:NO];
     
     NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str()) path:@"SignatureRequiredRequest"];
     
@@ -643,7 +674,8 @@ enum eSignConditions{
 #endif
 }
 
--(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse{
+-(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse
+{
 	int status = pResponse->GetStatus();
     NSString* statusMessage = status < ([statusMessages count]-1) ? statusMessages[status] : @"Unknown status";
     NSDictionary* xml;
@@ -667,7 +699,8 @@ enum eSignConditions{
     return;
 }
 
--(void)processFinanceResponse:(FinanceResponseCommand*)pResponse{
+-(void)processFinanceResponse:(FinanceResponseCommand*)pResponse
+{
 	int status = pResponse->GetStatus();
 	FinanceResponseInfo* info = [FinanceResponseInfo new];
     info.financialResult = pResponse->GetFinancialStatus();
@@ -685,9 +718,12 @@ enum eSignConditions{
     BOOL transactionResultPending = ((rt != nil) && [rt isEqualToString:@"true"]) ? YES : NO;
     
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
-    if(!pResponse->isRecoveredTransaction()){
+    if(!pResponse->isRecoveredTransaction())
+    {
         [delegate performSelectorOnMainThread:@selector(responseFinanceStatus:) withObject:info waitUntilDone:NO];
-    } else {
+    }
+    else
+    {
         info = transactionResultPending ? info : nil;
         [delegate performSelectorOnMainThread:@selector(responseRecoveredTransactionStatus:) withObject:info waitUntilDone:NO];
     }
@@ -697,7 +733,8 @@ enum eSignConditions{
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
 }*/
 
--(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse{
+-(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse
+{
 	LogInfo* info = [LogInfo new];
 	int status = pResponse->GetStatus();
 	info.statusCode = status;
@@ -709,10 +746,13 @@ enum eSignConditions{
 }
 
 -(BOOL)cancelIfPossible{
-    if(cancelAllowed){
+    if(cancelAllowed)
+    {
         [self cancel];
         return YES;
-    }else{
+    }
+    else
+    {
         return NO;
     }
 }

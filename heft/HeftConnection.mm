@@ -43,7 +43,8 @@ enum eBufferConditions{
 @synthesize maxFrameSize;
 @synthesize ourBufferSize;
 
-- (id)initWithDevice:(HeftRemoteDevice*)aDevice {
+- (id)initWithDevice:(HeftRemoteDevice*)aDevice
+{
     EASession* eaSession = nil;
     NSInputStream* is = nil;
     NSOutputStream* os = nil;
@@ -65,8 +66,10 @@ enum eBufferConditions{
         else
             LOG(@"Connection to %@ failed", aDevice.name);
     }
-    if(result){
-        if(self = [super init]){
+    if(result)
+    {
+        if(self = [super init])
+        {
             LOG(@"Connected to %@", aDevice.name);
             device = aDevice;
             session = eaSession;
@@ -84,10 +87,38 @@ enum eBufferConditions{
     return self;
 }
 
-- (void)dealloc{
+
+/*
+ [[_session inputStream] close];
+ [[_session inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+ [[_session inputStream] setDelegate:nil];
+ [[_session outputStream] close];
+ [[_session outputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+ [[_session outputStream] setDelegate:nil];
+ 
+ [_session release];
+ _session = nil;
+ 
+ [_writeData release];
+ _writeData = nil;
+ [_readData release];
+ _readData = nil;
+ */
+
+
+- (void)dealloc
+{
     LOG(@"Disconnection from %@", device.name);
-    if(device){
-        if(device.accessory){
+    [self shutdown];
+}
+
+- (void)shutdown
+{
+    LOG(@"Heftconnection shutdown.");
+    if(device)
+    {
+        if(device.accessory)
+        {
             NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
             [outputStream close];
             [outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
@@ -95,13 +126,17 @@ enum eBufferConditions{
             [inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
         }
     }
-}
-
-- (void)shutdown{
+    session = nil;
+    
     inputStream.delegate = nil;
+    outputStream.delegate = nil;
+    
+    outputStream = nil;
+    inputStream = nil;
 }
 
-- (void)resetData{
+- (void)resetData
+{
     
     if(inputQueue.size())
     {
@@ -118,7 +153,8 @@ enum eBufferConditions{
     
 }
 
-- (void)writeData:(uint8_t*)data length:(int)len{
+- (void)writeData:(uint8_t*)data length:(int)len
+{
     
     while (len) {
         while(![outputStream hasSpaceAvailable])
@@ -150,7 +186,8 @@ enum eBufferConditions{
 
 #pragma mark NSStreamDelegate
 
-- (void)stream:(NSInputStream*)aStream handleEvent:(NSStreamEvent)eventCode{
+- (void)stream:(NSInputStream*)aStream handleEvent:(NSStreamEvent)eventCode
+{
     if(eventCode == NSStreamEventHasBytesAvailable)
     {
         Assert(aStream == inputStream);
@@ -183,7 +220,8 @@ enum eBufferConditions{
 
 #pragma mark -
 
-- (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout{
+- (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout
+{
     auto initSize = buffer.size();
     
     if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]])
