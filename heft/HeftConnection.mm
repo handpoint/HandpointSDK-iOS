@@ -267,13 +267,13 @@ enum eBufferConditions{
         memcpy(&ack, &head[0], sizeof(ack));
         if (head.size() > sizeof(ack))
         {
-            // remove the first elements from the vector and shift everything else to the front
-            // do not remove from queue
+            // remove the first elements from the buffer and shift everything else to the front
+            // do not remove the buffer from queue
             head.erase(head.begin(), head.begin() + sizeof(ack));
         }
         else
         {
-            // we are done with this packet, remove it from the queue
+            // we are done with this packet, remove the buffer from the queue
             inputQueue.pop();
         }
     }
