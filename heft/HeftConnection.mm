@@ -88,23 +88,6 @@ enum eBufferConditions{
 }
 
 
-/*
- [[_session inputStream] close];
- [[_session inputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
- [[_session inputStream] setDelegate:nil];
- [[_session outputStream] close];
- [[_session outputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
- [[_session outputStream] setDelegate:nil];
- 
- [_session release];
- _session = nil;
- 
- [_writeData release];
- _writeData = nil;
- [_readData release];
- _readData = nil;
- */
-
 
 - (void)dealloc
 {
@@ -241,7 +224,8 @@ enum eBufferConditions{
     
     // if we want to hold the lock for as short a time as possible, create a local array of references/pointers
     // and remove all the buffers from the queue - release the lock and then copy buffers from queueue
-    // to the read buffer
+    // to the read buffer - beware of only holding a reference to a object on the queue if it is popped
+    // the object will be destroyed and the reference invalid.
     
     LOG(@"readData got read lock");
     // get everything from the queue
