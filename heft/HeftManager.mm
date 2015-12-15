@@ -47,7 +47,14 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 
 @synthesize connected, connectionID, manufacturer, name, modelNumber, serialNumber, firmwareRevision, hardwareRevision, protocolStrings;
 
--(id) initWithConnectionID:(NSUInteger)newConnectionID manufacturer:(NSString*)newManufacturer name:(NSString*)newName modelNumber:(NSString*)newModelNumber serialNumber:(NSString*)newSerialNumber firmwareRevision:(NSString*)newFirmwareRevision hardwareRevision:(NSString*)newHardwareRevision protocolStrings:(NSArray*)newProtocolStrings;
+-(id) initWithConnectionID:(NSUInteger)newConnectionID
+              manufacturer:(NSString*)newManufacturer
+                      name:(NSString*)newName
+               modelNumber:(NSString*)newModelNumber
+              serialNumber:(NSString*)newSerialNumber
+          firmwareRevision:(NSString*)newFirmwareRevision
+          hardwareRevision:(NSString*)newHardwareRevision
+           protocolStrings:(NSArray*)newProtocolStrings;
 {
 /*    if(!(self = [super init])){
         return nil;
@@ -82,7 +89,8 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 
 static HeftManager* instance = 0;
 
-+ (void)initialize{
++ (void)initialize
+{
 	if(self == [HeftManager class]) {
 		//file = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"log.txt"];
 		//log2file = [NSMutableString string];
@@ -92,12 +100,15 @@ static HeftManager* instance = 0;
 	}
 }
 
-+ (HeftManager*)sharedManager{
++ (HeftManager*)sharedManager
+{
 	return instance;
 }
 
-- (id)init {
-	if(self = [super init]) {
+- (id)init
+{
+	if(self = [super init])
+    {
 		LOG(@"HeftManager::init");
 		eaDevices = [NSMutableArray new];
 
@@ -117,19 +128,34 @@ static HeftManager* instance = 0;
 			}
 			return NO;
 		}];
-
 #endif
 	}
 	return self;
 }
 
-- (void)dealloc{
-	LOG(@"HeftManager::dealloc");
-	[[EAAccessoryManager sharedAccessoryManager] unregisterForLocalNotifications];
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
+
+- (void)cleanup
+{
+    LOG(@"HeftManager::cleanup");
+    [[EAAccessoryManager sharedAccessoryManager] unregisterForLocalNotifications];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    /*
+    for (HeftRemoteDevice* device: eaDevices)
+    {
+        [device ]  TODO: get the connection, close it hard!
+    }
+     */
 }
 
-- (BOOL)hasSources{
+- (void)dealloc
+{
+	LOG(@"HeftManager::dealloc");
+    [self cleanup];
+}
+
+- (BOOL)hasSources
+{
 	return NO;
 }
 
@@ -137,8 +163,10 @@ static HeftManager* instance = 0;
 //                                params[0] = device
 //                                params[1] = sharedSecret
 //                                params[2] = delegate
-- (void)asyncClientForDevice:(NSArray*)params{
-	@autoreleasepool{
+- (void)asyncClientForDevice:(NSArray*)params
+{
+	@autoreleasepool
+    {
 		id<HeftClient> result = nil;
 		NSData* sharedSecret = params[1];
 		NSObject<HeftStatusReportDelegate>* aDelegate = params[2];
@@ -149,16 +177,20 @@ static HeftManager* instance = 0;
 		HeftRemoteDevice* device = params[0];
 		result = [[MpedDevice alloc] initWithConnection:[[HeftConnection alloc] initWithDevice:device] sharedSecret:sharedSecret delegate:aDelegate];
 #endif
-		[aDelegate performSelectorOnMainThread:@selector(didConnect:) withObject:result waitUntilDone:NO];
+		[aDelegate performSelectorOnMainThread:@selector(didConnect:)
+                                    withObject:result
+                                 waitUntilDone:NO];
 	}
 }
 
-- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
+- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
+{
 	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
                              toTarget:self
                            withObject:@[device, sharedSecret, aDelegate]];
 }
-- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate{
+- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
+{
 	NSData* sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
 	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
                              toTarget:self
@@ -167,33 +199,40 @@ static HeftManager* instance = 0;
 
 #pragma mark property
 
-- (NSString*)version{
-	return @"2.4.1";
+- (NSString*)version
+{
+	return @"2.4.2";  // TODO: move this to a config file (include file or something else)
+                      //       see old comment below
 }
 
-- (NSString*)buildNumber {
+- (NSString*)buildNumber
+{
 	return @"1";
 }
 
 // A real kludge, need to automate this so it can be independent of Xcode project settings
-- (NSString*)getSDKVersion{
+- (NSString*)getSDKVersion
+{
 	NSString* SDKVersion = [self version];
 	return SDKVersion;
 }
 
-- (NSString*)getSDKBuildNumber{
+- (NSString*)getSDKBuildNumber
+{
 	NSString* SDKBuildNumber = [self buildNumber];
 	return SDKBuildNumber;
 }
 
-- (NSMutableArray*)devicesCopy{
+- (NSMutableArray*)devicesCopy
+{
 	NSMutableArray* result = [eaDevices mutableCopy];
 	return result;
 }
 
 #pragma mark HeftDiscovery
 
-- (void)startDiscovery:(BOOL)fDiscoverAllDevices{
+- (void)startDiscovery:(BOOL)fDiscoverAllDevices
+{
 #ifdef HEFT_SIMULATOR
 	[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 #else
@@ -240,18 +279,25 @@ static EAAccessory* simulatorAccessory = nil;
 
 #pragma mark EAAccessory notifications
 
-- (void)EAAccessoryDidConnect:(NSNotification*)notification{
+- (void)EAAccessoryDidConnect:(NSNotification*)notification
+{
+    NSLog(@"EAAccessoryDidConnect");
+
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
-	if([accessory.protocolStrings containsObject:eaProtocol]){
+	if([accessory.protocolStrings containsObject:eaProtocol])
+    {
 		HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
 		[eaDevices addObject:newDevice];
 		[delegate didFindAccessoryDevice:newDevice];
 	}
 }
 
-- (void)EAAccessoryDidDisconnect:(NSNotification*)notification{
+- (void)EAAccessoryDidDisconnect:(NSNotification*)notification
+{
+    NSLog(@"EAAccessoryDidDisconnect");
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
-	if([accessory.protocolStrings containsObject:eaProtocol]){
+	if([accessory.protocolStrings containsObject:eaProtocol])
+    {
 		NSUInteger index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop){
 			if(device.accessory == accessory)
 				*stop = YES;
@@ -277,7 +323,8 @@ static EAAccessory* simulatorAccessory = nil;
 		sharedSecretString = [@"0" stringByPaddingToLength:sharedSecretLength withString:@"0" startingAtIndex:0];
 	}
 	
-	for (int i = 0 ; i < 32; i++) {
+	for (int i = 0 ; i < 32; i++)
+    {
 		NSRange range = NSMakeRange (i*2, 2);
 		NSString *bytes = [sharedSecretString substringWithRange:range];
 		NSScanner* scanner = [NSScanner scannerWithString:bytes];

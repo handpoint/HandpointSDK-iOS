@@ -140,4 +140,6 @@
  */
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
 
+- (void)cleanup;
+
 @end
