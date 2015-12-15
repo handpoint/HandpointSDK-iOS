@@ -19,7 +19,7 @@ using InputQueue = std::queue<Buffer>;
 
 extern NSString* eaProtocol;
 
-const int ciDefaultMaxFrameSize = 256; // 2046; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
+const int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
 const int ciTimeout[] = {20, 15, 1, 5*60};
 
 enum eBufferConditions{
@@ -194,23 +194,25 @@ enum eBufferConditions{
         
         
         /*
-         * Erum með buffer (vector). Lesum inn í hann þar til ekki er meiri gögn að fá (eða nóg komið)
-         * setjum bufferinn þá í queue.
+         * Have a buffer (vector). Read into it until there is no more data
+         * Add the buffer to the input queue.
+         * This implementation is still locking too much, it should only lock
+         * when inserting a buffer into the input queue.
          */
         
         NSUInteger nread;
         const int bufferSize = 512;
         
-        [bufferLock lock]; // don't care for a condition, queue can be empty or not
         do {
             Buffer readBuffer;
             readBuffer.resize(bufferSize);
             nread = [inputStream read:&readBuffer[0] maxLength:bufferSize];
             LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::ReadDataStream : ", &readBuffer[0], (int)nread), (int)nread);
             readBuffer.resize(nread);
+            [bufferLock lock]; // don't care for a condition, queue can be empty or not
             inputQueue.push(std::move(readBuffer));
+            [bufferLock unlockWithCondition:eHasDataCondition];
         } while ([inputStream hasBytesAvailable]);
-        [bufferLock unlockWithCondition:eHasDataCondition];
     }
     else
     {
@@ -236,6 +238,10 @@ enum eBufferConditions{
             throw timeout2_exception();
         }
     }
+    
+    // if we want to hold the lock for as short a time as possible, create a local array of references/pointers
+    // and remove all the buffers from the queue - release the lock and then copy buffers from queueue
+    // to the read buffer
     
     LOG(@"readData got read lock");
     // get everything from the queue
