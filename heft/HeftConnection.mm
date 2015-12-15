@@ -223,7 +223,7 @@ enum eBufferConditions{
     }
     
     // if we want to hold the lock for as short a time as possible, create a local array of references/pointers
-    // and remove all the buffers from the queue - release the lock and then copy buffers from queueue
+    // and remove all the buffers from the queue - release the lock and then copy buffers from queue
     // to the read buffer - beware of only holding a reference to a object on the queue if it is popped
     // the object will be destroyed and the reference invalid.
     
