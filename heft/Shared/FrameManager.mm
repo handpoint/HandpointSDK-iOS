@@ -29,7 +29,8 @@ const int MAX_ATTEMPTS = 3;
 
 FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
     // max_frame_size is the total frame size, i.e. the combined length of [stx] [data] [ptx/etx] [crc]
-    if( max_frame_size >= ( Frame::GetMetaDataSize() + 2 ) ) // the +2 is because we need to be able to escape one DLE character into two DLE DLE
+    if( max_frame_size >= ( Frame::GetMetaDataSize() + 2 ) ) // the +2 is because we need to be
+                                                             // able to escape one DLE character into two DLE DLE
     {
         int max_data_size = max_frame_size - Frame::GetMetaDataSize();
         // you should "step" through this code using a max_data_size of 2
@@ -84,6 +85,15 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
 void FrameManager::Write(HeftConnection* connection){
     for(auto& frame : frames) {
 		int i = 0;
+        
+        // TODO: refactor and remove the retries - the writeData method
+        //       should always work - even though that data is not written
+        //       immediately. The retries are waiting for a ACK instead
+        //       of a NAK - but is that good? Will we ever get a NAK but then
+        //       later an ACK for the same Frame?
+        
+        // this code is syncrounous, that is, one write, then a read waiting
+        // for an ack. Should use GCD and a serial queue.
 		for(; i < MAX_ATTEMPTS; ++i) {
             [connection writeData:frame.GetData() length:frame.GetLength()];
             LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame sent:"));
@@ -109,17 +119,20 @@ void FrameManager::Write(HeftConnection* connection){
 
 void FrameManager::WriteWithoutAck(HeftConnection* connection){
 	// ATLASSERT(frames.size() == 1);
-    // for(vector<Frame>::iterator it = frames.begin(); it != frames.end(); ++it){
-    for(auto& frame: frames){
+    for(auto& frame: frames)
+    {
 		[connection writeData:frame.GetData() length:frame.GetLength()];
 		LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame sent:"));
 	}
 }
 
 int FrameManager::EndPos(const std::uint8_t* pData, int pos, int len){
-	for(int i = pos; i <= len - 4; ++i){
-		if(pData[i] == cuiDle){
-			switch(pData[i + 1]){
+	for(int i = pos; i <= len - 4; ++i)
+    {
+		if(pData[i] == cuiDle)
+        {
+			switch(pData[i + 1])
+            {
 			case cuiDle://skip doubled DLE
 				++i;
 				continue;
@@ -175,6 +188,7 @@ bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8
 		else
 			pos = std::max(static_cast<int>(buf.size()) - 4, 0);
 
+        LOG(@"FrameManager::ReadFrames - about to call readData again.");
 		[connection readData:buf timeout:eResponseTimeout];
 	}while(true);
 
@@ -190,6 +204,7 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
         if(buf.size() < sizeof(pCommand->StartSequence))
         {
             nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
+            LOG(@"FrameManager::Read, got %d bytes from readData", nread);
             if(!nread) {
                 if(finance_timeout)
                     throw timeout4_exception();
@@ -211,7 +226,8 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 		pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
 		switch(pCommand->StartSequence){
 		case FRAME_START:
-			if(ReadFrames(connection, buf/*, bCancel*/))
+            LOG(@"FrameManager::Read FRAME_START");
+			if(ReadFrames(connection, buf))
 				return ResponseCommand::Create(data);
 			break;
 		case SESSION_END:

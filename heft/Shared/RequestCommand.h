@@ -7,13 +7,15 @@
 
 #include "atl.h"
 
-class RequestCommand : public Command{
+class RequestCommand : public Command
+{
 	static const int ciMinSize = Command::ciMinSize + 6;
 
 protected:
     std::vector<std::uint8_t> data;
 
-	struct RequestPayload : CommandPayload{
+	struct RequestPayload : CommandPayload
+    {
 		std::uint8_t length[6];
 	} __attribute__((packed));
 
@@ -26,7 +28,8 @@ protected:
         return reinterpret_cast<T*>(&data[0]);
     }
     
-    template<class T> void FormatLength(int length){
+    template<class T> void FormatLength(int length)
+    {
 		int32_t len_msb = htonl(length);
 		T* pRequest = GetPayload<T>();
 		int dest_len = sizeof(pRequest->length) + 1;
@@ -40,7 +43,10 @@ protected:
 
 public:
 	//Command
-	bool isResponse(){return false;}
+	bool isResponse()
+    {
+        return false;
+    }
 
 	int GetLength()const{return (int)data.size();}
 	const std::uint8_t* GetData()const{return &data[0];}

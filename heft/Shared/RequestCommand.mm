@@ -85,7 +85,12 @@ static bool isNumber(const std::string str)
     return !str.empty() && it == str.end();
 }
 
-FinanceRequestCommand::FinanceRequestCommand(std::uint32_t type, const std::string& currency_code, std::uint32_t trans_amount, std::uint8_t card_present, const std::string& trans_id, const std::string& xml)
+FinanceRequestCommand::FinanceRequestCommand(std::uint32_t type,
+                                             const std::string& currency_code,
+                                             std::uint32_t trans_amount,
+                                             std::uint8_t card_present,
+                                             const std::string& trans_id,
+                                             const std::string& xml)
 : RequestCommand(
     ciMinSize
     + (int)(xml.length() // this conditional so the "if( trans_id_length || xml_length )" statement below won't corrupt the heap

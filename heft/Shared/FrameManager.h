@@ -24,7 +24,10 @@ public:
 	void WriteWithoutAck(HeftConnection* connection/*, volatile bool& bCancel*/);
 
 	template<class T>
-	T* ReadResponse(HeftConnection* connection, bool finance_timeout){return static_cast<T*>(Read(connection, finance_timeout));}
+	T* ReadResponse(HeftConnection* connection, bool finance_timeout)
+    {
+        return static_cast<T*>(Read(connection, finance_timeout));
+    }
 
 #ifdef UNIT_TESTING
     std::vector<Frame>& GetFrames(){return frames;}

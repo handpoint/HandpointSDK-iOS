@@ -29,6 +29,11 @@
 #import "MPosOperation.h"
 #endif
 
+#if 1
+#define USE_DISPATCH_ASYNC
+#endif
+
+
 const NSString* kSerialNumberInfoKey = @"SerialNumber";
 const NSString* kPublicKeyVersionInfoKey = @"PublicKeyVersion";
 const NSString* kEMVParamVersionInfoKey = @"EMVParamVersion";
@@ -105,7 +110,9 @@ enum eSignConditions{
 
 @implementation MpedDevice{
 	HeftConnection* connection;
+#ifndef USE_DISPATCH_ASYNC
 	NSOperationQueue* queue;
+#endif
 	NSData* sharedSecret;
 	__weak NSObject<HeftStatusReportDelegate>* delegate;
 	NSConditionLock* signLock;
@@ -123,8 +130,10 @@ enum eSignConditions{
 #endif
 		if(self = [super init]){
 			LOG(@"MpedDevice::init");
+#ifndef USE_DISPATCH_ASYNC
 			queue = [NSOperationQueue new];
 			[queue setMaxConcurrentOperationCount:1];
+#endif
 			delegate = aDelegate;
 			signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
             cancelAllowed = NO; // cancel is only allowed when an operation is under way.
@@ -149,13 +158,19 @@ enum eSignConditions{
 			try{
 				FrameManager fm(InitRequestCommand(), connection.maxFrameSize);
 				fm.Write(connection);
-				InitResponseCommand* pResponse = dynamic_cast<InitResponseCommand*>(reinterpret_cast<ResponseCommand*>(fm.ReadResponse<InitResponseCommand>(connection, false)));
+				InitResponseCommand* pResponse =
+                    dynamic_cast<InitResponseCommand*>(
+                        reinterpret_cast<ResponseCommand*>(
+                            fm.ReadResponse<InitResponseCommand>(connection, false)
+                                                           )
+                                                       );
 				if(!pResponse)
 					throw communication_exception();
 				connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
 
-                NSDictionary* xml;
-                if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"InitResponse"]) count]> 0)
+                NSDictionary* xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
+                                                      path:@"InitResponse"];
+                if([xml count] > 0)
                 {
                     NSString* trp = [xml objectForKey:@"TransactionResultPending"];
                     isTransactionResultPending = ((trp != nil) && [trp isEqualToString:@"true"]) ? YES : NO;
@@ -222,10 +237,14 @@ enum eSignConditions{
         LOG_RELEASE(Logger::eFine, @"Cancelling is not allowed at this stage.");
         return;
     }
+#ifndef USE_DISPATCH_ASYNC
 	if(![queue operationCount])
 		return;
+#endif
+    
 	LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
     cancelAllowed = NO;
+
 #if HEFT_SIMULATOR
 	[queue cancelAllOperations];
 #else
@@ -237,13 +256,18 @@ enum eSignConditions{
 
 - (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation
 {
+#ifdef USE_DISPATCH_ASYNC
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^ {
+        [operation start];
+    });
+#else
 	if([queue operationCount])
 		return NO;
 
     cancelAllowed = YES; // always at the start of an operation
     
 	[queue addOperation:operation];
-
+#endif
 	return YES;
 }
 
@@ -264,14 +288,25 @@ enum eSignConditions{
                   @"</FinancialTransactionRequest>",
                   reference];
     }
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, std::string([currency UTF8String]), (std::uint32_t)amount, present, std::string(), std::string([params UTF8String]))
-                                                                                       connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    
+    FinanceRequestCommand* frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
+                                                           std::string([currency UTF8String]),
+                                                           (std::uint32_t)amount,
+                                                           present,
+                                                           std::string(),
+                                                           std::string([params UTF8String])
+                                );
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
+                                                           connection:connection resultsProcessor:self
+                                                         sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString *)months{
-	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months", amount, currency, present ? @"is present" : @"is not present", reference, months);
+	LOG_RELEASE(Logger::eInfo,
+                @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
+                amount, currency, present ? @"is present" : @"is not present", reference, months);
     NSString *params = @"";
     NSString *refrenceString = @"";
     NSString *monthsString = @"";
@@ -298,7 +333,14 @@ enum eSignConditions{
                   refrenceString, monthsString];
     }
     
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALE_REQ, std::string([currency UTF8String]), (std::uint32_t)amount, present, std::string(), std::string([params UTF8String]))
+    FinanceRequestCommand* frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
+                                                           std::string([currency UTF8String]),
+                                                           (std::uint32_t)amount,
+                                                           present,
+                                                           std::string(),
+                                                           std::string([params UTF8String])
+                                );
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
@@ -542,9 +584,16 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
     if([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
+#ifndef USE_DISPATCH_ASYNC
         [delegate performSelectorOnMainThread:@selector(responseScannerEvent:)
                                    withObject:info
                                 waitUntilDone:NO];
+#else
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseScannerEvent:info];
+        });
+#endif
     }
 }
 -(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
@@ -557,9 +606,16 @@ enum eSignConditions{
         info.statusCode = code;
         info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
         info.xml = xml;
+#ifndef USE_DISPATCH_ASYNC
         [delegate performSelectorOnMainThread:@selector(responseEnableScanner:)
                                    withObject:info
                                 waitUntilDone:NO];
+#else
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseEnableScanner:info];
+        });
+#endif
     }
     if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
     {
@@ -567,9 +623,16 @@ enum eSignConditions{
         info .statusCode =  code;
         info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
         info.xml = xml;
+#ifndef USE_DISPATCH_ASYNC
         [delegate performSelectorOnMainThread:@selector(responseScannerDisabled:)
                                    withObject:info
                                 waitUntilDone:NO];
+#else
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseScannerDisabled:info];
+        });
+#endif
     }
     cancelAllowed = NO;
 }
@@ -580,9 +643,18 @@ enum eSignConditions{
 	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
+    
+#ifdef USE_DISPATCH_ASYNC
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id<HeftStatusReportDelegate> tmp = delegate;
+        LOG_RELEASE(Logger::eFine, @"calling responseStatus");
+        [tmp responseStatus:info];
+    });
+#else
 	[delegate performSelectorOnMainThread:@selector(responseStatus:)
                                withObject:info
                             waitUntilDone:NO];
+#endif
     //cancelAllowed is already set in the caller
 }
 
@@ -590,18 +662,33 @@ enum eSignConditions{
 	ResponseInfo* info = [ResponseInfo new];
 	info.status = status;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
+    
+#ifdef USE_DISPATCH_ASYNC
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id<HeftStatusReportDelegate> tmp = delegate;
+        [tmp responseError:info];
+    });
+#else
 	[delegate performSelectorOnMainThread:@selector(responseError:)
                                withObject:info
                             waitUntilDone:NO];
+#endif
     cancelAllowed = NO;
 }
 
 -(void)sendReportResult:(NSString*)report{
     if([delegate respondsToSelector: @selector(responseEMVReport:)])
     {
+#ifdef USE_DISPATCH_ASYNC
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseEMVReport:report];
+        });
+#else
         [delegate performSelectorOnMainThread:@selector(responseEMVReport:)
                                    withObject:report
                                 waitUntilDone:NO];
+#endif
     }
     else
     {
@@ -613,10 +700,18 @@ enum eSignConditions{
 	int result = EFT_PP_STATUS_PROCESSING_ERROR;
 
     // note: cancelAllowed = NO; // is not needed here as the card reader will send us a status message with the flag set correctly just before
+
     
+#ifndef USE_DISPATCH_ASYNC
 	[delegate performSelectorOnMainThread:@selector(requestSignature:)
                                withObject:@(pRequest->GetReceipt().c_str())
                             waitUntilDone:NO];
+#else
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id<HeftStatusReportDelegate> tmp = delegate;
+        [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
+    });
+#endif
     
     NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str()) path:@"SignatureRequiredRequest"];
     
@@ -628,15 +723,26 @@ enum eSignConditions{
 		[signLock unlockWithCondition:eNoSignCondition];
 	}
 	else
-		[delegate performSelectorOnMainThread:@selector(cancelSignature) withObject:nil waitUntilDone:NO];
-    
+    {
+#ifndef USE_DISPATCH_ASYNC
+        [delegate performSelectorOnMainThread:@selector(cancelSignature) withObject:nil waitUntilDone:NO];
+#else
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp cancelSignature];
+        });
+#endif
+    }
+
 	return result;
 }
 
 -(void)processResponse:(ResponseCommand*)pResponse{
 	int status = pResponse->GetStatus();
 	if(status != EFT_PP_STATUS_SUCCESS){
-		[self sendResponseInfo:statusMessages[status] code:status xml:nil];
+		[self sendResponseInfo:statusMessages[status]
+                          code:status
+                           xml:nil];
 #ifdef HEFT_SIMULATOR
 		[NSThread sleepForTimeInterval:1.];
 #endif
@@ -706,9 +812,12 @@ enum eSignConditions{
     info.financialResult = pResponse->GetFinancialStatus();
     info.isRestarting = pResponse->isRestarting();
 	info.statusCode = status;
-	NSDictionary* xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"FinancialTransactionResponse"];
+	NSDictionary* xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
+                                                 path:@"FinancialTransactionResponse"];
 	info.xml = xmlDetails;
-	info.status = status == EFT_PP_STATUS_SUCCESS ? [xmlDetails objectForKey:@"FinancialStatus"] : [xmlDetails objectForKey:@"StatusMessage"];
+	info.status = status == EFT_PP_STATUS_SUCCESS ?
+        [xmlDetails objectForKey:@"FinancialStatus"] :
+        [xmlDetails objectForKey:@"StatusMessage"];
 	info.authorisedAmount = pResponse->GetAmount();
 	info.transactionId = @(pResponse->GetTransID().c_str());
 	info.customerReceipt = @(pResponse->GetCustomerReceipt().c_str());
@@ -720,12 +829,27 @@ enum eSignConditions{
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
     if(!pResponse->isRecoveredTransaction())
     {
+#ifndef USE_DISPATCH_ASYNC
         [delegate performSelectorOnMainThread:@selector(responseFinanceStatus:) withObject:info waitUntilDone:NO];
+#else
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseFinanceStatus:info];
+        });
+#endif
+        
     }
     else
     {
         info = transactionResultPending ? info : nil;
+#ifndef USE_DISPATCH_ASYNC
         [delegate performSelectorOnMainThread:@selector(responseRecoveredTransactionStatus:) withObject:info waitUntilDone:NO];
+#else
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseRecoveredTransactionStatus:info];
+        });
+#endif
     }
     cancelAllowed = NO;
 }
@@ -741,7 +865,14 @@ enum eSignConditions{
 	info.status = statusMessages[status];
 	if(status == EFT_PP_STATUS_SUCCESS)
 		info.log = @(pResponse->GetData().c_str());
+#ifndef USE_DISPATCH_ASYNC
 	[delegate performSelectorOnMainThread:@selector(responseLogInfo:) withObject:info waitUntilDone:NO];
+#else
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id<HeftStatusReportDelegate> tmp = delegate;
+        [tmp responseLogInfo:info];
+    });
+#endif
     cancelAllowed = NO;
 }
 

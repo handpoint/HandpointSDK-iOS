@@ -10,6 +10,7 @@
 #import "HeftConnection.h"
 #import "MpedDevice.h"
 #import "HeftRemoteDevice.h"
+#import "HeftStatusReportPublic.h"
 
 #import "debug.h"
 
@@ -20,6 +21,10 @@
 //NSMutableString* log2file = nil;
 
 NSString* eaProtocol = @"com.datecs.pinpad";
+
+#if 1
+    #define USE_DISPATCH_ASYNC
+#endif
 
 @interface HeftRemoteDevice ()
 - (id)initWithName:(NSString*)aName address:(NSString*)aAddress;
@@ -177,24 +182,50 @@ static HeftManager* instance = 0;
 		HeftRemoteDevice* device = params[0];
 		result = [[MpedDevice alloc] initWithConnection:[[HeftConnection alloc] initWithDevice:device] sharedSecret:sharedSecret delegate:aDelegate];
 #endif
+        
+#ifndef USE_DISPATCH_ASYNC
 		[aDelegate performSelectorOnMainThread:@selector(didConnect:)
                                     withObject:result
                                  waitUntilDone:NO];
+#else
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = aDelegate;
+            [tmp didConnect:result];
+        });
+#endif
+        
+        // start run loop here...
+        // [[NSRunLoop currentRunLoop]run];
 	}
 }
 
-- (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
+- (void)init:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
+#ifndef USE_DISPATCH_ASYNC
 	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
                              toTarget:self
                            withObject:@[device, sharedSecret, aDelegate]];
+#else
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^ {
+        [self asyncClientForDevice:@[device, sharedSecret, aDelegate]];
+    });
+#endif
 }
+
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
 	NSData* sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
+    
+#ifdef USE_DISPATCH_ASYNC
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^ {
+        [self asyncClientForDevice:@[device, sharedSecretData, aDelegate]];
+    });
+#else
 	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
                              toTarget:self
                            withObject:@[device, sharedSecretData, aDelegate]];
+#endif
 }
 
 #pragma mark property
@@ -282,6 +313,8 @@ static EAAccessory* simulatorAccessory = nil;
 - (void)EAAccessoryDidConnect:(NSNotification*)notification
 {
     NSLog(@"EAAccessoryDidConnect");
+    
+    [self init];
 
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
 	if([accessory.protocolStrings containsObject:eaProtocol])
@@ -296,19 +329,22 @@ static EAAccessory* simulatorAccessory = nil;
 {
     NSLog(@"EAAccessoryDidDisconnect");
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
-	if([accessory.protocolStrings containsObject:eaProtocol])
+	if([accessory.protocolStrings containsObject:eaProtocol] && [eaDevices count] > 0)
     {
 		NSUInteger index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop){
 			if(device.accessory == accessory)
 				*stop = YES;
 			return *stop;
 		}];
-		HeftRemoteDevice* eaDevice = eaDevices[index];
-		[eaDevices removeObjectAtIndex:index];
-		[delegate didLostAccessoryDevice:eaDevice];
+        if (0 <= index < [eaDevices count])
+        {
+            HeftRemoteDevice* eaDevice = eaDevices[index];
+            [eaDevices removeObjectAtIndex:index];
+            [delegate didLostAccessoryDevice:eaDevice];
+        }
 	}
 }
-
+ 
 #pragma mark Utilities
 
 // Convert Shared secret from NSString to NSData

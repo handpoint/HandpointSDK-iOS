@@ -78,7 +78,8 @@ enum eConnectCondition{
 
 - (void)dealloc{
 	LOG(@"mPos Operation ended.");
-	delete pRequestCommand;
+    if (pRequestCommand)
+        delete pRequestCommand;
 }
 
 - (void)main{
@@ -354,8 +355,13 @@ namespace {
             //[sendStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
             [recvStream setDelegate:self];
             [sendStream setDelegate:self];
-            [recvStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-            [sendStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+            
+            // TODO: runloop testing going on - change back or remove old
+            
+            // [recvStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+            // [sendStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+            [recvStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+            [sendStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 
             [recvStream open];
             [sendStream open];
