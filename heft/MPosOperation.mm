@@ -153,6 +153,7 @@ enum eConnectCondition{
 }
 
 - (void)cleanUpConnection{
+    LOG(@"MPosOpoeration::cleanUpConnection");
     if(recvStream) {
         [recvStream close];
         [recvStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];

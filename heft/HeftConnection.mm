@@ -6,6 +6,7 @@
 #import "HeftConnection.h"
 #import "HeftRemoteDevice.h"
 #import "HeftManager.h"
+#import "MpedDevice.h"
 
 #import "Exception.h"
 #import "Logger.h"
@@ -39,6 +40,10 @@ enum eBufferConditions{
     NSInputStream* inputStream;
     NSOutputStream* outputStream;
     
+    // __weak MpedDevice* aPedDevice;
+    
+    // __weak NSObject<HeftStatusReportDelegate>* delegate;
+    
     InputQueue inputQueue;
     OutputQueue outputQueue;
     NSConditionLock* bufferLock;
@@ -47,7 +52,7 @@ enum eBufferConditions{
 @synthesize maxFrameSize;
 @synthesize ourBufferSize;
 
-- (id)initWithDevice:(HeftRemoteDevice*)aDevice
+- (id)initWithDevice:(HeftRemoteDevice*)aDevice runLoop:(NSRunLoop*) runLoop
 {
     EASession* eaSession = nil;
     NSInputStream* is = nil;
@@ -56,12 +61,13 @@ enum eBufferConditions{
     
     if(aDevice.accessory) {
         LOG(@"protocol strings: %@", aDevice.accessory.protocolStrings);
-        eaSession = [[EASession alloc] initWithAccessory:aDevice.accessory forProtocol:eaProtocol];
+        eaSession = [[EASession alloc] initWithAccessory:aDevice.accessory
+                                             forProtocol:eaProtocol];
         result = eaSession != nil;
         if(result) {
             // TODO: Testing currentRunLoop instead of mainRunLoop - change or remove ol
-            NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
-            // NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
+            // NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
+            // NSRunLoop* runLoop = [NSRunLoop currentRunLoop];            
             is = eaSession.inputStream;
             [is scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
             [is open];
@@ -102,6 +108,11 @@ enum eBufferConditions{
     [self shutdown];
 }
 
+- (void)addClient:(MpedDevice*)pedDevice
+{
+    // self->aPedDevice = pedDevice;
+}
+
 - (void)shutdown
 {
     LOG(@"Heftconnection shutdown");
@@ -131,6 +142,13 @@ enum eBufferConditions{
     
     // HeftManager* heftManager = [HeftManager sharedManager];
     // [heftManager cleanup];
+    
+    /*
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [aPedDevice didLostAccessoryDevice:device];
+    });
+    */
+   
 }
 
 - (void)resetData
@@ -197,7 +215,7 @@ enum eBufferConditions{
     
     switch (eventCode)
     {
-        case NSStreamEventHasBytesAvailable: {
+        case NSStreamEventHasBytesAvailable:
             if (aStream == inputStream)
             {
                 // Assert(aStream == inputStream); // why the assert? what if it is a outputStream?
@@ -232,19 +250,14 @@ enum eBufferConditions{
                     }
                 } while ([inputStream hasBytesAvailable]);
             }
-            else if (aStream == outputStream)
-            {
-                // can write data to the stream... do we have any data?
-            }
             else
             {
-                LOG(@"HeftConnection::handleEvent, stream is neither inputStream nor outputStream");
+                LOG(@"HeftConnection::handleEvent, stream is not an inputStream");
             }
         
         
             // hvað með að gera unlock eNoDataCondition?
             break;
-        }
         case NSStreamEventEndEncountered:
             LOG(@"HeftConnection::handleEvent, NSStreamEventEndEncountered");
             [self shutdown];
@@ -269,7 +282,18 @@ enum eBufferConditions{
     
     if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]])
     {
-        LOG(@"readData read lock timed out");
+        LOG(@"readData read lock timed out. inputQueue.empty() == %@", inputQueue.empty() ? @"True" : @"False");
+        
+        {
+            // try to read before we give up!
+/*
+            Buffer readBuffer;
+            readBuffer.resize(ciDefaultMaxFrameSize);
+            NSUInteger nread = [inputStream read:&readBuffer[0] maxLength:ciDefaultMaxFrameSize];
+            LOG(@"ReadData, tried reading in timeout, got %d bytes", (int) nread);
+*/
+        }
+        
         if(timeout == eFinanceTimeout)
         {
             LOG(@"Finance timeout");
@@ -281,11 +305,6 @@ enum eBufferConditions{
             throw timeout2_exception();
         }
     }
-    
-    // if we want to hold the lock for as short a time as possible, create a local array of references/pointers
-    // and remove all the buffers from the queue - release the lock and then copy buffers from queue
-    // to the read buffer - beware of only holding a reference to a object on the queue if it is popped
-    // the object will be destroyed and the reference invalid.
     
     LOG(@"readData got read lock");
     // get everything from the queue

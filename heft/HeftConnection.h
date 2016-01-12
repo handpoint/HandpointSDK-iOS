@@ -10,6 +10,7 @@
 
 
 @class HeftRemoteDevice;
+@class MpedDevice;
 
 typedef enum{
 	eAckTimeout
@@ -24,7 +25,8 @@ typedef enum{
 @property(nonatomic) int maxFrameSize;
 @property(nonatomic) int ourBufferSize;
 
-- (id)initWithDevice:(HeftRemoteDevice*)aDevice;
+- (id)initWithDevice:(HeftRemoteDevice*)aDevice runLoop:(NSRunLoop*) runLoop;
+- (void)addClient:(MpedDevice*)pedDevice;
 - (void)shutdown;
 - (void)resetData;
 

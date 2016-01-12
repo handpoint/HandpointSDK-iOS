@@ -29,10 +29,6 @@
 #import "MPosOperation.h"
 #endif
 
-#if 1
-#define USE_DISPATCH_ASYNC
-#endif
-
 
 const NSString* kSerialNumberInfoKey = @"SerialNumber";
 const NSString* kPublicKeyVersionInfoKey = @"PublicKeyVersion";
@@ -110,9 +106,6 @@ enum eSignConditions{
 
 @implementation MpedDevice{
 	HeftConnection* connection;
-#ifndef USE_DISPATCH_ASYNC
-	NSOperationQueue* queue;
-#endif
 	NSData* sharedSecret;
 	__weak NSObject<HeftStatusReportDelegate>* delegate;
 	NSConditionLock* signLock;
@@ -130,10 +123,6 @@ enum eSignConditions{
 #endif
 		if(self = [super init]){
 			LOG(@"MpedDevice::init");
-#ifndef USE_DISPATCH_ASYNC
-			queue = [NSOperationQueue new];
-			[queue setMaxConcurrentOperationCount:1];
-#endif
 			delegate = aDelegate;
 			signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
             cancelAllowed = NO; // cancel is only allowed when an operation is under way.
@@ -155,6 +144,7 @@ enum eSignConditions{
 #else
 			connection = aConnection;
 			sharedSecret = aSharedSecret;
+            
 			try{
 				FrameManager fm(InitRequestCommand(), connection.maxFrameSize);
 				fm.Write(connection);
@@ -166,6 +156,7 @@ enum eSignConditions{
                                                        );
 				if(!pResponse)
 					throw communication_exception();
+                
 				connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
 
                 NSDictionary* xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
@@ -237,10 +228,6 @@ enum eSignConditions{
         LOG_RELEASE(Logger::eFine, @"Cancelling is not allowed at this stage.");
         return;
     }
-#ifndef USE_DISPATCH_ASYNC
-	if(![queue operationCount])
-		return;
-#endif
     
 	LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
     cancelAllowed = NO;
@@ -256,18 +243,9 @@ enum eSignConditions{
 
 - (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation
 {
-#ifdef USE_DISPATCH_ASYNC
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^ {
         [operation start];
     });
-#else
-	if([queue operationCount])
-		return NO;
-
-    cancelAllowed = YES; // always at the start of an operation
-    
-	[queue addOperation:operation];
-#endif
 	return YES;
 }
 
@@ -584,16 +562,10 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
     if([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
-#ifndef USE_DISPATCH_ASYNC
-        [delegate performSelectorOnMainThread:@selector(responseScannerEvent:)
-                                   withObject:info
-                                waitUntilDone:NO];
-#else
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseScannerEvent:info];
         });
-#endif
     }
 }
 -(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
@@ -606,33 +578,22 @@ enum eSignConditions{
         info.statusCode = code;
         info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
         info.xml = xml;
-#ifndef USE_DISPATCH_ASYNC
-        [delegate performSelectorOnMainThread:@selector(responseEnableScanner:)
-                                   withObject:info
-                                waitUntilDone:NO];
-#else
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseEnableScanner:info];
         });
-#endif
     }
+    
     if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
     {
         ScannerDisabledResponseInfo* info = [ScannerDisabledResponseInfo new];
-        info .statusCode =  code;
+        info.statusCode =  code;
         info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
         info.xml = xml;
-#ifndef USE_DISPATCH_ASYNC
-        [delegate performSelectorOnMainThread:@selector(responseScannerDisabled:)
-                                   withObject:info
-                                waitUntilDone:NO];
-#else
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseScannerDisabled:info];
         });
-#endif
     }
     cancelAllowed = NO;
 }
@@ -643,18 +604,11 @@ enum eSignConditions{
 	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
 	info.xml = xml;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
-    
-#ifdef USE_DISPATCH_ASYNC
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         LOG_RELEASE(Logger::eFine, @"calling responseStatus");
         [tmp responseStatus:info];
     });
-#else
-	[delegate performSelectorOnMainThread:@selector(responseStatus:)
-                               withObject:info
-                            waitUntilDone:NO];
-#endif
     //cancelAllowed is already set in the caller
 }
 
@@ -663,32 +617,20 @@ enum eSignConditions{
 	info.status = status;
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
     
-#ifdef USE_DISPATCH_ASYNC
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp responseError:info];
     });
-#else
-	[delegate performSelectorOnMainThread:@selector(responseError:)
-                               withObject:info
-                            waitUntilDone:NO];
-#endif
     cancelAllowed = NO;
 }
 
 -(void)sendReportResult:(NSString*)report{
     if([delegate respondsToSelector: @selector(responseEMVReport:)])
     {
-#ifdef USE_DISPATCH_ASYNC
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseEMVReport:report];
         });
-#else
-        [delegate performSelectorOnMainThread:@selector(responseEMVReport:)
-                                   withObject:report
-                                waitUntilDone:NO];
-#endif
     }
     else
     {
@@ -700,18 +642,10 @@ enum eSignConditions{
 	int result = EFT_PP_STATUS_PROCESSING_ERROR;
 
     // note: cancelAllowed = NO; // is not needed here as the card reader will send us a status message with the flag set correctly just before
-
-    
-#ifndef USE_DISPATCH_ASYNC
-	[delegate performSelectorOnMainThread:@selector(requestSignature:)
-                               withObject:@(pRequest->GetReceipt().c_str())
-                            waitUntilDone:NO];
-#else
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
     });
-#endif
     
     NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str()) path:@"SignatureRequiredRequest"];
     
@@ -724,14 +658,10 @@ enum eSignConditions{
 	}
 	else
     {
-#ifndef USE_DISPATCH_ASYNC
-        [delegate performSelectorOnMainThread:@selector(cancelSignature) withObject:nil waitUntilDone:NO];
-#else
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp cancelSignature];
         });
-#endif
     }
 
 	return result;
@@ -829,27 +759,18 @@ enum eSignConditions{
 	LOG_RELEASE(Logger::eFine, @"%@", info.status);
     if(!pResponse->isRecoveredTransaction())
     {
-#ifndef USE_DISPATCH_ASYNC
-        [delegate performSelectorOnMainThread:@selector(responseFinanceStatus:) withObject:info waitUntilDone:NO];
-#else
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseFinanceStatus:info];
         });
-#endif
-        
     }
     else
     {
         info = transactionResultPending ? info : nil;
-#ifndef USE_DISPATCH_ASYNC
-        [delegate performSelectorOnMainThread:@selector(responseRecoveredTransactionStatus:) withObject:info waitUntilDone:NO];
-#else
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseRecoveredTransactionStatus:info];
         });
-#endif
     }
     cancelAllowed = NO;
 }
@@ -865,14 +786,10 @@ enum eSignConditions{
 	info.status = statusMessages[status];
 	if(status == EFT_PP_STATUS_SUCCESS)
 		info.log = @(pResponse->GetData().c_str());
-#ifndef USE_DISPATCH_ASYNC
-	[delegate performSelectorOnMainThread:@selector(responseLogInfo:) withObject:info waitUntilDone:NO];
-#else
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp responseLogInfo:info];
     });
-#endif
     cancelAllowed = NO;
 }
 
