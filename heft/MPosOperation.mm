@@ -26,6 +26,41 @@
 #include <memory>
 #include <map>
 
+@class RunLoopThread;
+
+namespace
+{
+    BOOL runLoopRunning = NO;
+    NSRunLoop* currentRunLoop = nil;
+    RunLoopThread* currentRunLoopThread;
+}
+
+@interface RunLoopThread:NSThread
+{
+}
+-(void)Run;
+@end
+
+@implementation RunLoopThread
+-(void)Run
+{
+    LOG(@"mPos Operation run loop starting.");
+    currentRunLoop = [NSRunLoop currentRunLoop];
+    
+    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
+    runLoopRunning = YES;
+    while (runLoopRunning)
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:loopUntil];
+        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
+    }
+    
+    LOG(@"mPos Operation run loop stopping.");
+}
+@end
+
+
+
 enum eConnectCondition{
 	eNoConnectStateCondition
 	, eReadyStateCondition
@@ -56,6 +91,19 @@ enum eConnectCondition{
     std::vector<std::uint8_t> connectionReceiveData;
 }
 
+
+
++ (void)startRunLoop
+{
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        // start a thread with the runloop
+        LOG(@"Inside dispatch once.");
+        currentRunLoopThread = [RunLoopThread new];
+        [currentRunLoopThread start];
+    });
+}
+
 - (id)initWithRequest:(RequestCommand*)aRequest
            connection:(HeftConnection*)aConnection
      resultsProcessor:(id<IResponseProcessor>)aProcessor
@@ -84,6 +132,9 @@ enum eConnectCondition{
 
 - (void)main{
 	@autoreleasepool {
+        // [MPosOperation startRunLoop];
+        // wait for currentRunLoopThread to be anything else than nil?
+
 		try
         {
 			RequestCommand* currentRequest = pRequestCommand;
@@ -157,16 +208,19 @@ enum eConnectCondition{
     if(recvStream) {
         [recvStream close];
         [recvStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        // [recvStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         [recvStream setDelegate:nil];
         recvStream = nil;
     }
     if(sendStream) {
         [sendStream close];
         [sendStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        // [sendStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         [sendStream setDelegate:nil];
         sendStream = nil;
     }
     connectionState = eConnectionClosed;
+    runLoopRunning = NO;
 }
 
 #pragma mark IHostProcessor
@@ -353,16 +407,20 @@ namespace {
         if(sendStream && recvStream)
         {
             [recvStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
-            //[sendStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
+            // [sendStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
             [recvStream setDelegate:self];
             [sendStream setDelegate:self];
             
             // TODO: runloop testing going on - change back or remove old
+            // TODO: use the thread runloop - store it in a static value
             
-            // [recvStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-            // [sendStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+            [recvStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+            [sendStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+            /*
+             NSAssert(currentRunLoop != nil, @"currentRunLoop not set when calling schedlueInRunLoop...");
             [recvStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
             [sendStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+             */
 
             [recvStream open];
             [sendStream open];
@@ -432,7 +490,8 @@ namespace {
             // the stream is already waiting for data from us
             NSInteger written;
 
-            written = [sendStream write:connectionSendData.data() maxLength:connectionSendData.size()];
+            written = [sendStream write:connectionSendData.data()
+                              maxLength:connectionSendData.size()];
             if(written < connectionSendData.size())
             {
                 LOG_RELEASE(Logger::eFine,

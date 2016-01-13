@@ -189,24 +189,23 @@ static HeftManager* instance = 0;
             });
             
         });
-        // [connection addDevice:result];
 #endif
         
         // runloop
-        NSLog(@"Starting runloop in thread.");
-        NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
-        runLoopRunning = YES;
-        int i = 0;
-        while (runLoopRunning)
         {
-            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:loopUntil];
-            loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
-            i++;
+            NSLog(@"Starting runloop in thread.");
+            NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
+            runLoopRunning = YES;
+            int i = 0;
+            while (runLoopRunning)
+            {
+                [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:loopUntil];
+                loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
+                i++;
+            }
+
+            NSLog(@"Runloop stopped, %d", i);
         }
-
-        NSLog(@"Runloop stopped, %d", i);
-
-        
 	}
 }
 
@@ -332,15 +331,16 @@ static EAAccessory* simulatorAccessory = nil;
 
 - (void)EAAccessoryDidDisconnect:(NSNotification*)notification
 {
-    NSLog(@"EAAccessoryDidDisconnect - # eaDevices %d", [eaDevices count]);
+    NSLog(@"EAAccessoryDidDisconnect - # eaDevices %lu", (unsigned long)[eaDevices count]);
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
 	if([accessory.protocolStrings containsObject:eaProtocol] && [eaDevices count] > 0)
     {
-		NSUInteger index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop){
+		NSUInteger index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop) {
 			if(device.accessory == accessory)
 				*stop = YES;
 			return *stop;
 		}];
+        
         if (index < [eaDevices count])
         {
             HeftRemoteDevice* eaDevice = eaDevices[index];

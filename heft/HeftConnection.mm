@@ -39,6 +39,7 @@ enum eBufferConditions{
     EASession* session;
     NSInputStream* inputStream;
     NSOutputStream* outputStream;
+    NSRunLoop* streamRunLoop;
     
     // __weak MpedDevice* aPedDevice;
     
@@ -58,6 +59,7 @@ enum eBufferConditions{
     NSInputStream* is = nil;
     NSOutputStream* os = nil;
     BOOL result = NO;
+    streamRunLoop = runLoop;
     
     if(aDevice.accessory) {
         LOG(@"protocol strings: %@", aDevice.accessory.protocolStrings);
@@ -104,7 +106,7 @@ enum eBufferConditions{
 
 - (void)dealloc
 {
-    LOG(@"Heftconnection dealloc%@", device.name);
+    LOG(@"Heftconnection dealloc [%@]", device.name);
     [self shutdown];
 }
 
@@ -118,11 +120,18 @@ enum eBufferConditions{
     LOG(@"Heftconnection shutdown");
     if(device && device.accessory)
     {
-        NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
-        [outputStream close];
-        [outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
-        [inputStream close];
-        [inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+        if (streamRunLoop)
+        {
+            NSRunLoop* runLoop = streamRunLoop;
+            streamRunLoop = nil;
+            
+            [outputStream close];
+            [outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+            [inputStream close];
+            [inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+        }
+        
+        device = nil;
     }
     session = nil;
 

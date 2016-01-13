@@ -275,7 +275,8 @@ enum eSignConditions{
                                                            std::string([params UTF8String])
                                 );
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
-                                                           connection:connection resultsProcessor:self
+                                                           connection:connection
+                                                     resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
@@ -343,8 +344,16 @@ enum eSignConditions{
                   @"</FinancialTransactionRequest>",
                   reference];
     }
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUND_REQ, std::string([currency UTF8String]), (std::uint32_t)amount, present, std::string(), std::string([params UTF8String]))
-																					   connection:connection resultsProcessor:self sharedSecret:sharedSecret];
+    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_REFUND_REQ,
+                                                           std::string([currency UTF8String]),
+                                                           (std::uint32_t)amount,
+                                                           present,
+                                                           std::string(),
+                                                           std::string([params UTF8String]));
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
+                                                           connection:connection
+                                                     resultsProcessor:self
+                                                         sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
