@@ -276,7 +276,7 @@ namespace {
                 connectionReceiveData.resize(old_size + stepSize);
                 nrecv = [recvStream read:&connectionReceiveData[old_size] maxLength:stepSize];
                 // it is possible that we didn't read all available data due to our buffer being too small
-                LOG(@"read %d bytes from tcp stream.", nrecv);
+                LOG(@"read %ld bytes from tcp stream.", (long)nrecv);
                 if(nrecv >= 0)
                 {
                     old_size += nrecv;
@@ -462,6 +462,7 @@ namespace {
         // ... but we are apparently already serving a server connection from the card reader ?!!!
         // (not to even mention the question of how this request got here while we are blocked somewhere else)
         // ... so, instead of trying to be graceful about it we will simply behave like our panties are in a rutt.
+        LOG_RELEASE(Logger::eWarning, @"Invalid state, status=EFT_PP_STATUS_CONNECT_ERROR");
         status = EFT_PP_STATUS_CONNECT_ERROR;
         
         // also, note that we won't touch the "current" connection

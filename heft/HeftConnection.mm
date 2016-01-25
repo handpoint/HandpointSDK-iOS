@@ -23,7 +23,7 @@ using OutputQueue = std::queue<Buffer>;
 
 extern NSString* eaProtocol;
 
-const int ciDefaultMaxFrameSize = 512; // Bluetooth frame is 0 - ~343 bytes
+const int ciDefaultMaxFrameSize = 4096; // Bluetooth frame is 0 - ~343 bytes
 const int ciTimeout[] = {20, 15, 1, 5*60};
 
 enum eBufferConditions{
@@ -152,11 +152,13 @@ enum eBufferConditions{
     // HeftManager* heftManager = [HeftManager sharedManager];
     // [heftManager cleanup];
     
+    
     /*
     dispatch_async(dispatch_get_main_queue(), ^{
         [aPedDevice didLostAccessoryDevice:device];
     });
     */
+
    
 }
 
@@ -293,16 +295,6 @@ enum eBufferConditions{
     {
         LOG(@"readData read lock timed out. inputQueue.empty() == %@", inputQueue.empty() ? @"True" : @"False");
         
-        {
-            // try to read before we give up!
-/*
-            Buffer readBuffer;
-            readBuffer.resize(ciDefaultMaxFrameSize);
-            NSUInteger nread = [inputStream read:&readBuffer[0] maxLength:ciDefaultMaxFrameSize];
-            LOG(@"ReadData, tried reading in timeout, got %d bytes", (int) nread);
-*/
-        }
-        
         if(timeout == eFinanceTimeout)
         {
             LOG(@"Finance timeout");
@@ -326,16 +318,17 @@ enum eBufferConditions{
     
     [bufferLock unlockWithCondition:eNoDataCondition];
     
-    int bytes_read = static_cast<int>(buffer.size() - initSize);
-    LOG(@"readData returning %d bytes", bytes_read);
+    auto bytes_read = buffer.size() - initSize;
+    LOG(@"readData returning %lu bytes", bytes_read);
 
-    return bytes_read;
+    return static_cast<int>(bytes_read);
 }
 
 - (UInt16)readAck{
     UInt16 ack = 0;
     
-    if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
+    if(![bufferLock lockWhenCondition:eHasDataCondition
+                           beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
     {
         LOG(@"Ack timeout");
         throw timeout1_exception();
@@ -366,7 +359,7 @@ enum eBufferConditions{
     }
     else
     {
-        LOG(@"readAck, data still in queue - %d items and %d bytes at head", inputQueue.size(), head.size());
+        LOG(@"readAck, data still in queue - %lu items and %lu bytes at head", inputQueue.size(), head.size());
         [bufferLock unlockWithCondition:eHasDataCondition];
     }
     

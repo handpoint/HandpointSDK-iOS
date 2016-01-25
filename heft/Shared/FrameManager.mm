@@ -190,7 +190,7 @@ bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8
 
         LOG(@"FrameManager::ReadFrames - about to call readData again.");
 		[connection readData:buf timeout:eResponseTimeout];
-	}while(true);
+	} while(true);
 
 	return true;
 }
@@ -200,7 +200,8 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
     int nread;
 	std::vector<std::uint8_t> buf;
 	data.clear();
-	while(true){
+	while(true)
+    {
         if(buf.size() < sizeof(pCommand->StartSequence))
         {
             nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
@@ -219,10 +220,12 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
                 continue;
             }
         }
+        /*
         else
         {
-            nread = (int)buf.size();
+            nread = (int)buf.size(); // this value is never read from nread
         }
+        */
 		pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
 		switch(pCommand->StartSequence){
 		case FRAME_START:
