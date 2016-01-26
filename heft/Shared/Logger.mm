@@ -2,9 +2,12 @@
 
 #include "Logger.h"
 #include <cstdint>
+
+
 Logger Logger::logger;
 
-Logger::Logger() : m_level(eFiner)
+// Logger::Logger() : m_level(eFiner) // TODO: change log level - fix class
+Logger::Logger() : m_level(eAll)
 {
 	fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"release_log.txt"];
 	logStr = [NSMutableString new];

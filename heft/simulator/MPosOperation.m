@@ -65,7 +65,9 @@ void simulateDeviceDisconnect();
                 // TODO: this has to be refactored - dynamic and reinterpret casts!
                 // and why is it needed? Can't we call Process on pResponse?
                 // oh the humanity!
-				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
+				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(
+                    reinterpret_cast<RequestCommand*>(pResponse.get())
+                );
 				ATLASSERT(pHostRequest);
 				currentRequest = pHostRequest->Process(self);
 			}

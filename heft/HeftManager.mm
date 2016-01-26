@@ -10,6 +10,7 @@
 #import "HeftConnection.h"
 #import "MpedDevice.h"
 #import "HeftRemoteDevice.h"
+#import "HeftStatusReportPublic.h"
 
 #import "debug.h"
 
@@ -20,6 +21,7 @@
 //NSMutableString* log2file = nil;
 
 NSString* eaProtocol = @"com.datecs.pinpad";
+
 
 @interface HeftRemoteDevice ()
 - (id)initWithName:(NSString*)aName address:(NSString*)aAddress;
@@ -82,6 +84,7 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 
 @implementation HeftManager {
 	BOOL fNotifyForAllDevices;
+    BOOL runLoopRunning;
 	NSMutableArray* eaDevices;
 }
 
@@ -114,20 +117,29 @@ static HeftManager* instance = 0;
 
 #ifndef HEFT_SIMULATOR
 		NSNotificationCenter* defaultCenter = [NSNotificationCenter defaultCenter];
-		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidConnect:) name:EAAccessoryDidConnectNotification object:nil];
-		[defaultCenter addObserver:self selector:@selector(EAAccessoryDidDisconnect:) name:EAAccessoryDidDisconnectNotification object:nil];
+		[defaultCenter addObserver:self
+                          selector:@selector(EAAccessoryDidConnect:)
+                              name:EAAccessoryDidConnectNotification
+                            object:nil];
+        
+		[defaultCenter addObserver:self
+                          selector:@selector(EAAccessoryDidDisconnect:)
+                              name:EAAccessoryDidDisconnectNotification
+                            object:nil];
 
 		EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
 		[eaManager registerForLocalNotifications];
 
 		NSArray* accessories = eaManager.connectedAccessories;
-		[accessories indexOfObjectWithOptions:NSEnumerationConcurrent passingTest:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop){
-			if([accessory.protocolStrings containsObject:eaProtocol]){
-				HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
-				[eaDevices addObject:newDevice];
-			}
-			return NO;
-		}];
+        
+		[accessories indexOfObjectWithOptions:NSEnumerationConcurrent
+                                  passingTest:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop){
+                                      if([accessory.protocolStrings containsObject:eaProtocol]){
+                                          HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
+                                          [eaDevices addObject:newDevice];
+                                      }
+                                      return NO;
+                                  }];
 #endif
 	}
 	return self;
@@ -139,13 +151,7 @@ static HeftManager* instance = 0;
     LOG(@"HeftManager::cleanup");
     [[EAAccessoryManager sharedAccessoryManager] unregisterForLocalNotifications];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    /*
-    for (HeftRemoteDevice* device: eaDevices)
-    {
-        [device ]  TODO: get the connection, close it hard!
-    }
-     */
+    runLoopRunning = NO; // stop the run loop
 }
 
 - (void)dealloc
@@ -160,48 +166,93 @@ static HeftManager* instance = 0;
 }
 
 // this is a thread function, params is an array:
-//                                params[0] = device
-//                                params[1] = sharedSecret
-//                                params[2] = delegate
+//                                params[0] = HeftRemoteDevice* device
+//                                params[1] = NSData* sharedSecret
+//                                params[2] = HeftStatusReportDelegate* delegate
 - (void)asyncClientForDevice:(NSArray*)params
 {
 	@autoreleasepool
     {
-		id<HeftClient> result = nil;
 		NSData* sharedSecret = params[1];
 		NSObject<HeftStatusReportDelegate>* aDelegate = params[2];
 #ifdef HEFT_SIMULATOR
 		[NSThread sleepForTimeInterval:2];
 		result = [[MpedDevice alloc] initWithConnection:nil sharedSecret:sharedSecret delegate:aDelegate];
 #else
-		HeftRemoteDevice* device = params[0];
-		result = [[MpedDevice alloc] initWithConnection:[[HeftConnection alloc] initWithDevice:device] sharedSecret:sharedSecret delegate:aDelegate];
+        
+        NSRunLoop* currentRunLoop = [NSRunLoop currentRunLoop];
+
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            HeftRemoteDevice* device = params[0];
+            HeftConnection* connection = [[HeftConnection alloc] initWithDevice:device runLoop:currentRunLoop];
+            
+            id<HeftClient> result = nil;
+
+            result = [[MpedDevice alloc] initWithConnection:connection
+                                           sharedSecret:sharedSecret
+                                               delegate:aDelegate];
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                id<HeftStatusReportDelegate> tmp = aDelegate;
+                [tmp didConnect:result];
+            });
+            
+        });
 #endif
-		[aDelegate performSelectorOnMainThread:@selector(didConnect:)
-                                    withObject:result
-                                 waitUntilDone:NO];
+        
+        // runloop
+        {
+            NSLog(@"Starting runloop in thread.");
+            runLoopRunning = YES;
+            
+            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:15
+                                                              target:self
+                                                            selector:@selector(timerCallback)
+                                                            userInfo:nil
+                                                             repeats:YES];
+            
+            while (runLoopRunning)
+            {
+                @autoreleasepool  // need a nested autoreleasepool. If it's not here the NSDate
+                {                 // leaks memory like crazy in some situations.
+                    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                             beforeDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+                }
+            }
+            
+            [timer invalidate];
+
+            NSLog(@"Runloop stopped.");
+        }
 	}
 }
 
+- (void)timerCallback
+{
+    // NSLog(@"Timer callback in HeftManager");
+}
+
+
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
-	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
+    [NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
                              toTarget:self
                            withObject:@[device, sharedSecret, aDelegate]];
 }
+
+
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
 	NSData* sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
-	[NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
-                             toTarget:self
-                           withObject:@[device, sharedSecretData, aDelegate]];
+    [self clientForDevice:device sharedSecret:sharedSecretData delegate:aDelegate];
+
 }
 
 #pragma mark property
 
 - (NSString*)version
 {
-	return @"2.4.2";  // TODO: move this to a config file (include file or something else)
+	return @"2.5";  // TODO: move this to a config file (include file or something else)
                       //       see old comment below
 }
 
@@ -282,6 +333,8 @@ static EAAccessory* simulatorAccessory = nil;
 - (void)EAAccessoryDidConnect:(NSNotification*)notification
 {
     NSLog(@"EAAccessoryDidConnect");
+    
+    // [self init];  TODO: who put this in here, should it be here?
 
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
 	if([accessory.protocolStrings containsObject:eaProtocol])
@@ -290,25 +343,43 @@ static EAAccessory* simulatorAccessory = nil;
 		[eaDevices addObject:newDevice];
 		[delegate didFindAccessoryDevice:newDevice];
 	}
+    else{
+        NSLog(@"Empty EAAccessoryDidConnect notification");
+    }
 }
 
 - (void)EAAccessoryDidDisconnect:(NSNotification*)notification
 {
-    NSLog(@"EAAccessoryDidDisconnect");
+    NSLog(@"EAAccessoryDidDisconnect - # eaDevices %lu", (unsigned long)[eaDevices count]);
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
-	if([accessory.protocolStrings containsObject:eaProtocol])
+	if([accessory.protocolStrings containsObject:eaProtocol] && [eaDevices count] > 0)
     {
-		NSUInteger index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop){
+		NSUInteger index = [eaDevices indexOfObjectPassingTest:^(HeftRemoteDevice* device, NSUInteger index, BOOL* stop) {
 			if(device.accessory == accessory)
 				*stop = YES;
 			return *stop;
 		}];
-		HeftRemoteDevice* eaDevice = eaDevices[index];
-		[eaDevices removeObjectAtIndex:index];
-		[delegate didLostAccessoryDevice:eaDevice];
-	}
-}
+        
+        if (index < [eaDevices count])
+        {
+            HeftRemoteDevice* eaDevice = eaDevices[index];
+            [eaDevices removeObjectAtIndex:index];
+            [delegate didLostAccessoryDevice:eaDevice];
+            runLoopRunning = NO;
 
+            NSLog(@"EAAccessoryDidDisconnect index [%lu], device [%@]", (unsigned long)index, [eaDevice name]);
+        }
+        else
+        {
+            NSLog(@"EAAccessoryDidDisconnect index [%lu] out of bounds", (unsigned long)index);
+        }
+	}
+    else
+    {
+        NSLog(@"Empty EAAccessoryDidDisconnect notification.");        
+    }
+}
+ 
 #pragma mark Utilities
 
 // Convert Shared secret from NSString to NSData
