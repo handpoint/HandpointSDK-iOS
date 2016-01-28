@@ -6,8 +6,8 @@
 
 Logger Logger::logger;
 
-// Logger::Logger() : m_level(eFiner) // TODO: change log level - fix class
-Logger::Logger() : m_level(eAll)
+// Logger::Logger() : m_level(eAll) // use to log everything
+Logger::Logger() : m_level(eFiner)
 {
 	fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"release_log.txt"];
 	logStr = [NSMutableString new];

@@ -200,7 +200,7 @@ enum eBufferConditions{
         if(nwritten <= 0)
             throw communication_exception();
 
-        LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, nwritten));
+        LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) nwritten));
         
         len -= nwritten;
         data += nwritten;

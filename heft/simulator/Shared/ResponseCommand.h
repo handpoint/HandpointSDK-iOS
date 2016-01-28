@@ -3,14 +3,21 @@
 #include "Command.h"
 #include "IResponseProcessor.h"
 
+#include <string>
+#include <cstdint>
+
+using std::string;
+using std::uint32_t;
+using std::uint8_t;
+
 class RequestCommand;
 
 class ResponseCommand : public Command{
-	UINT32 command_hsb;
+	uint32_t command_hsb;
 	int iStatus;
 
 public:
-	ResponseCommand(UINT32 type, int status = EFT_PP_STATUS_SUCCESS) : command_hsb(type), iStatus(status){}
+	ResponseCommand(uint32_t type, int status = EFT_PP_STATUS_SUCCESS) : command_hsb(type), iStatus(status){}
 
 	//Command
 	bool isResponse(){return true;}
@@ -50,8 +57,8 @@ public:
 };
 
 class FinanceResponseCommand : public ResponseCommand{
-	UINT8 financial_status;
-	UINT32 authorised_amount;
+	uint8_t financial_status;
+	uint32_t authorised_amount;
 	string trans_id;
 	string merchant_receipt;
 	string customer_receipt;
@@ -59,8 +66,8 @@ class FinanceResponseCommand : public ResponseCommand{
     BOOL recovered_transaction;
 
 public:
-	FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, UINT8 status = EFT_FINANC_STATUS_TRANS_APPROVED, BOOL recoveredTransaction = NO);
-    UINT8 GetFinancialStatus()
+	FinanceResponseCommand(uint32_t cmd, const string& aCurrency, uint32_t amount, uint8_t status = EFT_FINANC_STATUS_TRANS_APPROVED, BOOL recoveredTransaction = NO);
+    uint8_t GetFinancialStatus()
     {
         return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;
     }
@@ -69,12 +76,12 @@ public:
         return financial_status & EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK ? YES : NO;
     }
 	
-    void SetFinancialStatus(UINT8 status)
+    void SetFinancialStatus(uint8_t status)
     {
         financial_status = status;
     }
 	
-    UINT32 GetAmount()
+    uint32_t GetAmount()
     {
         return authorised_amount;
     }
@@ -139,11 +146,11 @@ public:
     
     BOOL isInException() const { return _in_exception; }
     
-    void setAmount(UINT32 amount) { _amount = amount; }
-    UINT32 getAmount() const { return _amount; }
+    void setAmount(uint32_t amount) { _amount = amount; }
+    uint32_t getAmount() const { return _amount; }
     
-    void setType(UINT32 type) { _type = type; }
-    UINT32 getType() const { return _type; }
+    void setType(uint32_t type) { _type = type; }
+    uint32_t getType() const { return _type; }
     
     void setCurrency(const string& currency) { _currency = currency; }
     string getCurrency() const { return _currency; }
@@ -173,8 +180,8 @@ public:
     
 private:
     BOOL _in_exception;
-    UINT32 _amount;
-    UINT32 _type;
+    uint32_t _amount;
+    uint32_t _type;
     string _currency;
     BOOL _authorized;
     NSInteger _auth_code;

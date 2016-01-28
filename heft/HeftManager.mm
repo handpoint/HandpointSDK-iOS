@@ -177,14 +177,24 @@ static HeftManager* instance = 0;
 		NSObject<HeftStatusReportDelegate>* aDelegate = params[2];
 #ifdef HEFT_SIMULATOR
 		[NSThread sleepForTimeInterval:2];
-		result = [[MpedDevice alloc] initWithConnection:nil sharedSecret:sharedSecret delegate:aDelegate];
+        id<HeftClient> result = nil;
+		result = [[MpedDevice alloc] initWithConnection:nil
+                                           sharedSecret:sharedSecret
+                                               delegate:aDelegate];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = aDelegate;
+            [tmp didConnect:result];
+        });
+
 #else
         
         NSRunLoop* currentRunLoop = [NSRunLoop currentRunLoop];
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HeftRemoteDevice* device = params[0];
-            HeftConnection* connection = [[HeftConnection alloc] initWithDevice:device runLoop:currentRunLoop];
+            HeftConnection* connection = [[HeftConnection alloc] initWithDevice:device
+                                                                        runLoop:currentRunLoop];
             
             id<HeftClient> result = nil;
 
@@ -198,7 +208,6 @@ static HeftManager* instance = 0;
             });
             
         });
-#endif
         
         // runloop
         {
@@ -224,7 +233,10 @@ static HeftManager* instance = 0;
 
             NSLog(@"Runloop stopped.");
         }
-	}
+#endif
+
+    }
+    
 }
 
 - (void)timerCallback
