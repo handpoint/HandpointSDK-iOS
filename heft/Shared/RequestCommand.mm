@@ -31,9 +31,9 @@ namespace {
     
     NSString* init_xml = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                                   "<InitRequest>"
-                                    "<ComBufSize>@</ComBufSize>"
-                                    "<SDKName>@</SDKName>"
-                                    "<SDKVersion>v@</SDKVersion>"
+                                    "<ComBufSize>%d</ComBufSize>"
+                                    "<SDKName>%@</SDKName>"
+                                    "<SDKVersion>v%@</SDKVersion>"
                                   "</InitRequest>";
 }
 
@@ -71,6 +71,7 @@ InitRequestCommand::InitRequestCommand() // const std::string& xml)
 {
     // must format the xml string and then resize the databuffer
     NSString* xml_string = [NSString stringWithFormat:init_xml, 340, @"iOS", @"2.51"];
+    LOG(xml_string);
     const char* init_xml_utf8 = [xml_string UTF8String];
     const auto xml_utf8_len = strlen(init_xml_utf8);
     auto new_buffer_size = xml_utf8_len + data.size();
