@@ -12,6 +12,7 @@
 #import "HeftStatusReport.h"
 #import "ResponseParser.h"
 #import "HeftCmdIds.h"
+#import "HeftManager.h"
 
 #import "exception.h"
 #import "Logger.h"
@@ -148,14 +149,18 @@ enum eSignConditions{
             
 			try
             {
-				FrameManager fm(InitRequestCommand(), connection.maxFrameSize);
+				FrameManager fm(InitRequestCommand(connection.maxFrameSize,
+                                                   [HeftManager sharedManager].version
+                                                   ),
+                                connection.maxFrameSize
+                                );
 				fm.Write(connection);
 				InitResponseCommand* pResponse =
                     dynamic_cast<InitResponseCommand*>(
                         reinterpret_cast<ResponseCommand*>(
                             fm.ReadResponse<InitResponseCommand>(connection, false)
-                                                           )
-                                                       );
+                        )
+                );
 				if(!pResponse)
 					throw communication_exception();
                 

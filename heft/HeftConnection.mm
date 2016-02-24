@@ -23,7 +23,7 @@ using OutputQueue = std::queue<Buffer>;
 
 extern NSString* eaProtocol;
 
-const int ciDefaultMaxFrameSize = 8192; // Bluetooth frame is 0 - ~343 bytes
+int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
 const int ciTimeout[] = {20, 15, 1, 5*60};
 
 enum eBufferConditions{

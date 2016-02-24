@@ -73,10 +73,7 @@ protected:
 	} __attribute__((packed));
 
 public:
-    // init with the xml which should be appened
-    // to the request as of feb. 2015
-    InitRequestCommand();
-    // InitRequestCommand(const std::string& xml);
+    InitRequestCommand(int bufferSize = 0, NSString* version = nil);
 };
 
 class IdleRequestCommand : public RequestCommand

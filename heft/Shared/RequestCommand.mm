@@ -32,7 +32,7 @@ namespace {
     NSString* init_xml = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                                   "<InitRequest>"
                                     "<ComBufSize>%d</ComBufSize>"
-                                    "<SDKName>%@</SDKName>"
+                                    "<SDKName>iOS</SDKName>"
                                     "<SDKVersion>v%@</SDKVersion>"
                                   "</InitRequest>";
 }
@@ -66,25 +66,32 @@ int RequestCommand::ReadLength(const RequestPayload* pRequest){
 }
 
 
-InitRequestCommand::InitRequestCommand() // const std::string& xml)
+InitRequestCommand::InitRequestCommand(int bufferSize, NSString* version)
     : RequestCommand(ciMinSize + 4, CMD_INIT_REQ)
 {
-    // must format the xml string and then resize the databuffer
-    NSString* xml_string = [NSString stringWithFormat:init_xml, 340, @"iOS", @"2.51"];
-    LOG(xml_string);
+    if (version == nil)
+    {
+        version = @"0.0";
+    }
+
+    // must format the xml and then resize the databuffer
+    NSString* xml_string = [NSString stringWithFormat:init_xml, bufferSize, version];
     const char* init_xml_utf8 = [xml_string UTF8String];
     const auto xml_utf8_len = strlen(init_xml_utf8);
     auto new_buffer_size = xml_utf8_len + data.size();
     data.resize(new_buffer_size);
-    // set the parameter length again
-    FormatLength<RequestPayload>(new_buffer_size - 10); // 10 is the header
     
+    // set the parameter length again, now with the size of the xml
+    FormatLength<RequestPayload>(new_buffer_size - 10); // 10 is the header
+
+    // add the date
 	NSDateFormatter* df = [NSDateFormatter new];
 	[df setDateFormat:@"yyyyMMddHHmmss"];
 	NSString* curDate = [df stringFromDate:[NSDate new]];
     InitPayload* payload = GetPayload<InitPayload>();
 	BCDCoder::Encode([curDate UTF8String], payload->data, ciMinSize);
-    
+
+    // insert the xml and the size
     payload->xml_size = htonl(xml_utf8_len);
     memcpy(&payload->xml[0], init_xml_utf8, xml_utf8_len);
 }
@@ -299,6 +306,7 @@ SignatureRequestCommand::SignatureRequestCommand(const void* payload, std::uint3
 	const char* pXml = pRequest->receipt + receipt_length;
     // this should probably be ntohl() but I'll not touch this for now
 	std::uint32_t xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
+    
 	pXml += sizeof xml_len;
 	xml_details.assign(pXml, xml_len);
 }
@@ -313,6 +321,7 @@ ChallengeRequestCommand::ChallengeRequestCommand(const void* payload, std::uint3
 	const char* pXml = reinterpret_cast<const char*>(pRequest->random_num + random_num_length);
     // this should probably be ntohl() but I'll not touch this for now
 	std::uint32_t xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
+    
 	pXml += sizeof xml_len;
 	xml_details.assign(pXml, xml_len);
 }
