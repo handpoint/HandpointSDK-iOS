@@ -146,7 +146,8 @@ enum eSignConditions{
 			connection = aConnection;
 			sharedSecret = aSharedSecret;
             
-			try{
+			try
+            {
 				FrameManager fm(InitRequestCommand(), connection.maxFrameSize);
 				fm.Write(connection);
 				InitResponseCommand* pResponse =
@@ -158,7 +159,8 @@ enum eSignConditions{
 				if(!pResponse)
 					throw communication_exception();
                 
-				connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
+                // connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
+                connection.maxFrameSize = pResponse->GetBufferSize();
 
                 NSDictionary* xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
                                                       path:@"InitResponse"];
@@ -190,6 +192,12 @@ enum eSignConditions{
 					, kXMLDetailsInfoKey:@(pResponse->GetXmlDetails().c_str())
 				};
 			}
+            catch(connection_broken_exception& cb_exception)
+            {
+                LOG(@"MpedDevice, CONNECTION BROKEN EXCEPTION - NEED TO HANDLE EOT.");
+                [self sendResponseError:cb_exception.stringId()];
+                self = nil;
+            }
 			catch(heft_exception& exception)
             {
 				[self sendResponseError:exception.stringId()];

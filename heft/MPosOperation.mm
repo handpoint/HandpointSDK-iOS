@@ -46,6 +46,8 @@ namespace
 {
     LOG(@"mPos Operation run loop starting.");
     currentRunLoop = [NSRunLoop currentRunLoop];
+
+    // TODO: add a timer - see other runloop
     
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
     runLoopRunning = YES;
@@ -143,16 +145,19 @@ enum eConnectCondition{
 			while(true)
             {
 				//LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
+                
+                
+                // sending the command to the device
 				FrameManager fm(*currentRequest, connection.maxFrameSize);
 				fm.Write(connection);
 				
+                // when/why does this happen?
 				if(pRequestCommand != currentRequest)
                 {
 					delete currentRequest;
 					currentRequest = 0;
 				}
 				
-                // std::shared_ptr<ResponseCommand> pResponse;
                 std::unique_ptr<ResponseCommand> pResponse;
                 BOOL retry;
                 BOOL already_cancelled = NO;
@@ -163,6 +168,7 @@ enum eConnectCondition{
                         retry = NO;
                         try
                         {
+                            // read the response
                             pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
                         }
                         catch (timeout4_exception& to4)
@@ -192,12 +198,12 @@ enum eConnectCondition{
 				}
 				
 				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
-				// ATLASSERT(pHostRequest);
 				currentRequest = pHostRequest->Process(self);
 			}
 		}
 		catch(heft_exception& exception)
         {
+            LOG(@"MPosOpoeration::main got an exception");
 			[processor sendResponseError:exception.stringId()];
 		}
 	}

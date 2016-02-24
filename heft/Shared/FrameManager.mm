@@ -27,7 +27,9 @@ const std::uint8_t cuiNak = 0x15;
  */
 const int MAX_ATTEMPTS = 3;
 
-FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
+FrameManager::FrameManager(const RequestCommand& request, int max_frame_size)
+{
+
     // max_frame_size is the total frame size, i.e. the combined length of [stx] [data] [ptx/etx] [crc]
     if( max_frame_size >= ( Frame::GetMetaDataSize() + 2 ) ) // the +2 is because we need to be
                                                              // able to escape one DLE character into two DLE DLE
@@ -35,21 +37,18 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
         int max_data_size = max_frame_size - Frame::GetMetaDataSize();
         // you should "step" through this code using a max_data_size of 2
 
-        std::uint8_t data_char;
-	    const std::uint8_t *pSrc, *pSrcEnd;
-        std::uint8_t *pDataBegin, *pData, *pDataEnd;
+        const std::uint8_t* pSrc        = request.GetData();
+        const std::uint8_t* pSrcEnd     = pSrc + request.GetLength();
+
         std::vector<std::uint8_t> frame_data(max_data_size);
+        std::uint8_t* pDataBegin  = &frame_data[0];
+        std::uint8_t* pData       = pDataBegin;
+        std::uint8_t* pDataEnd    = pData + max_data_size;
 
-        pSrc        = request.GetData();
-        pSrcEnd     = pSrc + request.GetLength();
-
-        pDataBegin  = &frame_data[0];
-        pData       = pDataBegin;
-        pDataEnd    = pData + max_data_size;
 
         while( pSrc != pSrcEnd )
         {
-            data_char = *pSrc++;
+            std::uint8_t data_char = *pSrc++;
             *pData++ = data_char;
 
             if(data_char == cuiDle)
@@ -82,7 +81,8 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size){
     }
 }
 
-void FrameManager::Write(HeftConnection* connection){
+void FrameManager::Write(HeftConnection* connection)
+{
     for(auto& frame : frames) {
 		int i = 0;
         
@@ -96,7 +96,7 @@ void FrameManager::Write(HeftConnection* connection){
         // for an ack. Should use GCD and a serial queue.
 		for(; i < MAX_ATTEMPTS; ++i) {
             [connection writeData:frame.GetData() length:frame.GetLength()];
-            LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame sent:"));
+            // LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame sent:"));
 			std::uint16_t ack = [connection readAck];
 			if(ack == POSITIVE_ACK) {
 				LOG_RELEASE(Logger::eFinest, @"Acknowledgment received: ACK");

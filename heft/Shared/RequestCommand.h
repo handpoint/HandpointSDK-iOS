@@ -48,31 +48,46 @@ public:
         return false;
     }
 
-	int GetLength()const{return (int)data.size();}
-	const std::uint8_t* GetData()const{return &data[0];}
+	int GetLength() const
+    {
+        return (int)data.size();
+    }
+	
+    const std::uint8_t* GetData() const
+    {
+        return &data[0];
+    }
 #ifdef HEFT_EXPORTS
 	CString dump(const CString& prefix)const{return ::dump(prefix, &data[0], data.size());}
 #endif
 };
 
-class InitRequestCommand : public RequestCommand{
+class InitRequestCommand : public RequestCommand
+{
 	static const int ciMinSize = 7;
 protected:
-	struct InitPayload : RequestPayload{
+	struct InitPayload : RequestPayload {
 		std::uint8_t data[InitRequestCommand::ciMinSize];
+        std::uint32_t xml_size;
+        std::uint8_t xml[];
 	} __attribute__((packed));
 
 public:
-	InitRequestCommand();
+    // init with the xml which should be appened
+    // to the request as of feb. 2015
+    InitRequestCommand();
+    // InitRequestCommand(const std::string& xml);
 };
 
-class IdleRequestCommand : public RequestCommand{
+class IdleRequestCommand : public RequestCommand
+{
 	static const int ciMinSize = 0;
 public:
 	IdleRequestCommand();
 };
 
-class XMLCommandRequestCommand : public RequestCommand{
+class XMLCommandRequestCommand : public RequestCommand
+{
 protected:
 	struct XMLCommandPayload : RequestPayload{
 		char xml_parameters[];
@@ -141,7 +156,7 @@ public:
 };
 
 class ConnectRequestCommand : public HostRequestCommand{
-	std::string remote_add;
+	std::string remote_address;
 	std::uint16_t port;
 	std::uint16_t timeout;
 
@@ -160,7 +175,7 @@ public:
 	
     const std::string& GetAddr()
     {
-        return remote_add;
+        return remote_address;
     }
 	
     int GetPort()

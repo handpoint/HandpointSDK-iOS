@@ -65,6 +65,8 @@ void simulateDeviceDisconnect();
                 // TODO: this has to be refactored - dynamic and reinterpret casts!
                 // and why is it needed? Can't we call Process on pResponse?
                 // oh the humanity!
+                LOG_RELEASE(Logger::eInfo, @"HostRequest about to be processed.");
+                
 				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(
                     reinterpret_cast<RequestCommand*>(pResponse.get())
                 );

@@ -21,7 +21,6 @@ namespace {
         char code[currency_code_length + 1];
     };
     
-    
     CurrencyCode ISO4217CurrencyCodes[] = {
           "USD", "0840"
         , "EUR", "0978"
@@ -29,16 +28,25 @@ namespace {
         , "ISK", "0352"
         , "ZAR", "0710"
     };
+    
+    NSString* init_xml = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                                  "<InitRequest>"
+                                    "<ComBufSize>@</ComBufSize>"
+                                    "<SDKName>@</SDKName>"
+                                    "<SDKVersion>v@</SDKVersion>"
+                                  "</InitRequest>";
 }
 
-RequestCommand::RequestCommand(int iCommandSize, std::uint32_t type) : data(ciMinSize + iCommandSize)
+RequestCommand::RequestCommand(int iCommandSize, std::uint32_t type)
+    : data(ciMinSize + iCommandSize)
 {
 	RequestPayload* pRequest = GetPayload<RequestPayload>();
 	pRequest->command = htonl(type);
 	FormatLength<RequestPayload>(iCommandSize);
 }
 
-RequestCommand::RequestCommand(const void* payload, std::uint32_t payloadSize){
+RequestCommand::RequestCommand(const void* payload, std::uint32_t payloadSize)
+{
     const RequestPayload* pRequest = reinterpret_cast<const RequestPayload*>(payload);
     int length = ReadLength(pRequest);
     if ((payloadSize - 4 - 6) != length) {
@@ -58,17 +66,32 @@ int RequestCommand::ReadLength(const RequestPayload* pRequest){
 }
 
 
-InitRequestCommand::InitRequestCommand() : RequestCommand(ciMinSize, CMD_INIT_REQ)
+InitRequestCommand::InitRequestCommand() // const std::string& xml)
+    : RequestCommand(ciMinSize + 4, CMD_INIT_REQ)
 {
+    // must format the xml string and then resize the databuffer
+    NSString* xml_string = [NSString stringWithFormat:init_xml, 340, @"iOS", @"2.51"];
+    const char* init_xml_utf8 = [xml_string UTF8String];
+    const auto xml_utf8_len = strlen(init_xml_utf8);
+    auto new_buffer_size = xml_utf8_len + data.size();
+    data.resize(new_buffer_size);
+    // set the parameter length again
+    FormatLength<RequestPayload>(new_buffer_size - 10); // 10 is the header
+    
 	NSDateFormatter* df = [NSDateFormatter new];
 	[df setDateFormat:@"yyyyMMddHHmmss"];
 	NSString* curDate = [df stringFromDate:[NSDate new]];
-	// ATLASSERT([curDate length] == ciMinSize * 2);
-	BCDCoder::Encode([curDate UTF8String], GetPayload<InitPayload>()->data, ciMinSize);
+    InitPayload* payload = GetPayload<InitPayload>();
+	BCDCoder::Encode([curDate UTF8String], payload->data, ciMinSize);
+    
+    payload->xml_size = htonl(xml_utf8_len);
+    memcpy(&payload->xml[0], init_xml_utf8, xml_utf8_len);
 }
 
+
 IdleRequestCommand::IdleRequestCommand() : RequestCommand(ciMinSize, CMD_IDLE_REQ)
-{}
+{
+}
 
 
 XMLCommandRequestCommand::XMLCommandRequestCommand(const std::string& xml)
@@ -113,7 +136,7 @@ FinanceRequestCommand::FinanceRequestCommand(std::uint32_t type,
 	    bool fCheckCodeSize = true;
         for (CurrencyCode& cc : ISO4217CurrencyCodes)
         {
-		    if(!currency_code.compare(cc.name))
+		    if(currency_code == cc.name)
             {
 			    code = cc.code;
 			    fCheckCodeSize = false;
@@ -175,7 +198,8 @@ HostRequestCommand::HostRequestCommand(const void* payload, std::uint32_t payloa
 HostRequestCommand* HostRequestCommand::Create(const void* payload, std::uint32_t payloadSize)
 {
 	const RequestPayload* pRequestPayload = reinterpret_cast<const RequestPayload*>(payload);
-	switch(ntohl(pRequestPayload->command)){
+	switch(ntohl(pRequestPayload->command))
+    {
 	case CMD_HOST_CONN_REQ:
 		return new ConnectRequestCommand(payload, payloadSize);
 	case CMD_HOST_SEND_REQ:
@@ -184,6 +208,8 @@ HostRequestCommand* HostRequestCommand::Create(const void* payload, std::uint32_
 		return new ReceiveRequestCommand(payload, payloadSize);
 	case CMD_HOST_DISC_REQ:
 		return new DisconnectRequestCommand(payload, payloadSize);
+    default:
+        break;
 	}
 	LOG(@"Unknown host packet");
 	throw communication_exception();
@@ -209,16 +235,28 @@ void HostResponseCommand::WriteStatus(std::uint16_t status)
                  &dest_len);
 }
 
+namespace {
+    std::uint16_t copy_short_from_bytearray_in_hostorder(const std::uint8_t* byte_array)
+    {
+        std::uint16_t tmp_port;
+        memcpy(&tmp_port, byte_array, 2);
+        return ntohs(tmp_port);
+    }
+}
+
 ConnectRequestCommand::ConnectRequestCommand(const void* payload, std::uint32_t payloadSize)
     : HostRequestCommand(payload, payloadSize)
 {
-	const ConnectPayload* pRequest = reinterpret_cast<const ConnectPayload*>(payload);
-	// ATLASSERT(pRequest->remote_add_length);
-	remote_add.assign(reinterpret_cast<const char*>(pRequest->remote_add), pRequest->remote_add_length);
-	const std::uint8_t* pWord = &pRequest->remote_add[pRequest->remote_add_length];
-	port = *pWord << 8 | *(pWord + 1);
+    const ConnectPayload* pRequest = reinterpret_cast<const ConnectPayload*>(payload);
+    
+    remote_address = std::string(reinterpret_cast<const char*>(pRequest->remote_add),
+                                 pRequest->remote_add_length
+                                );
+    const std::uint8_t* pWord = &pRequest->remote_add[pRequest->remote_add_length];
+    
+    port = copy_short_from_bytearray_in_hostorder(pWord);
 	pWord += sizeof port;
-	timeout = *pWord << 8 | *(pWord + 1);
+    timeout = copy_short_from_bytearray_in_hostorder(pWord);
 }
 
 SendRequestCommand::SendRequestCommand(const void* payload, std::uint32_t payloadSize)
@@ -258,6 +296,7 @@ SignatureRequestCommand::SignatureRequestCommand(const void* payload, std::uint3
 	std::uint16_t receipt_length = htons(pRequest->receipt_length);
 	receipt.assign(pRequest->receipt, receipt_length);
 	const char* pXml = pRequest->receipt + receipt_length;
+    // this should probably be ntohl() but I'll not touch this for now
 	std::uint32_t xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
 	pXml += sizeof xml_len;
 	xml_details.assign(pXml, xml_len);
@@ -271,6 +310,7 @@ ChallengeRequestCommand::ChallengeRequestCommand(const void* payload, std::uint3
 	random_num.reserve(random_num_length);
 	random_num.assign(pRequest->random_num, &pRequest->random_num[random_num_length]);
 	const char* pXml = reinterpret_cast<const char*>(pRequest->random_num + random_num_length);
+    // this should probably be ntohl() but I'll not touch this for now
 	std::uint32_t xml_len = *pXml << 24 | *((unsigned char*)pXml + 1) << 16 | *((unsigned char*)pXml + 2) << 8 | *((unsigned char*)pXml + 3);
 	pXml += sizeof xml_len;
 	xml_details.assign(pXml, xml_len);

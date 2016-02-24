@@ -28,13 +28,23 @@ protected:
 
 public:
 	//Command
-	bool isResponse(){return true;}
-	bool isResponseTo(const RequestCommand& request);
+	bool isResponse() {
+        return true;
+    }
+	
+    bool isResponseTo(const RequestCommand& request);
 
-	virtual void ProcessResult(id<IResponseProcessor> processor){[processor processResponse:this];}
+	virtual void ProcessResult(id<IResponseProcessor> processor) {
+        [processor processResponse:this];
+    }
 
-	int GetStatus(){return iStatus;}
-	int GetLength(){return length;}
+	int GetStatus() {
+        return iStatus;
+    }
+	
+    int GetLength() {
+        return length;
+    }
 
     static ResponseCommand* Create(const std::vector<std::uint8_t>& buf);
 };
@@ -69,16 +79,46 @@ class InitResponseCommand : public ResponseCommand{
 
 public:
 	InitResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
-	int GetBufferSize(){return com_buffer_size;}
-    std::string GetSerialNumber(){return serial_number;}
-	int GetPublicKeyVer(){return public_key_ver;}
-	int GetEmvParamVer(){return emv_param_ver;}
-	int GetGeneralParamVer(){return general_param_ver;}
-	int GetManufacturerCode(){return manufacturer_code;}
-	int GetModelCode(){return model_code;}
-    std::string GetAppName(){return app_name;}
-	int GetAppVer(){return app_ver;}
-    const std::string& GetXmlDetails(){return xml_details;}
+    
+	int GetBufferSize() {
+        return com_buffer_size;
+    }
+    
+    std::string GetSerialNumber() {
+        return serial_number;
+    }
+	
+    int GetPublicKeyVer() {
+        return public_key_ver;
+    }
+	
+    int GetEmvParamVer() {
+        return emv_param_ver;
+    }
+    
+	int GetGeneralParamVer() {
+        return general_param_ver;
+    }
+	
+    int GetManufacturerCode() {
+        return manufacturer_code;
+    }
+    
+	int GetModelCode() {
+        return model_code;
+    }
+    
+    std::string GetAppName() {
+        return app_name;
+    }
+	
+    int GetAppVer() {
+        return app_ver;
+    }
+    
+    const std::string& GetXmlDetails() {
+        return xml_details;
+    }
 };
 
 class XMLCommandResponseCommand : public ResponseCommand{
@@ -152,20 +192,46 @@ class FinanceResponseCommand : public ResponseCommand{
 
 public:
 	FinanceResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize, BOOL recoveredTransaction);
-    std::uint8_t GetFinancialStatus(){return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;}
-    BOOL isRestarting(){return financial_status & EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK ? YES : NO;}
-	std::uint32_t GetAmount(){return authorised_amount;}
-    const std::string& GetCustomerReceipt(){return customer_receipt;}
-    const std::string& GetMerchantReceipt(){return merchant_receipt;}
-    const std::string& GetTransID(){return trans_id;}
-    const std::string& GetXmlDetails(){return xml_details;}
-    BOOL isRecoveredTransaction(){return recovered_transaction;}
+    
+    std::uint8_t GetFinancialStatus() {
+        return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;
+    }
+    
+    BOOL isRestarting() {
+        return financial_status & EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK ? YES : NO;
+    }
+    
+	std::uint32_t GetAmount() {
+        return authorised_amount;
+    }
+    
+    const std::string& GetCustomerReceipt() {
+        return customer_receipt;
+    }
+    
+    const std::string& GetMerchantReceipt() {
+        return merchant_receipt;
+    }
+    
+    const std::string& GetTransID() {
+        return trans_id;
+    }
+    
+    const std::string& GetXmlDetails() {
+        return xml_details;
+    }
+    
+    BOOL isRecoveredTransaction() {
+        return recovered_transaction;
+    }
 
 	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor){[processor processFinanceResponse:this];}
+	void ProcessResult(id<IResponseProcessor> processor) {
+        [processor processFinanceResponse:this];
+    }
 };
 
-class GetLogInfoResponseCommand : public ResponseCommand{
+class GetLogInfoResponseCommand : public ResponseCommand {
     std::string data;
 
 #pragma pack(push, 1)
@@ -180,5 +246,7 @@ public:
     const std::string& GetData(){return data;}
 
 	//ResponseCommand
-	void ProcessResult(id<IResponseProcessor> processor){[processor processLogInfoResponse:this];}
+	void ProcessResult(id<IResponseProcessor> processor) {
+        [processor processLogInfoResponse:this];
+    }
 };

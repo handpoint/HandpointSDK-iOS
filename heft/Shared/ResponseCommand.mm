@@ -17,7 +17,6 @@
 
 
 ResponseCommand* ResponseCommand::Create(const std::vector<std::uint8_t>& buf)
-// std::shared_ptr<ResponseCommand> ResponseCommand::Create(const vector<std::uint8_t>& buf)
 {
 	const ResponsePayload* pResponse = reinterpret_cast<const ResponsePayload*>(&buf[0]);
 	//LOG_RELEASE(Logger::eFiner, dump(_T("Incoming message"), &buf[0], buf.size()));
@@ -115,7 +114,7 @@ bool ResponseCommand::isResponseTo(const RequestCommand& request){
 InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize)
     : ResponseCommand(pPayload, payloadSize)
 {
-	if(GetStatus() == EFT_PP_STATUS_SUCCESS){
+	if(GetStatus() == EFT_PP_STATUS_SUCCESS) {
 		const InitPayload* pResponse = static_cast<const InitPayload*>(pPayload);
 		//ATLASSERT(ReadLength(pResponse) == sizeof(InitPayload) - sizeof(ResponsePayload));
 		com_buffer_size = ntohs(pResponse->com_buffer_size);
