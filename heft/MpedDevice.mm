@@ -12,6 +12,7 @@
 #import "HeftStatusReport.h"
 #import "ResponseParser.h"
 #import "HeftCmdIds.h"
+#import "HeftManager.h"
 
 #import "exception.h"
 #import "Logger.h"
@@ -40,7 +41,6 @@ const NSString* kAppNameInfoKey = @"AppName";
 const NSString* kAppVersionInfoKey = @"AppVersion";
 const NSString* kXMLDetailsInfoKey = @"XMLDetails";
 
-// NSString* statusMessages[] = {
 NSArray* statusMessages = @[
 	@"Undefined"
 	,@"Success"
@@ -94,7 +94,7 @@ NSArray* statusMessages = @[
     ,@"Operation cancelled, the battery is too low. Please charge."
     ,@"Waiting for accoutn type selection"
     ,@"Bluetooth is not supported on this device" ];
-// };
+
 
 @interface MpedDevice ()<IResponseProcessor>
 @end
@@ -118,6 +118,8 @@ enum eSignConditions{
 
 - (id)initWithConnection:(HeftConnection*)aConnection sharedSecret:(NSData*)aSharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
+    LOG(@"MpedDevice::initWithConnection");
+
 #ifndef HEFT_SIMULATOR
 	if(aConnection){
 #endif
@@ -145,19 +147,25 @@ enum eSignConditions{
 			connection = aConnection;
 			sharedSecret = aSharedSecret;
             
-			try{
-				FrameManager fm(InitRequestCommand(), connection.maxFrameSize);
+			try
+            {
+				FrameManager fm(InitRequestCommand(connection.maxFrameSize,
+                                                   [HeftManager sharedManager].version
+                                                   ),
+                                connection.maxFrameSize
+                                );
 				fm.Write(connection);
 				InitResponseCommand* pResponse =
                     dynamic_cast<InitResponseCommand*>(
                         reinterpret_cast<ResponseCommand*>(
                             fm.ReadResponse<InitResponseCommand>(connection, false)
-                                                           )
-                                                       );
+                        )
+                );
 				if(!pResponse)
 					throw communication_exception();
                 
-				connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
+                // connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
+                connection.maxFrameSize = pResponse->GetBufferSize();
 
                 NSDictionary* xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
                                                       path:@"InitResponse"];
@@ -189,6 +197,12 @@ enum eSignConditions{
 					, kXMLDetailsInfoKey:@(pResponse->GetXmlDetails().c_str())
 				};
 			}
+            catch(connection_broken_exception& cb_exception)
+            {
+                LOG(@"MpedDevice, CONNECTION BROKEN EXCEPTION - NEED TO HANDLE EOT.");
+                [self sendResponseError:cb_exception.stringId()];
+                self = nil;
+            }
 			catch(heft_exception& exception)
             {
 				[self sendResponseError:exception.stringId()];
@@ -233,7 +247,7 @@ enum eSignConditions{
     cancelAllowed = NO;
 
 #if HEFT_SIMULATOR
-	[queue cancelAllOperations];
+	// [queue cancelAllOperations];
 #else
 	FrameManager fm(IdleRequestCommand(), connection.maxFrameSize);
 	fm.WriteWithoutAck(connection);
@@ -255,7 +269,9 @@ enum eSignConditions{
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference{
-	LOG_RELEASE(Logger::eInfo, @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+	LOG_RELEASE(Logger::eInfo,
+                @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
+                (int)amount, currency, present ? @"is present" : @"is not present", reference);
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
@@ -285,7 +301,7 @@ enum eSignConditions{
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString *)months{
 	LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
-                amount, currency, present ? @"is present" : @"is not present", reference, months);
+                (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
     NSString *params = @"";
     NSString *refrenceString = @"";
     NSString *monthsString = @"";
@@ -359,42 +375,53 @@ enum eSignConditions{
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
-	LOG_RELEASE(Logger::eInfo, @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
+	LOG_RELEASE(Logger::eInfo,
+                @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
+                transaction, (int)amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
-                                                                                                std::string([currency UTF8String]),
-                                                                                                (std::uint32_t)amount,
-                                                                                                present,
-                                                                                                std::string([transaction UTF8String]),
-                                                                                                std::string())
+    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
+                              std::string([currency UTF8String]),
+                              (std::uint32_t)amount,
+                              present,
+                              std::string([transaction UTF8String]),
+                              std::string());
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
-                                                     resultsProcessor:self sharedSecret:sharedSecret];
+                                                     resultsProcessor:self
+                                                         sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
-	LOG_RELEASE(Logger::eInfo, @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@", transaction, amount, currency, present ? @"is present" : @"is not present");
+	LOG_RELEASE(Logger::eInfo,
+                @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
+                transaction, (int)amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ
-                                                                                                , std::string([currency UTF8String])
-                                                                                                , (std::uint32_t)amount
-                                                                                                , present
-                                                                                                , std::string([transaction UTF8String])
-                                                                                                , std::string())
+    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ
+                                                           , std::string([currency UTF8String])
+                                                           , (std::uint32_t)amount
+                                                           , present
+                                                           , std::string([transaction UTF8String])
+                                                           , std::string());
+    
+	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
-                                                     resultsProcessor:self sharedSecret:sharedSecret];
+                                                     resultsProcessor:self
+                                                         sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
 	return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)retrievePendingTransaction{
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT
-                                                                                                , "0" // must be like this or we throw an invalid currency exception
-                                                                                                , 0
-                                                                                                , YES
-                                                                                                , std::string()
-                                                                                                , std::string())
+    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT
+                                                           , "0" // must be like this or we throw an invalid currency exception
+                                                           , 0
+                                                           , YES
+                                                           , std::string()
+                                                           , std::string());
+    
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
@@ -460,7 +487,8 @@ enum eSignConditions{
                   @"</enableScanner>",
                   multiScanString, buttonModeString, timeoutSecondsString];
     
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest: new XMLCommandRequestCommand(std::string([params UTF8String]))
+    XMLCommandRequestCommand* xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
@@ -538,7 +566,8 @@ enum eSignConditions{
                 @"</name>"
               @"</getReport>";
     
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest: new XMLCommandRequestCommand(std::string([params UTF8String]))
+    XMLCommandRequestCommand* xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
@@ -550,7 +579,11 @@ enum eSignConditions{
 #pragma mark -
 
 - (NSDictionary*)getValuesFromXml:(NSString*)xml path:(NSString*)path{
-	NSXMLParser* xmlParser = [[NSXMLParser alloc] initWithData:[[NSData alloc] initWithBytesNoCopy:(void*)[xml UTF8String] length:[xml length] freeWhenDone:NO]];
+    NSData* xmlData = [[NSData alloc] initWithBytesNoCopy:(void*)[xml UTF8String]
+                                                   length:[xml length]
+                                             freeWhenDone:NO];
+
+    NSXMLParser* xmlParser = [[NSXMLParser alloc] initWithData:xmlData];
 	ResponseParser* parser = [[ResponseParser alloc] initWithPath:path];
 	xmlParser.delegate = parser;
 	//LOG(@"%@", xml);
@@ -643,7 +676,8 @@ enum eSignConditions{
     }
     else
     {
-        LOG_RELEASE(Logger::eFine, @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
+        LOG_RELEASE(Logger::eFine,
+                    @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
     }
 }
 
@@ -656,11 +690,13 @@ enum eSignConditions{
         [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
     });
     
-    NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str()) path:@"SignatureRequiredRequest"];
+    NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str())
+                                          path:@"SignatureRequiredRequest"];
     
     double wait_time = [xml[@"timeout"] doubleValue];
 
-	if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:wait_time]]){
+	if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:wait_time]])
+    {
 		result = signatureIsOk ? EFT_PP_STATUS_SUCCESS : EFT_PP_STATUS_INVALID_SIGNATURE;
 		signatureIsOk = NO;
 		[signLock unlockWithCondition:eNoSignCondition];
@@ -794,7 +830,9 @@ enum eSignConditions{
 	info.statusCode = status;
 	info.status = statusMessages[status];
 	if(status == EFT_PP_STATUS_SUCCESS)
+    {
 		info.log = @(pResponse->GetData().c_str());
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp responseLogInfo:info];

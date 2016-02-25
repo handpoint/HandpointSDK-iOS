@@ -8,4 +8,3 @@
 //	#import <SenTestingKit/SenTestingKit.h>
 #endif
 
-#import "StdAfx.h"

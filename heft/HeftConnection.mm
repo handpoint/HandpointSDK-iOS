@@ -23,7 +23,7 @@ using OutputQueue = std::queue<Buffer>;
 
 extern NSString* eaProtocol;
 
-const int ciDefaultMaxFrameSize = 4096; // Bluetooth frame is 0 - ~343 bytes
+int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
 const int ciTimeout[] = {20, 15, 1, 5*60};
 
 enum eBufferConditions{
@@ -118,17 +118,13 @@ enum eBufferConditions{
 - (void)shutdown
 {
     LOG(@"Heftconnection shutdown");
+    NSRunLoop* runLoop = nil;;
     if(device && device.accessory)
     {
         if (streamRunLoop)
         {
-            NSRunLoop* runLoop = streamRunLoop;
+            runLoop = streamRunLoop;
             streamRunLoop = nil;
-            
-            [outputStream close];
-            [outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
-            [inputStream close];
-            [inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
         }
         
         device = nil;
@@ -137,12 +133,18 @@ enum eBufferConditions{
 
     if (inputStream)
     {
+        [inputStream close];
+        if (runLoop)
+            [inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
         inputStream.delegate = nil;
         inputStream = nil;
     }
 
     if (outputStream)
     {
+        [outputStream close];
+        if (runLoop)
+            [outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
         outputStream.delegate = nil;
         outputStream = nil;
     }
@@ -180,6 +182,27 @@ enum eBufferConditions{
     }
 }
 
+
+/*
+ NSStreamStatus
+ ---------------
+ NSStreamStatusNotOpen = 0,
+ NSStreamStatusOpening = 1,
+ NSStreamStatusOpen = 2,
+ NSStreamStatusReading = 3,
+ NSStreamStatusWriting = 4,
+ NSStreamStatusAtEnd = 5,
+ NSStreamStatusClosed = 6,
+ NSStreamStatusError = 7
+ */
+bool isStatusAnError(NSStreamStatus status)
+{
+    return status == NSStreamStatusNotOpen ||
+            status == NSStreamStatusClosed  ||
+            status == NSStreamStatusError   ||
+            status == NSStreamStatusAtEnd;
+}
+
 // TODO: put data into outputqueue...
 //       and write to the stream when
 //       possible.
@@ -193,6 +216,12 @@ enum eBufferConditions{
         while(![outputStream hasSpaceAvailable])
         {
             [NSThread sleepForTimeInterval:.025];
+            NSStreamStatus status = [outputStream streamStatus];
+            LOG(@"WriteData sleep, status: %d", (int) status);
+            if (isStatusAnError(status))
+            {
+                throw communication_exception();
+            }
         }
         
         NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize)];
@@ -200,7 +229,8 @@ enum eBufferConditions{
         if(nwritten <= 0)
             throw communication_exception();
 
-        LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, nwritten));
+        // LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) nwritten));
+        LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
         
         len -= nwritten;
         data += nwritten;
@@ -211,6 +241,13 @@ enum eBufferConditions{
     while(![outputStream hasSpaceAvailable])
     {
         [NSThread sleepForTimeInterval:.025];
+        NSStreamStatus status = [outputStream streamStatus];
+        LOG(@"WriteAck sleep, status: %d", (int) status);
+        if (isStatusAnError(status))
+        {
+            throw communication_exception();
+        }
+        
     }
     NSInteger nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
     LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));
@@ -220,7 +257,8 @@ enum eBufferConditions{
 
 #pragma mark NSStreamDelegate
 
-- (void)stream:(NSInputStream*)aStream handleEvent:(NSStreamEvent)eventCode
+// - (void)stream:(NSInputStream*)aStream handleEvent:(NSStreamEvent)eventCode
+- (void)stream:(NSStream*)aStream handleEvent:(NSStreamEvent)eventCode
 {
     LOG(@"handleEvent starting, eventCode: %d", (int)eventCode);
     

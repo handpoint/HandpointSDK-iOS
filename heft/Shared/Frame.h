@@ -32,7 +32,10 @@ class Frame{
 	T* GetPayload(){
         return reinterpret_cast<T*>(&write_data[0]);
     }
-	const FrameEndPayload* GetEndPayload(){return reinterpret_cast<const FrameEndPayload*>(&m_pData[m_len - sizeof(FrameEndPayload)]);}
+	const FrameEndPayload* GetEndPayload()
+    {
+        return reinterpret_cast<const FrameEndPayload*>(&m_pData[m_len - sizeof(FrameEndPayload)]);
+    }
 	//FramePayload* GetPayload(){return reinterpret_cast<FramePayload*>(&data[0]);}
 	void AddCRC();
 
@@ -40,13 +43,28 @@ public:
 	static const int ciMinSize = 6;
 
     Frame(const std::uint8_t* pData, int len, bool partial);
-	int GetLength(){return (int)write_data.size();}
-    std::uint8_t* GetData(){return &write_data[0];}
-    static int GetMetaDataSize(){return ciMinSize;}
+    
+	int GetLength()
+    {
+        return (int) write_data.size();
+    }
+    
+    std::uint8_t* GetData()
+    {
+        return &write_data[0];
+    }
+    
+    static int GetMetaDataSize()
+    {
+        return ciMinSize;
+    }
 
     Frame(const std::uint8_t* pData, int len);
 	bool isValidCrc();
-	bool isPartial(){return GetEndPayload()->EndSequence == FRAME_PARTIAL_END;}
+	bool isPartial()
+    {
+        return GetEndPayload()->EndSequence == FRAME_PARTIAL_END;
+    }
 
 	NSString* dump(NSString* prefix)const;
 };

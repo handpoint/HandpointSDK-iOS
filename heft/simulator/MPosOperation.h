@@ -3,6 +3,7 @@
 //  headstart
 //
 
+#import <Foundation/Foundation.h>
 #import "IHostProcessor.h"
 
 class RequestCommand;
