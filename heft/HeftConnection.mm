@@ -135,7 +135,9 @@ enum eBufferConditions{
     {
         [inputStream close];
         if (runLoop)
+        {
             [inputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+        }
         inputStream.delegate = nil;
         inputStream = nil;
     }
@@ -144,7 +146,9 @@ enum eBufferConditions{
     {
         [outputStream close];
         if (runLoop)
+        {
             [outputStream removeFromRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+        }
         outputStream.delegate = nil;
         outputStream = nil;
     }
