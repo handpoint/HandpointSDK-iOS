@@ -149,14 +149,12 @@ enum eSignConditions{
             
 			try
             {
-                /*
+                
 				FrameManager fm(InitRequestCommand(connection.maxFrameSize,
                                                    [HeftManager sharedManager].version
                                                    ),
                                 connection.maxFrameSize
-                                );*/
-                
-                FrameManager fm(InitRequestCommand(256, @"2.5.1"), 256);
+                                );
                 
 				fm.Write(connection);
 				InitResponseCommand* pResponse =
