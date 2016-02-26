@@ -149,11 +149,15 @@ enum eSignConditions{
             
 			try
             {
+                /*
 				FrameManager fm(InitRequestCommand(connection.maxFrameSize,
                                                    [HeftManager sharedManager].version
                                                    ),
                                 connection.maxFrameSize
-                                );
+                                );*/
+                
+                FrameManager fm(InitRequestCommand(256, @"2.5.1"), 256);
+                
 				fm.Write(connection);
 				InitResponseCommand* pResponse =
                     dynamic_cast<InitResponseCommand*>(
@@ -164,8 +168,37 @@ enum eSignConditions{
 				if(!pResponse)
 					throw communication_exception();
                 
+                LOG(@"Status: %d", pResponse->GetStatus());
+                if (pResponse->GetStatus() == EFT_PP_STATUS_INVALID_DATA)
+                {
+                    
+                    // try init again, but now without the XML and all that
+                    fm = FrameManager(InitRequestCommand(0, nil), connection.maxFrameSize);
+                    fm.Write(connection);
+                    pResponse = dynamic_cast<InitResponseCommand*>(
+                                  reinterpret_cast<ResponseCommand*>(
+                                    fm.ReadResponse<InitResponseCommand>(connection, false)
+                                  )
+                                 );
+                    LOG(@"Status: %d", pResponse->GetStatus());
+                }
+                
+                auto bufferSize = pResponse->GetBufferSize();
+                LOG(@"Buffersize from reader: %d", bufferSize);
+                if (bufferSize >= 2048 && connection.maxFrameSize <= 2048)
+                {
+                    // probably an old reader, we did not request 2048 or greater
+                    // which is poorly supported by iOS
+                    connection.maxFrameSize = 256;
+                    LOG(@"Buffersize set to 256");
+                }
+                else
+                {
+                    connection.maxFrameSize = bufferSize;
+                }
+                
                 // connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
-                connection.maxFrameSize = pResponse->GetBufferSize();
+                // connection.maxFrameSize = pResponse->GetBufferSize();
 
                 NSDictionary* xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
                                                       path:@"InitResponse"];

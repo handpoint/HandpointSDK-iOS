@@ -149,7 +149,10 @@ public:
     HostResponseCommand(std::uint32_t command, int status, int cmd_size = 0);
 
 	//Command
-	bool isResponse(){return true;}
+	bool isResponse()
+    {
+        return true;
+    }
 };
 
 class ConnectRequestCommand : public HostRequestCommand{
@@ -223,8 +226,16 @@ public:
     {
         return [handler processReceive:this];
     }
-	int GetTimeout(){return timeout;}
-	std::uint16_t GetDataLen(){return data_len;}
+    
+	int GetTimeout()
+    {
+        return timeout;
+    }
+    
+	std::uint16_t GetDataLen()
+    {
+        return data_len;
+    }
 };
 
 class ReceiveResponseCommand : public HostResponseCommand{
@@ -241,7 +252,10 @@ public:
 class DisconnectRequestCommand : public HostRequestCommand{
 public:
     DisconnectRequestCommand(const void* payload, std::uint32_t payloadSize);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processDisconnect:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processDisconnect:this];
+    }
 };
 
 class SignatureRequestCommand : public RequestCommand, public IRequestProcess{
@@ -256,11 +270,21 @@ protected:
 
 public:
     SignatureRequestCommand(const void* payload, std::uint32_t payloadSize);
-    const std::string& GetReceipt(){return receipt;}
-    const std::string& GetXmlDetails(){return xml_details;}
+    const std::string& GetReceipt()
+    {
+        return receipt;
+    }
+    
+    const std::string& GetXmlDetails()
+    {
+        return xml_details;
+    }
 
 	//IRequestProcess
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSignature:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processSignature:this];
+    }
 };
 
 class ChallengeRequestCommand : public RequestCommand, public IRequestProcess{
@@ -275,11 +299,21 @@ protected:
 
 public:
     ChallengeRequestCommand(const void* payload, std::uint32_t payloadSize);
-	const std::vector<std::uint8_t>& GetRandomNum(){return random_num;}
-	const std::string& GetXmlDetails(){return xml_details;}
+	const std::vector<std::uint8_t>& GetRandomNum()
+    {
+        return random_num;
+    }
+	
+    const std::string& GetXmlDetails()
+    {
+        return xml_details;
+    }
 
 	//IRequestProcess
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processChallenge:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processChallenge:this];
+    }
 };
 
 class ChallengeResponseCommand : public HostResponseCommand{
