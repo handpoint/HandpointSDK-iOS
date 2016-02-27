@@ -179,6 +179,13 @@ enum eSignConditions{
                                   )
                                  );
                     LOG(@"Status: %d", pResponse->GetStatus());
+                    if (pResponse->GetStatus() == EFT_PP_STATUS_INVALID_DATA)
+                    {
+                        // we tried twice, with and without the buffer size request
+                        // "What we've got here is failure to communicate"
+                        throw communication_exception();
+                    }
+
                 }
                 
                 auto bufferSize = pResponse->GetBufferSize();
@@ -195,9 +202,6 @@ enum eSignConditions{
                     connection.maxFrameSize = bufferSize;
                 }
                 
-                // connection.maxFrameSize = pResponse->GetBufferSize()-2; // Hotfix: 2048 bytes causes buffer overflow in EFT client.
-                // connection.maxFrameSize = pResponse->GetBufferSize();
-
                 NSDictionary* xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
                                                       path:@"InitResponse"];
                 if([xml count] > 0)
