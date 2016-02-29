@@ -164,12 +164,13 @@ enum eSignConditions{
                         )
                 );
 				if(!pResponse)
+                {
 					throw communication_exception();
+                }
                 
                 LOG(@"Status: %d", pResponse->GetStatus());
                 if (pResponse->GetStatus() == EFT_PP_STATUS_INVALID_DATA)
                 {
-                    
                     // try init again, but now without the XML and all that
                     fm = FrameManager(InitRequestCommand(0, nil), connection.maxFrameSize);
                     fm.Write(connection);
