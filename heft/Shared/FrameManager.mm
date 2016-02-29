@@ -29,7 +29,6 @@ const int MAX_ATTEMPTS = 3;
 
 FrameManager::FrameManager(const RequestCommand& request, int max_frame_size)
 {
-
     // max_frame_size is the total frame size, i.e. the combined length of [stx] [data] [ptx/etx] [crc]
     if( max_frame_size >= ( Frame::GetMetaDataSize() + 2 ) ) // the +2 is because we need to be
                                                              // able to escape one DLE character into two DLE DLE
@@ -80,6 +79,40 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size)
 	    frames.push_back(Frame(pDataBegin, (int)(pData - pDataBegin), false));
     }
 }
+
+
+/*
+// a copy constructor
+FrameManager::FrameManager(const FrameManager& other)
+    : frames(other.frames), data(other.data)
+{
+    LOG(@"FrameManager::FrameManager(const FrameManager& other)");
+}
+
+FrameManager& FrameManager::operator= (const FrameManager& other)
+{
+    LOG(@"FrameManager& FrameManager::operator= (const FrameManager& other)");
+    if (this != &other)
+    {
+        frames = other.frames;
+        data = other.data;
+    }
+    return *this;
+}
+
+FrameManager::FrameManager(FrameManager&& other)
+    : frames(std::move(other.frames)), data(std::move(other.data))
+{
+    LOG(@"FrameManager::FrameManager(FrameManager&& other)");
+}
+
+
+FrameManager::~FrameManager()
+{
+    LOG(@"FrameManager::~FrameManager()");
+}
+*/
+
 
 void FrameManager::Write(HeftConnection* connection)
 {

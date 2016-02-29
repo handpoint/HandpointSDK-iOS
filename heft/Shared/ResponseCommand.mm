@@ -134,6 +134,10 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, std::u
         }
 		xml_details.assign(pResponse->xml_details, xml_len);
 	}
+    else
+    {
+        LOG(@"STATUS != EFT_PP_STATUS_SUCCESS");
+    }
 }
 
 XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size)

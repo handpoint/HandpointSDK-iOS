@@ -20,6 +20,16 @@ class FrameManager{
 
 public:
 	FrameManager(const RequestCommand& request, int max_frame_size);
+    
+    // copy and move constructors
+    /*
+    FrameManager(const FrameManager& other);
+
+    FrameManager(FrameManager&& other);
+    FrameManager & operator= (const FrameManager& other);
+    ~FrameManager();
+     */
+    
 	void Write(HeftConnection* connection/*, volatile bool& bCancel*/);
 	void WriteWithoutAck(HeftConnection* connection/*, volatile bool& bCancel*/);
 

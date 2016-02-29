@@ -41,10 +41,6 @@ enum eBufferConditions{
     NSOutputStream* outputStream;
     NSRunLoop* streamRunLoop;
     
-    // __weak MpedDevice* aPedDevice;
-    
-    // __weak NSObject<HeftStatusReportDelegate>* delegate;
-    
     InputQueue inputQueue;
     OutputQueue outputQueue;
     NSConditionLock* bufferLock;
@@ -154,18 +150,6 @@ enum eBufferConditions{
     }
     
     [self resetData];
-    
-    // HeftManager* heftManager = [HeftManager sharedManager];
-    // [heftManager cleanup];
-    
-    
-    /*
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [aPedDevice didLostAccessoryDevice:device];
-    });
-    */
-
-   
 }
 
 - (void)resetData
