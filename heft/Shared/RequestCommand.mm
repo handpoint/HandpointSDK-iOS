@@ -67,46 +67,39 @@ int RequestCommand::ReadLength(const RequestPayload* pRequest){
 
 
 InitRequestCommand::InitRequestCommand(int bufferSize, NSString* version)
-    : RequestCommand(ciMinSize, CMD_INIT_REQ)
+: RequestCommand(ciMinSize, CMD_INIT_REQ)
 {
-    
-    bool send_buffer_size = bufferSize > 0;
-
-    if (send_buffer_size && version == nil)
-    {
-        version = @"0.0";
-    }
-
     InitPayload* payload = GetPayload<InitPayload>();
     
-    
     // always add the date
-	NSDateFormatter* df = [[NSDateFormatter alloc] init];
+    NSDateFormatter* df = [[NSDateFormatter alloc] init];
     [df setDateFormat:@"yyyyMMddHHmmss"];
-	NSString* curDate = [df stringFromDate:[NSDate date]];
-	BCDCoder::Encode([curDate UTF8String], payload->data, ciMinSize);
+    NSString* curDate = [df stringFromDate:[NSDate date]];
+    BCDCoder::Encode([curDate UTF8String], payload->data, ciMinSize);
     
-
-    if (send_buffer_size)
+    if (bufferSize > 0)
     {
+        if (version == nil)
+        {
+            version = @"0.0";
+        }
+        
         // format the xml and then resize the databuffer
         NSString* xml_string = [NSString stringWithFormat:init_xml, bufferSize, version];
-        LOG(@"xml: %@", xml_string);
         const char* init_xml_utf8 = [xml_string UTF8String];
         const auto xml_utf8_len = strlen(init_xml_utf8);
         auto new_buffer_size = xml_utf8_len + data.size() + 4; // 4 for the xml size
-        LOG(@"new_buffer_size: %d", new_buffer_size);
         data.resize(new_buffer_size);
-        payload = GetPayload<InitPayload>(); // reset the payload pointer
-
+        payload = GetPayload<InitPayload>(); // reset the payload pointer after resize
+        
         // set the parameter length again, now with the size of the xml
-        FormatLength<RequestPayload>(xml_utf8_len+11); // 10 is the header
+        // plus the size of the header
+        FormatLength<RequestPayload>(xml_utf8_len + 11);
         
         // insert the xml and the size
         payload->xml_size = htonl(xml_utf8_len);
         memcpy(&payload->xml[0], init_xml_utf8, xml_utf8_len);
     }
-    
 }
 
 
