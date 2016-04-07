@@ -36,10 +36,18 @@ protected:
 
 public:
 	FinanceRequestCommand(uint32_t type, const string& currency_code, uint32_t trans_amount, uint8_t card_present, const string& trans_id, const string& xml);
-	uint32_t GetAmount()const{return amount;}
-	const string& GetCurrency()const{return currency;}
-	ResponseCommand* CreateResponse()const;
-	ResponseCommand* CreateResponseOnCancel()const;
+	uint32_t GetAmount() const
+    {
+        return amount;
+    }
+	
+    const string& GetCurrency() const
+    {
+        return currency;
+    }
+    
+	ResponseCommand* CreateResponse() const;
+	ResponseCommand* CreateResponseOnCancel() const;
 };
 
 class XMLCommandRequestCommand : public RequestCommand{
@@ -104,32 +112,48 @@ public:
 	HostResponseCommand(uint32_t command, uint32_t aFin_cmd, const string& aCurrency, uint32_t aAmount, int aStatus = EFT_PP_STATUS_SUCCESS);
 
 	//Command
-	bool isResponse(){return true;}
+	bool isResponse()
+    {
+        return true;
+    }
+    
 	ResponseCommand* CreateResponse()const;
 };
 
 class ConnectRequestCommand : public HostRequestCommand{
 public:
 	ConnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processConnect:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processConnect:this];
+    }
 };
 
 class SendRequestCommand : public HostRequestCommand{
 public:
 	SendRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSend:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processSend:this];
+    }
 };
 
 class ReceiveRequestCommand : public HostRequestCommand{
 public:
 	ReceiveRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processReceive:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processReceive:this];
+    }
 };
 
 class DisconnectRequestCommand : public HostRequestCommand{
 public:
 	DisconnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processDisconnect:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processDisconnect:this];
+    }
 };
 
 class SignatureRequestCommand : public RequestCommand, public IRequestProcess{
@@ -148,7 +172,11 @@ public:
 	uint32_t GetFinCommand(){return type;}
 
 	//IRequestProcess
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSignature:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processSignature:this];
+    }
+    
 	ResponseCommand* CreateResponse() const
     {
         // ATLASSERT(false);
