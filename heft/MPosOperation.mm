@@ -315,6 +315,8 @@ namespace {
     
     if(eventCode & NSStreamEventHasSpaceAvailable)
     {
+        LOG(@"NSStreamEventHasBytesAvailable");
+
         if(aStream == sendStream){
             // note: this event will not be generated again until we write something to the stream
             [connectLock lock];
@@ -359,6 +361,8 @@ namespace {
                 }
             } else if(connectionState == eConnectionConnected){
                 // we got this event too soon (as in before we have received a send command from the card reader)
+                // MÁ: This comment makes no sense, the state is not changed when a command is received from the card
+                //     reader. The state should be changed as soon as a connection has been made
                 connectionState = eConnectionSending; // we will inspect for this when we receive the command from the card reader
                 [connectLock unlock];
             } else {
@@ -477,28 +481,33 @@ namespace {
     return new HostResponseCommand(CMD_HOST_CONN_RSP, status);
 }
 
+
+// TODO: refactor this - clean up paths, when and why does it fail
+//       looks like this will fail when the connection is so slow
+//       that everything can not be written at once.
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest
 {
-	LOG_RELEASE(Logger::eFine,
-                @"Request to bureau (length:%d): %@",
-                pRequest->GetLength(),
-                [[NSString alloc] initWithBytes:pRequest->GetData()
-                                         length:pRequest->GetLength()
-                                       encoding:NSUTF8StringEncoding]);
+    LOG_RELEASE(Logger::eFine, @"Sending request to bureau (length:%d).", pRequest->GetLength());
     
     if(sendStream)
     {
-        // connectionState = eConnectionSending;  //TODO: skoða þetta betur, sjá hvað er að gerast.
+        if (connectionState == eConnectionConnected)
+        {
+            LOG(@"connectionState == eConnectionConnected");
+            connectionState = eConnectionSending;  //TODO: skoða þetta betur, sjá hvað er að gerast.
+        }
+        
+        // TODO: do we have to copy the data, can't we just store a pointer to the request
+        //       , an index into the data and the bytes written?
         connectionSendData.assign(pRequest->GetData(), pRequest->GetData() + pRequest->GetLength());
         
         [connectLock lock];
         if(connectionState == eConnectionSending)
         {
             // the stream is already waiting for data from us
-            NSInteger written;
-
-            written = [sendStream write:connectionSendData.data()
-                              maxLength:connectionSendData.size()];
+            NSInteger written = [sendStream write:connectionSendData.data()
+                                        maxLength:connectionSendData.size()];
+            
             if(written < connectionSendData.size())
             {
                 LOG_RELEASE(Logger::eFine,
@@ -515,25 +524,52 @@ namespace {
                     {
                         [connectLock unlockWithCondition:eNoConnectStateCondition];
                         return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
-                    } // else send error
+                    }
+                    else
+                    {
+                        LOG(@"ConnectionState != eConnectionSendingComplete");
+                        // else send error
+                        // what/why?
+                    }
                 } // else send timeout
+                else
+                {
+                    LOG(@"Timout waiting for connectLock.");
+                }
             }
             else
             {
                 if(written == connectionSendData.size())
                 {
+                    LOG(@"written == sendData size.");
                     connectionSendData.clear();
                     connectionState = eConnectionSendingComplete;
                     [connectLock unlock];
                     return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
                 }
+                else
+                {
+                    LOG(@"written > sendData size.");
+                }
             }
+        }
+        else
+        {
+            LOG(@"(connectionState != eConnectionSending)");
         }
         [connectLock unlock];
         
     } // else this was a connection error
+    else
+    {
+        LOG(@"Trying to send to bureau but sendStream is nil.");
+    }
     
     // if we get to here then we encountered an error
+    // TODO: this is too general, we must make sure we know what happened - and handle
+    //       that wich we can handle. Everything else must be logged.
+    LOG(@"processSend, sending error.");
+    
     [self cleanUpConnection];
     
     return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SENDING_ERROR);
