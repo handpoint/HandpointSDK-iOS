@@ -506,6 +506,11 @@ enum eSignConditions{
 
     // default timeoutvalue is 60 seconds
     long timeoutSecondsParameter = timeoutSeconds == 0 ? 60 : timeoutSeconds;
+    if (timeoutSecondsParameter > 65535)
+    {
+        // the max value supported by the reader
+        timeoutSecondsParameter = 65535;
+    }
     NSString* timeoutSecondsString = [NSString stringWithFormat:
                     @"<timeoutSeconds>"
                     @"%ld"
