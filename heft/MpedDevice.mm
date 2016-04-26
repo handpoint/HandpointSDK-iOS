@@ -491,30 +491,27 @@ enum eSignConditions{
 
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
-    //NSString *params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><enableScanner></enableScanner>";
     NSString *params = @"";
-    NSString *multiScanString = @"";
-    NSString *buttonModeString = @"";
-    NSString *timeoutSecondsString = @"";
-    if(!multiScan) {
-        multiScanString = [NSString stringWithFormat:
-                          @"<multiScan>"
-                          @"false"
-                          @"</multiScan>"];
-    }
-    if(!buttonMode) {
-        buttonModeString = [NSString stringWithFormat:
-                        @"<buttonMode>"
-                        @"false"
-                        @"</buttonMode>"];
-    }
-    if(timeoutSeconds) {
-        timeoutSecondsString = [NSString stringWithFormat:
-                        @"<timeoutSeconds>"
-                        @"%ld"
-                        @"</timeoutSeconds>",
-                        (long)timeoutSeconds];
-    }
+    
+    NSString* multiScanString = [NSString stringWithFormat:
+                      @"<multiScan>"
+                      @"%s"
+                      @"</multiScan>",
+                       multiScan ? "true" : "false"];
+    NSString* buttonModeString = [NSString stringWithFormat:
+                    @"<buttonMode>"
+                    @"%s"
+                    @"</buttonMode>",
+                      buttonMode ? "true" : "false"];
+
+    // default timeoutvalue is 60 seconds
+    long timeoutSecondsParameter = timeoutSeconds == 0 ? 60 : timeoutSeconds;
+    NSString* timeoutSecondsString = [NSString stringWithFormat:
+                    @"<timeoutSeconds>"
+                    @"%ld"
+                    @"</timeoutSeconds>",
+                    timeoutSecondsParameter];
+    
     params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                   @"<enableScanner>"
                   @"%@"
@@ -529,6 +526,8 @@ enum eSignConditions{
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     
+    // hardcoded here - should be able to cancel multiscan when nothing has been scanned
+    cancelAllowed = YES;
     return [self postOperationToQueueIfNew:operation];
 }
 
