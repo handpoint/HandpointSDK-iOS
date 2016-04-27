@@ -6,6 +6,22 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		FBDA036A1CD018DC00607201 /* device-simulator */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator" */;
+			buildPhases = (
+				FBDA03701CD018EB00607201 /* ShellScript */,
+				FBDA03711CD018ED00607201 /* CopyFiles */,
+				FBDA03751CD0215500607201 /* CopyFiles */,
+			);
+			dependencies = (
+			);
+			name = "device-simulator";
+			productName = "device-simulator";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
@@ -59,6 +75,14 @@
 		AD75FBAE16FC92F30000446E /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
 		AD75FBAF16FC93580000446E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3761628B0590043AFBC /* CoreGraphics.framework */; };
 		ADF06E8E16FC6AB200B50C8E /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398955165FF88800F8FA29 /* HeftRemoteDevice.m */; };
+		FBDA03721CD01AB900607201 /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; };
+		FBDA03731CD01AB900607201 /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; };
+		FBDA03741CD01AB900607201 /* HeftStatusReportPublic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; };
+		FBDA03761CD0216B00607201 /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; };
+		FBDA03771CD0216B00607201 /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; };
+		FBDA03781CD0216B00607201 /* HeftStatusReportPublic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; };
+		FBDA03801CD031D200607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
+		FBDA03811CD031D800607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +102,32 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBDA03711CD018ED00607201 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/include";
+			dstSubfolderSpec = 0;
+			files = (
+				FBDA03801CD031D200607201 /* CmdIds.h in CopyFiles */,
+				FBDA03721CD01AB900607201 /* HeftClient.h in CopyFiles */,
+				FBDA03731CD01AB900607201 /* HeftManager.h in CopyFiles */,
+				FBDA03741CD01AB900607201 /* HeftStatusReportPublic.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBDA03751CD0215500607201 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include";
+			dstSubfolderSpec = 0;
+			files = (
+				FBDA03811CD031D800607201 /* CmdIds.h in CopyFiles */,
+				FBDA03761CD0216B00607201 /* HeftClient.h in CopyFiles */,
+				FBDA03771CD0216B00607201 /* HeftManager.h in CopyFiles */,
+				FBDA03781CD0216B00607201 /* HeftStatusReportPublic.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,6 +508,9 @@
 					49F4DECD1C6E6B4200C0B5D0 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
+					FBDA036A1CD018DC00607201 = {
+						CreatedOnToolsVersion = 7.3;
+					};
 				};
 			};
 			buildConfigurationList = 2DEDA3681628B0580043AFBC /* Build configuration list for PBXProject "headstart" */;
@@ -475,6 +528,7 @@
 				2D398926165FF23D00F8FA29 /* heft */,
 				2D398934165FF23E00F8FA29 /* heftTests */,
 				49F4DECD1C6E6B4200C0B5D0 /* heft_osx */,
+				FBDA036A1CD018DC00607201 /* device-simulator */,
 			);
 		};
 /* End PBXProject section */
@@ -515,7 +569,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi";
+			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release-Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi";
+		};
+		FBDA03701CD018EB00607201 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcodebuild -scheme heft -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -sdk iphoneos -configuration Release\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Release-Simulator\n\n# make a new output folder\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/include\n# make a new output folder for simulator\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include\n\n# combine lib files for various platforms into one\nlipo -create \"${TARGET_BUILD_DIR}/../Release-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Release-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/libheft.a\"\nlipo -create \"${TARGET_BUILD_DIR}/../Release-Simulator-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Release-Simulator-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/libheft.a\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -601,7 +668,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		2D38903A169F629E00720A15 /* Debug Simulator */ = {
+		2D38903A169F629E00720A15 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -634,9 +701,9 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
 			};
-			name = "Debug Simulator";
+			name = "Debug-Simulator";
 		};
-		2D38903D169F629E00720A15 /* Debug Simulator */ = {
+		2D38903D169F629E00720A15 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
@@ -669,9 +736,9 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
-			name = "Debug Simulator";
+			name = "Debug-Simulator";
 		};
-		2D38903E169F629E00720A15 /* Debug Simulator */ = {
+		2D38903E169F629E00720A15 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
@@ -690,9 +757,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
-			name = "Debug Simulator";
+			name = "Debug-Simulator";
 		};
-		2D389040169F62B800720A15 /* Release Simulator */ = {
+		2D389040169F62B800720A15 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -722,9 +789,9 @@
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
 			};
-			name = "Release Simulator";
+			name = "Release-Simulator";
 		};
-		2D389043169F62B800720A15 /* Release Simulator */ = {
+		2D389043169F62B800720A15 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
@@ -760,9 +827,9 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
-			name = "Release Simulator";
+			name = "Release-Simulator";
 		};
-		2D389044169F62B800720A15 /* Release Simulator */ = {
+		2D389044169F62B800720A15 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
@@ -781,7 +848,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
-			name = "Release Simulator";
+			name = "Release-Simulator";
 		};
 		2D398946165FF23E00F8FA29 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -987,7 +1054,7 @@
 			};
 			name = Debug;
 		};
-		49F4DED61C6E6B4200C0B5D0 /* Debug Simulator */ = {
+		49F4DED61C6E6B4200C0B5D0 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -1016,7 +1083,7 @@
 				SDKROOT = macosx10.11;
 				SKIP_INSTALL = YES;
 			};
-			name = "Debug Simulator";
+			name = "Debug-Simulator";
 		};
 		49F4DED71C6E6B4200C0B5D0 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1050,7 +1117,7 @@
 			};
 			name = Release;
 		};
-		49F4DED81C6E6B4200C0B5D0 /* Release Simulator */ = {
+		49F4DED81C6E6B4200C0B5D0 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -1080,7 +1147,47 @@
 				SDKROOT = macosx10.11;
 				SKIP_INSTALL = YES;
 			};
-			name = "Release Simulator";
+			name = "Release-Simulator";
+		};
+		FBDA036B1CD018DC00607201 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FBDA036C1CD018DC00607201 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug-Simulator";
+		};
+		FBDA036D1CD018DC00607201 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		FBDA036E1CD018DC00607201 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release-Simulator";
 		};
 /* End XCBuildConfiguration section */
 
@@ -1089,9 +1196,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D398946165FF23E00F8FA29 /* Debug */,
-				2D38903D169F629E00720A15 /* Debug Simulator */,
+				2D38903D169F629E00720A15 /* Debug-Simulator */,
 				2D398947165FF23E00F8FA29 /* Release */,
-				2D389043169F62B800720A15 /* Release Simulator */,
+				2D389043169F62B800720A15 /* Release-Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1100,9 +1207,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D398949165FF23E00F8FA29 /* Debug */,
-				2D38903E169F629E00720A15 /* Debug Simulator */,
+				2D38903E169F629E00720A15 /* Debug-Simulator */,
 				2D39894A165FF23E00F8FA29 /* Release */,
-				2D389044169F62B800720A15 /* Release Simulator */,
+				2D389044169F62B800720A15 /* Release-Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1111,9 +1218,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2DEDA3A81628B0590043AFBC /* Debug */,
-				2D38903A169F629E00720A15 /* Debug Simulator */,
+				2D38903A169F629E00720A15 /* Debug-Simulator */,
 				2DEDA3A91628B0590043AFBC /* Release */,
-				2D389040169F62B800720A15 /* Release Simulator */,
+				2D389040169F62B800720A15 /* Release-Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1122,9 +1229,20 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				49F4DED51C6E6B4200C0B5D0 /* Debug */,
-				49F4DED61C6E6B4200C0B5D0 /* Debug Simulator */,
+				49F4DED61C6E6B4200C0B5D0 /* Debug-Simulator */,
 				49F4DED71C6E6B4200C0B5D0 /* Release */,
-				49F4DED81C6E6B4200C0B5D0 /* Release Simulator */,
+				49F4DED81C6E6B4200C0B5D0 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBDA036B1CD018DC00607201 /* Debug */,
+				FBDA036C1CD018DC00607201 /* Debug-Simulator */,
+				FBDA036D1CD018DC00607201 /* Release */,
+				FBDA036E1CD018DC00607201 /* Release-Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
