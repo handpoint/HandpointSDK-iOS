@@ -6,8 +6,7 @@
 
 Logger Logger::logger;
 
-Logger::Logger() : m_level(eAll) // use to log everything
-// Logger::Logger() : m_level(eFiner)
+Logger::Logger() : m_level(eFiner)
 {
 	fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"release_log.txt"];
 	logStr = [NSMutableString new];
@@ -15,7 +14,8 @@ Logger::Logger() : m_level(eAll) // use to log everything
 
 void Logger::setFileName(NSString* filename)
 {
-	if(m_level != eOff && !fileName){
+	if(m_level != eOff && !fileName)
+    {
 		[[NSFileManager defaultManager] removeItemAtPath:fileName error:NULL];
 		fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:filename];
 		[logStr writeToFile:fileName atomically:YES encoding:NSUTF8StringEncoding error:NULL];
@@ -33,6 +33,7 @@ void Logger::log(NSString* format, ...)
 	[logStr appendString:@"\n"];
 
 	[logStr writeToFile:fileName atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    [logStr setString:@""];
 
 #ifdef DEBUG
 	NSLogv(format, vlist);

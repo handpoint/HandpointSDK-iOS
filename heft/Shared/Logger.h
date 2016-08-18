@@ -13,7 +13,7 @@ public:
 	
     void setFileName(NSString* filename);
 	
-    void setLevel(eLevel level){m_level = level;}
+    void setLevel(eLevel level) {m_level = level;}
 
 	bool isLogable(eLevel level)
     {

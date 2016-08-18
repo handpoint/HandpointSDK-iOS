@@ -221,7 +221,7 @@ bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8
 		else
 			pos = std::max(static_cast<int>(buf.size()) - 4, 0);
 
-        LOG(@"FrameManager::ReadFrames - about to call readData again.");
+        LOG_RELEASE(Logger::eAll, @"FrameManager::ReadFrames - about to call readData again.");
 		[connection readData:buf timeout:eResponseTimeout];
 	} while(true);
 
