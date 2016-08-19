@@ -273,7 +273,7 @@ namespace {
         if(aStream == recvStream)
         {
             // note: this event will not be generated again until the server sends us more data
-            NSInteger nrecv;
+            NSInteger nrecv = 0;
             auto old_size = connectionReceiveData.size();
             NSUInteger stepSize = 65536; // during testing we used a really small value here (i.e. 1)
 
