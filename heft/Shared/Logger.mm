@@ -6,35 +6,33 @@
 
 Logger Logger::logger;
 
-Logger::Logger() : m_level(eAll) // use to log everything
-// Logger::Logger() : m_level(eFiner)
+Logger::Logger()
 {
-	fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"release_log.txt"];
-	logStr = [NSMutableString new];
+#ifdef DEBUG
+    m_level = eAll;
+#else
+    m_level = eInfo;
+#endif
 }
 
 void Logger::setFileName(NSString* filename)
 {
-	if(m_level != eOff && !fileName){
-		[[NSFileManager defaultManager] removeItemAtPath:fileName error:NULL];
-		fileName = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:filename];
-		[logStr writeToFile:fileName atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-	}
 }
 
 void Logger::log(NSString* format, ...)
 {
+#ifdef DEBUG
+    
 	va_list vlist;
 	va_start(vlist, format);
-
+    NSMutableString* logStr = [NSMutableString new];
+    
 	[logStr appendString:[NSDateFormatter localizedStringFromDate:[NSDate new] dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterNoStyle]];
 	[logStr appendString:@": "];
 	[logStr appendString:[[NSString alloc] initWithFormat:format arguments:vlist]];
 	[logStr appendString:@"\n"];
 
-	[logStr writeToFile:fileName atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
-#ifdef DEBUG
 	NSLogv(format, vlist);
 #endif
 }
