@@ -8,7 +8,11 @@ Logger Logger::logger;
 
 Logger::Logger()
 {
-    m_level = eFiner;
+#ifdef DEBUG
+    m_level = eAll;
+#else
+    m_level = eInfo;
+#endif
 }
 
 void Logger::setFileName(NSString* filename)
