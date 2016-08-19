@@ -42,74 +42,74 @@ const NSString* kAppVersionInfoKey = @"AppVersion";
 const NSString* kXMLDetailsInfoKey = @"XMLDetails";
 
 NSArray* statusMessages = @[
-	@"Undefined"
-	,@"Success"
-	,@"Invalid data"
-	,@"Processing error"
-	,@"Command not allowed"
-	,@"Device is not initialized"
-	,@"Connection timeout detected"
-	,@"Connection error"
-	,@"Send error"
-	,@"Receiving error"
-	,@"No data available"
-	,@"Transaction not allowed"
-	,@"Currency not supported"
-	,@"No host configuration found"
-	,@"Card reader error"
-	,@"Failed to read card data"
-	,@"Invalid card"
-	,@"Timeout waiting for user input"
-	,@"User cancelled the transaction"
-	,@"Invalid signature"
-	,@"Waiting for card"
-	,@"Card detected"
-	,@"Waiting for application selection"
-	,@"Waiting for application confirmation"
-	,@"Waiting for amount validation"
-	,@"Waiting for PIN entry"
-	,@"Waiting for manual card data"
-	,@"Waiting for card removal"
-	,@"Waiting for gratuity"
-	,@"Shared secret invalid"
-	,@"Authenticating POS"
-	,@"Waiting for signature"
-	,@"Connecting to host"
-	,@"Sending data to host"
-	,@"Waiting for data from host"
-	,@"Disconnecting from host"
-    ,@"PIN entry completed"
-    ,@"Merchant cancelled the transaction"
-    ,@"Request invalid"
-    ,@"Card cancelled the transaction"
-    ,@"Blocked card"
-    ,@"Request for authorisation timed out"
-    ,@"Request for payment timed out"
-    ,@"Response to authorisation request timed out"
-    ,@"Response to payment request timed out"
-    ,@"Please insert card in chip reader"
-    ,@"Remove the card from the reader"
-    ,@"This device does not have a scanner"
-    ,@""
-    ,@"Operation cancelled, the battery is too low. Please charge."
-    ,@"Waiting for accoutn type selection"
-    ,@"Bluetooth is not supported on this device" ];
+                            @"Undefined"
+                            ,@"Success"
+                            ,@"Invalid data"
+                            ,@"Processing error"
+                            ,@"Command not allowed"
+                            ,@"Device is not initialized"
+                            ,@"Connection timeout detected"
+                            ,@"Connection error"
+                            ,@"Send error"
+                            ,@"Receiving error"
+                            ,@"No data available"
+                            ,@"Transaction not allowed"
+                            ,@"Currency not supported"
+                            ,@"No host configuration found"
+                            ,@"Card reader error"
+                            ,@"Failed to read card data"
+                            ,@"Invalid card"
+                            ,@"Timeout waiting for user input"
+                            ,@"User cancelled the transaction"
+                            ,@"Invalid signature"
+                            ,@"Waiting for card"
+                            ,@"Card detected"
+                            ,@"Waiting for application selection"
+                            ,@"Waiting for application confirmation"
+                            ,@"Waiting for amount validation"
+                            ,@"Waiting for PIN entry"
+                            ,@"Waiting for manual card data"
+                            ,@"Waiting for card removal"
+                            ,@"Waiting for gratuity"
+                            ,@"Shared secret invalid"
+                            ,@"Authenticating POS"
+                            ,@"Waiting for signature"
+                            ,@"Connecting to host"
+                            ,@"Sending data to host"
+                            ,@"Waiting for data from host"
+                            ,@"Disconnecting from host"
+                            ,@"PIN entry completed"
+                            ,@"Merchant cancelled the transaction"
+                            ,@"Request invalid"
+                            ,@"Card cancelled the transaction"
+                            ,@"Blocked card"
+                            ,@"Request for authorisation timed out"
+                            ,@"Request for payment timed out"
+                            ,@"Response to authorisation request timed out"
+                            ,@"Response to payment request timed out"
+                            ,@"Please insert card in chip reader"
+                            ,@"Remove the card from the reader"
+                            ,@"This device does not have a scanner"
+                            ,@""
+                            ,@"Operation cancelled, the battery is too low. Please charge."
+                            ,@"Waiting for accoutn type selection"
+                            ,@"Bluetooth is not supported on this device" ];
 
 
 @interface MpedDevice ()<IResponseProcessor>
 @end
 
 enum eSignConditions{
-	eNoSignCondition
-	, eSignCondition
+    eNoSignCondition
+    , eSignCondition
 };
 
 @implementation MpedDevice{
-	HeftConnection* connection;
-	NSData* sharedSecret;
-	__weak NSObject<HeftStatusReportDelegate>* delegate;
-	NSConditionLock* signLock;
-	BOOL signatureIsOk;
+    HeftConnection* connection;
+    NSData* sharedSecret;
+    __weak NSObject<HeftStatusReportDelegate>* delegate;
+    NSConditionLock* signLock;
+    BOOL signatureIsOk;
     BOOL cancelAllowed;
 }
 
@@ -121,51 +121,48 @@ enum eSignConditions{
     LOG(@"MpedDevice::initWithConnection");
 
 #ifndef HEFT_SIMULATOR
-	if(aConnection){
+    if(aConnection){
 #endif
-		if(self = [super init]){
-			LOG(@"MpedDevice::init");
-			delegate = aDelegate;
-			signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
+        if(self = [super init]){
+            LOG(@"MpedDevice::init");
+            delegate = aDelegate;
+            signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
             cancelAllowed = NO; // cancel is only allowed when an operation is under way.
-
+            
 #ifdef HEFT_SIMULATOR
-			mpedInfo = @{
-				kSerialNumberInfoKey:@"000123400123"
-				, kPublicKeyVersionInfoKey:@1
-				, kEMVParamVersionInfoKey:@1
-				, kGeneralParamInfoKey:@1
-				, kManufacturerCodeInfoKey:@0
-				, kModelCodeInfoKey:@0
-				, kAppNameInfoKey:@"Simulator"
-				, kAppVersionInfoKey:@0x0107
-				, kXMLDetailsInfoKey:@""
-			};
+            mpedInfo = @{
+                         kSerialNumberInfoKey:@"000123400123"
+                         , kPublicKeyVersionInfoKey:@1
+                         , kEMVParamVersionInfoKey:@1
+                         , kGeneralParamInfoKey:@1
+                         , kManufacturerCodeInfoKey:@0
+                         , kModelCodeInfoKey:@0
+                         , kAppNameInfoKey:@"Simulator"
+                         , kAppVersionInfoKey:@0x0107
+                         , kXMLDetailsInfoKey:@""
+                         };
             
             isTransactionResultPending = simulatorState.isInException();
 #else
-			connection = aConnection;
-			sharedSecret = aSharedSecret;
+            connection = aConnection;
+            sharedSecret = aSharedSecret;
             
-			try
+            try
             {
                 
-				FrameManager fm(InitRequestCommand(connection.maxFrameSize,
+                FrameManager fm(InitRequestCommand(connection.maxFrameSize,
                                                    [HeftManager sharedManager].version
                                                    ),
                                 connection.maxFrameSize
                                 );
                 
-				fm.Write(connection);
-				InitResponseCommand* pResponse =
-                    dynamic_cast<InitResponseCommand*>(
-                        reinterpret_cast<ResponseCommand*>(
-                            fm.ReadResponse<InitResponseCommand>(connection, false)
-                        )
-                );
-				if(!pResponse)
+                fm.Write(connection);
+                
+                std::unique_ptr<InitResponseCommand> pResponse(fm.ReadResponse<InitResponseCommand>(connection, false));
+                
+                if(!pResponse)
                 {
-					throw communication_exception();
+                    throw communication_exception();
                 }
                 
                 LOG(@"Status: %d", pResponse->GetStatus());
@@ -174,11 +171,7 @@ enum eSignConditions{
                     // try init again, but now without the XML and all that
                     fm = FrameManager(InitRequestCommand(0, nil), connection.maxFrameSize);
                     fm.Write(connection);
-                    pResponse = dynamic_cast<InitResponseCommand*>(
-                                  reinterpret_cast<ResponseCommand*>(
-                                    fm.ReadResponse<InitResponseCommand>(connection, false)
-                                  )
-                                 );
+                    pResponse.reset(fm.ReadResponse<InitResponseCommand>(connection, false));
                     LOG(@"Status: %d", pResponse->GetStatus());
                     if (pResponse->GetStatus() == EFT_PP_STATUS_INVALID_DATA)
                     {
@@ -186,7 +179,6 @@ enum eSignConditions{
                         // "What we've got here is failure to communicate"
                         throw communication_exception();
                     }
-
                 }
                 
                 auto bufferSize = pResponse->GetBufferSize();
@@ -215,51 +207,51 @@ enum eSignConditions{
                     isTransactionResultPending = NO;
                 }
                 /*
-                 I´ve seriously debated whether or not to create a new dictionary object in the MpedDevice interface, 
-                 to hold the xml details from the above xml details parse, and reached the conclusion that currently 
+                 I´ve seriously debated whether or not to create a new dictionary object in the MpedDevice interface,
+                 to hold the xml details from the above xml details parse, and reached the conclusion that currently
                  there is no need for it as mpedInfo already provides all important information.
                  But, in preparation for the future, I´ve decided that we should deprecate the kXMLDetailsInfoKey tag.
                  */
-
+                
                 mpedInfo = @{
-					kSerialNumberInfoKey:@(pResponse->GetSerialNumber().c_str())
-					, kPublicKeyVersionInfoKey:@(pResponse->GetPublicKeyVer())
-					, kEMVParamVersionInfoKey:@(pResponse->GetEmvParamVer())
-					, kGeneralParamInfoKey:@(pResponse->GetGeneralParamVer())
-					, kManufacturerCodeInfoKey:@(pResponse->GetManufacturerCode())
-					, kModelCodeInfoKey:@(pResponse->GetModelCode())
-					, kAppNameInfoKey:@(pResponse->GetAppName().c_str())
-					, kAppVersionInfoKey:@(pResponse->GetAppVer())
-					, kXMLDetailsInfoKey:@(pResponse->GetXmlDetails().c_str())
-				};
-			}
+                             kSerialNumberInfoKey:@(pResponse->GetSerialNumber().c_str())
+                             , kPublicKeyVersionInfoKey:@(pResponse->GetPublicKeyVer())
+                             , kEMVParamVersionInfoKey:@(pResponse->GetEmvParamVer())
+                             , kGeneralParamInfoKey:@(pResponse->GetGeneralParamVer())
+                             , kManufacturerCodeInfoKey:@(pResponse->GetManufacturerCode())
+                             , kModelCodeInfoKey:@(pResponse->GetModelCode())
+                             , kAppNameInfoKey:@(pResponse->GetAppName().c_str())
+                             , kAppVersionInfoKey:@(pResponse->GetAppVer())
+                             , kXMLDetailsInfoKey:@(pResponse->GetXmlDetails().c_str())
+                             };
+            }
             catch(connection_broken_exception& cb_exception)
             {
                 LOG(@"MpedDevice, CONNECTION BROKEN EXCEPTION - NEED TO HANDLE EOT.");
                 [self sendResponseError:cb_exception.stringId()];
                 self = nil;
             }
-			catch(heft_exception& exception)
+            catch(heft_exception& exception)
             {
-				[self sendResponseError:exception.stringId()];
-				self = nil;
-			}
+                [self sendResponseError:exception.stringId()];
+                self = nil;
+            }
 #endif
-		}
+        }
 #ifndef HEFT_SIMULATOR
-	}
-	else{
-		[self sendResponseError:@"Can't create bluetooth connection"];
-		self = nil;
-	}
+    }
+    else{
+        [self sendResponseError:@"Can't create bluetooth connection"];
+        self = nil;
+    }
 #endif
-
-	return self;
+    
+    return self;
 }
 
 - (void)dealloc
 {
-	LOG(@"MpedDevice::dealloc");
+    LOG(@"MpedDevice::dealloc");
     [self shutdown];
 }
 
@@ -279,33 +271,45 @@ enum eSignConditions{
         return;
     }
     
-	LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
+    LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
     cancelAllowed = NO;
-
+    
 #if HEFT_SIMULATOR
-	// [queue cancelAllOperations];
+    // [queue cancelAllOperations];
 #else
-	FrameManager fm(IdleRequestCommand(), connection.maxFrameSize);
-	fm.WriteWithoutAck(connection);
+    FrameManager fm(IdleRequestCommand(), connection.maxFrameSize);
+    fm.WriteWithoutAck(connection);
 #endif
-	LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
+    LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
 }
+
+/*
+ - (void)initKeen
+ {
+ //
+ [KeenClient sharedClientWithProjectID:@"56afbb7e46f9a76bfe19bfdc"
+ andWriteKey:@"6460787402f46a7cafef91ec1d666cc37e14cc0f0bc26a0e3066bfc2e3c772d83a91a99f0ddec23a59fead9051e53bb2e2693201df24bd29eac9c78a61a2208993e9cef175bca6dc029ef28a93a0e5e135201bda7d6a98b2aa1f5aa76c5a4002"
+ andReadKey:@"41767afa5ec4ad84cc2f7c2baec294cec64c6267246fa471f1ba18580f351e39744f6d6b51329e9a8807aa4b9d5875fd64b5814008dd0c41b4ea99fa6c771bdc031ff4d5fb46d1cb05fba21e0e2ed226e2d900f99b6f37e69e567f1128669066"];
+ 
+ }
+ */
+
 
 - (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^ {
         [operation start];
     });
-	return YES;
+    return YES;
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present
 {
-	return [self saleWithAmount:amount currency:currency cardholder:present reference:@""];
+    return [self saleWithAmount:amount currency:currency cardholder:present reference:@""];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference{
-	LOG_RELEASE(Logger::eInfo,
+    LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
                 (int)amount, currency, present ? @"is present" : @"is not present", reference);
     NSString *params = @"";
@@ -325,17 +329,17 @@ enum eSignConditions{
                                                            present,
                                                            std::string(),
                                                            std::string([params UTF8String])
-                                );
+                                                           );
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString *)months{
-	LOG_RELEASE(Logger::eInfo,
+    LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
                 (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
     NSString *params = @"";
@@ -343,10 +347,10 @@ enum eSignConditions{
     NSString *monthsString = @"";
     if(reference != NULL && reference.length != 0) {
         refrenceString = [NSString stringWithFormat:
-                        @"<CustomerReference>"
-                        @"%@"
-                        @"</CustomerReference>",
-                        reference];
+                          @"<CustomerReference>"
+                          @"%@"
+                          @"</CustomerReference>",
+                          reference];
     }
     if(months != NULL && months.length != 0) {
         monthsString = [NSString stringWithFormat:
@@ -370,22 +374,22 @@ enum eSignConditions{
                                                            present,
                                                            std::string(),
                                                            std::string([params UTF8String])
-                                );
+                                                           );
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
-	return [self refundWithAmount:amount currency:currency cardholder:present reference:@""];
+    return [self refundWithAmount:amount currency:currency cardholder:present reference:@""];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString *)reference{
-	LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+    LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
@@ -407,30 +411,30 @@ enum eSignConditions{
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
-	LOG_RELEASE(Logger::eInfo,
+    LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
-                              std::string([currency UTF8String]),
-                              (std::uint32_t)amount,
-                              present,
-                              std::string([transaction UTF8String]),
-                              std::string());
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
+                                                           std::string([currency UTF8String]),
+                                                           (std::uint32_t)amount,
+                                                           present,
+                                                           std::string([transaction UTF8String]),
+                                                           std::string());
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
-	LOG_RELEASE(Logger::eInfo,
+    LOG_RELEASE(Logger::eInfo,
                 @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
@@ -441,12 +445,12 @@ enum eSignConditions{
                                                            , std::string([transaction UTF8String])
                                                            , std::string());
     
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)retrievePendingTransaction{
@@ -469,24 +473,24 @@ enum eSignConditions{
 }
 
 -(BOOL)enableScanner{
-	return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
+    return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan{
-	return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
+    return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-	return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
+    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 
 //Deprecated enable scanner function names
 -(BOOL)enableScanner:(BOOL)multiScan{
-	return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
+    return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-	return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
+    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
-	return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
+    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
 }
 
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
@@ -494,16 +498,16 @@ enum eSignConditions{
     NSString *params = @"";
     
     NSString* multiScanString = [NSString stringWithFormat:
-                      @"<multiScan>"
-                      @"%s"
-                      @"</multiScan>",
-                       multiScan ? "true" : "false"];
+                                 @"<multiScan>"
+                                 @"%s"
+                                 @"</multiScan>",
+                                 multiScan ? "true" : "false"];
     NSString* buttonModeString = [NSString stringWithFormat:
-                    @"<buttonMode>"
-                    @"%s"
-                    @"</buttonMode>",
-                      buttonMode ? "true" : "false"];
-
+                                  @"<buttonMode>"
+                                  @"%s"
+                                  @"</buttonMode>",
+                                  buttonMode ? "true" : "false"];
+    
     // default timeoutvalue is 60 seconds
     long timeoutSecondsParameter = timeoutSeconds == 0 ? 60 : timeoutSeconds;
     if (timeoutSecondsParameter > 65535)
@@ -512,18 +516,18 @@ enum eSignConditions{
         timeoutSecondsParameter = 65535;
     }
     NSString* timeoutSecondsString = [NSString stringWithFormat:
-                    @"<timeoutSeconds>"
-                    @"%ld"
-                    @"</timeoutSeconds>",
-                    timeoutSecondsParameter];
+                                      @"<timeoutSeconds>"
+                                      @"%ld"
+                                      @"</timeoutSeconds>",
+                                      timeoutSecondsParameter];
     
     params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                  @"<enableScanner>"
-                  @"%@"
-                  @"%@"
-                  @"%@"
-                  @"</enableScanner>",
-                  multiScanString, buttonModeString, timeoutSecondsString];
+              @"<enableScanner>"
+              @"%@"
+              @"%@"
+              @"%@"
+              @"</enableScanner>",
+              multiScanString, buttonModeString, timeoutSecondsString];
     
     XMLCommandRequestCommand* xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
@@ -540,71 +544,71 @@ enum eSignConditions{
     [self cancel];
 }
 - (BOOL)financeStartOfDay{
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeEndOfDay{
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)financeInit{
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
     isTransactionResultPending = NO;
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logSetLevel:(eLogLevel)level{
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logReset{
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (BOOL)logGetInfo{
-	MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
+    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:sharedSecret];
-	return [self postOperationToQueueIfNew:operation];
+    return [self postOperationToQueueIfNew:operation];
 }
 
 - (void)acceptSignature:(BOOL)flag{
-	[signLock lock];
-	signatureIsOk = flag;
-	[signLock unlockWithCondition:eSignCondition];
+    [signLock lock];
+    signatureIsOk = flag;
+    [signLock unlockWithCondition:eSignCondition];
 }
 
 - (BOOL)getEMVConfiguration {
     LOG(@"MpedDevice getEMVConfiguration");
     
     NSString* params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-              @"<getReport>"
-                @"<name>"
-                 @"EMVConfiguration"
-                @"</name>"
-              @"</getReport>";
+    @"<getReport>"
+    @"<name>"
+    @"EMVConfiguration"
+    @"</name>"
+    @"</getReport>";
     
     XMLCommandRequestCommand* xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
@@ -622,16 +626,16 @@ enum eSignConditions{
     NSData* xmlData = [[NSData alloc] initWithBytesNoCopy:(void*)[xml UTF8String]
                                                    length:[xml length]
                                              freeWhenDone:NO];
-
+    
     NSXMLParser* xmlParser = [[NSXMLParser alloc] initWithData:xmlData];
-	ResponseParser* parser = [[ResponseParser alloc] initWithPath:path];
-	xmlParser.delegate = parser;
-	//LOG(@"%@", xml);
-	[xmlParser parse];
-	//Verify([xmlParser parse]);
-	//LOG(@"%@", xmlParser.parserError);
-	//LOG(@"%@", parser.result);
-	return parser.result;
+    ResponseParser* parser = [[ResponseParser alloc] initWithPath:path];
+    xmlParser.delegate = parser;
+    //LOG(@"%@", xml);
+    [xmlParser parse];
+    //Verify([xmlParser parse]);
+    //LOG(@"%@", xmlParser.parserError);
+    //LOG(@"%@", parser.result);
+    return parser.result;
 }
 
 #pragma mark IResponseProcessor
@@ -681,11 +685,11 @@ enum eSignConditions{
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
 {
-	ResponseInfo* info = [ResponseInfo new];
-	info.statusCode = code;
-	info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-	info.xml = xml;
-	LOG_RELEASE(Logger::eFine, @"%@", info.status);
+    ResponseInfo* info = [ResponseInfo new];
+    info.statusCode = code;
+    info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+    info.xml = xml;
+    LOG_RELEASE(Logger::eFine, @"%@", info.status);
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         LOG_RELEASE(Logger::eFine, @"calling responseStatus");
@@ -695,9 +699,9 @@ enum eSignConditions{
 }
 
 -(void)sendResponseError:(NSString*)status{
-	ResponseInfo* info = [ResponseInfo new];
-	info.status = status;
-	LOG_RELEASE(Logger::eFine, @"%@", info.status);
+    ResponseInfo* info = [ResponseInfo new];
+    info.status = status;
+    LOG_RELEASE(Logger::eFine, @"%@", info.status);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
@@ -722,8 +726,8 @@ enum eSignConditions{
 }
 
 - (int)processSign:(SignatureRequestCommand*)pRequest{
-	int result = EFT_PP_STATUS_PROCESSING_ERROR;
-
+    int result = EFT_PP_STATUS_PROCESSING_ERROR;
+    
     // note: cancelAllowed = NO; // is not needed here as the card reader will send us a status message with the flag set correctly just before
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
@@ -734,34 +738,34 @@ enum eSignConditions{
                                           path:@"SignatureRequiredRequest"];
     
     double wait_time = [xml[@"timeout"] doubleValue];
-
-	if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:wait_time]])
+    
+    if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:wait_time]])
     {
-		result = signatureIsOk ? EFT_PP_STATUS_SUCCESS : EFT_PP_STATUS_INVALID_SIGNATURE;
-		signatureIsOk = NO;
-		[signLock unlockWithCondition:eNoSignCondition];
-	}
-	else
+        result = signatureIsOk ? EFT_PP_STATUS_SUCCESS : EFT_PP_STATUS_INVALID_SIGNATURE;
+        signatureIsOk = NO;
+        [signLock unlockWithCondition:eNoSignCondition];
+    }
+    else
     {
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp cancelSignature];
         });
     }
-
-	return result;
+    
+    return result;
 }
 
 -(void)processResponse:(ResponseCommand*)pResponse{
-	int status = pResponse->GetStatus();
-	if(status != EFT_PP_STATUS_SUCCESS){
-		[self sendResponseInfo:statusMessages[status]
+    int status = pResponse->GetStatus();
+    if(status != EFT_PP_STATUS_SUCCESS){
+        [self sendResponseInfo:statusMessages[status]
                           code:status
                            xml:nil];
 #ifdef HEFT_SIMULATOR
-		[NSThread sleepForTimeInterval:1.];
+        [NSThread sleepForTimeInterval:1.];
 #endif
-	}
+    }
 }
 
 -(void)processXMLCommandResponseCommand:(XMLCommandResponseCommand*)pResponse{
@@ -787,17 +791,17 @@ enum eSignConditions{
             // call some method with these parameters
             [self sendReportResult:report_data];
         }
-
+        
     }
-
+    
 #ifdef HEFT_SIMULATOR
-	[NSThread sleepForTimeInterval:1.];
+    [NSThread sleepForTimeInterval:1.];
 #endif
 }
 
 -(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse
 {
-	int status = pResponse->GetStatus();
+    int status = pResponse->GetStatus();
     NSString* statusMessage = status < ([statusMessages count]-1) ? statusMessages[status] : @"Unknown status";
     NSDictionary* xml;
     if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]) count]> 0)
@@ -822,26 +826,30 @@ enum eSignConditions{
 
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse
 {
-	int status = pResponse->GetStatus();
-	FinanceResponseInfo* info = [FinanceResponseInfo new];
+    int status = pResponse->GetStatus();
+    FinanceResponseInfo* info = [FinanceResponseInfo new];
     info.financialResult = pResponse->GetFinancialStatus();
     info.isRestarting = pResponse->isRestarting();
-	info.statusCode = status;
-	NSDictionary* xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
+    info.statusCode = status;
+    NSDictionary* xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
                                                  path:@"FinancialTransactionResponse"];
-	info.xml = xmlDetails;
-	info.status = status == EFT_PP_STATUS_SUCCESS ?
-        [xmlDetails objectForKey:@"FinancialStatus"] :
-        [xmlDetails objectForKey:@"StatusMessage"];
-	info.authorisedAmount = pResponse->GetAmount();
-	info.transactionId = @(pResponse->GetTransID().c_str());
-	info.customerReceipt = @(pResponse->GetCustomerReceipt().c_str());
-	info.merchantReceipt = @(pResponse->GetMerchantReceipt().c_str());
+    info.xml = xmlDetails;
+    info.status = status == EFT_PP_STATUS_SUCCESS ?
+    [xmlDetails objectForKey:@"FinancialStatus"] :
+    [xmlDetails objectForKey:@"StatusMessage"];
+    info.authorisedAmount = pResponse->GetAmount();
+    info.transactionId = @(pResponse->GetTransID().c_str());
+    info.customerReceipt = @(pResponse->GetCustomerReceipt().c_str());
+    info.merchantReceipt = @(pResponse->GetMerchantReceipt().c_str());
     
     NSString* rt = [xmlDetails objectForKey:@"RecoveredTransaction"];
     BOOL transactionResultPending = ((rt != nil) && [rt isEqualToString:@"true"]) ? YES : NO;
     
-	LOG_RELEASE(Logger::eFine, @"%@", info.status);
+    LOG_RELEASE(Logger::eFine, @"%@", info.status);
+    
+    // check if we have a block - if so, post that block instead of calling the event/callback
+    // although it looks the same, we just call the block with parameters instead of the other
+
     if(!pResponse->isRecoveredTransaction())
     {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -861,17 +869,17 @@ enum eSignConditions{
 }
 
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
-}*/
+ }*/
 
 -(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse
 {
-	LogInfo* info = [LogInfo new];
-	int status = pResponse->GetStatus();
-	info.statusCode = status;
-	info.status = statusMessages[status];
-	if(status == EFT_PP_STATUS_SUCCESS)
+    LogInfo* info = [LogInfo new];
+    int status = pResponse->GetStatus();
+    info.statusCode = status;
+    info.status = statusMessages[status];
+    if(status == EFT_PP_STATUS_SUCCESS)
     {
-		info.log = @(pResponse->GetData().c_str());
+        info.log = @(pResponse->GetData().c_str());
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
