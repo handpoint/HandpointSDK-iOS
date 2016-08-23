@@ -185,7 +185,8 @@ bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8
 		int len = (int)buf.size();
 
 		int frame_len = EndPos(pData, pos, len);
-		if(frame_len != -1){
+		if(frame_len != -1)
+        {
 			len = frame_len;
 			Frame frame(pData, len);
 
@@ -219,9 +220,10 @@ bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8
 				continue;
 		}
 		else
+        {
 			pos = std::max(static_cast<int>(buf.size()) - 4, 0);
+        }
 
-        LOG_RELEASE(Logger::eAll, @"FrameManager::ReadFrames - about to call readData again.");
 		[connection readData:buf timeout:eResponseTimeout];
 	} while(true);
 
@@ -232,10 +234,12 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
     FramePayload* pCommand;
     int nread;
 	std::vector<std::uint8_t> buf;
+    buf.reserve(8192);
 	data.clear();
 	while(true)
     {
-        if(buf.size() < sizeof(pCommand->StartSequence))
+        while(buf.size() < sizeof(pCommand->StartSequence))
+        // if(buf.size() < sizeof(pCommand->StartSequence))
         {
             nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
             LOG(@"FrameManager::Read, got %d bytes from readData", nread);
@@ -245,26 +249,30 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
                 else
                     throw timeout2_exception();
             }
-            if(nread < sizeof(pCommand->StartSequence))
+            // if(nread < sizeof(pCommand->StartSequence))
+            /*
+            if(buf.size() < sizeof(pCommand->StartSequence))
             {
                 // this is not an error ...
                 // ... it just means that more bytes are required
-                LOG(@"FrameManager::Read I need more data. Read size: %i  Read bytes: %02X",nread,buf[0]);
+                LOG(@"FrameManager::Read I need more data. Read size: %i  Total read: %lu, Read bytes: %02X", nread, buf.size(), buf[0]);
                 continue;
             }
+             */
         }
-        /*
-        else
-        {
-            nread = (int)buf.size(); // this value is never read from nread
-        }
-        */
 		pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
 		switch(pCommand->StartSequence){
 		case FRAME_START:
             LOG(@"FrameManager::Read FRAME_START");
 			if(ReadFrames(connection, buf))
+            {
 				return ResponseCommand::Create(data);
+            }
+            else
+            {
+                LOG(@"FrameManager::Read FRAME_START, ReadFrames failed. Nothing done.");
+                // what if readFrames fails? At least log it.
+            }
 			break;
 		case SESSION_END:
 			LOG(@"FrameManager::Read SESSION_END");

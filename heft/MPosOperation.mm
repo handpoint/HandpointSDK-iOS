@@ -274,21 +274,33 @@ namespace {
         {
             // note: this event will not be generated again until the server sends us more data
             NSInteger nrecv = 0;
-            auto old_size = connectionReceiveData.size();
-            NSUInteger stepSize = 65536; // during testing we used a really small value here (i.e. 1)
+            // auto old_size = connectionReceiveData.size();
+            // NSUInteger stepSize = 16384; // during testing we used a really small value here (i.e. 1)
+            
+            std::uint8_t read_buffer[16384];
 
             do
             {
-                connectionReceiveData.resize(old_size + stepSize);
-                nrecv = [recvStream read:&connectionReceiveData[old_size] maxLength:stepSize];
+                // nrecv = [recvStream read:&connectionReceiveData[old_size] maxLength:stepSize];
+                nrecv = [recvStream read:read_buffer maxLength:16384];
                 // it is possible that we didn't read all available data due to our buffer being too small
                 LOG(@"read %ld bytes from tcp stream.", (long)nrecv);
-                if(nrecv >= 0)
+                if(nrecv > 0)
                 {
-                    old_size += nrecv;
+                    // old_size += nrecv;
+                    connectionReceiveData.insert(end(connectionReceiveData), read_buffer, read_buffer+(int)nrecv);
+                }
+                else if (nrecv == 0)
+                {
+                    // end of stream, do nothing, will received an NSStreamEventEndEncountered event next
+                    return;
                 }
                 else
                 {
+                    // -1, an error occurred. But what error?
+                    NSError* error = [recvStream streamError];
+                    LOG(@"Got an error on the stream: \n %@", [error userInfo]);
+                    
                     // first remove us as the streams event handler so that we don't accidentally get more events
                     [recvStream setDelegate:nil];
                     [sendStream setDelegate:nil];
@@ -301,7 +313,7 @@ namespace {
             } while ([recvStream hasBytesAvailable]);
             
             // we now have all the data that was pending
-            connectionReceiveData.resize(old_size);
+            // connectionReceiveData.resize(old_size);
             
             // note: for this event we don't touch the connectionState state variable, or the lock, as it will be handled in the NSSteamEventEndEncountered condition below.
             
@@ -330,6 +342,9 @@ namespace {
                     {
                         connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);
                         [connectLock unlock];
+                        
+                        LOG_RELEASE(Logger::eFine, @"wrote %lu bytes, %lu still left to write", written, connectionSendData.size());
+                        return;
                     }
                     else
                     {
@@ -347,9 +362,8 @@ namespace {
                             
                             connectionState = eConnectionClosed;
                             
-                            // [connectLock unlock];
-                            // TODO: deadlocked?
                             LOG_RELEASE(Logger::eFine, @"Error writing data, closing connection.");
+                            [connectLock unlock];
                             return;
                         }
                     

@@ -215,7 +215,9 @@ bool isStatusAnError(NSStreamStatus status)
         NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize)];
         
         if(nwritten <= 0)
+        {
             throw communication_exception();
+        }
 
         // LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) nwritten));
         LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
@@ -266,8 +268,8 @@ bool isStatusAnError(NSStreamStatus status)
                 const int bufferSize = ciDefaultMaxFrameSize;
 
                 do {
-                    Buffer readBuffer;
-                    readBuffer.resize(bufferSize);
+                    Buffer readBuffer(bufferSize);
+                    // readBuffer.resize(bufferSize);
                     nread = [inputStream read:&readBuffer[0] maxLength:bufferSize];
                     LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", &readBuffer[0], (int)nread), (int)nread);
                     
