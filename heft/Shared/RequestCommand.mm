@@ -291,6 +291,16 @@ ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, std::uint32_t 
     data_len = htons(pRequest->data_len);
 }
 
+ReceiveResponseCommand::ReceiveResponseCommand(NSData* payload)
+: HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)[payload length])
+
+{
+    ReceiveResponsePayload* pPayload = GetPayload<ReceiveResponsePayload>();
+    pPayload->data_len = htonl([payload length]);
+    memcpy(pPayload->data, [payload bytes], [payload length]);
+}
+
+
 ReceiveResponseCommand::ReceiveResponseCommand(const std::vector<std::uint8_t>& payload)
     : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)payload.size())
 {

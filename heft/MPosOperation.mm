@@ -77,12 +77,13 @@ enum eConnectCondition{
 	//int maxFrameSize;
 	__weak id<IResponseProcessor> processor;
 	NSData* sharedSecret;
-	NSOutputStream* sendStream;
-	NSInputStream* recvStream;
+	// NSOutputStream* sendStream;
+	// NSInputStream* recvStream;
     
     // we get the host and the port from the ConnectToHost request command.
     NSURLComponents *components;
     int timeout;
+    NSData* host_response_data;
     
 	NSConditionLock* connectLock;
     enum eConnectionState {
@@ -94,8 +95,9 @@ enum eConnectCondition{
         eConnectionReceiving,
         eConnectionReceivingComplete,
     } connectionState;
-    std::vector<std::uint8_t> connectionSendData;
-    std::vector<std::uint8_t> connectionReceiveData;
+
+    // std::vector<std::uint8_t> connectionSendData;
+    // std::vector<std::uint8_t> connectionReceiveData;
 }
 
 
@@ -125,8 +127,8 @@ enum eConnectCondition{
 		sharedSecret = aSharedSecret;
 		connectLock = [[NSConditionLock alloc] initWithCondition:eNoConnectStateCondition];
         connectionState = eConnectionClosed;
-        connectionSendData.clear();
-        connectionReceiveData.clear();
+        // connectionSendData.clear();
+        // connectionReceiveData.clear();
 	}
 	return self;
 }
@@ -216,6 +218,7 @@ enum eConnectCondition{
 
 - (void)cleanUpConnection{
     LOG(@"MPosOpoeration::cleanUpConnection");
+    /*
     if(recvStream) {
         [recvStream close];
         [recvStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
@@ -230,6 +233,7 @@ enum eConnectCondition{
         [sendStream setDelegate:nil];
         sendStream = nil;
     }
+     */
     connectionState = eConnectionClosed;
     runLoopRunning = NO;
 }
@@ -247,6 +251,7 @@ namespace {
     };
 }
 
+#if 0
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
 {
     LOG(@"stream:aStream handleEvent:%@", eventCodes[(unsigned long)eventCode]);
@@ -402,6 +407,7 @@ namespace {
         [connectLock unlockWithCondition:eReadyStateCondition];
     }
 }
+#endif
 
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest
 {
@@ -423,11 +429,11 @@ namespace {
    
     timeout = pRequest->GetTimeout();
     
-    // return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
+    return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
     
 
     
-#if 1
+#if 0
     
     int status = EFT_PP_STATUS_CONNECT_ERROR;
     
@@ -541,7 +547,8 @@ namespace {
     // Content-Length: 1340\r\n\r\n          <--- double linefeed before data
     // 025\xb0\x02\x0b
     //
-    
+
+
     NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
     
     LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:50]);
@@ -549,8 +556,17 @@ namespace {
     
     NSArray* parts = [http_request componentsSeparatedByString:@"\r\n\r\n"];
     // should have two parts, the header and the data
-    NSArray* header_values = [[parts objectAtIndex:0] componentsSeparatedByString:@"\r\n"];
-    NSString* data = [parts objectAtIndex:1];
+    NSString* http_header = [parts objectAtIndex:0];
+    NSArray* header_values = [http_header componentsSeparatedByString:@"\r\n"];
+
+    // the post data should be NSData, not NSString - copy straight from the buffer
+    NSUInteger size_of_http_header = [http_header length];
+
+    NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
+                                  length: pRequest->GetLength() - (size_of_http_header+4)];
+
+
+    // NSString* data = [parts objectAtIndex:1];
 
     // get the first line of the http header
     // POST /viscus/cr/v1/authorization HTTP/1.1
@@ -561,133 +577,57 @@ namespace {
     LOG_RELEASE(Logger::eFiner, @"first line: %@, path: %@", first_line, path);
 
     components.path = path;
-    
+
+
     NSURL* url = components.URL;
     LOG_RELEASE(Logger::eFiner, [url absoluteString]);
     
 
+    // NSURLRequest* request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:timeout];
 
-    NSURLRequest* request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:timeout];
 
-    /*
-    (NSURLSessionDataTask *)dataTaskWithRequest:request completionHandler:^
-completionHandler:(void (^)(NSData *data,
-                            NSURLResponse *response,
-                            NSError *error))completionHandler
-    */
-    
-    
-#if 1
-    if(sendStream)
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Accept"];
+
+    NSCondition* wait_until_done = [[NSCondition alloc] init];
+
+    [wait_until_done lock];
+
+    LOG(@"Sending a http request to host");
+
+    NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
+                                                               fromData:data
+                                                      completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
     {
-        if (connectionState == eConnectionConnected)
-        {
-            LOG(@"connectionState == eConnectionConnected");
-            connectionState = eConnectionSending;  //TODO: skoða þetta betur, sjá hvað er að gerast.
-        }
-        
-        // TODO: do we have to copy the data, can't we just store a pointer to the request
-        //       , an index into the data and the bytes written?
-        connectionSendData.assign(pRequest->GetData(), pRequest->GetData() + pRequest->GetLength());
-        
-        [connectLock lock];
-        if(connectionState == eConnectionSending)
-        {
-            // the stream is already waiting for data from us
-            NSInteger written = [sendStream write:connectionSendData.data()
-                                        maxLength:connectionSendData.size()];
-            
-            if(written < connectionSendData.size())
-            {
-                LOG_RELEASE(Logger::eFine,
-                            @"%d bytes sent to bureau, %d bytes left.",
-                            written, pRequest->GetLength()-written);
-                
-                connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);
-                [connectLock unlockWithCondition:eNoConnectStateCondition];
+        LOG_RELEASE(Logger::eFiner, @"Response received from host: %@", [error localizedDescription])
+        host_response_data = response_data;
+        LOG([[NSString alloc] initWithData:response_data encoding:NSUTF8StringEncoding]);
+        [wait_until_done signal];
+    }];
 
-                if([connectLock lockWhenCondition:eReadyStateCondition
-                                       beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
-                {
-                    if(connectionState == eConnectionSendingComplete)
-                    {
-                        [connectLock unlockWithCondition:eNoConnectStateCondition];
-                        return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
-                    }
-                    else
-                    {
-                        LOG(@"ConnectionState != eConnectionSendingComplete");
-                        // else send error
-                        // what/why?
-                    }
-                } // else send timeout
-                else
-                {
-                    LOG(@"Timout waiting for connectLock.");
-                }
-            }
-            else
-            {
-                if(written == connectionSendData.size())
-                {
-                    LOG(@"written == sendData size.");
-                    connectionSendData.clear();
-                    connectionState = eConnectionSendingComplete;
-                    [connectLock unlock];
-                    return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
-                }
-                else
-                {
-                    LOG(@"written > sendData size.");
-                }
-            }
-        }
-        else
-        {
-            LOG(@"(connectionState != eConnectionSending)");
-        }
-        [connectLock unlock];
-        
-    } // else this was a connection error
-    else
-    {
-        LOG(@"Trying to send to bureau but sendStream is nil.");
-    }
-    
-    // if we get to here then we encountered an error
-    // TODO: this is too general, we must make sure we know what happened - and handle
-    //       that wich we can handle. Everything else must be logged.
-    LOG(@"processSend, sending error.");
-    
-    [self cleanUpConnection];
-    
-    return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SENDING_ERROR);
-#endif
+    //Don't forget this line ever
+    [uploadTask resume];
+
+    // wait until upload done... then return - or just assume it worked to hurry things up!
+    LOG(@"Waiting for lock");
+    [wait_until_done wait];
+    LOG(@"Got lock, done");
+    [wait_until_done unlock];
+
+    return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest
 {
-	LOG(@"Recv :%d bytes, %ds timeout", pRequest->GetDataLen(), pRequest->GetTimeout());
-    
-    if(recvStream)
-    {
-        if([connectLock lockWhenCondition:eReadyStateCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
-        {
-            if(connectionState == eConnectionReceivingComplete)
-            {
-                [connectLock unlockWithCondition:eNoConnectStateCondition];
-                LOG_RELEASE(Logger::eFine, @"Response from bureau (length:%d): ", connectionReceiveData.size());
-                return new ReceiveResponseCommand(connectionReceiveData);
-            } // else receive error
-            
-            [connectLock unlockWithCondition:eNoConnectStateCondition];
-        } // else receive timeout
-    } // else there was a connect or send error
+    // LOG(@"Recv :%d bytes, %ds timeout", pRequest->GetDataLen(), pRequest->GetTimeout());
+    LOG(@"Recv :%d bytes", [host_response_data length]);
 
-    // if we get to here then we encountered an error
-    [self cleanUpConnection];
-    
-    return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVING_ERROR);
+
+    return new ReceiveResponseCommand(host_response_data);
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{

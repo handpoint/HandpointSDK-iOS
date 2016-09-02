@@ -246,7 +246,8 @@ class ReceiveResponseCommand : public HostResponseCommand{
 	} __attribute__((packed));
 
 public:
-	ReceiveResponseCommand(const std::vector<std::uint8_t>& payload);
+    ReceiveResponseCommand(const std::vector<std::uint8_t>& payload);
+	ReceiveResponseCommand(NSData* payload);
 };
 
 class DisconnectRequestCommand : public HostRequestCommand{
