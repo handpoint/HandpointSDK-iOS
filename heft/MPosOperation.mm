@@ -79,6 +79,11 @@ enum eConnectCondition{
 	NSData* sharedSecret;
 	NSOutputStream* sendStream;
 	NSInputStream* recvStream;
+    
+    // we get the host and the port from the ConnectToHost request command.
+    NSURLComponents *components;
+    int timeout;
+    
 	NSConditionLock* connectLock;
     enum eConnectionState {
         eConnectionClosed,
@@ -407,6 +412,23 @@ namespace {
                 pRequest->GetTimeout()
     );
     
+
+    
+
+    components = [[NSURLComponents alloc] init];
+    components.scheme = @"https";
+    components.host = [NSString stringWithUTF8String:pRequest->GetAddr().c_str()];
+    components.port = [NSNumber numberWithInt:pRequest->GetPort()];
+    
+   
+    timeout = pRequest->GetTimeout();
+    
+    // return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
+    
+
+    
+#if 1
+    
     int status = EFT_PP_STATUS_CONNECT_ERROR;
     
     [connectLock lock];
@@ -494,14 +516,67 @@ namespace {
         // also, note that we won't touch the "current" connection
     }
     
+    
     return new HostResponseCommand(CMD_HOST_CONN_RSP, status);
+    
+#endif
 }
 
 
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest
 {
     LOG_RELEASE(Logger::eFine, @"Sending request to bureau (length:%d).", pRequest->GetLength());
+
+    // LOG_RELEASE(Logger::eFiner, ::dump(@"Outgoing message"));
+    LOG(@"%@",::dump(@"Message to bureau:", pRequest->GetData(), pRequest->GetLength()));
+
+    // parse the http header from the request
+    //
+    // POST /viscus/cr/v1/authorization HTTP/1.1\r\n
+    // Accept-Language: en\r\n
+    // Accept: */*\r\n
+    // Host: gw2.handpoint.com\r\n
+    // Content-Type: application/octet-stream\r\n
+    // Connection: close\r\n
+    // Content-Length: 1340\r\n\r\n          <--- double linefeed before data
+    // 025\xb0\x02\x0b
+    //
     
+    NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
+    
+    LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:50]);
+    
+    
+    NSArray* parts = [http_request componentsSeparatedByString:@"\r\n\r\n"];
+    // should have two parts, the header and the data
+    NSArray* header_values = [[parts objectAtIndex:0] componentsSeparatedByString:@"\r\n"];
+    NSString* data = [parts objectAtIndex:1];
+
+    // get the first line of the http header
+    // POST /viscus/cr/v1/authorization HTTP/1.1
+    // split it on spaces
+    // get the middle part of that
+    NSString* first_line = [header_values objectAtIndex:0];
+    NSString* path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
+    LOG_RELEASE(Logger::eFiner, @"first line: %@, path: %@", first_line, path);
+
+    components.path = path;
+    
+    NSURL* url = components.URL;
+    LOG_RELEASE(Logger::eFiner, [url absoluteString]);
+    
+
+    /*
+
+    NSURLRequest* request = [NSURLRequest requestWithURL:<#(nonnull NSURL *)#> cachePolicy:<#(NSURLRequestCachePolicy)#> timeoutInterval:<#(NSTimeInterval)#>];
+    
+    (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
+completionHandler:(void (^)(NSData *data,
+                            NSURLResponse *response,
+                            NSError *error))completionHandler
+    */
+    
+#if 1
     if(sendStream)
     {
         if (connectionState == eConnectionConnected)
@@ -586,6 +661,7 @@ namespace {
     [self cleanUpConnection];
     
     return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SENDING_ERROR);
+#endif
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest
