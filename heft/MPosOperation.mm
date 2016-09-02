@@ -77,9 +77,7 @@ enum eConnectCondition{
 	//int maxFrameSize;
 	__weak id<IResponseProcessor> processor;
 	NSData* sharedSecret;
-	// NSOutputStream* sendStream;
-	// NSInputStream* recvStream;
-    
+
     // we get the host and the port from the ConnectToHost request command.
     NSURLComponents *components;
     int timeout;
@@ -95,9 +93,6 @@ enum eConnectCondition{
         eConnectionReceiving,
         eConnectionReceivingComplete,
     } connectionState;
-
-    // std::vector<std::uint8_t> connectionSendData;
-    // std::vector<std::uint8_t> connectionReceiveData;
 }
 
 
@@ -127,8 +122,6 @@ enum eConnectCondition{
 		sharedSecret = aSharedSecret;
 		connectLock = [[NSConditionLock alloc] initWithCondition:eNoConnectStateCondition];
         connectionState = eConnectionClosed;
-        // connectionSendData.clear();
-        // connectionReceiveData.clear();
 	}
 	return self;
 }
@@ -218,22 +211,6 @@ enum eConnectCondition{
 
 - (void)cleanUpConnection{
     LOG(@"MPosOpoeration::cleanUpConnection");
-    /*
-    if(recvStream) {
-        [recvStream close];
-        [recvStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-        // [recvStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        [recvStream setDelegate:nil];
-        recvStream = nil;
-    }
-    if(sendStream) {
-        [sendStream close];
-        [sendStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-        // [sendStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        [sendStream setDelegate:nil];
-        sendStream = nil;
-    }
-     */
     connectionState = eConnectionClosed;
     runLoopRunning = NO;
 }
@@ -251,163 +228,6 @@ namespace {
     };
 }
 
-#if 0
-- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
-{
-    LOG(@"stream:aStream handleEvent:%@", eventCodes[(unsigned long)eventCode]);
-
-    if(eventCode & NSStreamEventErrorOccurred)
-    {
-        // first remove us as the streams event handler so that we don't accidentally get more events
-        [recvStream setDelegate:nil];
-        [sendStream setDelegate:nil];
-        
-        [connectLock lock];
-        connectionState = eConnectionClosed;
-        [connectLock unlockWithCondition:eReadyStateCondition];
-        return;
-    }
-    
-    if(eventCode & NSStreamEventOpenCompleted)
-    {
-        if(connectionState == eConnectionConnecting)
-        {
-            [connectLock lock];
-            connectionState = eConnectionConnected;
-            [connectLock unlockWithCondition:eReadyStateCondition];
-        }
-    }
-    
-    if(eventCode & NSStreamEventHasBytesAvailable)
-    {
-        if(aStream == recvStream)
-        {
-            // note: this event will not be generated again until the server sends us more data
-            // NSInteger nrecv = 0;
-            // auto old_size = connectionReceiveData.size();
-            // NSUInteger stepSize = 16384; // during testing we used a really small value here (i.e. 1)
-            
-            std::uint8_t read_buffer[16384];
-
-            do
-            {
-                // nrecv = [recvStream read:&connectionReceiveData[old_size] maxLength:stepSize];
-                NSInteger nrecv = [recvStream read:read_buffer maxLength:16384];
-                // it is possible that we didn't read all available data due to our buffer being too small
-                LOG(@"read %ld bytes from tcp stream.", (long)nrecv);
-                if(nrecv > 0)
-                {
-                    // old_size += nrecv;
-                    connectionReceiveData.insert(end(connectionReceiveData), read_buffer, read_buffer+(int)nrecv);
-                }
-                else if (nrecv == 0)
-                {
-                    // end of stream, do nothing, we will received an NSStreamEventEndEncountered event next
-                    return;
-                }
-                else
-                {
-                    // -1, an error occurred. But what error?
-                    NSError* error = [recvStream streamError];
-                    LOG(@"Got an error on the stream: \n %@", [error userInfo]);
-                    
-                    // first remove us as the streams event handler so that we don't accidentally get more events
-                    [recvStream setDelegate:nil];
-                    [sendStream setDelegate:nil];
-                    
-                    [connectLock lock];
-                    connectionState = eConnectionClosed;
-                    [connectLock unlockWithCondition:eReadyStateCondition];
-                    return;
-                }
-            } while ([recvStream hasBytesAvailable]);
-            
-            // we now have all the data that was pending
-            // connectionReceiveData.resize(old_size);
-            
-            // note: for this event we don't touch the connectionState state variable, or the lock, as it will be handled in the NSSteamEventEndEncountered condition below.
-            
-        }
-        else
-        {
-            // else there are bytes on the sendStream? ... which makes no sense! ... but if so ... then we just ignore this event
-            LOG(@"NSStreamEventHasBytesAvailable, aStream != recvStream");
-        }
-    }
-    
-    if(eventCode & NSStreamEventHasSpaceAvailable)
-    {
-        LOG(@"NSStreamEventHasBytesAvailable");
-
-        if(aStream == sendStream){
-            // note: this event will not be generated again until we write something to the stream
-            [connectLock lock];
-            if(connectionState == eConnectionSending) {
-                NSInteger written;
-
-                if(connectionSendData.size())
-                {
-                    written = [sendStream write:connectionSendData.data() maxLength:connectionSendData.size()];
-                    if(written < connectionSendData.size())
-                    {
-                        connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);
-                        [connectLock unlock];
-                        
-                        LOG_RELEASE(Logger::eFine, @"wrote %lu bytes, %lu still left to write", written, connectionSendData.size());
-                        
-                        // return, we will get another event when we can write more
-                        return;
-                    }
-                    else
-                    {
-                        if(written == connectionSendData.size())
-                        {
-                            connectionSendData.clear();
-                            connectionState = eConnectionSendingComplete;
-                        }
-                        else
-                        {
-                            // error:
-                            // first remove us as the streams event handler so that we don't accidentally get more events
-                            [recvStream setDelegate:nil];
-                            [sendStream setDelegate:nil];
-                            
-                            connectionState = eConnectionClosed;
-                            
-                            LOG_RELEASE(Logger::eFine, @"Error writing data, closing connection.");
-                            [connectLock unlock];
-                            return;
-                        }
-                    
-                        // only free the lock when all data is sent or if there is an error
-                        [connectLock unlockWithCondition:eReadyStateCondition];
-                    }
-                } else {
-                    [connectLock unlock];
-                }
-            } else if(connectionState == eConnectionConnected){
-                // we got this event too soon (as in before we have received a send command from the card reader)
-                // MÁ: This comment makes no sense, the state is not changed when a command is received from the card
-                //     reader. The state should be changed as soon as a connection has been made
-                connectionState = eConnectionSending; // we will inspect for this when we receive the command from the card reader
-                [connectLock unlock];
-            } else {
-                [connectLock unlock];
-            }
-        } // else there is space available on the recvStream ... which we just ignore
-    }
-    
-    if(eventCode & NSStreamEventEndEncountered)
-    {
-        LOG_RELEASE(Logger::eFine, @"NSStreamEventEndEncountered - server closed connection.");
-        
-        // note: it is entirely possible for the server to close the connection prematurely, before it has received anything from us (e.g.  due to some error server site).
-        [connectLock lock];
-        connectionState = eConnectionReceivingComplete;
-        [connectLock unlockWithCondition:eReadyStateCondition];
-    }
-}
-#endif
 
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest
 {
