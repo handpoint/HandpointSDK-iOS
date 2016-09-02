@@ -566,15 +566,16 @@ namespace {
     LOG_RELEASE(Logger::eFiner, [url absoluteString]);
     
 
-    /*
 
-    NSURLRequest* request = [NSURLRequest requestWithURL:<#(nonnull NSURL *)#> cachePolicy:<#(NSURLRequestCachePolicy)#> timeoutInterval:<#(NSTimeInterval)#>];
-    
-    (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
+    NSURLRequest* request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:timeout];
+
+    /*
+    (NSURLSessionDataTask *)dataTaskWithRequest:request completionHandler:^
 completionHandler:(void (^)(NSData *data,
                             NSURLResponse *response,
                             NSError *error))completionHandler
     */
+    
     
 #if 1
     if(sendStream)
