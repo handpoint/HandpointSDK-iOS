@@ -168,7 +168,7 @@ enum eConnectCondition{
                         retry = NO;
                         try
                         {
-                            // read the response
+                            // read the response from the cardreader
                             pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
                         }
                         catch (timeout4_exception& to4)
@@ -273,7 +273,7 @@ namespace {
         if(aStream == recvStream)
         {
             // note: this event will not be generated again until the server sends us more data
-            NSInteger nrecv = 0;
+            // NSInteger nrecv = 0;
             // auto old_size = connectionReceiveData.size();
             // NSUInteger stepSize = 16384; // during testing we used a really small value here (i.e. 1)
             
@@ -282,7 +282,7 @@ namespace {
             do
             {
                 // nrecv = [recvStream read:&connectionReceiveData[old_size] maxLength:stepSize];
-                nrecv = [recvStream read:read_buffer maxLength:16384];
+                NSInteger nrecv = [recvStream read:read_buffer maxLength:16384];
                 // it is possible that we didn't read all available data due to our buffer being too small
                 LOG(@"read %ld bytes from tcp stream.", (long)nrecv);
                 if(nrecv > 0)
@@ -292,7 +292,7 @@ namespace {
                 }
                 else if (nrecv == 0)
                 {
-                    // end of stream, do nothing, will received an NSStreamEventEndEncountered event next
+                    // end of stream, do nothing, we will received an NSStreamEventEndEncountered event next
                     return;
                 }
                 else
@@ -344,6 +344,8 @@ namespace {
                         [connectLock unlock];
                         
                         LOG_RELEASE(Logger::eFine, @"wrote %lu bytes, %lu still left to write", written, connectionSendData.size());
+                        
+                        // return, we will get another event when we can write more
                         return;
                     }
                     else
@@ -496,9 +498,6 @@ namespace {
 }
 
 
-// TODO: refactor this - clean up paths, when and why does it fail
-//       looks like this will fail when the connection is so slow
-//       that everything can not be written at once.
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest
 {
     LOG_RELEASE(Logger::eFine, @"Sending request to bureau (length:%d).", pRequest->GetLength());
@@ -525,7 +524,7 @@ namespace {
             if(written < connectionSendData.size())
             {
                 LOG_RELEASE(Logger::eFine,
-                            @"%d bytes send to bureau, %d bytes left.",
+                            @"%d bytes sent to bureau, %d bytes left.",
                             written, pRequest->GetLength()-written);
                 
                 connectionSendData.erase(connectionSendData.begin(), connectionSendData.begin() + written);

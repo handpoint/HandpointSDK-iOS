@@ -23,6 +23,7 @@ using OutputQueue = std::queue<Buffer>;
 
 extern NSString* eaProtocol;
 
+// int ciDefaultMaxFrameSize = 2046; // Bluetooth frame is 0 - ~343 bytes
 int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
 const int ciTimeout[] = {20, 15, 1, 5*60};
 
@@ -265,7 +266,7 @@ bool isStatusAnError(NSStreamStatus status)
                  */
                 
                 NSUInteger nread;
-                const int bufferSize = ciDefaultMaxFrameSize;
+                const int bufferSize = ciDefaultMaxFrameSize*2;
 
                 do {
                     Buffer readBuffer(bufferSize);
@@ -305,6 +306,17 @@ bool isStatusAnError(NSStreamStatus status)
             LOG(@"HeftConnection::handleEvent, NSStreamEventErrorOccurred");
             [self shutdown];
             break;
+        case NSStreamEventHasSpaceAvailable:
+            if (aStream == outputStream)
+            {
+                LOG(@"HeftConnection::handleEvent, NSStreamEventHasSpaceAvailable on outputStream");
+            }
+            else
+            {
+                LOG(@"HeftConnection::handleEvent, NSStreamEventHasSpaceAvailable on inputStream!");
+            }
+            break;
+           
         default:
             LOG(@"HeftConnection::handleEvent, unhandled event");
             break;
@@ -347,7 +359,7 @@ bool isStatusAnError(NSStreamStatus status)
     [bufferLock unlockWithCondition:eNoDataCondition];
     
     auto bytes_read = buffer.size() - initSize;
-    LOG(@"readData returning %lu bytes", bytes_read);
+    LOG(@"readData returning %lu bytes, total buffer size=%lu", bytes_read, buffer.size());
 
     return static_cast<int>(bytes_read);
 }
