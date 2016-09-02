@@ -386,8 +386,6 @@ namespace {
                                   length: pRequest->GetLength() - (size_of_http_header+4)];
 
 
-    // NSString* data = [parts objectAtIndex:1];
-
     // get the first line of the http header
     // POST /viscus/cr/v1/authorization HTTP/1.1
     // split it on spaces
@@ -398,13 +396,8 @@ namespace {
 
     components.path = path;
 
-
     NSURL* url = components.URL;
     LOG_RELEASE(Logger::eFiner, [url absoluteString]);
-    
-
-    // NSURLRequest* request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:timeout];
-
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
@@ -412,6 +405,8 @@ namespace {
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Accept"];
+
+    // [request setValue:[NSString stringWithFormat:@"%tu", [data length]] forHTTPHeaderField:@"Content-Length"];
 
     NSCondition* wait_until_done = [[NSCondition alloc] init];
 
@@ -429,6 +424,8 @@ namespace {
         [wait_until_done signal];
     }];
 
+    LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
+
     //Don't forget this line ever
     [uploadTask resume];
 
@@ -443,11 +440,10 @@ namespace {
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest
 {
-    // LOG(@"Recv :%d bytes, %ds timeout", pRequest->GetDataLen(), pRequest->GetTimeout());
     LOG(@"Recv :%d bytes", [host_response_data length]);
 
-
     return new ReceiveResponseCommand(host_response_data);
+    host_response_data = nil;
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
