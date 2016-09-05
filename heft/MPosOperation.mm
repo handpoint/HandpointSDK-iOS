@@ -250,102 +250,6 @@ namespace {
     timeout = pRequest->GetTimeout();
     
     return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
-    
-
-    
-#if 0
-    
-    int status = EFT_PP_STATUS_CONNECT_ERROR;
-    
-    [connectLock lock];
-    if(connectionState == eConnectionClosed)
-    {
-        connectionState = eConnectionConnecting;
-        connectionSendData.clear();
-        connectionReceiveData.clear();
-        [connectLock unlockWithCondition:eNoConnectStateCondition];
-        
-        NSString* host = @(pRequest->GetAddr().c_str());
-        CFReadStreamRef readStream;
-        CFWriteStreamRef writeStream;
-        CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault,
-                                           (__bridge CFStringRef)host,
-                                           pRequest->GetPort(),
-                                           &readStream,
-                                           &writeStream
-        );
-        
-        recvStream = (NSInputStream*)CFBridgingRelease(readStream);
-        sendStream = (NSOutputStream*)CFBridgingRelease(writeStream);
-
-        if(sendStream && recvStream)
-        {
-            [recvStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
-            // [sendStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
-            [recvStream setDelegate:self];
-            [sendStream setDelegate:self];
-            
-            // TODO: runloop testing going on - change back or remove old
-            // TODO: use the thread runloop - store it in a static value
-            
-            [recvStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-            [sendStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-            /*
-             NSAssert(currentRunLoop != nil, @"currentRunLoop not set when calling schedlueInRunLoop...");
-            [recvStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-            [sendStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-             */
-
-            [recvStream open];
-            [sendStream open];
-            
-            if([connectLock lockWhenCondition:eReadyStateCondition
-                                   beforeDate:[NSDate dateWithTimeIntervalSinceNow:pRequest->GetTimeout()]])
-            {
-                [connectLock unlockWithCondition:eNoConnectStateCondition];
-                if(recvStream.streamStatus == NSStreamStatusOpen)
-                {
-                    LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: connected to bureau");
-                    return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
-                }
-                else
-                {
-                    LOG_RELEASE(Logger::eWarning, @"Error connecting bureau.");
-                    status = EFT_PP_STATUS_CONNECT_ERROR;
-                }
-            }
-            else
-            {
-                LOG_RELEASE(Logger::eWarning, @"Error connecting bureau (timeout).");
-                status = EFT_PP_STATUS_CONNECT_TIMEOUT;
-            }
-        }
-        else
-        {
-            LOG_RELEASE(Logger::eWarning, @"Error connecting bureau.");
-            status = EFT_PP_STATUS_CONNECT_ERROR;
-        }
-        
-        // if we get to here then we encountered an error
-        [self cleanUpConnection];
-    }
-    else
-    {
-        [connectLock unlock];
-        // not sure how or what happened on the card reader side ...
-        // ... but we are apparently already serving a server connection from the card reader ?!!!
-        // (not to even mention the question of how this request got here while we are blocked somewhere else)
-        // ... so, instead of trying to be graceful about it we will simply behave like our panties are in a rutt.
-        LOG_RELEASE(Logger::eWarning, @"Invalid state, status=EFT_PP_STATUS_CONNECT_ERROR");
-        status = EFT_PP_STATUS_CONNECT_ERROR;
-        
-        // also, note that we won't touch the "current" connection
-    }
-    
-    
-    return new HostResponseCommand(CMD_HOST_CONN_RSP, status);
-    
-#endif
 }
 
 
@@ -404,7 +308,7 @@ namespace {
 
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
 
     // [request setValue:[NSString stringWithFormat:@"%tu", [data length]] forHTTPHeaderField:@"Content-Length"];
 
