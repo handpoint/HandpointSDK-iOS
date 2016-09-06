@@ -80,8 +80,10 @@ enum eConnectCondition{
     NSURLComponents *components;
     int timeout;
     NSMutableData* host_response_data;
+    NSError* host_communication_error;
     NSCondition* wait_until_done;
     
+    /*
 	NSConditionLock* connectLock;
     enum eConnectionState {
         eConnectionClosed,
@@ -92,6 +94,7 @@ enum eConnectCondition{
         eConnectionReceiving,
         eConnectionReceivingComplete,
     } connectionState;
+     */
 }
 
 
@@ -112,14 +115,15 @@ enum eConnectCondition{
      resultsProcessor:(id<IResponseProcessor>)aProcessor
          sharedSecret:(NSData*)aSharedSecret
 {
-	if(self = [super init]){
+	if(self = [super init])
+    {
 		LOG(@"mPos Operation started.");
 		pRequestCommand = aRequest;
 		connection = aConnection;
 		processor = aProcessor;
 		sharedSecret = aSharedSecret;
-		connectLock = [[NSConditionLock alloc] initWithCondition:eNoConnectStateCondition];
-        connectionState = eConnectionClosed;
+        host_response_data = nil;
+        host_communication_error = nil;
 	}
 	return self;
 }
@@ -132,9 +136,6 @@ enum eConnectCondition{
 
 - (void)main{
 	@autoreleasepool {
-        // [MPosOperation startRunLoop];
-        // wait for currentRunLoopThread to be anything else than nil?
-
 		try
         {
 			RequestCommand* currentRequest = pRequestCommand;
@@ -143,7 +144,6 @@ enum eConnectCondition{
 			while(true)
             {
 				//LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
-                
                 
                 // sending the command to the device
 				FrameManager fm(*currentRequest, connection.maxFrameSize);
@@ -209,10 +209,10 @@ enum eConnectCondition{
 
 - (void)cleanUpConnection{
     LOG(@"MPosOpoeration::cleanUpConnection");
-    connectionState = eConnectionClosed;
     runLoopRunning = NO;
     wait_until_done = nil;
     host_response_data = nil;
+    host_communication_error = nil;
 }
 
 #pragma mark IHostProcessor
@@ -227,6 +227,8 @@ namespace {
         {16, @"NSStreamEventEndEncountered"}
     };
     
+    // TODO: add codes
+    //       use Objective-C map?
     std::map<unsigned short, NSString*> httpCodes = {
         {200, @"OK"},
         {400, @"Bad Request"},
@@ -252,6 +254,7 @@ namespace {
     
     timeout = pRequest->GetTimeout();
     host_response_data = nil;
+    host_communication_error = nil;
     wait_until_done = nil;
     
     return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
@@ -277,12 +280,12 @@ namespace {
     // 025\xb0\x02\x0b
     //
 
-
     NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
     
-    LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:50]);
+    int log_size = std::min(100, pRequest->GetLength());
+    LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:log_size]);
     
-    
+    // split on double linefeed
     NSArray* parts = [http_request componentsSeparatedByString:@"\r\n\r\n"];
     // should have two parts, the header and the data
     NSString* http_header = [parts objectAtIndex:0];
@@ -291,9 +294,9 @@ namespace {
     // the post data should be NSData, not NSString - copy straight from the buffer
     NSUInteger size_of_http_header = [http_header length];
 
+    // the data is everything after the header+double linefeed
     NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
                                   length: pRequest->GetLength() - (size_of_http_header+4)];
-
 
     // get the first line of the http header
     // POST /viscus/cr/v1/authorization HTTP/1.1
@@ -301,12 +304,17 @@ namespace {
     // get the middle part of that
     NSString* first_line = [header_values objectAtIndex:0];
     NSString* path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
+
+#ifdef DEBUG
     LOG_RELEASE(Logger::eFiner, @"first line: %@, path: %@", first_line, path);
+#endif
 
     components.path = path;
 
     NSURL* url = components.URL;
+#ifdef DEBUG
     LOG_RELEASE(Logger::eFiner, [url absoluteString]);
+#endif
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
@@ -324,30 +332,43 @@ namespace {
 
     [wait_until_done lock];
 
+#ifdef DEBUG
     LOG(@"Sending a http request to host");
+#endif
 
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                fromData:data
                                                       completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
     {
-        LOG_RELEASE(Logger::eFiner, @"Response received from host: %@", [error localizedDescription])
-        // host_response_data = response_data;
-        // LOG(response.description);
+        LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
         
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-        NSInteger status_code = [httpResponse statusCode];
-        
-        NSString* status_string = @"";
-        if (httpCodes.find((int) status_code) != httpCodes.end())
+        // TODO: handle errors here, for example, The network connection was lost.
+        //       Save the error and return it to the reader in processReceive.
+        //       See error handling in old code.
+        if (error != nil)
         {
-            status_string = httpCodes[(int) status_code];
+            host_communication_error = error;
         }
-        
-        NSString *header = [NSString stringWithFormat:@"HTTP/1.0 %d %@\r\n\r\n", (int) status_code, status_string];
-        
-        NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
-        host_response_data = [tmp_data mutableCopy];
-        [host_response_data appendData:response_data];
+        else
+        {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+            
+            LOG(@"%@", [response description]);
+            
+            NSInteger status_code = [httpResponse statusCode];
+            
+            NSString* status_string = @"";
+            if (httpCodes.find((int) status_code) != httpCodes.end())
+            {
+                status_string = httpCodes[(int) status_code];
+            }
+            
+            NSString *header = [NSString stringWithFormat:@"HTTP/1.0 %d %@\r\n\r\n", (int) status_code, status_string];
+            
+            NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
+            host_response_data = [tmp_data mutableCopy];
+            [host_response_data appendData:response_data];
+        }
         // LOG([[NSString alloc] initWithData:response_data encoding:NSUTF8StringEncoding]);
         [wait_until_done signal];
     }];
@@ -373,9 +394,21 @@ namespace {
         LOG(@"Got lock, done");
     }
     [wait_until_done unlock];
+    
+    // check for error - copy member data to local variables and reset
+    NSError* error = host_communication_error;
+    host_communication_error = nil;
     NSData* tmp = host_response_data;
     host_response_data = nil;
-    return new ReceiveResponseCommand(tmp);
+
+    if (error != nil)
+    {
+        return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVING_ERROR);
+    }
+    else
+    {
+        return new ReceiveResponseCommand(tmp);
+    }
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
