@@ -47,8 +47,6 @@ namespace
     LOG(@"mPos Operation run loop starting.");
     currentRunLoop = [NSRunLoop currentRunLoop];
 
-    // TODO: add a timer - see other runloop
-    
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
     runLoopRunning = YES;
     while (runLoopRunning)
@@ -81,7 +79,8 @@ enum eConnectCondition{
     // we get the host and the port from the ConnectToHost request command.
     NSURLComponents *components;
     int timeout;
-    NSData* host_response_data;
+    NSMutableData* host_response_data;
+    NSCondition* wait_until_done;
     
 	NSConditionLock* connectLock;
     enum eConnectionState {
@@ -117,7 +116,6 @@ enum eConnectCondition{
 		LOG(@"mPos Operation started.");
 		pRequestCommand = aRequest;
 		connection = aConnection;
-		//maxFrameSize = frameSize;
 		processor = aProcessor;
 		sharedSecret = aSharedSecret;
 		connectLock = [[NSConditionLock alloc] initWithCondition:eNoConnectStateCondition];
@@ -213,6 +211,8 @@ enum eConnectCondition{
     LOG(@"MPosOpoeration::cleanUpConnection");
     connectionState = eConnectionClosed;
     runLoopRunning = NO;
+    wait_until_done = nil;
+    host_response_data = nil;
 }
 
 #pragma mark IHostProcessor
@@ -226,6 +226,13 @@ namespace {
         {8, @"NSStreamEventErrorOccurred"},
         {16, @"NSStreamEventEndEncountered"}
     };
+    
+    std::map<unsigned short, NSString*> httpCodes = {
+        {200, @"OK"},
+        {400, @"Bad Request"},
+        {401, @"Unauthorized"},
+        {403, @"Forbidden"}
+    };
 }
 
 
@@ -238,16 +245,14 @@ namespace {
                 pRequest->GetTimeout()
     );
     
-
-    
-
     components = [[NSURLComponents alloc] init];
     components.scheme = @"https";
     components.host = [NSString stringWithUTF8String:pRequest->GetAddr().c_str()];
     components.port = [NSNumber numberWithInt:pRequest->GetPort()];
     
-   
     timeout = pRequest->GetTimeout();
+    host_response_data = nil;
+    wait_until_done = nil;
     
     return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
 }
@@ -310,9 +315,12 @@ namespace {
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
 
+    // is this not a part of the request already? - does it get in the way?
+    [request setValue:components.host forHTTPHeaderField:@"Host"];
+
     // [request setValue:[NSString stringWithFormat:@"%tu", [data length]] forHTTPHeaderField:@"Content-Length"];
 
-    NSCondition* wait_until_done = [[NSCondition alloc] init];
+    wait_until_done = [[NSCondition alloc] init];
 
     [wait_until_done lock];
 
@@ -323,8 +331,24 @@ namespace {
                                                       completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
     {
         LOG_RELEASE(Logger::eFiner, @"Response received from host: %@", [error localizedDescription])
-        host_response_data = response_data;
-        LOG([[NSString alloc] initWithData:response_data encoding:NSUTF8StringEncoding]);
+        // host_response_data = response_data;
+        // LOG(response.description);
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+        NSInteger status_code = [httpResponse statusCode];
+        
+        NSString* status_string = @"";
+        if (httpCodes.find((int) status_code) != httpCodes.end())
+        {
+            status_string = httpCodes[(int) status_code];
+        }
+        
+        NSString *header = [NSString stringWithFormat:@"HTTP/1.0 %d %@\r\n\r\n", (int) status_code, status_string];
+        
+        NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
+        host_response_data = [tmp_data mutableCopy];
+        [host_response_data appendData:response_data];
+        // LOG([[NSString alloc] initWithData:response_data encoding:NSUTF8StringEncoding]);
         [wait_until_done signal];
     }];
 
@@ -333,21 +357,25 @@ namespace {
     //Don't forget this line ever
     [uploadTask resume];
 
-    // wait until upload done... then return - or just assume it worked to hurry things up!
-    LOG(@"Waiting for lock");
-    [wait_until_done wait];
-    LOG(@"Got lock, done");
-    [wait_until_done unlock];
 
     return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest
 {
-    LOG(@"Recv :%d bytes", [host_response_data length]);
+    LOG(@"processReceive:%lu bytes", (unsigned long) [host_response_data length]);
 
-    return new ReceiveResponseCommand(host_response_data);
+    // wait until upload done... then return - or just assume it worked to hurry things up!
+    if (host_response_data == nil)
+    {
+        LOG(@"Waiting for lock");
+        [wait_until_done wait];
+        LOG(@"Got lock, done");
+    }
+    [wait_until_done unlock];
+    NSData* tmp = host_response_data;
     host_response_data = nil;
+    return new ReceiveResponseCommand(tmp);
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{

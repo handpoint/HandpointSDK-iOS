@@ -201,6 +201,8 @@ bool isStatusAnError(NSStreamStatus status)
 //       fire and forget method
 - (void)writeData:(uint8_t*)data length:(int)len
 {
+    LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
+
     while (len) {
         while(![outputStream hasSpaceAvailable])
         {
@@ -213,14 +215,15 @@ bool isStatusAnError(NSStreamStatus status)
             }
         }
         
-        NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize)];
+        // TODO: just try to write everything here, let the system take care of bookkeeping
+        //       use len as parameter (do not cap at maxFrameSize)
+        NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize*2)];
         
         if(nwritten <= 0)
         {
             throw communication_exception();
         }
 
-        // LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) nwritten));
         LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
         
         len -= nwritten;
