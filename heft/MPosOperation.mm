@@ -77,7 +77,8 @@ enum eConnectCondition{
 	NSData* sharedSecret;
 
     // we get the host and the port from the ConnectToHost request command.
-    NSURLComponents *components;
+    NSURLSessionConfiguration* session_configuration;
+    NSURLComponents* components;
     int timeout;
     NSMutableData* host_response_data;
     NSError* host_communication_error;
@@ -124,6 +125,8 @@ enum eConnectCondition{
 		sharedSecret = aSharedSecret;
         host_response_data = nil;
         host_communication_error = nil;
+        
+        session_configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
 	}
 	return self;
 }
@@ -257,6 +260,8 @@ namespace {
     host_communication_error = nil;
     wait_until_done = nil;
     
+    session_configuration.timeoutIntervalForResource = timeout;
+    
     return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
@@ -277,7 +282,7 @@ namespace {
     // Content-Type: application/octet-stream\r\n
     // Connection: close\r\n
     // Content-Length: 1340\r\n\r\n          <--- double linefeed before data
-    // 025\xb0\x02\x0b
+    // 025\xb0\x02\x0b...[1340 bytes total]
     //
 
     NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
@@ -296,12 +301,12 @@ namespace {
 
     // the data is everything after the header+double linefeed
     NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
-                                  length: pRequest->GetLength() - (size_of_http_header+4)];
+                                  length:pRequest->GetLength() - (size_of_http_header+4)];
 
     // get the first line of the http header
     // POST /viscus/cr/v1/authorization HTTP/1.1
     // split it on spaces
-    // get the middle part of that
+    // get the middle part of that, which is the path on the server
     NSString* first_line = [header_values objectAtIndex:0];
     NSString* path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
 
@@ -316,17 +321,16 @@ namespace {
     LOG_RELEASE(Logger::eFiner, [url absoluteString]);
 #endif
 
-    NSURLSession *session = [NSURLSession sharedSession];
+
+    
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
 
+    // Add values to the request
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
-
     // is this not a part of the request already? - does it get in the way?
     [request setValue:components.host forHTTPHeaderField:@"Host"];
-
-    // [request setValue:[NSString stringWithFormat:@"%tu", [data length]] forHTTPHeaderField:@"Content-Length"];
 
     wait_until_done = [[NSCondition alloc] init];
 
@@ -335,6 +339,8 @@ namespace {
 #ifdef DEBUG
     LOG(@"Sending a http request to host");
 #endif
+//    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:session_configuration];
 
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                fromData:data
