@@ -27,6 +27,15 @@ namespace {
         , "GBP", "0826"
         , "ISK", "0352"
         , "ZAR", "0710"
+        , "CAD", "0124"
+        , "AUD", "0036"
+        , "CHF", "0756"
+        , "SEK", "0752"
+        , "MXN", "0484"
+        , "NZD", "0554"
+        , "NOK", "0578"
+        , "DKK", "0208"
+        , "HRK", "0191"
     };
     
     NSString* init_xml = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
