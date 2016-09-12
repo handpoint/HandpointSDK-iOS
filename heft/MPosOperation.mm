@@ -423,6 +423,172 @@ namespace {
 	return new HostResponseCommand(CMD_HOST_DISC_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
+- (RequestCommand*)processPost:(PostRequestCommand*)pRequest
+{
+    LOG_RELEASE(Logger::eFine, @"Posting request to bureau (length:%d).", pRequest->GetLength());
+    
+    // LOG_RELEASE(Logger::eFiner, ::dump(@"Outgoing message"));
+    LOG(@"%@",::dump(@"Message to bureau:", pRequest->GetData(), pRequest->GetLength()));
+    
+    components = [[NSURLComponents alloc] init];
+    components.scheme = @"https";
+    components.host = pRequest->get_host();
+    components.port = pRequest->get_port();
+    
+    timeout = pRequest->GetTimeout();
+
+    host_response_data = nil;
+    host_communication_error = nil;
+    wait_until_done = nil;
+    
+    session_configuration.timeoutIntervalForResource = timeout;
+    
+    // parse the http header from the request
+    //
+    // POST /viscus/cr/v1/authorization HTTP/1.1\r\n
+    // Accept-Language: en\r\n
+    // Accept: */*\r\n
+    // Host: gw2.handpoint.com\r\n
+    // Content-Type: application/octet-stream\r\n
+    // Connection: close\r\n
+    // Content-Length: 1340\r\n\r\n          <--- double linefeed before data
+    // 025\xb0\x02\x0b...[1340 bytes total]
+    //
+    
+    // NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
+    // NSString* http_request = [pRequest->get_data() stringEncodingForData:NSISOLatin1StringEncoding];
+    NSString* http_request = [[NSString alloc] initWithData:pRequest->get_data() encoding:NSISOLatin1StringEncoding];
+    
+    int log_size = std::min(100, pRequest->GetLength());
+    LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:log_size]);
+    
+    // split on double linefeed
+    NSArray* parts = [http_request componentsSeparatedByString:@"\r\n\r\n"];
+    // should have two parts, the header and the data
+    NSString* http_header = [parts objectAtIndex:0];
+    NSArray* header_values = [http_header componentsSeparatedByString:@"\r\n"];
+    
+    // the post data should be NSData, not NSString - copy straight from the buffer
+    // NSUInteger size_of_http_header = [http_header length];
+    
+    // the data is everything after the header+double linefeed
+    
+    // NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
+    //                              length:pRequest->GetLength() - (size_of_http_header+4)];
+    // NSData* data = [[parts objectAtIndex:1] dataUsingEncoding:NSISOLatin1StringEncoding];
+    
+    // get the first line of the http header
+    // POST /viscus/cr/v1/authorization HTTP/1.1
+    // split it on spaces
+    // get the middle part of that, which is the path on the server
+    NSString* first_line = [header_values objectAtIndex:0];
+    NSString* path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
+    
+#ifdef DEBUG
+    LOG_RELEASE(Logger::eFiner, @"first line: %@, path: %@", first_line, path);
+#endif
+    
+    components.path = path;
+    
+    NSURL* url = components.URL;
+#ifdef DEBUG
+    LOG_RELEASE(Logger::eFiner, [url absoluteString]);
+#endif
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    
+    // Add values to the request
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
+    // is this not a part of the request already? - does it get in the way?
+    [request setValue:components.host forHTTPHeaderField:@"Host"];
+    
+    wait_until_done = [[NSCondition alloc] init];
+    
+    [wait_until_done lock];
+    
+#ifdef DEBUG
+    LOG(@"Sending a http request to host");
+#endif
+    //    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:session_configuration];
+    
+    NSData* data = [[parts objectAtIndex:1] dataUsingEncoding:NSISOLatin1StringEncoding];
+    
+    NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
+                                                               fromData:data
+                                                      completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
+                  {
+                      LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
+                      
+                      // TODO: handle errors here, for example, The network connection was lost.
+                      //       Save the error and return it to the reader in processReceive.
+                      //       See error handling in old code.
+                      if (error != nil)
+                      {
+                          host_communication_error = error;
+                      }
+                      else
+                      {
+                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                          
+                          LOG(@"%@", [response description]);
+                          
+                          NSInteger status_code = [httpResponse statusCode];
+                          
+                          NSString* status_string = @"";
+                          if (httpCodes.find((int) status_code) != httpCodes.end())
+                          {
+                              status_string = httpCodes[(int) status_code];
+                          }
+                          
+                          NSString *header = [NSString stringWithFormat:@"HTTP/1.0 %d %@\r\n\r\n", (int) status_code, status_string];
+                          
+                          NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
+                          host_response_data = [tmp_data mutableCopy];
+                          [host_response_data appendData:response_data];
+                      }
+                      // LOG([[NSString alloc] initWithData:response_data encoding:NSUTF8StringEncoding]);
+                      [wait_until_done signal];
+                  }
+    ];
+    
+    // LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
+    
+    [uploadTask resume];
+    
+    LOG(@"Waiting for lock");
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeout];
+    // [wait_until_done wait];
+    BOOL was_timeout = NO;
+    was_timeout = [wait_until_done waitUntilDate:timeoutDate];
+    LOG(@"Got lock, done");
+    [wait_until_done unlock];
+    
+    // should use local variables.
+    // check for error - copy member data to local variables and reset
+    NSError* error = host_communication_error;
+    host_communication_error = nil;
+    NSData* tmp = host_response_data;
+    host_response_data = nil;
+    
+    if (was_timeout == NO)
+    {
+        return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_CONNECT_TIMEOUT);
+    }
+    else if (error != nil)
+    {
+        return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVING_ERROR);
+    }
+    else
+    {
+        return new ReceiveResponseCommand(tmp);
+    }
+}
+
+
+
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
 	LOG(@"Signature required request");
 	int status = [processor processSign:pRequest];

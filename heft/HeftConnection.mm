@@ -217,14 +217,16 @@ bool isStatusAnError(NSStreamStatus status)
         
         // TODO: just try to write everything here, let the system take care of bookkeeping
         //       use len as parameter (do not cap at maxFrameSize)
-        NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize*2)];
+        // NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize*2)];
+        NSInteger nwritten = [outputStream write:data maxLength:len];
         
         if(nwritten <= 0)
         {
             throw communication_exception();
         }
 
-        LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
+        // LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
+        LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d", (int) nwritten, len);
         
         len -= nwritten;
         data += nwritten;
@@ -286,7 +288,6 @@ bool isStatusAnError(NSStreamStatus status)
                         
                         // nota GCD queue til að stjórna þessu, þá sér stýrikerfið um
                         // lásana...nota barrier í readData partion (þá blokkar það)
-                        
                         [bufferLock lock]; // don't care for a condition, queue can be empty or not
                         inputQueue.push(std::move(readBuffer));
                         [bufferLock unlockWithCondition:eHasDataCondition];

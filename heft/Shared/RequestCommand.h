@@ -210,6 +210,60 @@ public:
     }
 };
 
+class PostRequestCommand : public HostRequestCommand
+{
+    std::uint16_t port;
+    std::uint16_t timeout;
+    NSString*     host;
+//    NSString*     path;
+    NSData*       post_data;
+    
+protected:
+    struct PostPayload : RequestPayload{
+        std::uint16_t port;
+        std::uint16_t timeout;
+        std::uint8_t  host_address_length;
+//        std::uint8_t  path_length;
+        std::uint16_t data_len;
+        std::uint8_t  data[];  // [host[n]path[m]data[r]
+    } __attribute__((packed));
+    
+public:
+    PostRequestCommand(const void* payload, std::uint32_t payloadSize);
+    RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processPost:this];
+    }
+    
+    NSNumber* get_port()
+    {
+        return [NSNumber numberWithShort:port];
+    }
+    
+    int GetTimeout()
+    {
+        return timeout;
+    }
+    
+    NSString* get_host()
+    {
+        return host;
+    }
+  
+    /*
+    NSString* get_path()
+    {
+        return path;
+    }
+    */
+    
+    NSData* get_data()
+    {
+        return post_data;
+    }
+};
+
+
 class ReceiveRequestCommand : public HostRequestCommand{
 	std::uint16_t data_len;
 	std::uint16_t timeout;

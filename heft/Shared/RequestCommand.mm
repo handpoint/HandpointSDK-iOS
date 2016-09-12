@@ -223,6 +223,9 @@ HostRequestCommand* HostRequestCommand::Create(const void* payload, std::uint32_
         return new ReceiveRequestCommand(payload, payloadSize);
     case CMD_HOST_DISC_REQ:
         return new DisconnectRequestCommand(payload, payloadSize);
+    case CMD_HOST_MSG_TO_HOST:
+        return new PostRequestCommand(payload, payloadSize);
+            
     default:
         break;
     }
@@ -282,6 +285,27 @@ SendRequestCommand::SendRequestCommand(const void* payload, std::uint32_t payloa
     data.resize(htons(pRequest->data_len));
     memcpy(&data[0], pRequest->data, data.size());
 }
+
+PostRequestCommand::PostRequestCommand(const void* payload, std::uint32_t payloadSize)
+: HostRequestCommand(payload, payloadSize)
+{
+    const PostPayload* pRequest = reinterpret_cast<const PostPayload*>(payload);
+    timeout = htons(pRequest->timeout);
+    port = htons(pRequest->port);
+    std::uint8_t host_size = pRequest->host_address_length;
+    // std::uint8_t path_size = pRequest->path_length;
+    std::uint16_t data_size = htons(pRequest->data_len);
+    
+    NSData* host_data = [NSData dataWithBytes:pRequest->data length:host_size];
+    host = [[NSString alloc] initWithData:host_data encoding:NSUTF8StringEncoding];
+    
+    // NSData* path_data = [NSData dataWithBytes:pRequest->data+host_size length:path_size];
+    // path = [[NSString alloc] initWithData:path_data encoding:NSUTF8StringEncoding];
+    
+    post_data = [NSData dataWithBytes:pRequest->data+host_size length:data_size];
+}
+
+
 
 ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, std::uint32_t payloadSize)
     : HostRequestCommand(payload, payloadSize)
