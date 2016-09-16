@@ -130,6 +130,7 @@ enum eBufferConditions{
 
     if (inputStream)
     {
+        // TODO:   fix crash, EXC_BAD_ACCESS(code=1, address=0x1281bb00) 
         [inputStream close];
         if (runLoop)
         {

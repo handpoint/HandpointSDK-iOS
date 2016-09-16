@@ -236,7 +236,10 @@ namespace {
         {200, @"OK"},
         {400, @"Bad Request"},
         {401, @"Unauthorized"},
-        {403, @"Forbidden"}
+        {403, @"Forbidden"},
+        {404, @"Not Found"},
+        {405, @"Method Not Allowed"},
+        {500, @"Internal Server Error"}
     };
 }
 
@@ -454,10 +457,7 @@ namespace {
     // Content-Length: 1340\r\n\r\n          <--- double linefeed before data
     // 025\xb0\x02\x0b...[1340 bytes total]
     //
-    
-    // NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
-    // NSString* http_request = [pRequest->get_data() stringEncodingForData:NSISOLatin1StringEncoding];
-    NSString* http_request = [[NSString alloc] initWithData:pRequest->get_data() encoding:NSISOLatin1StringEncoding];
+    NSString* http_request = [[NSString alloc] initWithData:pRequest->get_data() encoding:NSISOLatin1StringEncoding;
     
     int log_size = std::min(100, pRequest->GetLength());
     LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:log_size]);
@@ -519,39 +519,35 @@ namespace {
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                fromData:data
                                                       completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
+          {
+              LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
+              
+              if (error != nil)
+              {
+                  host_communication_error = error;
+              }
+              else
+              {
+                  NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                  
+                  LOG(@"%@", [response description]);
+                  
+                  NSInteger status_code = [httpResponse statusCode];
+                  
+                  NSString* status_string = @"";
+                  if (httpCodes.find((int) status_code) != httpCodes.end())
                   {
-                      LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
-                      
-                      // TODO: handle errors here, for example, The network connection was lost.
-                      //       Save the error and return it to the reader in processReceive.
-                      //       See error handling in old code.
-                      if (error != nil)
-                      {
-                          host_communication_error = error;
-                      }
-                      else
-                      {
-                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-                          
-                          LOG(@"%@", [response description]);
-                          
-                          NSInteger status_code = [httpResponse statusCode];
-                          
-                          NSString* status_string = @"";
-                          if (httpCodes.find((int) status_code) != httpCodes.end())
-                          {
-                              status_string = httpCodes[(int) status_code];
-                          }
-                          
-                          NSString *header = [NSString stringWithFormat:@"HTTP/1.0 %d %@\r\n\r\n", (int) status_code, status_string];
-                          
-                          NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
-                          host_response_data = [tmp_data mutableCopy];
-                          [host_response_data appendData:response_data];
-                      }
-                      // LOG([[NSString alloc] initWithData:response_data encoding:NSUTF8StringEncoding]);
-                      [wait_until_done signal];
+                      status_string = httpCodes[(int) status_code];
                   }
+                  
+                  NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
+                  
+                  NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
+                  host_response_data = [tmp_data mutableCopy];
+                  [host_response_data appendData:response_data];
+              }
+              [wait_until_done signal];
+          }
     ];
     
     // LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
@@ -561,8 +557,7 @@ namespace {
     LOG(@"Waiting for lock");
     NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeout];
     // [wait_until_done wait];
-    BOOL was_timeout = NO;
-    was_timeout = [wait_until_done waitUntilDate:timeoutDate];
+    BOOL finished_in_time = [wait_until_done waitUntilDate:timeoutDate];
     LOG(@"Got lock, done");
     [wait_until_done unlock];
     
@@ -573,7 +568,7 @@ namespace {
     NSData* tmp = host_response_data;
     host_response_data = nil;
     
-    if (was_timeout == NO)
+    if (finished_in_time == NO)
     {
         return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_CONNECT_TIMEOUT);
     }
