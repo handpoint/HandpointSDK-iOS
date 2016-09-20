@@ -290,8 +290,10 @@ namespace {
 
     NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
     
+#ifdef DEBUG
     int log_size = std::min(100, pRequest->GetLength());
     LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:log_size]);
+#endif
     
     // split on double linefeed
     NSArray* parts = [http_request componentsSeparatedByString:@"\r\n\r\n"];
@@ -457,11 +459,12 @@ namespace {
     // Content-Length: 1340\r\n\r\n          <--- double linefeed before data
     // 025\xb0\x02\x0b...[1340 bytes total]
     //
-    NSString* http_request = [[NSString alloc] initWithData:pRequest->get_data() encoding:NSISOLatin1StringEncoding;
+    NSString* http_request = [[NSString alloc] initWithData:pRequest->get_data() encoding:NSISOLatin1StringEncoding];
     
+#ifdef DEBUG
     int log_size = std::min(100, pRequest->GetLength());
     LOG_RELEASE(Logger::eFiner, @"start of request data: %@", [http_request substringToIndex:log_size]);
-    
+#endif
     // split on double linefeed
     NSArray* parts = [http_request componentsSeparatedByString:@"\r\n\r\n"];
     // should have two parts, the header and the data
