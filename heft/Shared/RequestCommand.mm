@@ -22,11 +22,165 @@ namespace {
     };
     
     CurrencyCode ISO4217CurrencyCodes[] = {
-          "USD", "0840"
-        , "EUR", "0978"
-        , "GBP", "0826"
-        , "ISK", "0352"
-        , "ZAR", "0710"
+            "AED", "784" //United Arab Emirates dirham
+            ,"AFN", "971" //Afghani
+            ,"ALL", "8" //Lek
+            ,"AMD", "51" //Armenian dram
+            ,"ANG", "532" //Netherlands Antillean guilder
+            ,"AOA", "973" //Kwanza
+            ,"ARS", "32" //Argentine peso
+            ,"AUD", "36" //Australian dollar
+            ,"AWG", "533" //Aruban guilder
+            ,"AZN", "944" //Azerbaijanian manat
+            ,"BAM", "977" //Convertible marks
+            ,"BBD", "52" //Barbados dollar
+            ,"BDT", "50" //Bangladeshi taka
+            ,"BGN", "975" //Bulgarian lev
+            ,"BHD", "48" //Bahraini dinar
+            ,"BIF", "108" //Burundian franc
+            ,"BMD", "60" //Bermudian dollar
+            ,"BND", "96" //Brunei dollar
+            ,"BOB", "68" //Boliviano
+            ,"BOV", "984" //Bolivian Mvdol (funds code)
+            ,"BRL", "986" //Brazilian real
+            ,"BSD", "44" //Bahamian dollar
+            ,"BTN", "64" //Ngultrum
+            ,"BWP", "72" //Pula
+            ,"BYR", "974" //Belarusian ruble
+            ,"BZD", "84" //Belize dollar
+            ,"CAD", "124" //Canadian dollar
+            ,"CDF", "976" //Franc Congolais
+            ,"CHF", "756" //Swiss franc
+            ,"CLP", "152" //Chilean peso
+            ,"CNY", "156" //Chinese Yuan
+            ,"COP", "170" //Colombian peso
+            ,"COU", "970" //Unidad de Valor Real
+            ,"CRC", "188" //Costa Rican colon
+            ,"CUC", "931" //Cuban convertible peso
+            ,"CUP", "192" //Cuban peso
+            ,"CVE", "132" //Cape Verde escudo
+            ,"CZK", "203" //Czech Koruna
+            ,"DJF", "262" //Djibouti franc
+            ,"DKK", "208" //Danish krone
+            ,"DOP", "214" //Dominican peso
+            ,"DZD", "12" //Algerian dinar
+            ,"EGP", "818" //Egyptian pound
+            ,"ERN", "232" //Nakfa
+            ,"ETB", "230" //Ethiopian birr
+            ,"EUR", "978" //euro
+            ,"FJD", "242" //Fiji dollar
+            ,"FKP", "238" //Falkland Islands pound
+            ,"GBP", "826" //Pound sterling
+            ,"GEL", "981" //Lari
+            ,"GHS", "936" //Cedi
+            ,"GIP", "292" //Gibraltar pound
+            ,"GMD", "270" //Dalasi
+            ,"GNF", "324" //Guinea franc
+            ,"GTQ", "320" //Quetzal
+            ,"GYD", "328" //Guyana dollar
+            ,"HKD", "344" //Hong Kong dollar
+            ,"HNL", "340" //Lempira
+            ,"HRK", "191" //Croatian kuna
+            ,"HTG", "332" //Haiti gourde
+            ,"HUF", "348" //Forint
+            ,"IDR", "360" //Rupiah
+            ,"ILS", "376" //Israeli new sheqel
+            ,"INR", "356" //Indian rupee
+            ,"IQD", "368" //Iraqi dinar
+            ,"IRR", "364" //Iranian rial
+            ,"ISK", "352" //Iceland krona
+            ,"JMD", "388" //Jamaican dollar
+            ,"JOD", "400" //Jordanian dinar
+            ,"JPY", "392" //Japanese yen
+            ,"KES", "404" //Kenyan shilling
+            ,"KGS", "417" //Som
+            ,"KHR", "116" //Riel
+            ,"KMF", "174" //Comoro franc
+            ,"KPW", "408" //North Korean won
+            ,"KRW", "410" //South Korean won
+            ,"KWD", "414" //Kuwaiti dinar
+            ,"KYD", "136" //Cayman Islands dollar
+            ,"KZT", "398" //Tenge
+            ,"LAK", "418" //Kip
+            ,"LBP", "422" //Lebanese pound
+            ,"LKR", "144" //Sri Lanka rupee
+            ,"LRD", "430" //Liberian dollar
+            ,"LSL", "426" //Lesotho loti
+            ,"LTL", "440" //Lithuanian litas
+            ,"LYD", "434" //Libyan dinar
+            ,"MAD", "504" //Moroccan dirham
+            ,"MDL", "498" //Moldovan leu
+            ,"MGA", "969" //Malagasy ariary
+            ,"MKD", "807" //Denar
+            ,"MMK", "104" //Kyat
+            ,"MNT", "496" //Tughrik
+            ,"MOP", "446" //Pataca
+            ,"MRO", "478" //Mauritanian ouguiya
+            ,"MUR", "480" //Mauritius rupee
+            ,"MVR", "462" //Rufiyaa
+            ,"MWK", "454" //Kwacha
+            ,"MXN", "484" //Mexican peso
+            ,"MXV", "979" //Mexican Unidad de Inversion
+            ,"MYR", "458" //Malaysian ringgit
+            ,"MZN", "943" //Metical
+            ,"NAD", "516" //Namibian dollar
+            ,"NGN", "566" //Naira
+            ,"NIO", "558" //Cordoba oro
+            ,"NOK", "578" //Norwegian krone
+            ,"NPR", "524" //Nepalese rupee
+            ,"NZD", "554" //New Zealand dollar
+            ,"OMR", "512" //Rial Omani
+            ,"PAB", "590" //Balboa
+            ,"PEN", "604" //Nuevo sol
+            ,"PGK", "598" //Kina
+            ,"PHP", "608" //Philippine peso
+            ,"PKR", "586" //Pakistan rupee
+            ,"PLN", "985" //Z?oty
+            ,"PYG", "600" //Guarani
+            ,"QAR", "634" //Qatari rial
+            ,"RON", "946" //Romanian new leu
+            ,"RSD", "941" //Serbian dinar
+            ,"RUB", "643" //Russian rouble
+            ,"RWF", "646" //Rwanda franc
+            ,"SAR", "682" //Saudi riyal
+            ,"SBD", "90" //Solomon Islands dollar
+            ,"SCR", "690" //Seychelles rupee
+            ,"SDG", "938" //Sudanese pound
+            ,"SEK", "752" //Swedish krona/kronor
+            ,"SGD", "702" //Singapore dollar
+            ,"SHP", "654" //Saint Helena pound
+            ,"SLL", "694" //Leone
+            ,"SOS", "706" //Somali shilling
+            ,"SRD", "968" //Surinam dollar
+            ,"SSP", "728" //South Sudanese pound
+            ,"STD", "678" //Dobra
+            ,"SYP", "760" //Syrian pound
+            ,"SZL", "748" //Lilangeni
+            ,"THB", "764" //Baht
+            ,"TJS", "972" //Somoni
+            ,"TMT", "934" //Manat
+            ,"TND", "788" //Tunisian dinar
+            ,"TOP", "776" //Pa'anga
+            ,"TRY", "949" //Turkish lira
+            ,"TTD", "780" //Trinidad and Tobago dollar
+            ,"TWD", "901" //New Taiwan dollar
+            ,"TZS", "834" //Tanzanian shilling
+            ,"UAH", "980" //Hryvnia
+            ,"UGX", "800" //Uganda shilling
+            ,"USD", "840" //US dollar
+            ,"UZS", "860" //Uzbekistan som
+            ,"VEF", "937" //Venezuelan bolivar fuerte
+            ,"VND", "704" //Vietnamese Dong
+            ,"VUV", "548" //Vatu
+            ,"WST", "882" //Samoan tala
+            ,"XAF", "950" //CFA franc BEAC
+            ,"XCD", "951" //East Caribbean dollar
+            ,"XOF", "952" //CFA Franc BCEAO
+            ,"XPF", "953" //CFP franc
+            ,"YER", "886" //Yemeni rial
+            ,"ZAR", "710" //South African rand
+            ,"ZMW", "967" //Kwacha
+            ,"ZWL", "932" //Zimbabwe dollar
     };
     
     NSString* init_xml = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
