@@ -116,7 +116,6 @@ FrameManager::~FrameManager()
 
 void FrameManager::Write(HeftConnection* connection)
 {
-    int j = 0;
     for(auto& frame : frames) {
 		int i = 0;
         
@@ -147,11 +146,7 @@ void FrameManager::Write(HeftConnection* connection)
 			[connection writeAck:SESSION_END];
 			LOG(@"Session end sent");
 			throw communication_exception();
-		}
-#if 0
-        if (j++ > 1)
-            [NSThread sleepForTimeInterval:10];  // TODO: REMOVE THIS SHIT!!!!!!!
-#endif
+		}        
 	}
 }
 
