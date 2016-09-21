@@ -13,7 +13,7 @@ public:
 	
     void setFileName(NSString* filename);
 	
-    void setLevel(eLevel level){m_level = level;}
+    void setLevel(eLevel level) {m_level = level;}
 
 	bool isLogable(eLevel level)
     {
@@ -29,8 +29,6 @@ private:
 	~Logger(){}
 	Logger& operator =(const Logger& arg);
 
-	NSString* fileName;
-	NSMutableString* logStr;
 	eLevel m_level;
 };
 
@@ -58,5 +56,9 @@ NSString* dump(NSString* prefix, const void* const pData, int len);
 #ifdef HEFT_SIMULATOR
 #define LOG_RELEASE(level, ...) LOG(__VA_ARGS__)
 #else
+#ifdef DEBUG
 #define LOG_RELEASE(level, ...) if(Logger::instance().isLogable(level)) Logger::instance().log(__VA_ARGS__);
+#else
+#define LOG_RELEASE(level, ...)
+#endif
 #endif

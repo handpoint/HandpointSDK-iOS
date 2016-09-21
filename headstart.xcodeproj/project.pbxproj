@@ -1153,7 +1153,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.3;
+				CURRENT_PROJECT_VERSION = 2.5.4;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1163,7 +1163,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.3;
+				CURRENT_PROJECT_VERSION = 2.5.4;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1173,7 +1173,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.3;
+				CURRENT_PROJECT_VERSION = 2.5.4;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1183,7 +1183,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.3;
+				CURRENT_PROJECT_VERSION = 2.5.4;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
