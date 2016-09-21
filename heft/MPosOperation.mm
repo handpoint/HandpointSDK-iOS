@@ -538,9 +538,11 @@ namespace {
                   NSInteger status_code = [httpResponse statusCode];
                   
                   NSString* status_string = @"";
-                  if (httpCodes.find((int) status_code) != httpCodes.end())
+                  auto http_code_found = httpCodes.find((int) status_code);
+                  if (http_code_found != httpCodes.end())
                   {
-                      status_string = httpCodes[(int) status_code];
+                      // status_string = httpCodes[(int) status_code];
+                      status_string = http_code_found->second;
                   }
                   
                   NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
