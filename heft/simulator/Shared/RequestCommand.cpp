@@ -60,7 +60,7 @@ namespace {
     
     
     CurrencyCode ISO4217CurrencyCodes[] = {
-       "AED", "784" //United Arab Emirates dirham
+       "AED", "0784" //United Arab Emirates dirham
         ,"AFN", "0971" //Afghani
         ,"ALL", "0008" //Lek
         ,"AMD", "0051" //Armenian dram
