@@ -374,7 +374,7 @@ namespace {
                 status_string = httpCodes[(int) status_code];
             }
             
-            NSString *header = [NSString stringWithFormat:@"HTTP/1.0 %d %@\r\n\r\n", (int) status_code, status_string];
+            NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
             
             NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
             host_response_data = [tmp_data mutableCopy];
@@ -411,7 +411,7 @@ namespace {
     host_communication_error = nil;
     NSData* tmp = host_response_data;
     host_response_data = nil;
-
+    
     if (error != nil)
     {
         return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVING_ERROR);
