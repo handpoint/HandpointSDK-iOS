@@ -244,6 +244,13 @@ namespace {
 }
 
 
+// Declare a new method that will be used by both processSend and processPost, almost all of the
+// duplicate code should be in this method.
+// 
+// POST data to host in the background, locking lock before returning and releasing when done
+// user calls the function and if it returns YES, wait for the lock.
+// BOOL sendMessage(NSString* host, short port, NSString* path, NSData* data, NSCondition* lock);
+
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest
 {
 	LOG_RELEASE(Logger::eFine,
@@ -369,9 +376,11 @@ namespace {
             NSInteger status_code = [httpResponse statusCode];
             
             NSString* status_string = @"";
-            if (httpCodes.find((int) status_code) != httpCodes.end())
+            auto http_code_found = httpCodes.find((int) status_code);
+            if (http_code_found != httpCodes.end())
             {
-                status_string = httpCodes[(int) status_code];
+                // status_string = httpCodes[(int) status_code];
+                status_string = http_code_found->second;
             }
             
             NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
