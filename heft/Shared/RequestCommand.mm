@@ -28,12 +28,14 @@ namespace {
         , "ISK", "0352"
         , "ZAR", "0710"
     };
+
     
     NSString* init_xml = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                                   "<InitRequest>"
                                     "<ComBufSize>%d</ComBufSize>"
                                     "<SDKName>iOS</SDKName>"
-                                    "<SDKVersion>v%@</SDKVersion>"
+                                    "<SDKVersion>%@</SDKVersion>"
+                                    "<PostEnabled>1</PostEnabled>"
                                   "</InitRequest>";
 }
 
