@@ -1,7 +1,10 @@
 #pragma once
 
-class BCDCoder{
-public:
-	static void Encode(const char* const pStr, UINT8* pBuf, int size);
-	static string Decode(const UINT8* pBuf, int size);
+#include <string>
+#include <cstdint>
+
+
+namespace BCDCoder {
+    void Encode(const char* pStr, std::uint8_t* pBuf, int size);
+    std::string Decode(const std::uint8_t* pBuf, int size);
 };

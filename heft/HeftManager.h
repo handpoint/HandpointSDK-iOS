@@ -11,6 +11,9 @@
  *
  **/
 
+#import <Foundation/Foundation.h>
+
+
 @protocol HeftClient;
 @protocol HeftStatusReportDelegate;
 @class HeftRemoteDevice;
@@ -136,5 +139,9 @@
  @param aDelegate				Delegate which will be perform HeftStatusReportDelegate notifications.
  */
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
+
+- (void)cleanup;
+
+- (void)timerCallback;
 
 @end

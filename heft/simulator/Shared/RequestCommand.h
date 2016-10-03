@@ -2,13 +2,20 @@
 #include "Command.h"
 #include "CmdIds.h"
 
+#include <cstdint>
+#include <string>
+
+using std::uint32_t;
+using std::uint8_t;
+using std::string;
+
 class ResponseCommand;
 
 class RequestCommand : public Command{
 protected:
-	UINT32 m_cmd;
+	uint32_t m_cmd;
 
-	RequestCommand(UINT32 cmd) : m_cmd(cmd){}
+	RequestCommand(uint32_t cmd) : m_cmd(cmd){}
 
 public:
 	//Command
@@ -16,23 +23,31 @@ public:
 	virtual ResponseCommand* CreateResponse()const;
     virtual ResponseCommand* CreateResponseOnCancel()const;
 
-	UINT32 GetType()const{return m_cmd;}
+	uint32_t GetType()const{return m_cmd;}
 };
 
 class FinanceRequestCommand : public RequestCommand{
 	string currency;
-	UINT32 amount;
+	uint32_t amount;
 
 protected:
 	enum eState{eWaitingCard, eCardInserted, eAppSelect, ePinInput, eConnect};
 	mutable int state;
 
 public:
-	FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml);
-	UINT32 GetAmount()const{return amount;}
-	const string& GetCurrency()const{return currency;}
-	ResponseCommand* CreateResponse()const;
-	ResponseCommand* CreateResponseOnCancel()const;
+	FinanceRequestCommand(uint32_t type, const string& currency_code, uint32_t trans_amount, uint8_t card_present, const string& trans_id, const string& xml);
+	uint32_t GetAmount() const
+    {
+        return amount;
+    }
+	
+    const string& GetCurrency() const
+    {
+        return currency;
+    }
+    
+	ResponseCommand* CreateResponse() const;
+	ResponseCommand* CreateResponseOnCancel() const;
 };
 
 class XMLCommandRequestCommand : public RequestCommand{
@@ -70,79 +85,109 @@ public:
 class HostRequestCommand : public RequestCommand, public IRequestProcess{
 protected:
 	string currency;
-	UINT32 amount;
-	UINT32 fin_cmd;
+	uint32_t amount;
+	uint32_t fin_cmd;
 
 public:
-	HostRequestCommand(UINT32 cmd, const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd) : RequestCommand(cmd), currency(aCurrency), amount(aAmount), fin_cmd(aFin_cmd){}
-	ResponseCommand* CreateResponse()const{ATLASSERT(false);return 0;}
+	HostRequestCommand(uint32_t cmd, const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
+        : RequestCommand(cmd), currency(aCurrency), amount(aAmount), fin_cmd(aFin_cmd){}
+	ResponseCommand* CreateResponse()const
+    {
+        // ATLASSERT(false);
+        return 0;
+    }
 	const string& GetCurrency(){return currency;}
-	UINT32 GetAmount(){return amount;}
-	UINT32 GetFinCommand(){return fin_cmd;}
+	uint32_t GetAmount(){return amount;}
+	uint32_t GetFinCommand(){return fin_cmd;}
 };
 
 class HostResponseCommand : public RequestCommand{
 protected:
 	string currency;
-	UINT32 amount;
+	uint32_t amount;
 	int status;
-	UINT32 fin_cmd;
+	uint32_t fin_cmd;
 
 public:
-	HostResponseCommand(UINT32 command, UINT32 aFin_cmd, const string& aCurrency, UINT32 aAmount, int aStatus = EFT_PP_STATUS_SUCCESS);
+	HostResponseCommand(uint32_t command, uint32_t aFin_cmd, const string& aCurrency, uint32_t aAmount, int aStatus = EFT_PP_STATUS_SUCCESS);
 
 	//Command
-	bool isResponse(){return true;}
+	bool isResponse()
+    {
+        return true;
+    }
+    
 	ResponseCommand* CreateResponse()const;
 };
 
 class ConnectRequestCommand : public HostRequestCommand{
 public:
-	ConnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processConnect:this];}
+	ConnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processConnect:this];
+    }
 };
 
 class SendRequestCommand : public HostRequestCommand{
 public:
-	SendRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSend:this];}
+	SendRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processSend:this];
+    }
 };
 
 class ReceiveRequestCommand : public HostRequestCommand{
 public:
-	ReceiveRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processReceive:this];}
+	ReceiveRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processReceive:this];
+    }
 };
 
 class DisconnectRequestCommand : public HostRequestCommand{
 public:
-	DisconnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processDisconnect:this];}
+	DisconnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processDisconnect:this];
+    }
 };
 
 class SignatureRequestCommand : public RequestCommand, public IRequestProcess{
 	string receipt;
     string xml_details;
 	string currency;
-	UINT32 amount;
-	UINT32 type;
+	uint32_t amount;
+	uint32_t type;
 
 public:
-	SignatureRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aType);
+	SignatureRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aType);
 	const string& GetReceipt(){return receipt;}
     const string& GetXmlDetails(){return xml_details;}
 	const string& GetCurrency(){return currency;}
-	UINT32 GetAmount(){return amount;}
-	UINT32 GetFinCommand(){return type;}
+	uint32_t GetAmount(){return amount;}
+	uint32_t GetFinCommand(){return type;}
 
 	//IRequestProcess
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSignature:this];}
-	ResponseCommand* CreateResponse()const{ATLASSERT(false);return 0;}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processSignature:this];
+    }
+    
+	ResponseCommand* CreateResponse() const
+    {
+        // ATLASSERT(false);
+        
+        return 0;
+    }
 };
 
 class SetLogLevelRequestCommand : public RequestCommand{
 public:
-	SetLogLevelRequestCommand(UINT8 log_level);
+	SetLogLevelRequestCommand(uint8_t log_level);
 };
 
 class ResetLogInfoRequestCommand : public RequestCommand{

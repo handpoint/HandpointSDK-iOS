@@ -13,4 +13,5 @@ class RequestCommand;
 
 - (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)processor sharedSecret:(NSData*)aSharedSecret;
 
++ (void)startRunLoop;
 @end

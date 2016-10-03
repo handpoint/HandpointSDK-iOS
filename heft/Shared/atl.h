@@ -1,15 +1,26 @@
+#pragma once
+
+#ifndef _ATL_METHODS_DEFINED_
+#define _ATL_METHODS_DEFINED_
+
+#import <Foundation/Foundation.h>
+
+#include <cstdint>
+
 inline int AtlHexEncodeGetRequiredLength(int nSrcLen)
 {
-	__int64 nRet64=2*static_cast<__int64>(nSrcLen)+1;
-	ATLASSERT(nRet64 <= INT_MAX && nRet64 >= INT_MIN);
+	// __int64 nRet64=2*static_cast<__int64>(nSrcLen)+1;
+    std::int64_t nRet64=2*static_cast<std::int64_t>(nSrcLen)+1;
+    
+	// ATLASSERT(nRet64 <= INT_MAX && nRet64 >= INT_MIN);
 	int nRet = static_cast<int>(nRet64);
 	return nRet;
 }
 
 inline bool AtlHexEncode(
-	const BYTE *pbSrcData,
+    const std::uint8_t *pbSrcData,
 	int nSrcLen,
-	LPSTR szDest,
+	char* szDest,
 	int *pnDestLen) throw()
 {
 	static const char s_chHexChars[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
@@ -22,13 +33,13 @@ inline bool AtlHexEncode(
 	
 	if(*pnDestLen < AtlHexEncodeGetRequiredLength(nSrcLen))
 	{
-		ATLASSERT(false);
+		// ATLASSERT(false);
 		return false;
 	}
 
 	int nRead = 0;
 	int nWritten = 0;
-	BYTE ch;
+    std::uint8_t ch;
 	while (nRead < nSrcLen)
 	{
 		ch = *pbSrcData++;
@@ -62,9 +73,9 @@ inline char AtlGetHexValue(char ch) throw()
 }
 
 inline bool AtlHexDecode(
-						 LPCSTR pSrcData,
+						 const char* pSrcData,
 						 int nSrcLen,
-						 LPBYTE pbDest,
+                         std::uint8_t* pbDest,
 						 int* pnDestLen) throw()
 {
 	if (!pSrcData || !pbDest || !pnDestLen)
@@ -74,7 +85,6 @@ inline bool AtlHexDecode(
 	
 	if(*pnDestLen < AtlHexDecodeGetRequiredLength(nSrcLen))
 	{
-		ATLASSERT(FALSE);
 		return FALSE;
 	}
 	
@@ -88,7 +98,7 @@ inline bool AtlHexDecode(
 		{
 			return FALSE;
 		}
-		*pbDest++ = (BYTE)(16*ch1+ch2);
+        *pbDest++ = (std::uint8_t)(16*ch1+ch2);
 		nWritten++;
 		nRead += 2;
 	}
@@ -96,3 +106,5 @@ inline bool AtlHexDecode(
 	*pnDestLen = nWritten;
 	return TRUE;
 }
+
+#endif

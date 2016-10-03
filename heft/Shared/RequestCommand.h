@@ -1,84 +1,114 @@
 #pragma once
 #include "Command.h"
 
-class RequestCommand : public Command{
+#include <vector>
+#include <string>
+#include <cstdint>
+
+#include "atl.h"
+
+class RequestCommand : public Command
+{
 	static const int ciMinSize = Command::ciMinSize + 6;
 
 protected:
-	vector<UINT8> data;
+    std::vector<std::uint8_t> data;
 
-	struct RequestPayload : CommandPayload{
-		UINT8 length[6];
+	struct RequestPayload : CommandPayload
+    {
+		std::uint8_t length[6];
 	} __attribute__((packed));
 
-	RequestCommand(int iCommandSize, UINT32 type);
-	RequestCommand(const void* payload, UINT32 payloadSize);
+	RequestCommand(int iCommandSize, uint32_t type);
+	RequestCommand(const void* payload, uint32_t payloadSize);
 	RequestCommand(){}
-	template<class T>
-	T* GetPayload(){return reinterpret_cast<T*>(&data[0]);}
-	template<class T>
-	void FormatLength(int length){
-		INT32 len_msb = htonl(length);
+
+    template<class T> T* GetPayload()
+    {
+        return reinterpret_cast<T*>(&data[0]);
+    }
+    
+    template<class T> void FormatLength(int length)
+    {
+		int32_t len_msb = htonl(length);
 		T* pRequest = GetPayload<T>();
 		int dest_len = sizeof(pRequest->length) + 1;
-		AtlHexEncode(reinterpret_cast<UINT8*>(&len_msb) + 1, sizeof(len_msb) - 1, reinterpret_cast<LPSTR>(pRequest->length), &dest_len);
+		AtlHexEncode(reinterpret_cast<const std::uint8_t*>(&len_msb) + 1,
+                     static_cast<int>(sizeof(len_msb) - 1),
+                     reinterpret_cast<char*>(pRequest->length),
+                     &dest_len);
 	}
-
+    
 	int ReadLength(const RequestPayload* pRequest);
 
 public:
 	//Command
-	bool isResponse(){return false;}
+	bool isResponse()
+    {
+        return false;
+    }
 
-	int GetLength()const{return (int)data.size();}
-	const UINT8* GetData()const{return &data[0];}
+	int GetLength() const
+    {
+        return (int)data.size();
+    }
+	
+    const std::uint8_t* GetData() const
+    {
+        return &data[0];
+    }
 #ifdef HEFT_EXPORTS
 	CString dump(const CString& prefix)const{return ::dump(prefix, &data[0], data.size());}
 #endif
 };
 
-class InitRequestCommand : public RequestCommand{
+class InitRequestCommand : public RequestCommand
+{
 	static const int ciMinSize = 7;
 protected:
-	struct InitPayload : RequestPayload{
-		UINT8 data[InitRequestCommand::ciMinSize];
+	struct InitPayload : RequestPayload {
+		std::uint8_t data[InitRequestCommand::ciMinSize];
+        std::uint32_t xml_size;
+        std::uint8_t xml[];
 	} __attribute__((packed));
 
 public:
-	InitRequestCommand();
+    InitRequestCommand(int bufferSize = 0, NSString* version = nil);
 };
 
-class IdleRequestCommand : public RequestCommand{
+class IdleRequestCommand : public RequestCommand
+{
 	static const int ciMinSize = 0;
 public:
 	IdleRequestCommand();
 };
 
-class XMLCommandRequestCommand : public RequestCommand{
+class XMLCommandRequestCommand : public RequestCommand
+{
 protected:
 	struct XMLCommandPayload : RequestPayload{
 		char xml_parameters[];
 	} __attribute__((packed));
 
 public:
-	XMLCommandRequestCommand(const string& xml);
+	XMLCommandRequestCommand(const std::string& xml);
 };
 
 class FinanceRequestCommand : public RequestCommand{
 	static const int ciMinSize = 7; // customer reference field not included for it will not appear if it is empty ( support older EFT versions)
 protected:
 	struct FinancePayload : RequestPayload{
-		UINT8 currency_code[2];
-		UINT32 trans_amount;
-		UINT8 card_present;
-		UINT8 trans_id_length; // must be set to zero if xml exists and there is no trans_id
-		UINT8 trans_id[];
-		// UINT32 xml_length;
-		// UINT8 xml[];
+		std::uint8_t currency_code[2];
+        std::uint32_t trans_amount;
+		std::uint8_t card_present;
+		std::uint8_t trans_id_length; // must be set to zero if xml exists and there is no trans_id
+		std::uint8_t trans_id[];
+		// uint32_t_t xml_length;
+		// std::uint8_t xml[];
 	} __attribute__((packed));
 
 public:
-	FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml);
+    FinanceRequestCommand(std::uint32_t type, const std::string& currency_code, std::uint32_t trans_amount, std::uint8_t card_present, const std::string& trans_id, const std::string& xml);
 };
 
 class StartOfDayRequestCommand : public RequestCommand{
@@ -100,8 +130,8 @@ public:
 
 class HostRequestCommand : public RequestCommand, public IRequestProcess{
 public:
-    HostRequestCommand(const void* payload, UINT32 payloadSize);
-	static HostRequestCommand* Create(const void* payload, UINT32 payloadSize);
+    HostRequestCommand(const void* payload, std::uint32_t payloadSize);
+    static HostRequestCommand* Create(const void* payload, std::uint32_t payloadSize);
 };
 
 class HostResponseCommand : public RequestCommand{
@@ -109,135 +139,247 @@ class HostResponseCommand : public RequestCommand{
 
 protected:
 	struct HostResponsePayload : CommandPayload{
-		UINT32 status;
-		UINT8 length[6];
+        std::uint32_t status;
+		std::uint8_t length[6];
 	} __attribute__((packed));
 
-	void WriteStatus(UINT16 status);
+	void WriteStatus(std::uint16_t status);
 
 public:
-	HostResponseCommand(UINT32 command, int status, int cmd_size = 0);
+    HostResponseCommand(std::uint32_t command, int status, int cmd_size = 0);
 
 	//Command
-	bool isResponse(){return true;}
+	bool isResponse()
+    {
+        return true;
+    }
 };
 
 class ConnectRequestCommand : public HostRequestCommand{
-	string remote_add;
-	UINT16 port;
-	UINT16 timeout;
+	std::string remote_address;
+	std::uint16_t port;
+	std::uint16_t timeout;
 
 protected:
 	struct ConnectPayload : RequestPayload{
-		UINT8 remote_add_length;
-		UINT8 remote_add[];
+		std::uint8_t remote_add_length;
+		std::uint8_t remote_add[];
 	} __attribute__((packed));
 
 public:
-	ConnectRequestCommand(const void* payload, UINT32 payloadSize);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processConnect:this];}
-	const string& GetAddr(){return remote_add;}
-	int GetPort(){return port;}
-	int GetTimeout(){return timeout;}
+    ConnectRequestCommand(const void* payload, std::uint32_t payloadSize);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processConnect:this];
+    }
+	
+    const std::string& GetAddr()
+    {
+        return remote_address;
+    }
+	
+    int GetPort()
+    {
+        return port;
+    }
+	int GetTimeout()
+    {
+        return timeout;
+    }
 };
 
 class SendRequestCommand : public HostRequestCommand{
-	UINT16 timeout;
+	std::uint16_t timeout;
 
 protected:
 	struct SendPayload : RequestPayload{
-		UINT16 timeout;
-		UINT16 data_len;
-		UINT8 data[];
+		std::uint16_t timeout;
+		std::uint16_t data_len;
+		std::uint8_t data[];
 	} __attribute__((packed));
 
 public:
-	SendRequestCommand(const void* payload, UINT32 payloadSize);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSend:this];}
-	int GetTimeout(){return timeout;}
+    SendRequestCommand(const void* payload, std::uint32_t payloadSize);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processSend:this];
+    }
+	
+    int GetTimeout(){
+        return timeout;
+    }
 };
 
+class PostRequestCommand : public HostRequestCommand
+{
+    std::uint16_t port;
+    std::uint16_t timeout;
+    NSString*     host;
+//    NSString*     path;
+    NSData*       post_data;
+    
+protected:
+    struct PostPayload : RequestPayload{
+        std::uint16_t port;
+        std::uint16_t timeout;
+        std::uint8_t  host_address_length;
+//        std::uint8_t  path_length;
+        std::uint16_t data_len;
+        std::uint8_t  data[];  // [host[n]path[m]data[r]
+    } __attribute__((packed));
+    
+public:
+    PostRequestCommand(const void* payload, std::uint32_t payloadSize);
+    RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processPost:this];
+    }
+    
+    NSNumber* get_port()
+    {
+        return [NSNumber numberWithShort:port];
+    }
+    
+    int GetTimeout()
+    {
+        return timeout;
+    }
+    
+    NSString* get_host()
+    {
+        return host;
+    }
+  
+    /*
+    NSString* get_path()
+    {
+        return path;
+    }
+    */
+    
+    NSData* get_data()
+    {
+        return post_data;
+    }
+};
+
+
 class ReceiveRequestCommand : public HostRequestCommand{
-	UINT16 data_len;
-	UINT16 timeout;
+	std::uint16_t data_len;
+	std::uint16_t timeout;
 
 protected:
 	struct ReceivePayload : RequestPayload{
-		UINT16 data_len;
-		UINT16 timeout;
+		std::uint16_t data_len;
+		std::uint16_t timeout;
 	} __attribute__((packed));
 
 public:
-	ReceiveRequestCommand(const void* payload, UINT32 payloadSize);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processReceive:this];}
-	int GetTimeout(){return timeout;}
-	UINT16 GetDataLen(){return data_len;}
+    ReceiveRequestCommand(const void* payload, std::uint32_t payloadSize);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processReceive:this];
+    }
+    
+	int GetTimeout()
+    {
+        return timeout;
+    }
+    
+	std::uint16_t GetDataLen()
+    {
+        return data_len;
+    }
 };
 
 class ReceiveResponseCommand : public HostResponseCommand{
 	static const int ciMinSize = 4;
 	struct ReceiveResponsePayload : HostResponsePayload{
-		UINT32 data_len;
-		UINT8 data[];
+        std::uint32_t data_len;
+		std::uint8_t data[];
 	} __attribute__((packed));
 
 public:
-	ReceiveResponseCommand(const vector<UINT8>& payload);
+    ReceiveResponseCommand(const std::vector<std::uint8_t>& payload);
+	ReceiveResponseCommand(NSData* payload);
 };
 
 class DisconnectRequestCommand : public HostRequestCommand{
 public:
-	DisconnectRequestCommand(const void* payload, UINT32 payloadSize);
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processDisconnect:this];}
+    DisconnectRequestCommand(const void* payload, std::uint32_t payloadSize);
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processDisconnect:this];
+    }
 };
 
 class SignatureRequestCommand : public RequestCommand, public IRequestProcess{
-	string receipt;
-	string xml_details;
+	std::string receipt;
+	std::string xml_details;
 
 protected:
 	struct SignatureRequestPayload : RequestPayload{
-		UINT16 receipt_length;
+		std::uint16_t receipt_length;
 		char receipt[];
 	} __attribute__((packed));
 
 public:
-	SignatureRequestCommand(const void* payload, UINT32 payloadSize);
-	const string& GetReceipt(){return receipt;}
-	const string& GetXmlDetails(){return xml_details;}
+    SignatureRequestCommand(const void* payload, std::uint32_t payloadSize);
+    const std::string& GetReceipt()
+    {
+        return receipt;
+    }
+    
+    const std::string& GetXmlDetails()
+    {
+        return xml_details;
+    }
 
 	//IRequestProcess
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processSignature:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processSignature:this];
+    }
 };
 
 class ChallengeRequestCommand : public RequestCommand, public IRequestProcess{
-	vector<UINT8> random_num;
-	string xml_details;
+    std::vector<std::uint8_t> random_num;
+	std::string xml_details;
 
 protected:
 	struct ChallengeRequestPayload : RequestPayload{
-		UINT16 random_num_length;
-		UINT8 random_num[];
+		std::uint16_t random_num_length;
+		std::uint8_t random_num[];
 	} __attribute__((packed));
 
 public:
-	ChallengeRequestCommand(const void* payload, UINT32 payloadSize);
-	const vector<UINT8>& GetRandomNum(){return random_num;}
-	const string& GetXmlDetails(){return xml_details;}
+    ChallengeRequestCommand(const void* payload, std::uint32_t payloadSize);
+	const std::vector<std::uint8_t>& GetRandomNum()
+    {
+        return random_num;
+    }
+	
+    const std::string& GetXmlDetails()
+    {
+        return xml_details;
+    }
 
 	//IRequestProcess
-	RequestCommand* Process(id<IHostProcessor> handler){return [handler processChallenge:this];}
+	RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processChallenge:this];
+    }
 };
 
 class ChallengeResponseCommand : public HostResponseCommand{
 	static const int ciMinSize = 4;
 	struct ChallengeResponsePayload : HostResponsePayload{
-		UINT16 mx_len;
-		UINT8 mx[];
+		std::uint16_t mx_len;
+		std::uint8_t mx[];
 	} __attribute__((packed));
 
 public:
-	ChallengeResponseCommand(const vector<UINT8>& mx, const vector<UINT8>& zx);
+	ChallengeResponseCommand(const std::vector<std::uint8_t>& mx, const std::vector<std::uint8_t>& zx);
 };
 
 /*class DebugEnableRequestCommand : public RequestCommand{
@@ -264,11 +406,11 @@ class SetLogLevelRequestCommand : public RequestCommand{
 	static const int ciMinSize = 1;
 protected:
 	struct SetLogLevelPayload : RequestPayload{
-		UINT8 log_level;
+		std::uint8_t log_level;
 	} __attribute__((packed));
 
 public:
-	SetLogLevelRequestCommand(UINT8 log_level);
+	SetLogLevelRequestCommand(std::uint8_t log_level);
 };
 
 class ResetLogInfoRequestCommand : public RequestCommand{

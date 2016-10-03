@@ -6,34 +6,67 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		FBDA036A1CD018DC00607201 /* device-simulator */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator" */;
+			buildPhases = (
+				FBDA03701CD018EB00607201 /* ShellScript */,
+				FBDA03711CD018ED00607201 /* CopyFiles */,
+				FBDA03751CD0215500607201 /* CopyFiles */,
+			);
+			dependencies = (
+			);
+			name = "device-simulator";
+			productName = "device-simulator";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
-		2D1A425616F746C300CD6781 /* BcdCoderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425516F746C300CD6781 /* BcdCoderTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
 		2D1A425C16F757CB00CD6781 /* FrameManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425B16F757CB00CD6781 /* FrameManagerTest.m */; };
 		2D1B8AD416A0AD5700B11BC9 /* RequestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */; };
 		2D1B8AD516A0AD5B00B11BC9 /* ResponseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */; };
-		2D398936165FF23E00F8FA29 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3991628B0590043AFBC /* SenTestingKit.framework */; };
 		2D398937165FF23E00F8FA29 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3721628B0580043AFBC /* UIKit.framework */; };
 		2D398938165FF23E00F8FA29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		2D39893B165FF23E00F8FA29 /* libheft.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D398927165FF23D00F8FA29 /* libheft.a */; };
 		2D398941165FF23E00F8FA29 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D39893F165FF23E00F8FA29 /* InfoPlist.strings */; };
-		2D398973165FF88800F8FA29 /* MPosOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D39894E165FF88800F8FA29 /* MPosOperation.m */; };
-		2D398974165FF88800F8FA29 /* HeftConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398951165FF88800F8FA29 /* HeftConnection.m */; };
-		2D398975165FF88800F8FA29 /* HeftManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398953165FF88800F8FA29 /* HeftManager.m */; };
+		2D398973165FF88800F8FA29 /* MPosOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39894E165FF88800F8FA29 /* MPosOperation.mm */; };
+		2D398974165FF88800F8FA29 /* HeftConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398951165FF88800F8FA29 /* HeftConnection.mm */; };
+		2D398975165FF88800F8FA29 /* HeftManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398953165FF88800F8FA29 /* HeftManager.mm */; };
 		2D398977165FF88800F8FA29 /* HeftStatusReport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398957165FF88800F8FA29 /* HeftStatusReport.m */; };
-		2D398978165FF88800F8FA29 /* MpedDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398959165FF88800F8FA29 /* MpedDevice.m */; };
+		2D398978165FF88800F8FA29 /* MpedDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398959165FF88800F8FA29 /* MpedDevice.mm */; };
 		2D398979165FF88800F8FA29 /* ResponseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D39895B165FF88800F8FA29 /* ResponseParser.m */; };
-		2D39897A165FF88800F8FA29 /* BCDCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D398960165FF88800F8FA29 /* BCDCoder.cpp */; };
-		2D39897B165FF88800F8FA29 /* Crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D398963165FF88800F8FA29 /* Crc.cpp */; };
-		2D39897C165FF88800F8FA29 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D398965165FF88800F8FA29 /* Frame.cpp */; };
-		2D39897D165FF88800F8FA29 /* FrameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D398967165FF88800F8FA29 /* FrameManager.cpp */; };
-		2D39897E165FF88800F8FA29 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896C165FF88800F8FA29 /* Logger.cpp */; };
-		2D39897F165FF88800F8FA29 /* RequestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896E165FF88800F8FA29 /* RequestCommand.cpp */; };
-		2D398980165FF88800F8FA29 /* ResponseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D398970165FF88800F8FA29 /* ResponseCommand.cpp */; };
+		2D39897A165FF88800F8FA29 /* BCDCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398960165FF88800F8FA29 /* BCDCoder.mm */; };
+		2D39897B165FF88800F8FA29 /* Crc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398963165FF88800F8FA29 /* Crc.mm */; };
+		2D39897C165FF88800F8FA29 /* Frame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398965165FF88800F8FA29 /* Frame.mm */; };
+		2D39897D165FF88800F8FA29 /* FrameManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398967165FF88800F8FA29 /* FrameManager.mm */; };
+		2D39897E165FF88800F8FA29 /* Logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896C165FF88800F8FA29 /* Logger.mm */; };
+		2D39897F165FF88800F8FA29 /* RequestCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896E165FF88800F8FA29 /* RequestCommand.mm */; };
+		2D398980165FF88800F8FA29 /* ResponseCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398970165FF88800F8FA29 /* ResponseCommand.mm */; };
 		2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
+		498A67081BF63765006D4606 /* Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 498A67071BF63765006D4606 /* Logger.m */; };
+		498A67091BF63765006D4606 /* Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 498A67071BF63765006D4606 /* Logger.m */; };
+		49DA880C1BEBB0880088EAA1 /* BcdCoderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425516F746C300CD6781 /* BcdCoderTest.m */; };
+		49F4DED91C6E6BC500C0B5D0 /* RequestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */; };
+		49F4DEDA1C6E6BC500C0B5D0 /* ResponseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */; };
+		49F4DEDB1C6E6BC500C0B5D0 /* BCDCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398960165FF88800F8FA29 /* BCDCoder.mm */; };
+		49F4DEDC1C6E6BC500C0B5D0 /* RequestCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896E165FF88800F8FA29 /* RequestCommand.mm */; };
+		49F4DEDD1C6E6BC500C0B5D0 /* ResponseCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398970165FF88800F8FA29 /* ResponseCommand.mm */; };
+		49F4DEDE1C6E6BC500C0B5D0 /* Frame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398965165FF88800F8FA29 /* Frame.mm */; };
+		49F4DEDF1C6E6BC500C0B5D0 /* FrameManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398967165FF88800F8FA29 /* FrameManager.mm */; };
+		49F4DEE01C6E6BC500C0B5D0 /* Logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896C165FF88800F8FA29 /* Logger.mm */; };
+		49F4DEE11C6E6BC500C0B5D0 /* HeftManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398953165FF88800F8FA29 /* HeftManager.mm */; };
+		49F4DEE21C6E6BC500C0B5D0 /* HeftStatusReport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398957165FF88800F8FA29 /* HeftStatusReport.m */; };
+		49F4DEE31C6E6BC500C0B5D0 /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398955165FF88800F8FA29 /* HeftRemoteDevice.m */; };
+		49F4DEE41C6E6BC500C0B5D0 /* HeftConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398951165FF88800F8FA29 /* HeftConnection.mm */; };
+		49F4DEE51C6E6BC500C0B5D0 /* MpedDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398959165FF88800F8FA29 /* MpedDevice.mm */; };
+		49F4DEE61C6E6BC500C0B5D0 /* ResponseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D39895B165FF88800F8FA29 /* ResponseParser.m */; };
+		49F4DEE71C6E6BC500C0B5D0 /* MPosOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39894E165FF88800F8FA29 /* MPosOperation.mm */; };
+		49F4DEE81C6E6E4600C0B5D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		809FF0691864D45900572A04 /* MPosOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 809FF0671864D45900572A04 /* MPosOperation.h */; };
-		809FF06A1864D45900572A04 /* MPosOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 809FF0681864D45900572A04 /* MPosOperation.m */; };
+		809FF06A1864D45900572A04 /* MPosOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 809FF0681864D45900572A04 /* MPosOperation.mm */; };
 		AD4C085C170C0C770005EDC0 /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD4C085D170C0C7F0005EDC0 /* HeftManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD4C085E170C0C870005EDC0 /* HeftStatusReportPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -42,6 +75,14 @@
 		AD75FBAE16FC92F30000446E /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
 		AD75FBAF16FC93580000446E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3761628B0590043AFBC /* CoreGraphics.framework */; };
 		ADF06E8E16FC6AB200B50C8E /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D398955165FF88800F8FA29 /* HeftRemoteDevice.m */; };
+		FBDA03721CD01AB900607201 /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; };
+		FBDA03731CD01AB900607201 /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; };
+		FBDA03741CD01AB900607201 /* HeftStatusReportPublic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; };
+		FBDA03761CD0216B00607201 /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39894F165FF88800F8FA29 /* HeftClient.h */; };
+		FBDA03771CD0216B00607201 /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D398952165FF88800F8FA29 /* HeftManager.h */; };
+		FBDA03781CD0216B00607201 /* HeftStatusReportPublic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; };
+		FBDA03801CD031D200607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
+		FBDA03811CD031D800607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,7 +95,46 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		49F4DECC1C6E6B4200C0B5D0 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBDA03711CD018ED00607201 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/include";
+			dstSubfolderSpec = 0;
+			files = (
+				FBDA03801CD031D200607201 /* CmdIds.h in CopyFiles */,
+				FBDA03721CD01AB900607201 /* HeftClient.h in CopyFiles */,
+				FBDA03731CD01AB900607201 /* HeftManager.h in CopyFiles */,
+				FBDA03741CD01AB900607201 /* HeftStatusReportPublic.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBDA03751CD0215500607201 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include";
+			dstSubfolderSpec = 0;
+			files = (
+				FBDA03811CD031D800607201 /* CmdIds.h in CopyFiles */,
+				FBDA03761CD0216B00607201 /* HeftClient.h in CopyFiles */,
+				FBDA03771CD0216B00607201 /* HeftManager.h in CopyFiles */,
+				FBDA03781CD0216B00607201 /* HeftStatusReportPublic.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		283D2AE0D17B51B9CE673CA5 /* Pods-heft.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.release.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.release.xcconfig"; sourceTree = "<group>"; };
 		2D0D3F3B162C64450057301F /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		2D1A425116F7448B00CD6781 /* CrcTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrcTest.h; sourceTree = "<group>"; };
 		2D1A425216F7448B00CD6781 /* CrcTest.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = CrcTest.m; sourceTree = "<group>"; };
@@ -73,41 +153,40 @@
 		2D398940165FF23E00F8FA29 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D39894C165FF88800F8FA29 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		2D39894D165FF88800F8FA29 /* MPosOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPosOperation.h; sourceTree = "<group>"; };
-		2D39894E165FF88800F8FA29 /* MPosOperation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MPosOperation.m; sourceTree = "<group>"; };
+		2D39894E165FF88800F8FA29 /* MPosOperation.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MPosOperation.mm; sourceTree = "<group>"; };
 		2D39894F165FF88800F8FA29 /* HeftClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftClient.h; sourceTree = "<group>"; };
 		2D398950165FF88800F8FA29 /* HeftConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftConnection.h; sourceTree = "<group>"; };
-		2D398951165FF88800F8FA29 /* HeftConnection.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = HeftConnection.m; sourceTree = "<group>"; };
+		2D398951165FF88800F8FA29 /* HeftConnection.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = HeftConnection.mm; sourceTree = "<group>"; };
 		2D398952165FF88800F8FA29 /* HeftManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftManager.h; sourceTree = "<group>"; };
-		2D398953165FF88800F8FA29 /* HeftManager.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = HeftManager.m; sourceTree = "<group>"; };
+		2D398953165FF88800F8FA29 /* HeftManager.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = HeftManager.mm; sourceTree = "<group>"; };
 		2D398954165FF88800F8FA29 /* HeftRemoteDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftRemoteDevice.h; sourceTree = "<group>"; };
 		2D398955165FF88800F8FA29 /* HeftRemoteDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeftRemoteDevice.m; sourceTree = "<group>"; };
 		2D398956165FF88800F8FA29 /* HeftStatusReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftStatusReport.h; sourceTree = "<group>"; };
 		2D398957165FF88800F8FA29 /* HeftStatusReport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeftStatusReport.m; sourceTree = "<group>"; };
 		2D398958165FF88800F8FA29 /* MpedDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpedDevice.h; sourceTree = "<group>"; };
-		2D398959165FF88800F8FA29 /* MpedDevice.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MpedDevice.m; sourceTree = "<group>"; };
+		2D398959165FF88800F8FA29 /* MpedDevice.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MpedDevice.mm; sourceTree = "<group>"; };
 		2D39895A165FF88800F8FA29 /* ResponseParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseParser.h; sourceTree = "<group>"; };
 		2D39895B165FF88800F8FA29 /* ResponseParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResponseParser.m; sourceTree = "<group>"; };
 		2D39895E165FF88800F8FA29 /* CmdIds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CmdIds.h; sourceTree = "<group>"; };
 		2D39895F165FF88800F8FA29 /* atl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atl.h; sourceTree = "<group>"; };
-		2D398960165FF88800F8FA29 /* BCDCoder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = BCDCoder.cpp; sourceTree = "<group>"; };
+		2D398960165FF88800F8FA29 /* BCDCoder.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = BCDCoder.mm; sourceTree = "<group>"; };
 		2D398961165FF88800F8FA29 /* BCDCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCDCoder.h; sourceTree = "<group>"; };
 		2D398962165FF88800F8FA29 /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
-		2D398963165FF88800F8FA29 /* Crc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Crc.cpp; sourceTree = "<group>"; };
+		2D398963165FF88800F8FA29 /* Crc.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Crc.mm; sourceTree = "<group>"; };
 		2D398964165FF88800F8FA29 /* Crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Crc.h; sourceTree = "<group>"; };
-		2D398965165FF88800F8FA29 /* Frame.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Frame.cpp; sourceTree = "<group>"; };
+		2D398965165FF88800F8FA29 /* Frame.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Frame.mm; sourceTree = "<group>"; };
 		2D398966165FF88800F8FA29 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
-		2D398967165FF88800F8FA29 /* FrameManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FrameManager.cpp; sourceTree = "<group>"; };
+		2D398967165FF88800F8FA29 /* FrameManager.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FrameManager.mm; sourceTree = "<group>"; };
 		2D398968165FF88800F8FA29 /* FrameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameManager.h; sourceTree = "<group>"; };
 		2D398969165FF88800F8FA29 /* HeftCmdIds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftCmdIds.h; sourceTree = "<group>"; };
 		2D39896A165FF88800F8FA29 /* IHostProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHostProcessor.h; sourceTree = "<group>"; };
 		2D39896B165FF88800F8FA29 /* IResponseProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IResponseProcessor.h; sourceTree = "<group>"; };
-		2D39896C165FF88800F8FA29 /* Logger.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Logger.cpp; sourceTree = "<group>"; };
+		2D39896C165FF88800F8FA29 /* Logger.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Logger.mm; sourceTree = "<group>"; };
 		2D39896D165FF88800F8FA29 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
-		2D39896E165FF88800F8FA29 /* RequestCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = RequestCommand.cpp; sourceTree = "<group>"; };
+		2D39896E165FF88800F8FA29 /* RequestCommand.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = RequestCommand.mm; sourceTree = "<group>"; };
 		2D39896F165FF88800F8FA29 /* RequestCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestCommand.h; sourceTree = "<group>"; };
-		2D398970165FF88800F8FA29 /* ResponseCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ResponseCommand.cpp; sourceTree = "<group>"; };
+		2D398970165FF88800F8FA29 /* ResponseCommand.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ResponseCommand.mm; sourceTree = "<group>"; };
 		2D398971165FF88800F8FA29 /* ResponseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseCommand.h; sourceTree = "<group>"; };
-		2D398972165FF88800F8FA29 /* StdAfx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdAfx.h; sourceTree = "<group>"; };
 		2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = RequestCommand.cpp; path = simulator/Shared/RequestCommand.cpp; sourceTree = "<group>"; };
 		2D5ACCA9169B258F00BA0D48 /* RequestCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RequestCommand.h; path = simulator/Shared/RequestCommand.h; sourceTree = "<group>"; };
 		2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ResponseCommand.cpp; path = simulator/Shared/ResponseCommand.cpp; sourceTree = "<group>"; };
@@ -117,11 +196,16 @@
 		2DEDA3721628B0580043AFBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2DEDA3741628B0590043AFBC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2DEDA3761628B0590043AFBC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		2DEDA3991628B0590043AFBC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		498A67071BF63765006D4606 /* Logger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logger.m; sourceTree = "<group>"; };
+		49F4DECE1C6E6B4200C0B5D0 /* libheft_osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libheft_osx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		809FF0671864D45900572A04 /* MPosOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPosOperation.h; path = simulator/MPosOperation.h; sourceTree = "<group>"; };
-		809FF0681864D45900572A04 /* MPosOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPosOperation.m; path = simulator/MPosOperation.m; sourceTree = "<group>"; };
+		809FF0681864D45900572A04 /* MPosOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MPosOperation.mm; path = simulator/MPosOperation.mm; sourceTree = "<group>"; };
+		9AD0F47DCA7651B04120F222 /* Pods-heft.debug simulator.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.debug simulator.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.debug simulator.xcconfig"; sourceTree = "<group>"; };
+		ACB16BD7945DE410CD09C5A9 /* libPods-heft.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-heft.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD87936016E09AEF00A2C326 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		AD8F91301702E39000F309FF /* heftTests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "heftTests-Prefix.pch"; sourceTree = "<group>"; };
+		EDB3B45339F876E9E84EBF3C /* Pods-heft.release simulator.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.release simulator.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.release simulator.xcconfig"; sourceTree = "<group>"; };
+		FE442BAA7A442E031B970C25 /* Pods-heft.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.debug.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,35 +224,53 @@
 				AD75FBAF16FC93580000446E /* CoreGraphics.framework in Frameworks */,
 				AD75FBAE16FC92F30000446E /* ExternalAccessory.framework in Frameworks */,
 				AD75FBAD16FC92C90000446E /* Security.framework in Frameworks */,
-				2D398936165FF23E00F8FA29 /* SenTestingKit.framework in Frameworks */,
 				2D398937165FF23E00F8FA29 /* UIKit.framework in Frameworks */,
 				2D398938165FF23E00F8FA29 /* Foundation.framework in Frameworks */,
 				2D39893B165FF23E00F8FA29 /* libheft.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		49F4DECB1C6E6B4200C0B5D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49F4DEE81C6E6E4600C0B5D0 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1E9579C351F90D3B26595860 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				FE442BAA7A442E031B970C25 /* Pods-heft.debug.xcconfig */,
+				9AD0F47DCA7651B04120F222 /* Pods-heft.debug simulator.xcconfig */,
+				283D2AE0D17B51B9CE673CA5 /* Pods-heft.release.xcconfig */,
+				EDB3B45339F876E9E84EBF3C /* Pods-heft.release simulator.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		2D398929165FF23D00F8FA29 /* heft */ = {
 			isa = PBXGroup;
 			children = (
 				2D5ACC95169B229200BA0D48 /* simulator */,
 				2DFB46391694744800E95CCC /* api */,
 				2D39895C165FF88800F8FA29 /* Shared */,
-				2D398953165FF88800F8FA29 /* HeftManager.m */,
+				2D398953165FF88800F8FA29 /* HeftManager.mm */,
 				2D398956165FF88800F8FA29 /* HeftStatusReport.h */,
 				2D398957165FF88800F8FA29 /* HeftStatusReport.m */,
 				2D398954165FF88800F8FA29 /* HeftRemoteDevice.h */,
 				2D398955165FF88800F8FA29 /* HeftRemoteDevice.m */,
 				2D398950165FF88800F8FA29 /* HeftConnection.h */,
-				2D398951165FF88800F8FA29 /* HeftConnection.m */,
+				2D398951165FF88800F8FA29 /* HeftConnection.mm */,
 				2D398958165FF88800F8FA29 /* MpedDevice.h */,
-				2D398959165FF88800F8FA29 /* MpedDevice.m */,
+				2D398959165FF88800F8FA29 /* MpedDevice.mm */,
 				2D39895A165FF88800F8FA29 /* ResponseParser.h */,
 				2D39895B165FF88800F8FA29 /* ResponseParser.m */,
 				2D39894D165FF88800F8FA29 /* MPosOperation.h */,
-				2D39894E165FF88800F8FA29 /* MPosOperation.m */,
+				2D39894E165FF88800F8FA29 /* MPosOperation.mm */,
 				2D39892A165FF23D00F8FA29 /* Supporting Files */,
 			);
 			path = heft;
@@ -213,27 +315,27 @@
 			isa = PBXGroup;
 			children = (
 				2D39895D165FF88800F8FA29 /* api */,
-				2D398972165FF88800F8FA29 /* StdAfx.h */,
 				2D39895F165FF88800F8FA29 /* atl.h */,
 				2D270937167F8FCA00FF0E38 /* Exception.h */,
-				2D398960165FF88800F8FA29 /* BCDCoder.cpp */,
+				2D398960165FF88800F8FA29 /* BCDCoder.mm */,
 				2D398961165FF88800F8FA29 /* BCDCoder.h */,
 				2D398962165FF88800F8FA29 /* Command.h */,
-				2D398963165FF88800F8FA29 /* Crc.cpp */,
+				2D398963165FF88800F8FA29 /* Crc.mm */,
 				2D398964165FF88800F8FA29 /* Crc.h */,
 				2D398969165FF88800F8FA29 /* HeftCmdIds.h */,
 				2D39896A165FF88800F8FA29 /* IHostProcessor.h */,
 				2D39896B165FF88800F8FA29 /* IResponseProcessor.h */,
-				2D39896E165FF88800F8FA29 /* RequestCommand.cpp */,
+				2D39896E165FF88800F8FA29 /* RequestCommand.mm */,
 				2D39896F165FF88800F8FA29 /* RequestCommand.h */,
-				2D398970165FF88800F8FA29 /* ResponseCommand.cpp */,
+				2D398970165FF88800F8FA29 /* ResponseCommand.mm */,
 				2D398971165FF88800F8FA29 /* ResponseCommand.h */,
-				2D398965165FF88800F8FA29 /* Frame.cpp */,
+				2D398965165FF88800F8FA29 /* Frame.mm */,
 				2D398966165FF88800F8FA29 /* Frame.h */,
-				2D398967165FF88800F8FA29 /* FrameManager.cpp */,
+				2D398967165FF88800F8FA29 /* FrameManager.mm */,
 				2D398968165FF88800F8FA29 /* FrameManager.h */,
-				2D39896C165FF88800F8FA29 /* Logger.cpp */,
+				2D39896C165FF88800F8FA29 /* Logger.mm */,
 				2D39896D165FF88800F8FA29 /* Logger.h */,
+				498A67071BF63765006D4606 /* Logger.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -250,7 +352,7 @@
 			isa = PBXGroup;
 			children = (
 				809FF0671864D45900572A04 /* MPosOperation.h */,
-				809FF0681864D45900572A04 /* MPosOperation.m */,
+				809FF0681864D45900572A04 /* MPosOperation.mm */,
 				2D5ACC97169B229E00BA0D48 /* Shared */,
 			);
 			name = simulator;
@@ -272,8 +374,10 @@
 			children = (
 				2D398929165FF23D00F8FA29 /* heft */,
 				2D39893C165FF23E00F8FA29 /* heftTests */,
+				49F4DECF1C6E6B4200C0B5D0 /* heft_osx */,
 				2DEDA3711628B0580043AFBC /* Frameworks */,
 				2DEDA36F1628B0580043AFBC /* Products */,
+				1E9579C351F90D3B26595860 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -282,6 +386,7 @@
 			children = (
 				2D398927165FF23D00F8FA29 /* libheft.a */,
 				2D398935165FF23E00F8FA29 /* heftTests.octest */,
+				49F4DECE1C6E6B4200C0B5D0 /* libheft_osx.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -296,7 +401,7 @@
 				2DEDA3741628B0590043AFBC /* Foundation.framework */,
 				2DEDA3761628B0590043AFBC /* CoreGraphics.framework */,
 				2D29E54316A8A73A00324510 /* QuartzCore.framework */,
-				2DEDA3991628B0590043AFBC /* SenTestingKit.framework */,
+				ACB16BD7945DE410CD09C5A9 /* libPods-heft.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -309,6 +414,13 @@
 				2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */,
 			);
 			name = api;
+			sourceTree = "<group>";
+		};
+		49F4DECF1C6E6B4200C0B5D0 /* heft_osx */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = heft_osx;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -366,6 +478,23 @@
 			productReference = 2D398935165FF23E00F8FA29 /* heftTests.octest */;
 			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
+		49F4DECD1C6E6B4200C0B5D0 /* heft_osx */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49F4DED41C6E6B4200C0B5D0 /* Build configuration list for PBXNativeTarget "heft_osx" */;
+			buildPhases = (
+				49F4DECA1C6E6B4200C0B5D0 /* Sources */,
+				49F4DECB1C6E6B4200C0B5D0 /* Frameworks */,
+				49F4DECC1C6E6B4200C0B5D0 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = heft_osx;
+			productName = heft_osx;
+			productReference = 49F4DECE1C6E6B4200C0B5D0 /* libheft_osx.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -373,8 +502,16 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0640;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = zdv;
+				TargetAttributes = {
+					49F4DECD1C6E6B4200C0B5D0 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+					FBDA036A1CD018DC00607201 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+				};
 			};
 			buildConfigurationList = 2DEDA3681628B0580043AFBC /* Build configuration list for PBXProject "headstart" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -390,6 +527,8 @@
 			targets = (
 				2D398926165FF23D00F8FA29 /* heft */,
 				2D398934165FF23E00F8FA29 /* heftTests */,
+				49F4DECD1C6E6B4200C0B5D0 /* heft_osx */,
+				FBDA036A1CD018DC00607201 /* device-simulator */,
 			);
 		};
 /* End PBXProject section */
@@ -430,7 +569,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi";
+			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release-Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi";
+		};
+		FBDA03701CD018EB00607201 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcodebuild -scheme heft -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -sdk iphoneos -configuration Release\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Release-Simulator\n\n# make a new output folder\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/include\n# make a new output folder for simulator\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include\n\n# combine lib files for various platforms into one\nlipo -create \"${TARGET_BUILD_DIR}/../Release-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Release-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/libheft.a\"\nlipo -create \"${TARGET_BUILD_DIR}/../Release-Simulator-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Release-Simulator-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/libheft.a\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -439,23 +591,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D398973165FF88800F8FA29 /* MPosOperation.m in Sources */,
-				2D398974165FF88800F8FA29 /* HeftConnection.m in Sources */,
-				2D398975165FF88800F8FA29 /* HeftManager.m in Sources */,
+				2D398973165FF88800F8FA29 /* MPosOperation.mm in Sources */,
+				2D398974165FF88800F8FA29 /* HeftConnection.mm in Sources */,
+				2D398975165FF88800F8FA29 /* HeftManager.mm in Sources */,
 				2D398977165FF88800F8FA29 /* HeftStatusReport.m in Sources */,
-				2D398978165FF88800F8FA29 /* MpedDevice.m in Sources */,
+				2D398978165FF88800F8FA29 /* MpedDevice.mm in Sources */,
 				2D398979165FF88800F8FA29 /* ResponseParser.m in Sources */,
-				2D39897A165FF88800F8FA29 /* BCDCoder.cpp in Sources */,
-				2D39897B165FF88800F8FA29 /* Crc.cpp in Sources */,
-				2D39897C165FF88800F8FA29 /* Frame.cpp in Sources */,
-				2D39897D165FF88800F8FA29 /* FrameManager.cpp in Sources */,
-				2D39897E165FF88800F8FA29 /* Logger.cpp in Sources */,
-				2D39897F165FF88800F8FA29 /* RequestCommand.cpp in Sources */,
-				2D398980165FF88800F8FA29 /* ResponseCommand.cpp in Sources */,
+				2D39897A165FF88800F8FA29 /* BCDCoder.mm in Sources */,
+				498A67081BF63765006D4606 /* Logger.m in Sources */,
+				2D39897B165FF88800F8FA29 /* Crc.mm in Sources */,
+				2D39897C165FF88800F8FA29 /* Frame.mm in Sources */,
+				2D39897D165FF88800F8FA29 /* FrameManager.mm in Sources */,
+				2D39897E165FF88800F8FA29 /* Logger.mm in Sources */,
+				2D39897F165FF88800F8FA29 /* RequestCommand.mm in Sources */,
+				2D398980165FF88800F8FA29 /* ResponseCommand.mm in Sources */,
 				2D1B8AD416A0AD5700B11BC9 /* RequestCommand.cpp in Sources */,
 				2D1B8AD516A0AD5B00B11BC9 /* ResponseCommand.cpp in Sources */,
 				ADF06E8E16FC6AB200B50C8E /* HeftRemoteDevice.m in Sources */,
-				809FF06A1864D45900572A04 /* MPosOperation.m in Sources */,
+				809FF06A1864D45900572A04 /* MPosOperation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,9 +617,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */,
-				2D1A425616F746C300CD6781 /* BcdCoderTest.m in Sources */,
 				2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */,
 				2D1A425C16F757CB00CD6781 /* FrameManagerTest.m in Sources */,
+				49DA880C1BEBB0880088EAA1 /* BcdCoderTest.m in Sources */,
+				498A67091BF63765006D4606 /* Logger.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49F4DECA1C6E6B4200C0B5D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49F4DED91C6E6BC500C0B5D0 /* RequestCommand.cpp in Sources */,
+				49F4DEDA1C6E6BC500C0B5D0 /* ResponseCommand.cpp in Sources */,
+				49F4DEDB1C6E6BC500C0B5D0 /* BCDCoder.mm in Sources */,
+				49F4DEDC1C6E6BC500C0B5D0 /* RequestCommand.mm in Sources */,
+				49F4DEDD1C6E6BC500C0B5D0 /* ResponseCommand.mm in Sources */,
+				49F4DEDE1C6E6BC500C0B5D0 /* Frame.mm in Sources */,
+				49F4DEDF1C6E6BC500C0B5D0 /* FrameManager.mm in Sources */,
+				49F4DEE01C6E6BC500C0B5D0 /* Logger.mm in Sources */,
+				49F4DEE11C6E6BC500C0B5D0 /* HeftManager.mm in Sources */,
+				49F4DEE21C6E6BC500C0B5D0 /* HeftStatusReport.m in Sources */,
+				49F4DEE31C6E6BC500C0B5D0 /* HeftRemoteDevice.m in Sources */,
+				49F4DEE41C6E6BC500C0B5D0 /* HeftConnection.mm in Sources */,
+				49F4DEE51C6E6BC500C0B5D0 /* MpedDevice.mm in Sources */,
+				49F4DEE61C6E6BC500C0B5D0 /* ResponseParser.m in Sources */,
+				49F4DEE71C6E6BC500C0B5D0 /* MPosOperation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,7 +668,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		2D38903A169F629E00720A15 /* Debug Simulator */ = {
+		2D38903A169F629E00720A15 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -501,9 +677,10 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -517,38 +694,34 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				ONLY_ACTIVE_ARCH = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 i386 armv7s";
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
 			};
-			name = "Debug Simulator";
+			name = "Debug-Simulator";
 		};
-		2D38903D169F629E00720A15 /* Debug Simulator */ = {
+		2D38903D169F629E00720A15 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
-					armv7s,
-				);
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
 					HeftConnection.m,
 					FinanceTransactionOperation.m,
 					"Shared/*",
 				);
-				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				HEADER_SEARCH_PATHS = /heft/Shared;
 				INCLUDED_SOURCE_FILE_NAMES = (
 					"simulator/Shared/*",
 					"simulator/*",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -560,11 +733,12 @@
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
-			name = "Debug Simulator";
+			name = "Debug-Simulator";
 		};
-		2D38903E169F629E00720A15 /* Debug Simulator */ = {
+		2D38903E169F629E00720A15 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
@@ -579,12 +753,13 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
-			name = "Debug Simulator";
+			name = "Debug-Simulator";
 		};
-		2D389040169F62B800720A15 /* Release Simulator */ = {
+		2D389040169F62B800720A15 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -593,9 +768,9 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HEFT_SIMULATOR=1",
@@ -605,26 +780,22 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "armv7 i386 armv7s";
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
 			};
-			name = "Release Simulator";
+			name = "Release-Simulator";
 		};
-		2D389043169F62B800720A15 /* Release Simulator */ = {
+		2D389043169F62B800720A15 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
-					armv7s,
-				);
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
 					HeftConnection.m,
@@ -632,15 +803,15 @@
 					"Shared/*",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				HEADER_SEARCH_PATHS = /heft/Shared;
 				INCLUDED_SOURCE_FILE_NAMES = (
 					"simulator/Shared/*",
 					"simulator/*",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -653,11 +824,12 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
-			name = "Release Simulator";
+			name = "Release-Simulator";
 		};
-		2D389044169F62B800720A15 /* Release Simulator */ = {
+		2D389044169F62B800720A15 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
@@ -672,30 +844,27 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
-			name = "Release Simulator";
+			name = "Release-Simulator";
 		};
 		2D398946165FF23E00F8FA29 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
-					armv7s,
-				);
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
 					"simulator/Shared/*",
 					"simulator/*",
 				);
-				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				HEADER_SEARCH_PATHS = /heft/Shared;
 				INCLUDED_SOURCE_FILE_NAMES = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -707,6 +876,7 @@
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
 			name = Debug;
@@ -714,24 +884,20 @@
 		2D398947165FF23E00F8FA29 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD_INCLUDING_64_BIT)",
-					armv7s,
-				);
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DSTROOT = /tmp/heft.dst;
 				EXCLUDED_SOURCE_FILE_NAMES = (
 					"simulator/Shared/*",
 					"simulator/*",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../Library";
+				HEADER_SEARCH_PATHS = /heft/Shared;
 				INCLUDED_SOURCE_FILE_NAMES = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -744,6 +910,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
 			};
 			name = Release;
@@ -763,6 +930,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -783,6 +951,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Library\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -797,9 +966,10 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -813,11 +983,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				ONLY_ACTIVE_ARCH = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 i386 armv7s";
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
 			};
 			name = Debug;
 		};
@@ -830,9 +1000,9 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"UNIT_TESTING=1",
@@ -842,16 +1012,182 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "armv7 i386 armv7s";
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
 			};
 			name = Release;
+		};
+		49F4DED51C6E6B4200C0B5D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1 ";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.11;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		49F4DED61C6E6B4200C0B5D0 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.11;
+				SKIP_INSTALL = YES;
+			};
+			name = "Debug-Simulator";
+		};
+		49F4DED71C6E6B4200C0B5D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.11;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		49F4DED81C6E6B4200C0B5D0 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.11;
+				SKIP_INSTALL = YES;
+			};
+			name = "Release-Simulator";
+		};
+		FBDA036B1CD018DC00607201 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FBDA036C1CD018DC00607201 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug-Simulator";
+		};
+		FBDA036D1CD018DC00607201 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		FBDA036E1CD018DC00607201 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CURRENT_PROJECT_VERSION = 2.5.3;
+				New_Setting = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release-Simulator";
 		};
 /* End XCBuildConfiguration section */
 
@@ -860,9 +1196,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D398946165FF23E00F8FA29 /* Debug */,
-				2D38903D169F629E00720A15 /* Debug Simulator */,
+				2D38903D169F629E00720A15 /* Debug-Simulator */,
 				2D398947165FF23E00F8FA29 /* Release */,
-				2D389043169F62B800720A15 /* Release Simulator */,
+				2D389043169F62B800720A15 /* Release-Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -871,9 +1207,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D398949165FF23E00F8FA29 /* Debug */,
-				2D38903E169F629E00720A15 /* Debug Simulator */,
+				2D38903E169F629E00720A15 /* Debug-Simulator */,
 				2D39894A165FF23E00F8FA29 /* Release */,
-				2D389044169F62B800720A15 /* Release Simulator */,
+				2D389044169F62B800720A15 /* Release-Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -882,9 +1218,31 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2DEDA3A81628B0590043AFBC /* Debug */,
-				2D38903A169F629E00720A15 /* Debug Simulator */,
+				2D38903A169F629E00720A15 /* Debug-Simulator */,
 				2DEDA3A91628B0590043AFBC /* Release */,
-				2D389040169F62B800720A15 /* Release Simulator */,
+				2D389040169F62B800720A15 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		49F4DED41C6E6B4200C0B5D0 /* Build configuration list for PBXNativeTarget "heft_osx" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49F4DED51C6E6B4200C0B5D0 /* Debug */,
+				49F4DED61C6E6B4200C0B5D0 /* Debug-Simulator */,
+				49F4DED71C6E6B4200C0B5D0 /* Release */,
+				49F4DED81C6E6B4200C0B5D0 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBDA036B1CD018DC00607201 /* Debug */,
+				FBDA036C1CD018DC00607201 /* Debug-Simulator */,
+				FBDA036D1CD018DC00607201 /* Release */,
+				FBDA036E1CD018DC00607201 /* Release-Simulator */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

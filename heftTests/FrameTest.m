@@ -3,6 +3,8 @@
 //  headstart
 //
 
+#if 0
+
 #import "FrameTest.h"
 #import "../heft/Shared/Frame.h"
 
@@ -78,3 +80,6 @@ do { \
 }
 
 @end
+
+
+#endif

@@ -1,6 +1,9 @@
 #pragma once
 
-class heft_exception : public exception{
+#include <exception>
+
+class heft_exception : public std::exception
+{
 public:
 	virtual NSString* stringId() = 0;
 };

@@ -1,12 +1,17 @@
-#include "../../Shared/StdAfx.h"
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
 #include "HeftCmdIds.h"
 
 #include "ResponseParser.h"
+#include "Exception.h"
+
+#include <cstdint>
+
+using std::uint32_t;
+using std::uint8_t;
 
 const int ciTransactionDeclinedAmount = 1000;
 const int ciUserCancelAmount          = 2000;
@@ -27,8 +32,15 @@ const int ciExceptionLimitUpper       = 9999;
 
 SimulatorState simulatorState;
 
-ResponseCommand* RequestCommand::CreateResponse()const{return new ResponseCommand(m_cmd);}
-ResponseCommand* RequestCommand::CreateResponseOnCancel()const{return new ResponseCommand(m_cmd, EFT_PP_STATUS_USER_CANCELLED);}
+ResponseCommand* RequestCommand::CreateResponse() const
+{
+    return new ResponseCommand(m_cmd);
+}
+
+ResponseCommand* RequestCommand::CreateResponseOnCancel() const
+{
+    return new ResponseCommand(m_cmd, EFT_PP_STATUS_USER_CANCELLED);
+}
 
 static bool isNumber(const string& str)
 {
@@ -37,47 +49,62 @@ static bool isNumber(const string& str)
     return !str.empty() && it == str.end();
 }
 
-FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml)
-	: RequestCommand(type)
-	, state(eWaitingCard), amount(trans_amount)
-{
+
+namespace {
     const int currency_code_length = 4;
     
-    static const struct CurrencyCode{
+    struct CurrencyCode{
         char name[4];
         char code[currency_code_length + 1];
-    } ISO4217CurrencyCodes[] = { // in the simulator we want to return the currency code with out the leading zero
-          "USD", "840"
+    };
+    
+    
+    CurrencyCode ISO4217CurrencyCodes[] = {
+        "USD", "840"
         , "EUR", "978"
         , "GBP", "826"
         , "ISK", "352"
         , "ZAR", "710"
     };
+}
+
+
+FinanceRequestCommand::FinanceRequestCommand(uint32_t type, const string& currency_code, uint32_t trans_amount, uint8_t card_present, const string& trans_id, const string& xml)
+	: RequestCommand(type), state(eWaitingCard), amount(trans_amount)
+{
+
     
     const char* code = currency_code.c_str();
     string abbr;
     
-    if(!isNumber(code)){
+    if(!isNumber(code))
+    {
         bool fCheckCodeSize = true;
-        for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-            CurrencyCode cc = ISO4217CurrencyCodes[i];
-            if(!currency_code.compare(cc.name)){
+        for (CurrencyCode& cc : ISO4217CurrencyCodes)
+        {
+            if(!currency_code.compare(cc.name))
+            {
                 code = cc.code;
                 fCheckCodeSize = false;
                 break;
             }
         }
-
+        
         if(fCheckCodeSize && currency_code.length() != currency_code_length)
             throw std::invalid_argument("invalid currency code");
         
-        abbr = currency_code;
+        
+
     }
-    else{
-        for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-            CurrencyCode cc = ISO4217CurrencyCodes[i];
-            if(!currency_code.compare(cc.code)){
-                abbr = cc.name;
+    else
+    {
+        abbr = currency_code;
+
+        for (CurrencyCode& cc : ISO4217CurrencyCodes)
+        {
+            if(!currency_code.compare(cc.name))
+            {
+                abbr = cc.code;
                 break;
             }
         }
@@ -103,7 +130,8 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
     }
 }
 
-ResponseCommand* FinanceRequestCommand::CreateResponse()const{
+ResponseCommand* FinanceRequestCommand::CreateResponse() const
+{
 	ResponseCommand* result = 0;
 	switch(state++){
 	case eWaitingCard:
@@ -155,7 +183,10 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 	return result;
 }
 
-ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const{return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);}
+ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const
+{
+    return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);
+}
 
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()
@@ -173,7 +204,7 @@ FinanceInitRequestCommand::FinanceInitRequestCommand()
 {
 }
 
-HostResponseCommand::HostResponseCommand(UINT32 command, UINT32 aFin_cmd, const string& aCurrency, UINT32 aAmount, int aStatus) 
+HostResponseCommand::HostResponseCommand(uint32_t command, uint32_t aFin_cmd, const string& aCurrency, uint32_t aAmount, int aStatus) 
 	: RequestCommand(command)
 	, fin_cmd(aFin_cmd), currency(aCurrency), amount(aAmount), status(aStatus)
 {
@@ -256,27 +287,27 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
 	return reinterpret_cast<ResponseCommand*>(result);
 }
 
-ConnectRequestCommand::ConnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+ConnectRequestCommand::ConnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_CONN_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-SendRequestCommand::SendRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+SendRequestCommand::SendRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_SEND_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-ReceiveRequestCommand::ReceiveRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+ReceiveRequestCommand::ReceiveRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_RECV_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-DisconnectRequestCommand::DisconnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+DisconnectRequestCommand::DisconnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_DISC_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aType)
+SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aType)
 	: RequestCommand(CMD_STAT_SIGN_REQ), currency(aCurrency), amount(aAmount), type(aType)
 {
     NSMutableDictionary* xmlDict = [[NSMutableDictionary alloc] init];
@@ -291,7 +322,7 @@ SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, UINT32
     receipt = simulatorState.generateReceipt(true);
 }
 
-SetLogLevelRequestCommand::SetLogLevelRequestCommand(UINT8 log_level) 
+SetLogLevelRequestCommand::SetLogLevelRequestCommand(uint8_t log_level) 
 	: RequestCommand(CMD_LOG_SET_LEV_REQ)
 {
 }

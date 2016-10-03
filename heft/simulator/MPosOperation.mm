@@ -3,14 +3,15 @@
 //  headstart
 //
 
-#import "StdAfx.h"
-
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 
 #import "MPosOperation.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
 #include "HeftCmdIds.h"
+#include "debug.h"
+#include "Logger.h"
+#include "Exception.h"
 
 void simulateDeviceDisconnect();
 
@@ -40,8 +41,7 @@ void simulateDeviceDisconnect();
 			
 			while(true){
 				//LOG_RELEASE(Logger:eFiner, @"Outgoing message");
-				
-				auto_ptr<ResponseCommand> pResponse;
+                std::unique_ptr<ResponseCommand> pResponse;
 				while(true){
 					pResponse.reset([self isCancelled] ? pRequestCommand->CreateResponseOnCancel() : currentRequest->CreateResponse());
 					
@@ -53,7 +53,7 @@ void simulateDeviceDisconnect();
 					if(pResponse->isResponse()){
 						pResponse->ProcessResult(processor);
 						if(pResponse->isResponseTo(*pRequestCommand)){
-							LOG_RELEASE(Logger::eInfo, _T("Current operation completed."));
+							LOG_RELEASE(Logger::eInfo, @"Current operation completed.");
 							return;
 						}
 						continue;
@@ -62,8 +62,16 @@ void simulateDeviceDisconnect();
 					break;
 				}
 				
-				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
-				ATLASSERT(pHostRequest);
+                // TODO: this has to be refactored - dynamic and reinterpret casts!
+                // and why is it needed? Can't we call Process on pResponse?
+                // oh the humanity!
+                LOG_RELEASE(Logger::eInfo, @"HostRequest about to be processed.");
+                
+				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(
+                    reinterpret_cast<RequestCommand*>(pResponse.get())
+                );
+				// ATLASSERT(pHostRequest);
+                assert(pHostRequest);
 				currentRequest = pHostRequest->Process(self);
 			}
 		}
@@ -77,48 +85,50 @@ void simulateDeviceDisconnect();
 #pragma mark IHostProcessor
 
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest{
-	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: connecting to bureau"));
+	LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: connecting to bureau");
 
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_CONNECTING, false));
-	spStatus->ProcessResult(processor);
+    EventInfoResponseCommand responseCommand(EFT_PP_STATUS_CONNECTING, false);
+    responseCommand.ProcessResult(processor);
 	
 	return new HostResponseCommand(CMD_HOST_CONN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
-	LOG_RELEASE(Logger::eFine, _T("Request to bureau (length:?):"));
-	
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_SENDING, false));
-	spStatus->ProcessResult(processor);
+	LOG_RELEASE(Logger::eFine, @"Request to bureau (length:?):");
+
+    EventInfoResponseCommand spStatus(EFT_PP_STATUS_SENDING, false);
+    spStatus.ProcessResult(processor);
 
 	return new HostResponseCommand(CMD_HOST_SEND_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest{
-	LOG(_T("Recv :? bytes, ?s timeout"));
-	
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_RECEIVEING, false));
-	spStatus->ProcessResult(processor);
+	LOG(@"Recv :? bytes, ?s timeout");
+
+    
+    EventInfoResponseCommand spStatus(EFT_PP_STATUS_RECEIVEING, false);
+    spStatus.ProcessResult(processor);
 	
 	return new HostResponseCommand(CMD_HOST_RECV_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
-	auto_ptr<EventInfoResponseCommand> spStatus(new EventInfoResponseCommand(EFT_PP_STATUS_DISCONNECTING, false));
-	spStatus->ProcessResult(processor);
+    EventInfoResponseCommand spStatus(EFT_PP_STATUS_DISCONNECTING, false);
+    spStatus.ProcessResult(processor);
 	
-	LOG_RELEASE(Logger::eFine, _T("State of financial transaction changed: disconnected"));
+	LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: disconnected");
 	return new HostResponseCommand(CMD_HOST_DISC_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
-	LOG(_T("Signature required request"));
+	LOG(@"Signature required request");
 	int status = [processor processSign:pRequest];
 	return new HostResponseCommand(CMD_STAT_SIGN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount(), status);
 }
 
 - (RequestCommand*)processChallenge:(ChallengeRequestCommand*)pRequest{
-	ATLASSERT(0);
+	// ATLASSERT(0);
+    assert(0);
 	return 0;
 }
 

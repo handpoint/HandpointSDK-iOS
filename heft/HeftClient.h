@@ -3,6 +3,8 @@
 //  headstart
 //
 
+#import <Foundation/Foundation.h>
+
 /**
  *  @file   HeftClient.h
  *
@@ -192,6 +194,14 @@ typedef enum{
  @param flag - Shows signature  was accepted or not.
  */
 - (void)acceptSignature:(BOOL)flag;
+
+
+/**
+ Get the EMV configuration report from the reader
+ @return YES if request is sent and NO if there is active transaction already.
+ */
+- (BOOL)getEMVConfiguration;
+
 
 /**
  Dictionary with MPED info details, obtained by querying it from device on interface creation.
