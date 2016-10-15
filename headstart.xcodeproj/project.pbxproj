@@ -83,6 +83,19 @@
 		FBDA03781CD0216B00607201 /* HeftStatusReportPublic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D7BAE2F16E11AE800F8F052 /* HeftStatusReportPublic.h */; };
 		FBDA03801CD031D200607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
 		FBDA03811CD031D800607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
+		FBFA750A1DB11CE300641641 /* HTTPCodes.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74E81DB11CE300641641 /* HTTPCodes.m */; };
+		FBFA750B1DB11CE300641641 /* KeenClient.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74EB1DB11CE300641641 /* KeenClient.m */; };
+		FBFA750C1DB11CE300641641 /* KeenConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74ED1DB11CE300641641 /* KeenConstants.m */; };
+		FBFA750D1DB11CE300641641 /* KeenProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74EF1DB11CE300641641 /* KeenProperties.m */; };
+		FBFA750E1DB11CE300641641 /* KIODBStore.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74F11DB11CE300641641 /* KIODBStore.m */; };
+		FBFA750F1DB11CE300641641 /* KIOQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74F41DB11CE300641641 /* KIOQuery.m */; };
+		FBFA75101DB11CE300641641 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBFA75021DB11CE300641641 /* libOCMock.a */; };
+		FBFA75111DB11CE300641641 /* KIOReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA75051DB11CE300641641 /* KIOReachability.m */; };
+		FBFA75121DB11CE300641641 /* keen_io_sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = FBFA75071DB11CE300641641 /* keen_io_sqlite3.c */; };
+		FBFA75141DB11CF300641641 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBFA75131DB11CF300641641 /* CoreLocation.framework */; };
+		FBFA75161DB11CF900641641 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBFA75151DB11CF900641641 /* SystemConfiguration.framework */; };
+		FBFA751C1DB1283300641641 /* NamespacedDependencies.h in Sources */ = {isa = PBXBuildFile; fileRef = FBFA75171DB11D9400641641 /* NamespacedDependencies.h */; };
+		FBFA751E1DB27CCE00641641 /* libextLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBFA74DB1DB11C8700641641 /* libextLib.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +105,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D398926165FF23D00F8FA29;
 			remoteInfo = heft;
+		};
+		FBFA75181DB11F2700641641 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DEDA3651628B0580043AFBC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FBFA74DA1DB11C8700641641;
+			remoteInfo = extLib;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -205,6 +225,42 @@
 		AD87936016E09AEF00A2C326 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		AD8F91301702E39000F309FF /* heftTests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "heftTests-Prefix.pch"; sourceTree = "<group>"; };
 		EDB3B45339F876E9E84EBF3C /* Pods-heft.release simulator.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.release simulator.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.release simulator.xcconfig"; sourceTree = "<group>"; };
+		FBFA74DB1DB11C8700641641 /* libextLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libextLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBFA74E71DB11CE300641641 /* HTTPCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPCodes.h; sourceTree = "<group>"; };
+		FBFA74E81DB11CE300641641 /* HTTPCodes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPCodes.m; sourceTree = "<group>"; };
+		FBFA74E91DB11CE300641641 /* KeenClient-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KeenClient-Prefix.pch"; sourceTree = "<group>"; };
+		FBFA74EA1DB11CE300641641 /* KeenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeenClient.h; sourceTree = "<group>"; };
+		FBFA74EB1DB11CE300641641 /* KeenClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeenClient.m; sourceTree = "<group>"; };
+		FBFA74EC1DB11CE300641641 /* KeenConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeenConstants.h; sourceTree = "<group>"; };
+		FBFA74ED1DB11CE300641641 /* KeenConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeenConstants.m; sourceTree = "<group>"; };
+		FBFA74EE1DB11CE300641641 /* KeenProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeenProperties.h; sourceTree = "<group>"; };
+		FBFA74EF1DB11CE300641641 /* KeenProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeenProperties.m; sourceTree = "<group>"; };
+		FBFA74F01DB11CE300641641 /* KIODBStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KIODBStore.h; sourceTree = "<group>"; };
+		FBFA74F11DB11CE300641641 /* KIODBStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KIODBStore.m; sourceTree = "<group>"; };
+		FBFA74F21DB11CE300641641 /* KIOEventStore_PrivateMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KIOEventStore_PrivateMethods.h; sourceTree = "<group>"; };
+		FBFA74F31DB11CE300641641 /* KIOQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KIOQuery.h; sourceTree = "<group>"; };
+		FBFA74F41DB11CE300641641 /* KIOQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KIOQuery.m; sourceTree = "<group>"; };
+		FBFA74F81DB11CE300641641 /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
+		FBFA74F91DB11CE300641641 /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
+		FBFA74FA1DB11CE300641641 /* OCMConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMConstraint.h; sourceTree = "<group>"; };
+		FBFA74FB1DB11CE300641641 /* OCMFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMFunctions.h; sourceTree = "<group>"; };
+		FBFA74FC1DB11CE300641641 /* OCMLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMLocation.h; sourceTree = "<group>"; };
+		FBFA74FD1DB11CE300641641 /* OCMMacroState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMMacroState.h; sourceTree = "<group>"; };
+		FBFA74FE1DB11CE300641641 /* OCMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMock.h; sourceTree = "<group>"; };
+		FBFA74FF1DB11CE300641641 /* OCMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockObject.h; sourceTree = "<group>"; };
+		FBFA75001DB11CE300641641 /* OCMRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMRecorder.h; sourceTree = "<group>"; };
+		FBFA75011DB11CE300641641 /* OCMStubRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMStubRecorder.h; sourceTree = "<group>"; };
+		FBFA75021DB11CE300641641 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
+		FBFA75041DB11CE300641641 /* KIOReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KIOReachability.h; sourceTree = "<group>"; };
+		FBFA75051DB11CE300641641 /* KIOReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KIOReachability.m; sourceTree = "<group>"; };
+		FBFA75071DB11CE300641641 /* keen_io_sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = keen_io_sqlite3.c; sourceTree = "<group>"; };
+		FBFA75081DB11CE300641641 /* keen_io_sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keen_io_sqlite3.h; sourceTree = "<group>"; };
+		FBFA75091DB11CE300641641 /* keen_io_sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keen_io_sqlite3ext.h; sourceTree = "<group>"; };
+		FBFA75131DB11CF300641641 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		FBFA75151DB11CF900641641 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		FBFA75171DB11D9400641641 /* NamespacedDependencies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamespacedDependencies.h; sourceTree = "<group>"; };
+		FBFA751B1DB11F8D00641641 /* generate_namespace_header.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = generate_namespace_header.sh; sourceTree = "<group>"; };
+		FBFA751D1DB277F700641641 /* extLib-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "extLib-Prefix.pch"; sourceTree = "<group>"; };
 		FE442BAA7A442E031B970C25 /* Pods-heft.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.debug.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -213,6 +269,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBFA751E1DB27CCE00641641 /* libextLib.a in Frameworks */,
 				2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,6 +292,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				49F4DEE81C6E6E4600C0B5D0 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBFA74D81DB11C8700641641 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBFA75161DB11CF900641641 /* SystemConfiguration.framework in Frameworks */,
+				FBFA75141DB11CF300641641 /* CoreLocation.framework in Frameworks */,
+				FBFA75101DB11CE300641641 /* libOCMock.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,9 +439,11 @@
 		2DEDA3631628B0580043AFBC = {
 			isa = PBXGroup;
 			children = (
+				FBFA751B1DB11F8D00641641 /* generate_namespace_header.sh */,
 				2D398929165FF23D00F8FA29 /* heft */,
 				2D39893C165FF23E00F8FA29 /* heftTests */,
 				49F4DECF1C6E6B4200C0B5D0 /* heft_osx */,
+				FBFA74DC1DB11C8700641641 /* extLib */,
 				2DEDA3711628B0580043AFBC /* Frameworks */,
 				2DEDA36F1628B0580043AFBC /* Products */,
 				1E9579C351F90D3B26595860 /* Pods */,
@@ -387,6 +456,7 @@
 				2D398927165FF23D00F8FA29 /* libheft.a */,
 				2D398935165FF23E00F8FA29 /* heftTests.octest */,
 				49F4DECE1C6E6B4200C0B5D0 /* libheft_osx.a */,
+				FBFA74DB1DB11C8700641641 /* libextLib.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -394,6 +464,8 @@
 		2DEDA3711628B0580043AFBC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FBFA75151DB11CF900641641 /* SystemConfiguration.framework */,
+				FBFA75131DB11CF300641641 /* CoreLocation.framework */,
 				AD87936016E09AEF00A2C326 /* MessageUI.framework */,
 				2DEAD200164020A5006E2429 /* Security.framework */,
 				2D0D3F3B162C64450057301F /* ExternalAccessory.framework */,
@@ -421,6 +493,93 @@
 			children = (
 			);
 			path = heft_osx;
+			sourceTree = "<group>";
+		};
+		FBFA74DC1DB11C8700641641 /* extLib */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA74E61DB11CE300641641 /* KeenClient */,
+				FBFA74F51DB11CE300641641 /* Library */,
+				FBFA75171DB11D9400641641 /* NamespacedDependencies.h */,
+				FBFA751D1DB277F700641641 /* extLib-Prefix.pch */,
+			);
+			path = extLib;
+			sourceTree = "<group>";
+		};
+		FBFA74E61DB11CE300641641 /* KeenClient */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA74E71DB11CE300641641 /* HTTPCodes.h */,
+				FBFA74E81DB11CE300641641 /* HTTPCodes.m */,
+				FBFA74E91DB11CE300641641 /* KeenClient-Prefix.pch */,
+				FBFA74EA1DB11CE300641641 /* KeenClient.h */,
+				FBFA74EB1DB11CE300641641 /* KeenClient.m */,
+				FBFA74EC1DB11CE300641641 /* KeenConstants.h */,
+				FBFA74ED1DB11CE300641641 /* KeenConstants.m */,
+				FBFA74EE1DB11CE300641641 /* KeenProperties.h */,
+				FBFA74EF1DB11CE300641641 /* KeenProperties.m */,
+				FBFA74F01DB11CE300641641 /* KIODBStore.h */,
+				FBFA74F11DB11CE300641641 /* KIODBStore.m */,
+				FBFA74F21DB11CE300641641 /* KIOEventStore_PrivateMethods.h */,
+				FBFA74F31DB11CE300641641 /* KIOQuery.h */,
+				FBFA74F41DB11CE300641641 /* KIOQuery.m */,
+			);
+			path = KeenClient;
+			sourceTree = "<group>";
+		};
+		FBFA74F51DB11CE300641641 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA74F61DB11CE300641641 /* Headers */,
+				FBFA75021DB11CE300641641 /* libOCMock.a */,
+				FBFA75031DB11CE300641641 /* Reachability */,
+				FBFA75061DB11CE300641641 /* sqlite-amalgamation */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		FBFA74F61DB11CE300641641 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA74F71DB11CE300641641 /* OCMock */,
+			);
+			path = Headers;
+			sourceTree = "<group>";
+		};
+		FBFA74F71DB11CE300641641 /* OCMock */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA74F81DB11CE300641641 /* NSNotificationCenter+OCMAdditions.h */,
+				FBFA74F91DB11CE300641641 /* OCMArg.h */,
+				FBFA74FA1DB11CE300641641 /* OCMConstraint.h */,
+				FBFA74FB1DB11CE300641641 /* OCMFunctions.h */,
+				FBFA74FC1DB11CE300641641 /* OCMLocation.h */,
+				FBFA74FD1DB11CE300641641 /* OCMMacroState.h */,
+				FBFA74FE1DB11CE300641641 /* OCMock.h */,
+				FBFA74FF1DB11CE300641641 /* OCMockObject.h */,
+				FBFA75001DB11CE300641641 /* OCMRecorder.h */,
+				FBFA75011DB11CE300641641 /* OCMStubRecorder.h */,
+			);
+			path = OCMock;
+			sourceTree = "<group>";
+		};
+		FBFA75031DB11CE300641641 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA75041DB11CE300641641 /* KIOReachability.h */,
+				FBFA75051DB11CE300641641 /* KIOReachability.m */,
+			);
+			path = Reachability;
+			sourceTree = "<group>";
+		};
+		FBFA75061DB11CE300641641 /* sqlite-amalgamation */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA75071DB11CE300641641 /* keen_io_sqlite3.c */,
+				FBFA75081DB11CE300641641 /* keen_io_sqlite3.h */,
+				FBFA75091DB11CE300641641 /* keen_io_sqlite3ext.h */,
+			);
+			path = "sqlite-amalgamation";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -453,6 +612,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FBFA75191DB11F2700641641 /* PBXTargetDependency */,
 			);
 			name = heft;
 			productName = heft;
@@ -495,6 +655,23 @@
 			productReference = 49F4DECE1C6E6B4200C0B5D0 /* libheft_osx.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		FBFA74DA1DB11C8700641641 /* extLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FBFA74E51DB11C8700641641 /* Build configuration list for PBXNativeTarget "extLib" */;
+			buildPhases = (
+				FBFA74D71DB11C8700641641 /* Sources */,
+				FBFA74D81DB11C8700641641 /* Frameworks */,
+				FBFA751A1DB11F7400641641 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = extLib;
+			productName = extLib;
+			productReference = FBFA74DB1DB11C8700641641 /* libextLib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -510,6 +687,11 @@
 					};
 					FBDA036A1CD018DC00607201 = {
 						CreatedOnToolsVersion = 7.3;
+					};
+					FBFA74DA1DB11C8700641641 = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 6BR4R3B384;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -529,6 +711,7 @@
 				2D398934165FF23E00F8FA29 /* heftTests */,
 				49F4DECD1C6E6B4200C0B5D0 /* heft_osx */,
 				FBDA036A1CD018DC00607201 /* device-simulator */,
+				FBFA74DA1DB11C8700641641 /* extLib */,
 			);
 		};
 /* End PBXProject section */
@@ -583,6 +766,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcodebuild -scheme heft -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -sdk iphoneos -configuration Release\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Release-Simulator\n\n# make a new output folder\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/include\n# make a new output folder for simulator\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include\n\n# combine lib files for various platforms into one\nlipo -create \"${TARGET_BUILD_DIR}/../Release-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Release-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/libheft.a\"\nlipo -create \"${TARGET_BUILD_DIR}/../Release-Simulator-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Release-Simulator-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/libheft.a\"";
+		};
+		FBFA751A1DB11F7400641641 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -646,6 +842,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FBFA74D71DB11C8700641641 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBFA751C1DB1283300641641 /* NamespacedDependencies.h in Sources */,
+				FBFA75111DB11CE300641641 /* KIOReachability.m in Sources */,
+				FBFA75121DB11CE300641641 /* keen_io_sqlite3.c in Sources */,
+				FBFA750A1DB11CE300641641 /* HTTPCodes.m in Sources */,
+				FBFA750C1DB11CE300641641 /* KeenConstants.m in Sources */,
+				FBFA750B1DB11CE300641641 /* KeenClient.m in Sources */,
+				FBFA750D1DB11CE300641641 /* KeenProperties.m in Sources */,
+				FBFA750F1DB11CE300641641 /* KIOQuery.m in Sources */,
+				FBFA750E1DB11CE300641641 /* KIODBStore.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -653,6 +865,11 @@
 			isa = PBXTargetDependency;
 			target = 2D398926165FF23D00F8FA29 /* heft */;
 			targetProxy = 2D398939165FF23E00F8FA29 /* PBXContainerItemProxy */;
+		};
+		FBFA75191DB11F2700641641 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FBFA74DA1DB11C8700641641 /* extLib */;
+			targetProxy = FBFA75181DB11F2700641641 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1153,7 +1370,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.4;
+				CURRENT_PROJECT_VERSION = 2.5.9;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1163,7 +1380,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.4;
+				CURRENT_PROJECT_VERSION = 2.5.9;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1173,7 +1390,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.4;
+				CURRENT_PROJECT_VERSION = 2.5.9;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1183,9 +1400,177 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 2.5.4;
+				CURRENT_PROJECT_VERSION = 2.5.9;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release-Simulator";
+		};
+		FBFA74E11DB11C8700641641 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "extLib/extLib-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/extLib/Library",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		FBFA74E21DB11C8700641641 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "extLib/extLib-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/extLib/Library",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = "Debug-Simulator";
+		};
+		FBFA74E31DB11C8700641641 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "extLib/extLib-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/extLib/Library",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		FBFA74E41DB11C8700641641 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "extLib/extLib-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/extLib/Library",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = "Release-Simulator";
 		};
@@ -1246,6 +1631,16 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		FBFA74E51DB11C8700641641 /* Build configuration list for PBXNativeTarget "extLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBFA74E11DB11C8700641641 /* Debug */,
+				FBFA74E21DB11C8700641641 /* Debug-Simulator */,
+				FBFA74E31DB11C8700641641 /* Release */,
+				FBFA74E41DB11C8700641641 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

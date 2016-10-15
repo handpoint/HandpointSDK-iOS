@@ -11,6 +11,7 @@
 #import "MpedDevice.h"
 #import "HeftRemoteDevice.h"
 #import "HeftStatusReportPublic.h"
+#import <UIKit/UIKit.h>
 
 #import "debug.h"
 
@@ -142,6 +143,37 @@ static HeftManager* instance = 0;
                                   }];
 #endif
 	}
+    
+    KeenClient *keenClient = [KeenClient sharedClientWithProjectID:DEV_KEEN_PROJECTID andWriteKey:DEV_KEEN_WRITEKEY andReadKey: nil];
+    [KeenClient enableLogging];
+    [KeenClient disableGeoLocation];
+    
+    NSDictionary *device = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [[UIDevice currentDevice] model], @"model",
+                            [[UIDevice currentDevice] systemName], @"systemName",
+                            [[UIDevice currentDevice] systemVersion], @"systemVersion",
+                            [[[UIDevice currentDevice] identifierForVendor] UUIDString], @"deviceID",
+                            nil];
+    
+    NSDictionary *app = [NSDictionary dictionaryWithObjectsAndKeys:
+                         [self getSDKVersion], @"handpointSDKVersion",
+                         [[NSBundle mainBundle] bundleIdentifier], @"bundleId",
+                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"], @"version",
+                         nil];
+    
+    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
+                           @"heftManager created", @"action",
+                           nil];
+    
+    
+    keenClient.globalPropertiesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             device, @"Device",
+                                             app, @"App",
+                                             nil];
+    
+    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_MANAGERCREATED error:nil];
+    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
+    
 	return self;
 }
 
@@ -207,6 +239,15 @@ static HeftManager* instance = 0;
                 [tmp didConnect:result];
             });
             
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   @"cardReaderAction", @"actionType",
+                                   @"Card reader connected", @"action",
+                                   [[result mpedInfo] objectForKey:kSerialNumberInfoKey], @"serialnumber",
+                                   [[result mpedInfo] objectForKey:kAppNameInfoKey], @"appNameInfoKey",
+                                   [[result mpedInfo] objectForKey:kAppVersionInfoKey], @"appVersionInfoKey",
+                                   nil];
+            [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_CARDREADERACTION error:nil];
+            
         });
         
         // runloop
@@ -264,7 +305,7 @@ static HeftManager* instance = 0;
 
 - (NSString*)version
 {
-	return @"2.5.4";  // TODO: move this to a config file (include file or something else)
+	return @"2.5.9";  // TODO: move this to a config file (include file or something else)
                       //       see old comment below
 }
 

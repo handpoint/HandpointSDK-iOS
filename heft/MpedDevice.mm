@@ -312,6 +312,16 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
                 (int)amount, currency, present ? @"is present" : @"is not present", reference);
+    
+    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
+                           @"FinancialAction", @"actionType",
+                           @"Sale", @"action",
+                           [NSNumber numberWithLong:amount], @"amount",
+                           currency, @"currency",
+                           reference, @"refrence",
+                           nil];
+    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_CARDREADERACTION error:nil];
+    
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
@@ -847,6 +857,14 @@ enum eSignConditions{
     
     LOG_RELEASE(Logger::eFine, @"%@", info.status);
     
+    NSMutableDictionary *event = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  @"FinancialAction", @"actionType",
+                                  [NSNumber numberWithLong:info.authorisedAmount], @"amount",
+                                  [NSNumber numberWithLong:info.statusCode], @"statusCode",
+                                  [NSNumber numberWithLong:info.financialResult], @"financialResult",
+                                  info.status, @"status",
+                                  nil];
+    
     // check if we have a block - if so, post that block instead of calling the event/callback
     // although it looks the same, we just call the block with parameters instead of the other
 
@@ -856,6 +874,7 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseFinanceStatus:info];
         });
+        [event setObject:@"responseFinanceStatus" forKey:@"action"];
     }
     else
     {
@@ -864,8 +883,11 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseRecoveredTransactionStatus:info];
         });
+        [event setObject:@"responseRecoveredTransactionStatus" forKey:@"action"];
     }
     cancelAllowed = NO;
+    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_CARDREADERACTION error:nil];
+    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
 }
 
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
