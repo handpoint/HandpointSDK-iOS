@@ -293,18 +293,28 @@ PostRequestCommand::PostRequestCommand(const void* payload, std::uint32_t payloa
 {
     const PostPayload* pRequest = reinterpret_cast<const PostPayload*>(payload);
     timeout = htons(pRequest->timeout);
-    port = htons(pRequest->port);
-    std::uint8_t host_size = pRequest->host_address_length;
+    main_port = htons(pRequest->main_port);
+    secondary_port = htons(pRequest->secondary_port);
+    std::uint8_t main_host_size = pRequest->main_host_address_length;
+    std::uint8_t secondary_host_size = pRequest->secondary_host_address_length;
     // std::uint8_t path_size = pRequest->path_length;
     std::uint16_t data_size = htons(pRequest->data_len);
+
+    // main host is required
+    NSData* host_data = [NSData dataWithBytes:pRequest->data length:main_host_size];
+    main_host = [[NSString alloc] initWithData:host_data encoding:NSUTF8StringEncoding];
     
-    NSData* host_data = [NSData dataWithBytes:pRequest->data length:host_size];
-    host = [[NSString alloc] initWithData:host_data encoding:NSUTF8StringEncoding];
+    // but secondary host can be 0
+    if (secondary_host_size > 0)
+    {
+        host_data = [NSData dataWithBytes:pRequest->data+main_host_size length:secondary_host_size];
+        secondary_host = [[NSString alloc] initWithData:host_data encoding:NSUTF8StringEncoding];
+    }
     
     // NSData* path_data = [NSData dataWithBytes:pRequest->data+host_size length:path_size];
     // path = [[NSString alloc] initWithData:path_data encoding:NSUTF8StringEncoding];
     
-    post_data = [NSData dataWithBytes:pRequest->data+host_size length:data_size];
+    post_data = [NSData dataWithBytes:pRequest->data+main_host_size+secondary_host_size length:data_size];
 }
 
 

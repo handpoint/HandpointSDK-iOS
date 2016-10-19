@@ -212,20 +212,26 @@ public:
 
 class PostRequestCommand : public HostRequestCommand
 {
-    std::uint16_t port;
+    
     std::uint16_t timeout;
-    NSString*     host;
-//    NSString*     path;
+    NSString*     main_host;
+    std::uint16_t main_port;
+    
+    NSString*     secondary_host;
+    std::uint16_t secondary_port;
+    //    NSString*     path;
     NSData*       post_data;
     
 protected:
     struct PostPayload : RequestPayload{
-        std::uint16_t port;
+        std::uint16_t main_port;
+        std::uint16_t secondary_port;
         std::uint16_t timeout;
-        std::uint8_t  host_address_length;
-//        std::uint8_t  path_length;
+        std::uint8_t  main_host_address_length;
+        std::uint8_t  secondary_host_address_length;
+        //        std::uint8_t  path_length;
         std::uint16_t data_len;
-        std::uint8_t  data[];  // [host[n]path[m]data[r]
+        std::uint8_t  data[];  // [host[n]host[m]data[r]
     } __attribute__((packed));
     
 public:
@@ -237,7 +243,7 @@ public:
     
     NSNumber* get_port()
     {
-        return [NSNumber numberWithShort:port];
+        return [NSNumber numberWithShort:main_port];
     }
     
     int GetTimeout()
@@ -247,7 +253,7 @@ public:
     
     NSString* get_host()
     {
-        return host;
+        return main_host;
     }
   
     /*
