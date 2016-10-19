@@ -129,6 +129,7 @@ enum eBufferConditions{
 
     if (inputStream)
     {
+        // TODO:   fix crash, EXC_BAD_ACCESS(code=1, address=0x1281bb00) 
         [inputStream close];
         if (runLoop)
         {
@@ -200,6 +201,8 @@ bool isStatusAnError(NSStreamStatus status)
 //       fire and forget method
 - (void)writeData:(uint8_t*)data length:(int)len
 {
+    LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
+
     while (len) {
         while(![outputStream hasSpaceAvailable])
         {
@@ -212,13 +215,18 @@ bool isStatusAnError(NSStreamStatus status)
             }
         }
         
-        NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize)];
+        // TODO: just try to write everything here, let the system take care of bookkeeping
+        //       use len as parameter (do not cap at maxFrameSize)
+        // NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize*2)];
+        NSInteger nwritten = [outputStream write:data maxLength:len];
         
         if(nwritten <= 0)
+        {
             throw communication_exception();
+        }
 
-        // LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) nwritten));
-        LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
+        // LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
+        LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d", (int) nwritten, len);
         
         len -= nwritten;
         data += nwritten;
@@ -263,11 +271,11 @@ bool isStatusAnError(NSStreamStatus status)
                  */
                 
                 NSUInteger nread;
-                const int bufferSize = ciDefaultMaxFrameSize;
+                const int bufferSize = ciDefaultMaxFrameSize*2; // the buffer isn't large - keep a bigger buffer
+                                                                // just in case things are ... buffered up!
 
                 do {
-                    Buffer readBuffer;
-                    readBuffer.resize(bufferSize);
+                    Buffer readBuffer(bufferSize);
                     nread = [inputStream read:&readBuffer[0] maxLength:bufferSize];
                     LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", &readBuffer[0], (int)nread), (int)nread);
                     
@@ -280,7 +288,6 @@ bool isStatusAnError(NSStreamStatus status)
                         
                         // nota GCD queue til að stjórna þessu, þá sér stýrikerfið um
                         // lásana...nota barrier í readData partion (þá blokkar það)
-                        
                         [bufferLock lock]; // don't care for a condition, queue can be empty or not
                         inputQueue.push(std::move(readBuffer));
                         [bufferLock unlockWithCondition:eHasDataCondition];
@@ -303,6 +310,17 @@ bool isStatusAnError(NSStreamStatus status)
             LOG(@"HeftConnection::handleEvent, NSStreamEventErrorOccurred");
             [self shutdown];
             break;
+        case NSStreamEventHasSpaceAvailable:
+            if (aStream == outputStream)
+            {
+                LOG(@"HeftConnection::handleEvent, NSStreamEventHasSpaceAvailable on outputStream");
+            }
+            else
+            {
+                LOG(@"HeftConnection::handleEvent, NSStreamEventHasSpaceAvailable on inputStream!");
+            }
+            break;
+           
         default:
             LOG(@"HeftConnection::handleEvent, unhandled event");
             break;
@@ -345,7 +363,7 @@ bool isStatusAnError(NSStreamStatus status)
     [bufferLock unlockWithCondition:eNoDataCondition];
     
     auto bytes_read = buffer.size() - initSize;
-    LOG(@"readData returning %lu bytes", bytes_read);
+    LOG(@"readData returning %lu bytes, total buffer size=%lu", bytes_read, buffer.size());
 
     return static_cast<int>(bytes_read);
 }

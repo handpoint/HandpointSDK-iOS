@@ -182,12 +182,14 @@ namespace {
             ,"ZMW", "0967" //Kwacha
             ,"ZWL", "0932" //Zimbabwe dollar
     };
+
     
     NSString* init_xml = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                                   "<InitRequest>"
                                     "<ComBufSize>%d</ComBufSize>"
                                     "<SDKName>iOS</SDKName>"
-                                    "<SDKVersion>v%@</SDKVersion>"
+                                    "<SDKVersion>%@</SDKVersion>"
+                                    "<PostEnabled>1</PostEnabled>"
                                   "</InitRequest>";
 }
 
@@ -377,6 +379,9 @@ HostRequestCommand* HostRequestCommand::Create(const void* payload, std::uint32_
         return new ReceiveRequestCommand(payload, payloadSize);
     case CMD_HOST_DISC_REQ:
         return new DisconnectRequestCommand(payload, payloadSize);
+    case CMD_HOST_MSG_TO_HOST:
+        return new PostRequestCommand(payload, payloadSize);
+            
     default:
         break;
     }
@@ -437,6 +442,37 @@ SendRequestCommand::SendRequestCommand(const void* payload, std::uint32_t payloa
     memcpy(&data[0], pRequest->data, data.size());
 }
 
+PostRequestCommand::PostRequestCommand(const void* payload, std::uint32_t payloadSize)
+: HostRequestCommand(payload, payloadSize)
+{
+    const PostPayload* pRequest = reinterpret_cast<const PostPayload*>(payload);
+    timeout = htons(pRequest->timeout);
+    main_port = htons(pRequest->main_port);
+    secondary_port = htons(pRequest->secondary_port);
+    std::uint8_t main_host_size = pRequest->main_host_address_length;
+    std::uint8_t secondary_host_size = pRequest->secondary_host_address_length;
+    // std::uint8_t path_size = pRequest->path_length;
+    std::uint16_t data_size = htons(pRequest->data_len);
+
+    // main host is required
+    NSData* host_data = [NSData dataWithBytes:pRequest->data length:main_host_size];
+    main_host = [[NSString alloc] initWithData:host_data encoding:NSUTF8StringEncoding];
+    
+    // but secondary host can be 0
+    if (secondary_host_size > 0)
+    {
+        host_data = [NSData dataWithBytes:pRequest->data+main_host_size length:secondary_host_size];
+        secondary_host = [[NSString alloc] initWithData:host_data encoding:NSUTF8StringEncoding];
+    }
+    
+    // NSData* path_data = [NSData dataWithBytes:pRequest->data+host_size length:path_size];
+    // path = [[NSString alloc] initWithData:path_data encoding:NSUTF8StringEncoding];
+    
+    post_data = [NSData dataWithBytes:pRequest->data+main_host_size+secondary_host_size length:data_size];
+}
+
+
+
 ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, std::uint32_t payloadSize)
     : HostRequestCommand(payload, payloadSize)
 {
@@ -444,6 +480,16 @@ ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, std::uint32_t 
     timeout = htons(pRequest->timeout);
     data_len = htons(pRequest->data_len);
 }
+
+ReceiveResponseCommand::ReceiveResponseCommand(NSData* payload)
+: HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)[payload length])
+
+{
+    ReceiveResponsePayload* pPayload = GetPayload<ReceiveResponsePayload>();
+    pPayload->data_len = htonl([payload length]);
+    memcpy(pPayload->data, [payload bytes], [payload length]);
+}
+
 
 ReceiveResponseCommand::ReceiveResponseCommand(const std::vector<std::uint8_t>& payload)
     : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)payload.size())
