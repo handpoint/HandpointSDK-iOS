@@ -234,7 +234,7 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
     FramePayload* pCommand;
     int nread;
 	std::vector<std::uint8_t> buf;
-    buf.reserve(8192);
+    buf.reserve(8192); // reserve a "big" buffer since we can afford it - and because reasons!
 	data.clear();
 	while(true)
     {

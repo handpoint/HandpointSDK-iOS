@@ -271,11 +271,11 @@ bool isStatusAnError(NSStreamStatus status)
                  */
                 
                 NSUInteger nread;
-                const int bufferSize = ciDefaultMaxFrameSize*2;
+                const int bufferSize = ciDefaultMaxFrameSize*2; // the buffer isn't large - keep a bigger buffer
+                                                                // just in case things are ... buffered up!
 
                 do {
                     Buffer readBuffer(bufferSize);
-                    // readBuffer.resize(bufferSize);
                     nread = [inputStream read:&readBuffer[0] maxLength:bufferSize];
                     LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", &readBuffer[0], (int)nread), (int)nread);
                     
