@@ -47,6 +47,7 @@ ResponseCommand* ResponseCommand::Create(const std::vector<std::uint8_t>& buf)
 	case CMD_HOST_SEND_REQ:
 	case CMD_HOST_RECV_REQ:
 	case CMD_HOST_DISC_REQ:
+    case CMD_HOST_MSG_TO_HOST:
 		return reinterpret_cast<ResponseCommand*>(HostRequestCommand::Create(pResponse, (std::uint32_t)buf.size()));
 	case CMD_STAT_SIGN_REQ:
 		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse, (std::uint32_t)buf.size()));
