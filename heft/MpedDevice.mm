@@ -320,7 +320,7 @@ enum eSignConditions{
                            currency, @"currency",
                            reference, @"refrence",
                            nil];
-    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_CARDREADERACTION error:nil];
+    [AnalyticsHelper addCardreaderEvent:event error:nil];
     
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
@@ -886,8 +886,8 @@ enum eSignConditions{
         [event setObject:@"responseRecoveredTransactionStatus" forKey:@"action"];
     }
     cancelAllowed = NO;
-    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_CARDREADERACTION error:nil];
-    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
+    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    [AnalyticsHelper uploadWithFinishedBlock:nil];
 }
 
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{

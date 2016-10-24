@@ -11,7 +11,7 @@
 #import "MpedDevice.h"
 #import "HeftRemoteDevice.h"
 #import "HeftStatusReportPublic.h"
-#import <UIKit/UIKit.h>
+
 
 #import "debug.h"
 
@@ -144,35 +144,14 @@ static HeftManager* instance = 0;
 #endif
 	}
     
-    KeenClient *keenClient = [KeenClient sharedClientWithProjectID:DEV_KEEN_PROJECTID andWriteKey:DEV_KEEN_WRITEKEY andReadKey: nil];
-    [KeenClient enableLogging];
-    [KeenClient disableGeoLocation];
-    
-    NSDictionary *device = [NSDictionary dictionaryWithObjectsAndKeys:
-                            [[UIDevice currentDevice] model], @"model",
-                            [[UIDevice currentDevice] systemName], @"systemName",
-                            [[UIDevice currentDevice] systemVersion], @"systemVersion",
-                            [[[UIDevice currentDevice] identifierForVendor] UUIDString], @"deviceID",
-                            nil];
-    
-    NSDictionary *app = [NSDictionary dictionaryWithObjectsAndKeys:
-                         [self getSDKVersion], @"handpointSDKVersion",
-                         [[NSBundle mainBundle] bundleIdentifier], @"bundleId",
-                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"], @"version",
-                         nil];
-    
+    [AnalyticsHelper setupAnalyticsWithSDKVersion:[self getSDKVersion]];
+    //[AnalyticsHelper enableLogging];
+    [AnalyticsHelper disableGeoLocation];
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
                            @"heftManager created", @"action",
                            nil];
-    
-    
-    keenClient.globalPropertiesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             device, @"Device",
-                                             app, @"App",
-                                             nil];
-    
-    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_MANAGERCREATED error:nil];
-    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
+    [AnalyticsHelper addManagerEvent:event error:nil];
+    [AnalyticsHelper uploadWithFinishedBlock:nil];
     
 	return self;
 }
@@ -246,7 +225,7 @@ static HeftManager* instance = 0;
                                    [[result mpedInfo] objectForKey:kAppNameInfoKey], @"appNameInfoKey",
                                    [[result mpedInfo] objectForKey:kAppVersionInfoKey], @"appVersionInfoKey",
                                    nil];
-            [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_CARDREADERACTION error:nil];
+            [AnalyticsHelper addManagerEvent:event error:nil];
             
         });
         
