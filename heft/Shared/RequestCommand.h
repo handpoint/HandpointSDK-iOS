@@ -210,6 +210,66 @@ public:
     }
 };
 
+class PostRequestCommand : public HostRequestCommand
+{
+    
+    std::uint16_t timeout;
+    NSString*     main_host;
+    std::uint16_t main_port;
+    
+    NSString*     secondary_host;
+    std::uint16_t secondary_port;
+    //    NSString*     path;
+    NSData*       post_data;
+    
+protected:
+    struct PostPayload : RequestPayload{
+        std::uint16_t main_port;
+        std::uint16_t secondary_port;
+        std::uint16_t timeout;
+        std::uint8_t  main_host_address_length;
+        std::uint8_t  secondary_host_address_length;
+        //        std::uint8_t  path_length;
+        std::uint16_t data_len;
+        std::uint8_t  data[];  // [host[n]host[m]data[r]
+    } __attribute__((packed));
+    
+public:
+    PostRequestCommand(const void* payload, std::uint32_t payloadSize);
+    RequestCommand* Process(id<IHostProcessor> handler)
+    {
+        return [handler processPost:this];
+    }
+    
+    NSNumber* get_port()
+    {
+        return [NSNumber numberWithShort:main_port];
+    }
+    
+    int GetTimeout()
+    {
+        return timeout;
+    }
+    
+    NSString* get_host()
+    {
+        return main_host;
+    }
+  
+    /*
+    NSString* get_path()
+    {
+        return path;
+    }
+    */
+    
+    NSData* get_data()
+    {
+        return post_data;
+    }
+};
+
+
 class ReceiveRequestCommand : public HostRequestCommand{
 	std::uint16_t data_len;
 	std::uint16_t timeout;
@@ -246,7 +306,8 @@ class ReceiveResponseCommand : public HostResponseCommand{
 	} __attribute__((packed));
 
 public:
-	ReceiveResponseCommand(const std::vector<std::uint8_t>& payload);
+    ReceiveResponseCommand(const std::vector<std::uint8_t>& payload);
+	ReceiveResponseCommand(NSData* payload);
 };
 
 class DisconnectRequestCommand : public HostRequestCommand{
