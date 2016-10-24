@@ -96,6 +96,8 @@
 		FBFA75161DB11CF900641641 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBFA75151DB11CF900641641 /* SystemConfiguration.framework */; };
 		FBFA751C1DB1283300641641 /* NamespacedDependencies.h in Sources */ = {isa = PBXBuildFile; fileRef = FBFA75171DB11D9400641641 /* NamespacedDependencies.h */; };
 		FBFA751E1DB27CCE00641641 /* libextLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBFA74DB1DB11C8700641641 /* libextLib.a */; };
+		FBFA75351DB4DEDE00641641 /* AnalyticsHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FBFA75331DB4DEDE00641641 /* AnalyticsHelper.h */; };
+		FBFA75361DB4DEDE00641641 /* AnalyticsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA75341DB4DEDE00641641 /* AnalyticsHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -261,6 +263,8 @@
 		FBFA75171DB11D9400641641 /* NamespacedDependencies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamespacedDependencies.h; sourceTree = "<group>"; };
 		FBFA751B1DB11F8D00641641 /* generate_namespace_header.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = generate_namespace_header.sh; sourceTree = "<group>"; };
 		FBFA751D1DB277F700641641 /* extLib-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "extLib-Prefix.pch"; sourceTree = "<group>"; };
+		FBFA75331DB4DEDE00641641 /* AnalyticsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyticsHelper.h; sourceTree = "<group>"; };
+		FBFA75341DB4DEDE00641641 /* AnalyticsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsHelper.m; sourceTree = "<group>"; };
 		FE442BAA7A442E031B970C25 /* Pods-heft.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.debug.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -348,6 +352,8 @@
 			children = (
 				2D39894C165FF88800F8FA29 /* debug.h */,
 				2D39892B165FF23D00F8FA29 /* heft-Prefix.pch */,
+				FBFA75331DB4DEDE00641641 /* AnalyticsHelper.h */,
+				FBFA75341DB4DEDE00641641 /* AnalyticsHelper.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -594,6 +600,7 @@
 				AD4C085C170C0C770005EDC0 /* HeftClient.h in Headers */,
 				AD4C085D170C0C7F0005EDC0 /* HeftManager.h in Headers */,
 				809FF0691864D45900572A04 /* MPosOperation.h in Headers */,
+				FBFA75351DB4DEDE00641641 /* AnalyticsHelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,6 +800,7 @@
 				2D398977165FF88800F8FA29 /* HeftStatusReport.m in Sources */,
 				2D398978165FF88800F8FA29 /* MpedDevice.mm in Sources */,
 				2D398979165FF88800F8FA29 /* ResponseParser.m in Sources */,
+				FBFA75361DB4DEDE00641641 /* AnalyticsHelper.m in Sources */,
 				2D39897A165FF88800F8FA29 /* BCDCoder.mm in Sources */,
 				498A67081BF63765006D4606 /* Logger.m in Sources */,
 				2D39897B165FF88800F8FA29 /* Crc.mm in Sources */,
