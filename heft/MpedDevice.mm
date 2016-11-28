@@ -528,7 +528,7 @@ enum eSignConditions{
 
 -(BOOL)enableScanner{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"enableScanner", @"action",
                            nil];
     [AnalyticsHelper addCardreaderEvent:event error:nil];
@@ -536,19 +536,19 @@ enum eSignConditions{
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"enableScannerWithMultiScan", @"action",
-                           multiScan, @"multiScan",
+                           [NSNumber numberWithBool: multiScan], @"multiScan",
                            nil];
     [AnalyticsHelper addCardreaderEvent:event error:nil];
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"enableScannerWithMultiScanButtonMode", @"action",
-                           multiScan, @"multiScan",
-                           buttonMode, @"buttonMode",
+                           [NSNumber numberWithBool: multiScan], @"multiScan",
+                           [NSNumber numberWithBool: buttonMode], @"buttonMode",
                            nil];
     [AnalyticsHelper addCardreaderEvent:event error:nil];
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
@@ -557,7 +557,7 @@ enum eSignConditions{
 //Deprecated enable scanner function names
 -(BOOL)enableScanner:(BOOL)multiScan{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"enableScannerMultiscan", @"action",
                            @"Yes", @"deprecated",
                            nil];
@@ -566,7 +566,7 @@ enum eSignConditions{
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"enableScannerMultiscanButtonMode", @"action",
                            @"Yes", @"deprecated",
                            nil];
@@ -575,7 +575,7 @@ enum eSignConditions{
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"enableScannerMultiscanButtonModeTimeoutSeconds", @"action",
                            @"Yes", @"deprecated",
                            nil];
@@ -586,11 +586,11 @@ enum eSignConditions{
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"enableScannerWithMultiScanButtonModeTimeoutSeconds", @"action",
-                           multiScan, @"multiScan",
-                           buttonMode, @"buttonMode",
-                           timeoutSeconds, @"timeoutSeconds",
+                           [NSNumber numberWithBool: multiScan], @"multiScan",
+                           [NSNumber numberWithBool: buttonMode], @"buttonMode",
+                           [NSNumber numberWithInteger: timeoutSeconds], @"timeoutSeconds",
                            nil];
     [AnalyticsHelper addCardreaderEvent:event error:nil];
     
@@ -641,7 +641,7 @@ enum eSignConditions{
 
 -(void)disableScanner{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction°", @"actionType",
                            @"disableScanner", @"action",
                            nil];
     [AnalyticsHelper addCardreaderEvent:event error:nil];
@@ -693,7 +693,7 @@ enum eSignConditions{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
                            @"cardReaderAction", @"actionType",
                            @"logSetLevel", @"action",
-                           level, @"logLevel",
+                           @(level), @"logLevel",
                            nil];
     [AnalyticsHelper addCardreaderEvent:event error:nil];
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
@@ -733,7 +733,7 @@ enum eSignConditions{
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
                            @"FinancialAction", @"actionType",
                            @"acceptSignature", @"action",
-                           flag, @"flag",
+                           [NSNumber numberWithBool: flag], @"flag",
                            nil];
     [AnalyticsHelper addCardreaderEvent:event error:nil];
     [signLock lock];
@@ -793,7 +793,7 @@ enum eSignConditions{
     info.scanCode = xml ? [xml objectForKey:@"code"] : @"";
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            @"responseScannerEvent", @"action",
                            info.status, @"status",
                            nil];
@@ -810,7 +810,7 @@ enum eSignConditions{
 {
     LOG_RELEASE(Logger::eFine, @"Scanner disabled");
     NSMutableDictionary *event = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
+                           @"scannerAction", @"actionType",
                            status, @"status",
                            nil];
     
@@ -892,7 +892,7 @@ enum eSignConditions{
             [tmp responseEMVReport:report];
             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
                                    @"cardReaderAction", @"actionType",
-                                   @"sendReportResult", @"action",
+                                   @"responseEMVReport", @"action",
                                    nil];
             [AnalyticsHelper addCardreaderEvent:event error:nil];
         });
@@ -903,7 +903,7 @@ enum eSignConditions{
                     @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
                                @"cardReaderAction", @"actionType",
-                               @"sendReportResult-delegateNotImplemented", @"action",
+                               @"responseEMVReport-delegateNotImplemented", @"action",
                                nil];
         [AnalyticsHelper addCardreaderEvent:event error:nil];
     }
@@ -916,6 +916,11 @@ enum eSignConditions{
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
+        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
+                               @"FinancialAction", @"actionType",
+                               @"requestSignature", @"action",
+                               nil];
+        [AnalyticsHelper addCardreaderEvent:event error:nil];
     });
     
     NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str())
@@ -934,6 +939,11 @@ enum eSignConditions{
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp cancelSignature];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   @"FinancialAction", @"actionType",
+                                   @"cancelSignature", @"action",
+                                   nil];
+            [AnalyticsHelper addCardreaderEvent:event error:nil];
         });
     }
     
@@ -1080,6 +1090,11 @@ enum eSignConditions{
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp responseLogInfo:info];
+        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
+                               @"cardReaderAction", @"actionType",
+                               @"responseLogInfo", @"action",
+                               nil];
+        [AnalyticsHelper addCardreaderEvent:event error:nil];
     });
     cancelAllowed = NO;
 }
