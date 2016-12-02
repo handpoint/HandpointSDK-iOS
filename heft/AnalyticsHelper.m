@@ -9,63 +9,65 @@
 #import "AnalyticsHelper.h"
 #import "KeenClient.h"
 
-
 @implementation AnalyticsHelper
 
-+(void)setupAnalyticsWithSDKVersion:(NSString*)SDKVersion {
-    
-    KeenClient *keenClient = [KeenClient sharedClientWithProjectID:DEV_KEEN_PROJECTID andWriteKey:DEV_KEEN_WRITEKEY andReadKey: nil];
-    
-    NSDictionary *device = [NSDictionary dictionaryWithObjectsAndKeys:
-                            [[UIDevice currentDevice] model], @"model",
-                            [[UIDevice currentDevice] systemName], @"systemName",
-                            [[UIDevice currentDevice] systemVersion], @"systemVersion",
-                            [[[UIDevice currentDevice] identifierForVendor] UUIDString], @"deviceID",
-                            nil];
-    
-    NSDictionary *app = [NSDictionary dictionaryWithObjectsAndKeys:
-                         SDKVersion, @"handpointSDKVersion",
-                         [[NSBundle mainBundle] bundleIdentifier], @"bundleId",
-                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"], @"version",
-                         nil];
-    
-    keenClient.globalPropertiesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             device, @"Device",
-                                             app, @"App",
-                                             nil];
++ (void)setupAnalyticsWithGlobalProperties:(NSDictionary *)properties
+                                 projectID:(NSString *)projectID
+                                  writeKey:(NSString *)writeKey
+{
+    KeenClient *keenClient = [KeenClient sharedClientWithProjectID:projectID
+                                                       andWriteKey:writeKey
+                                                        andReadKey:nil];
 
-    
+    keenClient.globalPropertiesDictionary = properties;
 }
 
-+(void)disableGeoLocation {
++ (void)disableGeoLocation
+{
     [KeenClient disableGeoLocation];
 }
 
-+(void)enableGeoLocation {
++ (void)enableGeoLocation
+{
     [KeenClient enableGeoLocation];
 }
 
-+(void)enableLogging {
++ (void)enableLogging
+{
     [KeenClient enableLogging];
 }
 
-+(void)disableLogging {
++ (void)disableLogging
+{
     [KeenClient disableLogging];
 }
 
-+(BOOL)addEvent:(NSDictionary *)event toEventCollection:(NSString *)eventCollection error:(NSError **)anError {
-    return [[KeenClient sharedClient] addEvent:event toEventCollection:eventCollection error:anError];
++ (BOOL) addEvent:(NSDictionary *)event
+toEventCollection:(NSString *)eventCollection
+            error:(NSError **)anError
+{
+    return [[KeenClient sharedClient] addEvent:event
+                             toEventCollection:eventCollection
+                                         error:anError];
 }
 
-+(BOOL)addCardreaderEvent:(NSDictionary *)event error:(NSError **)anError {
-    return [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_CARDREADERACTION error:anError];
-}
-+(BOOL)addManagerEvent:(NSDictionary *)event error:(NSError **)anError {
-    return [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_MANAGERACTION error:anError];
++ (BOOL)addCardReaderEvent:(NSDictionary *)event
+{
+    return [[KeenClient sharedClient] addEvent:event
+                             toEventCollection:KEEN_CARDREADERACTION
+                                         error:nil];
 }
 
-+(void)uploadWithFinishedBlock:(void (^)())block {
-    [[KeenClient sharedClient] uploadWithFinishedBlock:block];
++ (BOOL)addManagerEvent:(NSDictionary *)event
+{
+    return [[KeenClient sharedClient] addEvent:event
+                             toEventCollection:KEEN_MANAGERACTION
+                                         error:nil];
+}
+
++ (void)upload
+{
+    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
 }
 
 @end
