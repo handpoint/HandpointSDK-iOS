@@ -268,11 +268,14 @@ enum eSignConditions{
 {
     if(!cancelAllowed){
         LOG_RELEASE(Logger::eFine, @"Cancelling is not allowed at this stage.");
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                               @"cardReaderAction", @"actionType",
-                               @"cancel-NotAllowed", @"action",
-                               nil];
-        [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+        NSDictionary *event = @{
+                @"actionType" : @"cardReaderAction",
+                @"action" : @"cancel-NotAllowed"
+        };
+
+        [AnalyticsHelper addCardReaderEvent:event];
+
         return;
     }
     
@@ -286,11 +289,13 @@ enum eSignConditions{
     fm.WriteWithoutAck(connection);
 #endif
     LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"cancel", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"cancel"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
 }
 
 
@@ -313,14 +318,15 @@ enum eSignConditions{
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
                 (int)amount, currency, present ? @"is present" : @"is not present", reference);
     
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"FinancialAction", @"actionType",
-                           @"Sale", @"action",
-                           [NSNumber numberWithLong:amount], @"amount",
-                           currency, @"currency",
-                           reference, @"refrence",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"FinancialAction",
+            @"action" : @"Sale",
+            @"amount" : @(amount),
+            @"currency" : currency,
+            @"refrence" : reference
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
@@ -353,15 +359,16 @@ enum eSignConditions{
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
                 (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
     
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"FinancialAction", @"actionType",
-                           @"Sale", @"action",
-                           [NSNumber numberWithLong:amount], @"amount",
-                           currency, @"currency",
-                           reference, @"refrence",
-                           months, @"divideBy",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"FinancialAction",
+            @"action" : @"Sale",
+            @"amount" : @(amount),
+            @"currency" : currency,
+            @"reference" : reference,
+            @"divideBy" : months
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     
     NSString *params = @"";
     NSString *refrenceString = @"";
@@ -412,14 +419,15 @@ enum eSignConditions{
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString *)reference{
     LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
     
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"FinancialAction", @"actionType",
-                           @"Refund", @"action",
-                           [NSNumber numberWithLong:amount], @"amount",
-                           currency, @"currency",
-                           reference, @"refrence",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"FinancialAction",
+            @"action" : @"Refund",
+            @"amount" : @(amount),
+            @"currency" : currency,
+            @"refrence" : reference
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
@@ -450,13 +458,14 @@ enum eSignConditions{
                 @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
     
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"FinancialAction", @"actionType",
-                           @"SaleVoid", @"action",
-                           [NSNumber numberWithLong:amount], @"amount",
-                           currency, @"currency",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"FinancialAction",
+            @"action" : @"SaleVoid",
+            @"amount" : @(amount),
+            @"currency" : currency
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
@@ -478,13 +487,14 @@ enum eSignConditions{
                 @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
     
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"FinancialAction", @"actionType",
-                           @"RefundVoid", @"action",
-                           [NSNumber numberWithLong:amount], @"amount",
-                           currency, @"currency",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"FinancialAction",
+            @"action" : @"RefundVoid",
+            @"amount" : @(amount),
+            @"currency" : currency
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ
@@ -503,11 +513,14 @@ enum eSignConditions{
 }
 
 - (BOOL)retrievePendingTransaction{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"FinancialAction", @"actionType",
-                           @"retrievePendingTransaction", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+    NSDictionary *event = @{
+            @"actionType" : @"FinancialAction",
+            @"action" : @"retrievePendingTransaction"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT
                                                            , "0" // must be like this or we throw an invalid currency exception
                                                            , 0
@@ -527,72 +540,86 @@ enum eSignConditions{
 }
 
 -(BOOL)enableScanner{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"enableScanner", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"enableScanner"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"enableScannerWithMultiScan", @"action",
-                           [NSNumber numberWithBool: multiScan], @"multiScan",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"enableScannerWithMultiScan",
+            @"multiScan" : @(multiScan)
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"enableScannerWithMultiScanButtonMode", @"action",
-                           [NSNumber numberWithBool: multiScan], @"multiScan",
-                           [NSNumber numberWithBool: buttonMode], @"buttonMode",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"enableScannerWithMultiScanButtonMode",
+            @"multiScan" : @(multiScan),
+            @"buttonMode" : @(buttonMode)
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 
 //Deprecated enable scanner function names
 -(BOOL)enableScanner:(BOOL)multiScan{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"enableScannerMultiscan", @"action",
-                           @"Yes", @"deprecated",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"enableScannerMultiscan",
+            @"deprecated" : @"Yes"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"enableScannerMultiscanButtonMode", @"action",
-                           @"Yes", @"deprecated",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"enableScannerMultiscanButtonMode",
+            @"deprecated" : @"Yes"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"enableScannerMultiscanButtonModeTimeoutSeconds", @"action",
-                           @"Yes", @"deprecated",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"enableScannerMultiscanButtonModeTimeoutSeconds",
+            @"deprecated" : @"Yes"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
 }
 
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"enableScannerWithMultiScanButtonModeTimeoutSeconds", @"action",
-                           [NSNumber numberWithBool: multiScan], @"multiScan",
-                           [NSNumber numberWithBool: buttonMode], @"buttonMode",
-                           [NSNumber numberWithInteger: timeoutSeconds], @"timeoutSeconds",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"enableScannerWithMultiScanButtonModeTimeoutSeconds",
+            @"multiScan" : @(multiScan),
+            @"buttonMode" : @(buttonMode),
+            @"timeoutSeconds" : @(timeoutSeconds)
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     
     NSString *params = @"";
     
@@ -640,19 +667,23 @@ enum eSignConditions{
 }
 
 -(void)disableScanner{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction°", @"actionType",
-                           @"disableScanner", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction°",
+            @"action" : @"disableScanner"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     [self cancel];
 }
 - (BOOL)financeStartOfDay{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"financeStartOfDay", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"financeStartOfDay"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -662,11 +693,13 @@ enum eSignConditions{
 }
 
 - (BOOL)financeEndOfDay{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"financeEndOfDay", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"financeEndOfDay"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -676,11 +709,13 @@ enum eSignConditions{
 }
 
 - (BOOL)financeInit{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"financeInit", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"financeInit"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -690,12 +725,14 @@ enum eSignConditions{
 }
 
 - (BOOL)logSetLevel:(eLogLevel)level{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"logSetLevel", @"action",
-                           @(level), @"logLevel",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"logSetLevel",
+            @"logLevel" : @(level)
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
                                                            connection:connection
                                                      resultsProcessor:self
@@ -704,11 +741,13 @@ enum eSignConditions{
 }
 
 - (BOOL)logReset{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"logReset", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"logReset"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -717,11 +756,13 @@ enum eSignConditions{
 }
 
 - (BOOL)logGetInfo{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"logGetInfo", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"logGetInfo"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -730,12 +771,14 @@ enum eSignConditions{
 }
 
 - (void)acceptSignature:(BOOL)flag{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"FinancialAction", @"actionType",
-                           @"acceptSignature", @"action",
-                           [NSNumber numberWithBool: flag], @"flag",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    NSDictionary *event = @{
+            @"actionType" : @"FinancialAction",
+            @"action" : @"acceptSignature",
+            @"flag" : @(flag)
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
     [signLock lock];
     signatureIsOk = flag;
     [signLock unlockWithCondition:eSignCondition];
@@ -743,11 +786,13 @@ enum eSignConditions{
 
 - (BOOL)getEMVConfiguration {
     LOG(@"MpedDevice getEMVConfiguration");
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"getEMVConfiguration", @"action",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"getEMVConfiguration"
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     
     NSString* params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
     @"<getReport>"
@@ -789,15 +834,17 @@ enum eSignConditions{
 {
     ScannerEventResponseInfo* info = [ScannerEventResponseInfo new];
     info.statusCode = code;
-    info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-    info.scanCode = xml ? [xml objectForKey:@"code"] : @"";
+    info.status = xml ? xml[@"StatusMessage"] : status;
+    info.scanCode = xml ? xml[@"code"] : @"";
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"scannerAction", @"actionType",
-                           @"responseScannerEvent", @"action",
-                           info.status, @"status",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+    NSDictionary *event = @{
+            @"actionType" : @"scannerAction",
+            @"action" : @"responseScannerEvent",
+            @"status" : info.status
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
     if([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -838,10 +885,11 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseScannerDisabled:info];
         });
-        [event setObject:@"responseScannerDisabled" forKey:@"action"];
+
+        event[@"action"] = @"responseScannerDisabled";
     }
     cancelAllowed = NO;
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+    [AnalyticsHelper addCardReaderEvent:event];
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
 {
@@ -876,12 +924,14 @@ enum eSignConditions{
         [tmp responseError:info];
     });
     cancelAllowed = NO;
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           @"cardReaderAction", @"actionType",
-                           @"responseError", @"action",
-                           info.status, @"status",
-                           nil];
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+    NSDictionary *event = @{
+            @"actionType" : @"cardReaderAction",
+            @"action" : @"responseError",
+            @"status" : info.status
+    };
+
+    [AnalyticsHelper addCardReaderEvent:event];
 }
 
 -(void)sendReportResult:(NSString*)report{
@@ -890,22 +940,26 @@ enum eSignConditions{
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseEMVReport:report];
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                                   @"cardReaderAction", @"actionType",
-                                   @"responseEMVReport", @"action",
-                                   nil];
-            [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+            NSDictionary *event = @{
+                    @"actionType" : @"cardReaderAction",
+                    @"action" : @"responseEMVReport"
+            };
+
+            [AnalyticsHelper addCardReaderEvent:event];
         });
     }
     else
     {
         LOG_RELEASE(Logger::eFine,
                     @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                               @"cardReaderAction", @"actionType",
-                               @"responseEMVReport-delegateNotImplemented", @"action",
-                               nil];
-        [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+        NSDictionary *event = @{
+                @"actionType" : @"cardReaderAction",
+                @"action" : @"responseEMVReport-delegateNotImplemented"
+        };
+
+        [AnalyticsHelper addCardReaderEvent:event];
     }
 }
 
@@ -916,11 +970,13 @@ enum eSignConditions{
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                               @"FinancialAction", @"actionType",
-                               @"requestSignature", @"action",
-                               nil];
-        [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+        NSDictionary *event = @{
+                @"actionType" : @"FinancialAction",
+                @"action" : @"requestSignature"
+        };
+
+        [AnalyticsHelper addCardReaderEvent:event];
     });
     
     NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str())
@@ -939,11 +995,13 @@ enum eSignConditions{
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp cancelSignature];
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                                   @"FinancialAction", @"actionType",
-                                   @"cancelSignature", @"action",
-                                   nil];
-            [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+            NSDictionary *event = @{
+                    @"actionType" : @"FinancialAction",
+                    @"action" : @"cancelSignature"
+            };
+
+            [AnalyticsHelper addCardReaderEvent:event];
         });
     }
     
@@ -1067,11 +1125,14 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseRecoveredTransactionStatus:info];
         });
-        [event setObject:@"responseRecoveredTransactionStatus" forKey:@"action"];
+
+        event[@"action"] = @"responseRecoveredTransactionStatus";
     }
     cancelAllowed = NO;
-    [AnalyticsHelper addCardreaderEvent:event error:nil];
-    [AnalyticsHelper uploadWithFinishedBlock:nil];
+
+    [AnalyticsHelper addCardReaderEvent:event];
+
+    [AnalyticsHelper upload];
 }
 
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
@@ -1087,15 +1148,19 @@ enum eSignConditions{
     {
         info.log = @(pResponse->GetData().c_str());
     }
+
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp responseLogInfo:info];
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                               @"cardReaderAction", @"actionType",
-                               @"responseLogInfo", @"action",
-                               nil];
-        [AnalyticsHelper addCardreaderEvent:event error:nil];
+
+        NSDictionary *event = @{
+                @"actionType" : @"cardReaderAction",
+                @"action" : @"responseLogInfo"
+        };
+
+        [AnalyticsHelper addCardReaderEvent:event];
     });
+
     cancelAllowed = NO;
 }
 
