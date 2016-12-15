@@ -384,6 +384,19 @@ static HeftManager* instance = 0;
             @"action" : @"getSDKVersion",
             @"SDKVersion" : SDKVersion
     };
+    NSString* SDKVersion;
+#ifdef HEFT_SIMULATOR
+    //Simulator
+    SDKVersion = [NSString stringWithFormat:@"%@ Simulator",[self version]];
+#else
+    #ifdef DEBUG
+        //Debug
+        SDKVersion = [NSString stringWithFormat:@"%@ Debug",[self version]];
+    #else
+        //Release
+        SDKVersion = [self version];
+    #endif
+#endif
 
     [AnalyticsHelper addManagerEvent:event];
 	
