@@ -8,12 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
-#define KEEN_MANAGERCREATED @"managerCreated"
-#define KEEN_MANAGERACTION @"managerAction"
-#define KEEN_CARDREADERACTION @"cardreaderAction"
+#define KEEN_SDKEVENTCOLLECTION @"sdkEventCollection"
 
 
 @interface AnalyticsHelper : NSObject
+
+struct ActionTypeStrings
+{
+    __unsafe_unretained NSString* const managerAction;
+    __unsafe_unretained NSString* const simulatorAction;
+    __unsafe_unretained NSString* const cardReaderAction;
+    __unsafe_unretained NSString* const financialAction;
+    __unsafe_unretained NSString* const scannerAction;
+};
+extern const struct ActionTypeStrings actionTypeName;
 
 + (void)setupAnalyticsWithGlobalProperties:(NSDictionary *)properties
                                  projectID:(NSString *)projectID
@@ -29,9 +37,7 @@
 
 + (BOOL)addEvent:(NSDictionary *)event toEventCollection:(NSString *)eventCollection error:(NSError **)anError;
 
-+ (BOOL)addCardReaderEvent:(NSDictionary *)event;
-
-+ (BOOL)addManagerEvent:(NSDictionary *)event;
++ (void)addEventForActionType:(NSString *)actionType Action:(NSString *)action withOptionalParameters:(NSDictionary *)optionalParameters;
 
 + (void)upload;
 

@@ -11,6 +11,14 @@
 
 @implementation AnalyticsHelper
 
+const struct ActionTypeStrings actionTypeName = {
+    .managerAction = @"managerAction",
+    .simulatorAction = @"simulatorAction",
+    .cardReaderAction = @"cardReaderAction",
+    .financialAction = @"financialAction",
+    .scannerAction = @"scannerAction"
+};
+
 + (void)setupAnalyticsWithGlobalProperties:(NSDictionary *)properties
                                  projectID:(NSString *)projectID
                                   writeKey:(NSString *)writeKey
@@ -51,18 +59,19 @@ toEventCollection:(NSString *)eventCollection
                                          error:anError];
 }
 
-+ (BOOL)addCardReaderEvent:(NSDictionary *)event
-{
-    return [[KeenClient sharedClient] addEvent:event
-                             toEventCollection:KEEN_CARDREADERACTION
-                                         error:nil];
-}
++ (void)addEventForActionType:(NSString *)actionType
+                       Action:(NSString *)action
+       withOptionalParameters:(NSDictionary *)optionalParameters {
+    NSDictionary *event = @{
+            @"actionType": actionType,
+            @"action": action,
+            @"optionalParameters": (optionalParameters) ? optionalParameters : @""
 
-+ (BOOL)addManagerEvent:(NSDictionary *)event
-{
-    return [[KeenClient sharedClient] addEvent:event
-                             toEventCollection:KEEN_MANAGERACTION
-                                         error:nil];
+    };
+
+    [[KeenClient sharedClient] addEvent:event
+                      toEventCollection:KEEN_SDKEVENTCOLLECTION
+                                  error:nil];
 }
 
 + (void)upload

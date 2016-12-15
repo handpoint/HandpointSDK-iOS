@@ -162,13 +162,7 @@ static HeftManager* instance = 0;
 
         //[AnalyticsHelper enableLogging];
         [AnalyticsHelper disableGeoLocation];
-
-        NSDictionary *event = @{
-                @"actionType" : @"managerAction",
-                @"action" : @"heftManager created"
-        };
-
-        [AnalyticsHelper addManagerEvent:event];
+        [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"heftManager created" withOptionalParameters:nil];
         [AnalyticsHelper upload];
 
 	}
@@ -220,13 +214,7 @@ static HeftManager* instance = 0;
 
 - (BOOL)hasSources
 {
-    NSDictionary *event = @{
-            @"actionType" : @"managerAction",
-            @"action" : @"hasSources",
-            @"deprecated" : @"Yes"
-    };
-
-    [AnalyticsHelper addManagerEvent:event];
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"hasSources" withOptionalParameters:@{@"deprecated": @"YES"}];
 
 	return NO;
 }
@@ -254,15 +242,14 @@ static HeftManager* instance = 0;
         });
 
         NSDictionary *mpedInfo = [result mpedInfo];
-        NSDictionary *event = @{
-                @"actionType" : @"simulatorAction",
-                @"action" : @"didConnect",
-                @"serialnumber" : mpedInfo[kSerialNumberInfoKey],
-                @"appNameInfoKey" : mpedInfo[kAppNameInfoKey],
-                @"appVersionInfoKey" : mpedInfo[kAppVersionInfoKey]
-        };
+        [AnalyticsHelper addEventForActionType: actionTypeName.simulatorAction
+                                Action: @"didConnect"
+                withOptionalParameters: @{
+                        @"serialnumber" : mpedInfo[kSerialNumberInfoKey],
+                        @"appNameInfoKey" : mpedInfo[kAppNameInfoKey],
+                        @"appVersionInfoKey" : mpedInfo[kAppVersionInfoKey]
 
-        [AnalyticsHelper addManagerEvent:event];
+                }];
 
 #else
 
@@ -283,16 +270,13 @@ static HeftManager* instance = 0;
                 id<HeftStatusReportDelegate> tmp = aDelegate;
                 [tmp didConnect:result];
             });
-            
-            NSDictionary *event = @{
-                    @"actionType" : @"cardReaderAction",
-                    @"action" : @"didConnect",
-                    @"serialnumber" : [result mpedInfo][kSerialNumberInfoKey],
-                    @"appNameInfoKey" : [result mpedInfo][kAppNameInfoKey],
-                    @"appVersionInfoKey" : [result mpedInfo][kAppVersionInfoKey]
-            };
 
-            [AnalyticsHelper addManagerEvent:event];
+            [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"didConnect" withOptionalParameters:@{
+                    @"serialnumber": [result mpedInfo][kSerialNumberInfoKey],
+                    @"appNameInfoKey": [result mpedInfo][kAppNameInfoKey],
+                    @"appVersionInfoKey": [result mpedInfo][kAppVersionInfoKey]
+
+            }];
             
         });
         
@@ -334,12 +318,7 @@ static HeftManager* instance = 0;
 
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
-    NSDictionary *event = @{
-            @"actionType" : @"managerAction",
-            @"action" : @"clientForDevice-NSData"
-    };
-
-    [AnalyticsHelper addManagerEvent:event];
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"clientForDevice-NSData" withOptionalParameters:nil];
 
     [NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
                              toTarget:self
@@ -349,12 +328,7 @@ static HeftManager* instance = 0;
 
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
-    NSDictionary *event = @{
-            @"actionType" : @"managerAction",
-            @"action" : @"clientForDevice-NSString"
-    };
-
-    [AnalyticsHelper addManagerEvent:event];
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"clientForDevice-NSString" withOptionalParameters:nil];
 
 	NSData* sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
     [self clientForDevice:device sharedSecret:sharedSecretData delegate:aDelegate];
@@ -377,13 +351,6 @@ static HeftManager* instance = 0;
 // A real kludge, need to automate this so it can be independent of Xcode project settings
 - (NSString*)getSDKVersion
 {
-    NSString* SDKVersion = [self version];
-
-    NSDictionary *event = @{
-            @"actionType" : @"managerAction",
-            @"action" : @"getSDKVersion",
-            @"SDKVersion" : SDKVersion
-    };
     NSString* SDKVersion;
 #ifdef HEFT_SIMULATOR
     //Simulator
@@ -398,7 +365,9 @@ static HeftManager* instance = 0;
     #endif
 #endif
 
-    [AnalyticsHelper addManagerEvent:event];
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"getSDKVersion" withOptionalParameters:@{
+            @"SDKVersion": SDKVersion
+    }];
 	
 	return SDKVersion;
 }
@@ -407,25 +376,17 @@ static HeftManager* instance = 0;
 {
     NSString* SDKBuildNumber = [self buildNumber];
 
-    NSDictionary *event = @{
-            @"actionType" : @"managerAction",
-            @"action" : @"getSDKBuildNumber",
-            @"SDKBuildNumber" : SDKBuildNumber
-    };
-
-    [AnalyticsHelper addManagerEvent:event];
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"getSDKBuildNumber" withOptionalParameters:@{
+            @"SDKBuildNumber": SDKBuildNumber
+    }];
 	
 	return SDKBuildNumber;
 }
 
 - (NSMutableArray*)devicesCopy
 {
-    NSDictionary *event = @{
-            @"actionType" : @"managerAction",
-            @"action" : @"devicesCopy"
-    };
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"devicesCopy" withOptionalParameters:nil];
 
-    [AnalyticsHelper addManagerEvent:event];
 	NSMutableArray* result = [eaDevices mutableCopy];
 	return result;
 }
@@ -436,25 +397,16 @@ static HeftManager* instance = 0;
 {
 #ifdef HEFT_SIMULATOR
 
-    NSDictionary *event = @{
-            @"actionType" : @"simulatorAction",
-            @"action" : @"startDiscovery"
-    };
-
-    [AnalyticsHelper addManagerEvent:event];
+    [AnalyticsHelper addEventForActionType: actionTypeName.simulatorAction
+                                    Action: @"startDiscovery"
+                    withOptionalParameters: nil];
 
 	[self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
 
 #else
 
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"startDiscovery" withOptionalParameters:nil];
 
-
-    NSDictionary *event = @{
-            @"actionType" : @"managerAction",
-            @"action" : @"startDiscovery"
-    };
-
-    [AnalyticsHelper addManagerEvent:event];
     // NSError* error = NULL;
     EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
     [eaManager showBluetoothAccessoryPickerWithNameFilter:nil
@@ -510,12 +462,8 @@ static EAAccessory* simulatorAccessory = nil;
 		HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
 		[eaDevices addObject:newDevice];
 
-        NSDictionary *event = @{
-                @"actionType" : @"managerAction",
-                @"action" : @"didFindAccessoryDevice"
-        };
+        [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"didFindAccessoryDevice" withOptionalParameters:nil];
 
-        [AnalyticsHelper addManagerEvent:event];
 		[delegate didFindAccessoryDevice:newDevice];
 	}
     else{
@@ -540,12 +488,7 @@ static EAAccessory* simulatorAccessory = nil;
             HeftRemoteDevice* eaDevice = eaDevices[index];
             [eaDevices removeObjectAtIndex:index];
 
-            NSDictionary *event = @{
-                    @"actionType" : @"managerAction",
-                    @"action" : @"didLostAccessoryDevice"
-            };
-
-            [AnalyticsHelper addManagerEvent:event];
+            [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"didLostAccessoryDevice" withOptionalParameters:nil];
 
             [delegate didLostAccessoryDevice:eaDevice];
             runLoopRunning = NO;
