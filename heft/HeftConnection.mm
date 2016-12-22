@@ -263,8 +263,6 @@ bool isStatusAnError(NSStreamStatus status)
         case NSStreamEventHasBytesAvailable:
             if (aStream == inputStream)
             {
-                // Assert(aStream == inputStream); // why the assert? what if it is a outputStream?
-                
                 /*
                  * Have a buffer (vector). Read into it until there is no more data
                  * Add the buffer to the input queue.
