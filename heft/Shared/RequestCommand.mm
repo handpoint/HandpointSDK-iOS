@@ -486,7 +486,9 @@ ReceiveResponseCommand::ReceiveResponseCommand(NSData* payload)
 
 {
     ReceiveResponsePayload* pPayload = GetPayload<ReceiveResponsePayload>();
-    pPayload->data_len = htonl([payload length]);
+    NSUInteger l = [payload length];
+    std::uint32_t pl = static_cast<std::uint32_t>(l);
+    pPayload->data_len = htonl(pl);
     memcpy(pPayload->data, [payload bytes], [payload length]);
 }
 

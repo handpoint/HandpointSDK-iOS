@@ -702,7 +702,7 @@ enum eSignConditions{
 -(void)sendResponseError:(NSString*)status{
     ResponseInfo* info = [ResponseInfo new];
     info.status = status;
-    LOG_RELEASE(Logger::eFine, @"%@", info.status);
+    LOG_RELEASE(Logger::eFine, @"%@", status);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;

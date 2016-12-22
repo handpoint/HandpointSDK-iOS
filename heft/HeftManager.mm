@@ -14,14 +14,7 @@
 
 #import "debug.h"
 
-//#define NSLog(...) [log2file appendFormat:@"%f:", CFAbsoluteTimeGetCurrent()];[log2file appendFormat:__VA_ARGS__];[log2file appendString:@"\n"]; \
-//[log2file writeToFile:file atomically:YES encoding:NSUTF8StringEncoding error:NULL]
-
-//NSString* file = nil;
-//NSMutableString* log2file = nil;
-
 NSString* eaProtocol = @"com.datecs.pinpad";
-
 
 @interface HeftRemoteDevice ()
 - (id)initWithName:(NSString*)aName address:(NSString*)aAddress;
@@ -132,14 +125,13 @@ static HeftManager* instance = 0;
 
 		NSArray* accessories = eaManager.connectedAccessories;
         
-		[accessories indexOfObjectWithOptions:NSEnumerationConcurrent
-                                  passingTest:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop){
-                                      if([accessory.protocolStrings containsObject:eaProtocol]){
-                                          HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
-                                          [eaDevices addObject:newDevice];
-                                      }
-                                      return NO;
-                                  }];
+        [accessories enumerateObjectsUsingBlock:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop) {
+            if([accessory.protocolStrings containsObject:eaProtocol])
+            {
+                HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
+                [eaDevices addObject:newDevice];
+            }
+        }];
 #endif
 	}
 	return self;
@@ -313,6 +305,27 @@ static HeftManager* instance = 0;
                                                }];
 #endif
 }
+
+
+- (NSArray*) connectedCardReaders
+{
+    EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
+
+    NSMutableArray *readers = [NSMutableArray array];
+    for (EAAccessory* device in eaManager.connectedAccessories)
+    {
+        for (NSString* protocol in device.protocolStrings)
+        {
+            if ([protocol isEqualToString:eaProtocol])
+            {
+                [readers addObject:device];
+            }
+        }
+    }
+    return readers;
+}
+
+
 
 #ifdef HEFT_SIMULATOR
 static EAAccessory* simulatorAccessory = nil;

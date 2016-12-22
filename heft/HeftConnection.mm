@@ -187,9 +187,9 @@ enum eBufferConditions{
 bool isStatusAnError(NSStreamStatus status)
 {
     return status == NSStreamStatusNotOpen ||
-            status == NSStreamStatusClosed  ||
-            status == NSStreamStatusError   ||
-            status == NSStreamStatusAtEnd;
+           status == NSStreamStatusClosed  ||
+           status == NSStreamStatusError   ||
+           status == NSStreamStatusAtEnd;
 }
 
 // TODO: put data into outputqueue...

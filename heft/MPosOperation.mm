@@ -351,7 +351,6 @@ namespace {
 #ifdef DEBUG
     LOG(@"Sending a http request to host");
 #endif
-//    NSURLSession *session = [NSURLSession sharedSession];
     NSURLSession* session = [NSURLSession sessionWithConfiguration:session_configuration];
 
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
@@ -379,7 +378,6 @@ namespace {
             auto http_code_found = httpCodes.find((int) status_code);
             if (http_code_found != httpCodes.end())
             {
-                // status_string = httpCodes[(int) status_code];
                 status_string = http_code_found->second;
             }
             
@@ -389,7 +387,6 @@ namespace {
             host_response_data = [tmp_data mutableCopy];
             [host_response_data appendData:response_data];
         }
-        // LOG([[NSString alloc] initWithData:response_data encoding:NSUTF8StringEncoding]);
         [wait_until_done signal];
     }];
 
@@ -406,8 +403,9 @@ namespace {
 {
     LOG(@"processReceive:%lu bytes", (unsigned long) [host_response_data length]);
 
-    // wait until upload done... then return - or just assume it worked to hurry things up!
-    if (host_response_data == nil)
+    // wait until upload done... then return
+    // first check if we alread have data or error
+    if (host_response_data == nil && host_communication_error == nil)
     {
         LOG(@"Waiting for lock");
         [wait_until_done wait];
