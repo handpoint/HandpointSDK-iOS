@@ -739,7 +739,7 @@ enum eSignConditions{
 {
     LOG_RELEASE(Logger::eFine, @"Scanner disabled");
     NSString *analyticsAction;
-    BOOL analyticsDeprecated;
+    NSString *analyticsDeprecated;
     
     if([delegate respondsToSelector:@selector(responseEnableScanner:)])
     {
@@ -752,7 +752,7 @@ enum eSignConditions{
             [tmp responseEnableScanner:info];
         });
         analyticsAction = @"responseEnableScanner";
-        analyticsDeprecated = YES;
+        analyticsDeprecated = @"YES";
     }
     
     if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
@@ -767,10 +767,14 @@ enum eSignConditions{
         });
 
         analyticsAction = @"responseScannerDisabled";
-        analyticsDeprecated = NO;
+        analyticsDeprecated = @"NO";
     }
     cancelAllowed = NO;
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:analyticsAction withOptionalParameters:@{@"status": status}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:analyticsAction
+                    withOptionalParameters:@{
+                            @"status": status,
+                            @"deprecated" : analyticsDeprecated}];
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
 {
@@ -784,14 +788,6 @@ enum eSignConditions{
         LOG_RELEASE(Logger::eFine, @"calling responseStatus");
         [tmp responseStatus:info];
     });
-    //To much to log all status updates?
-//    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-//                           @"cardReaderAction", @"actionType",
-//                           @"responseStatus", @"action",
-//                           info.status, @"status",
-//                           nil];
-//    [AnalyticsHelper addCardreaderEvent:event error:nil];
-    
     //cancelAllowed is already set in the caller
 }
 
@@ -984,7 +980,6 @@ enum eSignConditions{
             @"statusCode": @(info.statusCode),
             @"financialResult": @(info.financialResult),
             @"status": info.status
-
     }];
     [AnalyticsHelper upload];
 }

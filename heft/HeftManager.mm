@@ -270,11 +270,11 @@ static HeftManager* instance = 0;
                 id<HeftStatusReportDelegate> tmp = aDelegate;
                 [tmp didConnect:result];
             });
-
+            NSDictionary *mpedInfo = [result mpedInfo];
             [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"didConnect" withOptionalParameters:@{
-                    @"serialnumber": [result mpedInfo][kSerialNumberInfoKey],
-                    @"appNameInfoKey": [result mpedInfo][kAppNameInfoKey],
-                    @"appVersionInfoKey": [result mpedInfo][kAppVersionInfoKey]
+                    @"serialnumber": mpedInfo[kSerialNumberInfoKey],
+                    @"appNameInfoKey": mpedInfo[kAppNameInfoKey],
+                    @"appVersionInfoKey": mpedInfo[kAppVersionInfoKey]
 
             }];
             
