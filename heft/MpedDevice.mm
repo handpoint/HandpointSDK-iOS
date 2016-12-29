@@ -268,6 +268,9 @@ enum eSignConditions{
 {
     if(!cancelAllowed){
         LOG_RELEASE(Logger::eFine, @"Cancelling is not allowed at this stage.");
+
+        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"cancel-NotAllowed" withOptionalParameters:nil];
+
         return;
     }
     
@@ -281,18 +284,9 @@ enum eSignConditions{
     fm.WriteWithoutAck(connection);
 #endif
     LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
-}
 
-/*
- - (void)initKeen
- {
- //
- [KeenClient sharedClientWithProjectID:@"56afbb7e46f9a76bfe19bfdc"
- andWriteKey:@"6460787402f46a7cafef91ec1d666cc37e14cc0f0bc26a0e3066bfc2e3c772d83a91a99f0ddec23a59fead9051e53bb2e2693201df24bd29eac9c78a61a2208993e9cef175bca6dc029ef28a93a0e5e135201bda7d6a98b2aa1f5aa76c5a4002"
- andReadKey:@"41767afa5ec4ad84cc2f7c2baec294cec64c6267246fa471f1ba18580f351e39744f6d6b51329e9a8807aa4b9d5875fd64b5814008dd0c41b4ea99fa6c771bdc031ff4d5fb46d1cb05fba21e0e2ed226e2d900f99b6f37e69e567f1128669066"];
- 
- }
- */
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"cancel" withOptionalParameters:nil];
+}
 
 
 - (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation
@@ -313,6 +307,12 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
                 (int)amount, currency, present ? @"is present" : @"is not present", reference);
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
+            @"amount": @(amount),
+            @"currency": currency,
+            @"reference": reference}];
+    
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
@@ -343,6 +343,13 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
                 (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
+            @"amount": @(amount),
+            @"currency": currency,
+            @"reference": reference,
+            @"divideBy": months}];
+    
     NSString *params = @"";
     NSString *refrenceString = @"";
     NSString *monthsString = @"";
@@ -391,6 +398,12 @@ enum eSignConditions{
 
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString *)reference{
     LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Refund" withOptionalParameters:@{
+            @"amount": @(amount),
+            @"currency": currency,
+            @"reference": reference}];
+    
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
@@ -419,6 +432,11 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eInfo,
                 @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"SaleVoid" withOptionalParameters:@{
+            @"amount": @(amount),
+            @"currency": currency}];
+    
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
                                                            std::string([currency UTF8String]),
@@ -438,6 +456,11 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eInfo,
                 @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"RefundVoid" withOptionalParameters:@{
+            @"amount": @(amount),
+            @"currency": currency}];
+
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ
                                                            , std::string([currency UTF8String])
@@ -455,6 +478,9 @@ enum eSignConditions{
 }
 
 - (BOOL)retrievePendingTransaction{
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"retrievePendingTransaction" withOptionalParameters:nil];
+
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT
                                                            , "0" // must be like this or we throw an invalid currency exception
                                                            , 0
@@ -474,28 +500,61 @@ enum eSignConditions{
 }
 
 -(BOOL)enableScanner{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScanner" withOptionalParameters:nil];
+
     return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScan" withOptionalParameters:@{@"multiScan": @(multiScan)}];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScanButtonMode" withOptionalParameters:@{
+            @"multiScan": @(multiScan),
+            @"buttonMode": @(buttonMode)
+    }];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 
 //Deprecated enable scanner function names
 -(BOOL)enableScanner:(BOOL)multiScan{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscan" withOptionalParameters:@{
+            @"multiScan": @(multiScan),
+            @"deprecated": @"YES"}];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscanButtonMode" withOptionalParameters:@{
+            @"multiScan": @(multiScan),
+            @"buttonMode": @(buttonMode),
+            @"deprecated": @"YES"
+    }];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscanButtonModeTimeoutSeconds" withOptionalParameters:@{
+            @"multiScan": @(multiScan),
+            @"buttonMode": @(buttonMode),
+            @"timeoutSeconds": @(timeoutSeconds),
+            @"deprecated": @"YES"
+    }];
+
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
 }
 
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScanButtonModeTimeoutSeconds" withOptionalParameters:@{
+            @"multiScan": @(multiScan),
+            @"buttonMode": @(buttonMode),
+            @"timeoutSeconds": @(timeoutSeconds)
+    }];
+
     NSString *params = @"";
     
     NSString* multiScanString = [NSString stringWithFormat:
@@ -542,9 +601,13 @@ enum eSignConditions{
 }
 
 -(void)disableScanner{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"disableScanner" withOptionalParameters:nil];
+
     [self cancel];
 }
 - (BOOL)financeStartOfDay{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"financeStartOfDay" withOptionalParameters:nil];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -554,6 +617,8 @@ enum eSignConditions{
 }
 
 - (BOOL)financeEndOfDay{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"financeEndOfDay" withOptionalParameters:nil];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -563,6 +628,8 @@ enum eSignConditions{
 }
 
 - (BOOL)financeInit{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"financeInit" withOptionalParameters:nil];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -572,6 +639,8 @@ enum eSignConditions{
 }
 
 - (BOOL)logSetLevel:(eLogLevel)level{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logSetLevel" withOptionalParameters:@{@"logLevel": @(level)}];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
                                                            connection:connection
                                                      resultsProcessor:self
@@ -580,6 +649,8 @@ enum eSignConditions{
 }
 
 - (BOOL)logReset{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logReset" withOptionalParameters:nil];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -588,6 +659,8 @@ enum eSignConditions{
 }
 
 - (BOOL)logGetInfo{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logGetInfo" withOptionalParameters:nil];
+
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -596,6 +669,8 @@ enum eSignConditions{
 }
 
 - (void)acceptSignature:(BOOL)flag{
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"acceptSignature" withOptionalParameters:@{@"flag": @(flag)}];
+
     [signLock lock];
     signatureIsOk = flag;
     [signLock unlockWithCondition:eSignCondition];
@@ -603,7 +678,9 @@ enum eSignConditions{
 
 - (BOOL)getEMVConfiguration {
     LOG(@"MpedDevice getEMVConfiguration");
-    
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"getEMVConfiguration" withOptionalParameters:nil];
+
     NSString* params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
     @"<getReport>"
     @"<name>"
@@ -644,9 +721,12 @@ enum eSignConditions{
 {
     ScannerEventResponseInfo* info = [ScannerEventResponseInfo new];
     info.statusCode = code;
-    info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-    info.scanCode = xml ? [xml objectForKey:@"code"] : @"";
+    info.status = xml ? xml[@"StatusMessage"] : status;
+    info.scanCode = xml ? xml[@"code"] : @"";
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"responseScannerEvent" withOptionalParameters:@{@"status": status}];
+
     if([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -658,6 +738,8 @@ enum eSignConditions{
 -(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
 {
     LOG_RELEASE(Logger::eFine, @"Scanner disabled");
+    NSString *analyticsAction;
+    NSString *analyticsDeprecated;
     
     if([delegate respondsToSelector:@selector(responseEnableScanner:)])
     {
@@ -669,6 +751,8 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseEnableScanner:info];
         });
+        analyticsAction = @"responseEnableScanner";
+        analyticsDeprecated = @"YES";
     }
     
     if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
@@ -681,8 +765,16 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseScannerDisabled:info];
         });
+
+        analyticsAction = @"responseScannerDisabled";
+        analyticsDeprecated = @"NO";
     }
     cancelAllowed = NO;
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:analyticsAction
+                    withOptionalParameters:@{
+                            @"status": status,
+                            @"deprecated" : analyticsDeprecated}];
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
 {
@@ -709,6 +801,8 @@ enum eSignConditions{
         [tmp responseError:info];
     });
     cancelAllowed = NO;
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseError" withOptionalParameters:@{@"status": info.status}];
 }
 
 -(void)sendReportResult:(NSString*)report{
@@ -717,12 +811,16 @@ enum eSignConditions{
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseEMVReport:report];
+
+            [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseEMVReport" withOptionalParameters:nil];
         });
     }
     else
     {
         LOG_RELEASE(Logger::eFine,
                     @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
+
+        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseEMVReport-delegateNotImplemented" withOptionalParameters:nil];
     }
 }
 
@@ -733,6 +831,8 @@ enum eSignConditions{
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
+
+        [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"requestSignature" withOptionalParameters:nil];
     });
     
     NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str())
@@ -751,6 +851,8 @@ enum eSignConditions{
         dispatch_async(dispatch_get_main_queue(), ^{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp cancelSignature];
+
+            [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"cancelSignature" withOptionalParameters:nil];
         });
     }
     
@@ -848,6 +950,8 @@ enum eSignConditions{
     
     LOG_RELEASE(Logger::eFine, @"%@", info.status);
     
+    NSString *analyticsAction;
+    
     // check if we have a block - if so, post that block instead of calling the event/callback
     // although it looks the same, we just call the block with parameters instead of the other
 
@@ -857,6 +961,7 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseFinanceStatus:info];
         });
+        analyticsAction = @"responseFinanceStatus";
     }
     else
     {
@@ -865,8 +970,18 @@ enum eSignConditions{
             id<HeftStatusReportDelegate> tmp = delegate;
             [tmp responseRecoveredTransactionStatus:info];
         });
+
+        analyticsAction = @"responseRecoveredTransactionStatus";
     }
     cancelAllowed = NO;
+
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:analyticsAction withOptionalParameters:@{
+            @"amount": @(info.authorisedAmount),
+            @"statusCode": @(info.statusCode),
+            @"financialResult": @(info.financialResult),
+            @"status": info.status
+    }];
+    [AnalyticsHelper upload];
 }
 
 /*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
@@ -882,10 +997,14 @@ enum eSignConditions{
     {
         info.log = @(pResponse->GetData().c_str());
     }
+
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
         [tmp responseLogInfo:info];
+
+        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseLogInfo" withOptionalParameters:nil];
     });
+
     cancelAllowed = NO;
 }
 
