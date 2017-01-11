@@ -13,8 +13,7 @@
 /*
  The RPC interface to Hapi.
  These are methods that connect to the Handpoing Gateway withouth a connection 
- to a card reader.
- To initialize the communication, a setup of the client must be done with a cardreader.
+ to a card reader.C To initialize the communication, a setup of the client must be done with a cardreader.
  */
 
 //

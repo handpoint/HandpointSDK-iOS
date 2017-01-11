@@ -217,7 +217,6 @@ bool isStatusAnError(NSStreamStatus status)
         
         // TODO: just try to write everything here, let the system take care of bookkeeping
         //       use len as parameter (do not cap at maxFrameSize)
-        // NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize*2)];
         NSInteger nwritten = [outputStream write:data maxLength:len];
         
         if(nwritten <= 0)
