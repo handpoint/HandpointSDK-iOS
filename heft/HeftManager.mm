@@ -390,7 +390,7 @@ static EAAccessory* simulatorAccessory = nil;
             HeftRemoteDevice* eaDevice = eaDevices[index];
             [eaDevices removeObjectAtIndex:index];
             [delegate didLostAccessoryDevice:eaDevice];
-            runLoopRunning = NO;
+            // runLoopRunning = NO; TODO: Fix or remove the runloop
 
             NSLog(@"EAAccessoryDidDisconnect index [%lu], device [%@]", (unsigned long)index, [eaDevice name]);
         }

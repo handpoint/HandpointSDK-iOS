@@ -239,7 +239,6 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 	while(true)
     {
         while(buf.size() < sizeof(pCommand->StartSequence))
-        // if(buf.size() < sizeof(pCommand->StartSequence))
         {
             nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
             LOG(@"FrameManager::Read, got %d bytes from readData", nread);
