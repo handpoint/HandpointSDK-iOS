@@ -12,34 +12,36 @@
 #import "HapiRemoteService.h"
 
 
-
-static NSString* remoteHapiHost;
+#ifdef DEBUG
+static NSString* remoteHapiHost = @"dev-api.handpoint.com";
+#else
+static NSString* remoteHapiHost = @"api.handpoint.com";
+#endif
+static NSString* method_path = @"/viscus/sdk/v1/tipadjustment/";
 static short     remoteHapiPort = 0;
-static NSString* sharedSecret;
+static NSString* sharedSecret = nil;
 
 
-BOOL setupRemoteConnectionWithCardreader(NSString* shared_secret)
+BOOL setupHandpointApiConnection(NSString* shared_secret)
 {
-    // what to do?
-    // connect to a card reader (or check if one is connected)
-    // and then call a method on the cardreader to get the host and port
-    // which could just be anything that tricks the cardreader to call connect
-    // but should be something more explicit.
+    if (shared_secret == nil)
+    {
+        NSLog(@"shared secret must be set");
+        return NO;
+    }
+    
+    if ([shared_secret isEqualToString:@""])
+    {
+        NSLog(@"shared secret must not be an empty string");
+        return NO;
+    }
     
     sharedSecret = shared_secret;
-    // remoteHapiHost = @"gwtest3.handpoint.com"; // TODO: Remove debug value
-    remoteHapiHost = @"extest1.handpoint.com"; // TODO: Remove debug value
-    // remoteHapiHost = @"157.157.10.150"; //
-    // remoteHapiHost = @"gwtest3.handpointoffice.internal"; // TODO: Remove debug value
-    // remoteHapiPort = 8080; // TODO: Remove debug value
-    // remoteHapiPort = 3080; // TODO: Remove debug value
     return YES;
-    // return NO;
 }
 
 BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentCompletionHandler handler)
 {
-    static NSString* method_path = @"/viscus/sdk/v1/tipadjustment/";
     
     // check parameters and host connection parameterse
     if (transaction_id == nil || [transaction_id isEqualToString:@""])
@@ -49,7 +51,6 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
     }
     
     // TODO: more robust verification of the transaction id.
-    
     if (handler == nil)
     {
         NSLog(@"handler missing");
@@ -69,7 +70,8 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
     }
 
     // copy the handler parameter
-    tipAdjustmentCompletionHandler local_handler = [handler copy];
+    // tipAdjustmentCompletionHandler local_handler = [handler copy];
+    tipAdjustmentCompletionHandler local_handler = handler;
 
     static NSString* xml_template = @"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
     "<tipadjustment>\n"
@@ -84,7 +86,9 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
     // prepare the XML package for RPC
     NSString* xml_to_post = [NSString stringWithFormat:xml_template, transaction_id, tipAmount, current_date];
     
+#ifdef DEBUG
     NSLog(@"xml_to_post: %@", xml_to_post);
+#endif
     
     NSData* data =[xml_to_post dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -98,8 +102,10 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
 
     
     NSString* hmac = [mac base64EncodedStringWithOptions:0];
+
+#ifdef DEBUG
     NSLog(@"hmac: %@", hmac);
-    
+#endif
     // call the http post method
     //  - set parameters, including hmac
     NSURLSessionConfiguration* session_configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
@@ -113,11 +119,15 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
         components.port = [NSNumber numberWithShort:remoteHapiPort];
     }
     components.path = method_path;
-    
+
+#ifdef DEBUG
     NSLog(@"NSURLComponents string: %@", components.string);
+#endif
     NSURL* url = components.URL;
-    
+
+#ifdef debug
     NSLog(@"url: %@", [url absoluteString]);
+#endif
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
 
@@ -128,7 +138,9 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
     // is this not a part of the request already? - does it get in the way?
     [request setValue:components.host forHTTPHeaderField:@"Host"];
     
+#ifdef DEBUG
     NSLog(@"request: %@", request);
+#endif
 
     NSURLSession* session = [NSURLSession sessionWithConfiguration:session_configuration];
 
@@ -136,21 +148,40 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
                                                                fromData:data
                                                       completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
                                           {
+                                              TipAdjustmentStatus returnValue = TipAdjustmentFailed; // lets assume the worst
+
                                               //  - handle result of http post in a block
                                               //  - call handler when done
                                               //  - release handler parameter
                                               NSLog(@"response: %@", [response description]);
-                                              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
                                               
+                                              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
                                               NSInteger status_code = [httpResponse statusCode];
-                                              NSString* error_code = @"no error";
                                               if (error != nil)
                                               {
-                                                  error_code = error.description;
+                                                  NSString* error_code = error.description;
+                                                  NSLog([NSString stringWithFormat:@"http status: [%ld] error: [%@]", (long)status_code, error_code]);
+                                              }
+                                              else
+                                              {
+                                                  switch (status_code)
+                                                  {
+                                                      case 200:
+                                                          returnValue = TipAdjustmentAuthorised;
+                                                          break;
+                                                      case 403:
+                                                          returnValue = TipAdjustmentDeclined;
+                                                          break;
+                                                      default:
+                                                          // use TipAdjustmentusFailed
+                                                          break;
+                                                  };
                                               }
                                               
-                                              // when done, call the block - should we do it here or post it to the main (ui) thread?
-                                              local_handler((int) status_code , error_code);
+                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                  // call the completion block in the main thread
+                                                  local_handler(returnValue);
+                                              });
                                           }
     ];
     

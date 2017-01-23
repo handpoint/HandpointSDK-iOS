@@ -28,8 +28,15 @@
 - (void)testSetup {
     NSString* shared_secret = @"0102030405060708091011121314151617181920212223242526272829303132";
 
-    BOOL result = setupRemoteConnectionWithCardreader(shared_secret);
+    BOOL result = setupHandpointApiConnection(shared_secret);
     XCTAssertTrue(result);
+    
+    result = setupHandpointApiConnection(nil);
+    XCTAssertFalse(result);
+    
+    result = setupHandpointApiConnection(@"");
+    XCTAssertFalse(result);
+    
 }
 
 - (void)testHash {
@@ -41,14 +48,15 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Call a web methond and get an answer"];
 
     NSString* shared_secret = @"0102030405060708091011121314151617181920212223242526272829303132";
-    BOOL result = setupRemoteConnectionWithCardreader(shared_secret);
+    BOOL result = setupHandpointApiConnection(shared_secret);
+    XCTAssertTrue(result);
     
     NSString* transaction_id = @"d50af540-a1b0-11e6-85e6-07b2a5f091ec";
 
-    result = tipAdjustment(transaction_id, 100, ^(int result, NSString* resultCode)
+    result = tipAdjustment(transaction_id, 100, ^(TipAdjustmentStatus status)
                                 {
-                                    NSLog(@"tipAdjustment callback: %d, %@", result, resultCode);
-                                    XCTAssertEqual(result, 200);
+                                    NSLog(@"tipAdjustment callback: %d", (int)status );
+                                    XCTAssertTrue(result == TipAdjustmentAuthorised, @"The result of the call should be Authorized");
                                     [expectation fulfill];
                                 }
     );
