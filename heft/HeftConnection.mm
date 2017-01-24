@@ -190,13 +190,6 @@ bool isStatusAnError(NSStreamStatus status)
            status == NSStreamStatusAtEnd;
 }
 
-// TODO: put data into outputqueue...
-//       and write to the stream when
-//       possible.
-//       That means we have to copy the data
-//       And since this is blocking, we must look
-//       at the calling code, writing should be a
-//       fire and forget method
 - (void)writeData:(uint8_t*)data length:(int)len
 {
     LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
@@ -207,7 +200,6 @@ bool isStatusAnError(NSStreamStatus status)
     if (written < len)
     {
         // could not write everything, copy the unwritten data to the output queue
-        // outputQueue.push(Buffer(data[written], len-written));
         [outputData appendBytes:&data[written] length:len-written];
     }
 }
