@@ -139,13 +139,15 @@ void FrameManager::Write(HeftConnection* connection)
 				LOG_RELEASE(Logger::eFinest, @"Acknowledgment received: NAK");
 				continue;
 			}
-			LOG(@"Instead of ACK: %04x", ack);
-			throw communication_exception();
+            NSString* message = [NSString stringWithFormat:@"Instead of ACK: %04x", ack];
+			// LOG(@"Instead of ACK: %04x", ack);
+            LOG(message);
+			throw communication_exception(message);
 		}
 		if(i == MAX_ATTEMPTS) {
 			[connection writeAck:SESSION_END];
 			LOG(@"Session end sent");
-			throw communication_exception();
+			throw communication_exception(@"Session end sent");
 		}        
 	}
 }
@@ -284,7 +286,7 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 			LOG(@"FrameManager::Read NEGATIVE_ACK");
 		case POLLING_SEQ:
 		default:
-			throw communication_exception();
+			throw communication_exception(@"pCommand->StartSequence POLLING_SEQ or default case.");
 		}
 	}
 	return 0;

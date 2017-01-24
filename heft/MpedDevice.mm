@@ -162,7 +162,7 @@ enum eSignConditions{
                 
                 if(!pResponse)
                 {
-                    throw communication_exception();
+                    throw communication_exception(@"initWithConnection: pResponse is empty");
                 }
                 
                 LOG(@"Status: %d", pResponse->GetStatus());
@@ -177,7 +177,7 @@ enum eSignConditions{
                     {
                         // we tried twice, with and without the buffer size request
                         // "What we've got here is failure to communicate"
-                        throw communication_exception();
+                        throw communication_exception(@"Error trying to initialize. EFT_PP_STATUS_INVALID_DATA");
                     }
                 }
                 
@@ -187,8 +187,8 @@ enum eSignConditions{
                 {
                     // probably an old reader, we did not request 2048 or greater
                     // which is poorly supported by iOS
-                    connection.maxFrameSize = 256;
-                    LOG(@"Buffersize set to 256");
+                    // connection.maxFrameSize = 256;
+                    // LOG(@"Buffersize set to 256");
                 }
                 else
                 {
@@ -702,7 +702,7 @@ enum eSignConditions{
 -(void)sendResponseError:(NSString*)status{
     ResponseInfo* info = [ResponseInfo new];
     info.status = status;
-    LOG_RELEASE(Logger::eFine, @"%@", status);
+    LOG_RELEASE(Logger::eFine, @"sendResponseError: %@", status);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         id<HeftStatusReportDelegate> tmp = delegate;
