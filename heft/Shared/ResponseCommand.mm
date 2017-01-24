@@ -23,7 +23,7 @@ ResponseCommand* ResponseCommand::Create(const std::vector<std::uint8_t>& buf)
 	if(buf.size() < sizeof pResponse->command)
     {
 		LOG(@"Response less than command");
-		throw communication_exception();
+		throw communication_exception(@"Response less than command");
 	}
 	switch(ntohl(pResponse->command))
     {
@@ -70,7 +70,7 @@ ResponseCommand* ResponseCommand::Create(const std::vector<std::uint8_t>& buf)
 		return new XMLCommandResponseCommand(pResponse, buf.size());
 	default:
 		LOG(@"Unknown command");
-		throw communication_exception();
+		throw communication_exception(@"Unknown command");
 	}
 	return 0;
 }
@@ -81,7 +81,7 @@ ResponseCommand::ResponseCommand(const ResponsePayload* pPayload, std::uint32_t 
     if ((payloadSize - 4 - 4 - 6) != length)
     {
         LOG(@"Invalid response command buffer detected");
-        throw communication_exception();
+        throw communication_exception(@"Invalid response command buffer detected");
     }
 }
 
@@ -131,7 +131,7 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, std::u
         if(xml_len > GetLength())
         {
             LOG(@"Invalid xml data length in command detected");
-            throw communication_exception();
+            throw communication_exception(@"Invalid xml data length in command detected");
         }
 		xml_details.assign(pResponse->xml_details, xml_len);
 	}

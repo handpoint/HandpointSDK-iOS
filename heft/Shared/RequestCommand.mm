@@ -207,7 +207,7 @@ RequestCommand::RequestCommand(const void* payload, std::uint32_t payloadSize)
     int length = ReadLength(pRequest);
     if ((payloadSize - 4 - 6) != length) {
         LOG(@"Invalid request command buffer detected");
-        throw communication_exception();
+        throw communication_exception(@"Invalid request command buffer detected");
     }
 }
 
@@ -386,7 +386,7 @@ HostRequestCommand* HostRequestCommand::Create(const void* payload, std::uint32_
         break;
     }
     LOG(@"Unknown host packet");
-    throw communication_exception();
+    throw communication_exception(@"Unknown host packet");
 }
 
 HostResponseCommand::HostResponseCommand(std::uint32_t command, int status, int cmd_size)

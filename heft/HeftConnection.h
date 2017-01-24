@@ -34,6 +34,7 @@ typedef enum{
 - (void)writeAck:(UInt16)ack;
 - (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout;
 - (UInt16)readAck;
+- (void)write_from_queue_to_stream;
 
 @end
 
