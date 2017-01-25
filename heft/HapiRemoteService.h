@@ -28,7 +28,7 @@ typedef void (^tipAdjustmentCompletionHandler)(TipAdjustmentStatus status);
 
 /**
  Performs a tipAdjustment transaction. Note, shared secret must be set before calling.
- @param transaction_id - The id of the transaction. This is the value returned in transactionId field of FinanceResponseInfo
+ @param transaction -    The id of the transaction. This is the value returned in transactionId field of FinanceResponseInfo
                          which is passed to responseFinanceStatus after a Sale. This value must not be nil or empty.
  @param tipAmount -      The amount - in the smallest unit for the given CurrencyCode -
                          for the transaction. ISO 4217 defines number of digits in
@@ -43,7 +43,7 @@ typedef void (^tipAdjustmentCompletionHandler)(TipAdjustmentStatus status);
                          The block will be called in the main (UI) thread of the app.
   @return YES if request is sent and NO if a parameter is invalid.
 */
-BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentCompletionHandler handler);
+BOOL tipAdjustment(NSString* transaction, NSInteger tipAmount, tipAdjustmentCompletionHandler handler);
 
 
 #endif /* HapiRemoteService_h */

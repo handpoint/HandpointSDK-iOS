@@ -13,11 +13,14 @@
 
 
 #ifdef DEBUG
-static NSString* remoteHapiHost = @"dev-api.handpoint.com";
+static NSString* remoteHapiHost = @"dev-api.handpoint.io";
 #else
 static NSString* remoteHapiHost = @"api.handpoint.com";
 #endif
-static NSString* method_path = @"/viscus/sdk/v1/tipadjustment/";
+// static NSString* method_path = @"/viscus/sdk/v1/tipadjustment/";
+static NSString* method_path = @"/sdk/financial/v1/tipadjustment/";
+
+
 static short     remoteHapiPort = 0;
 static NSString* sharedSecret = nil;
 
@@ -40,11 +43,11 @@ BOOL setupHandpointApiConnection(NSString* shared_secret)
     return YES;
 }
 
-BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentCompletionHandler handler)
+BOOL tipAdjustment(NSString* transaction, NSInteger tipAmount, tipAdjustmentCompletionHandler handler)
 {
     
     // check parameters and host connection parameterse
-    if (transaction_id == nil || [transaction_id isEqualToString:@""])
+    if (transaction == nil || [transaction isEqualToString:@""])
     {
         NSLog(@"Invalid transactionId");
         return NO;
@@ -84,7 +87,7 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
     NSDate* current_date = [NSDate date];
     
     // prepare the XML package for RPC
-    NSString* xml_to_post = [NSString stringWithFormat:xml_template, transaction_id, tipAmount, current_date];
+    NSString* xml_to_post = [NSString stringWithFormat:xml_template, transaction, tipAmount, current_date];
     
 #ifdef DEBUG
     NSLog(@"xml_to_post: %@", xml_to_post);
@@ -112,7 +115,11 @@ BOOL tipAdjustment(NSString* transaction_id, NSInteger tipAmount, tipAdjustmentC
     // session_configuration.timeoutIntervalForResource = timeout; // Hardcoded timeout? Parameter to method? Class if we have a class?
     
     NSURLComponents* components = [[NSURLComponents alloc] init];
+#ifdef DEBUG
     components.scheme = @"https";
+#else
+    components.scheme = @"https";
+#endif
     components.host = remoteHapiHost;
     if (remoteHapiPort > 0)
     {

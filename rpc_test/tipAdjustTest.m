@@ -51,15 +51,15 @@
     BOOL result = setupHandpointApiConnection(shared_secret);
     XCTAssertTrue(result);
     
-    NSString* transaction_id = @"d50af540-a1b0-11e6-85e6-07b2a5f091ec";
+    NSString* transaction = @"d50af540-a1b0-11e6-85e6-07b2a5f091ec";
 
-    result = tipAdjustment(transaction_id, 100, ^(TipAdjustmentStatus status)
-                                {
-                                    NSLog(@"tipAdjustment callback: %d", (int)status );
-                                    XCTAssertTrue(result == TipAdjustmentAuthorised, @"The result of the call should be Authorized");
-                                    [expectation fulfill];
-                                }
-    );
+    result = tipAdjustment(transaction, 100, ^(TipAdjustmentStatus status)
+    {
+        NSLog(@"tipAdjustment callback: %d", (int)status );
+        XCTAssertTrue(status == TipAdjustmentAuthorised, @"The result of the call should be Authorized");
+        [expectation fulfill];
+    });
+    
     XCTAssertTrue(result);
     [self waitForExpectationsWithTimeout:30.0 handler:^(NSError *error) {
         if (error) {
@@ -68,13 +68,5 @@
     }];
 }
 
-/*
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-  }];
-}
- */
 
 @end
