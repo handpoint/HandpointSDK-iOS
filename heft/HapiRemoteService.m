@@ -12,12 +12,15 @@
 #import "HapiRemoteService.h"
 
 
+// endpoints
+// https://api.handpoint.com/sdk/financial/v1/tipadjustment
+// https://dev-api.handpoint.io/sdk/financial/v1/tipadjustment
+
 #ifdef DEBUG
 static NSString* remoteHapiHost = @"dev-api.handpoint.io";
 #else
 static NSString* remoteHapiHost = @"api.handpoint.com";
 #endif
-// static NSString* method_path = @"/viscus/sdk/v1/tipadjustment/";
 static NSString* method_path = @"/sdk/financial/v1/tipadjustment/";
 
 
