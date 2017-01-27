@@ -36,7 +36,7 @@ typedef void (^tipAdjustmentCompletionHandler)(TipAdjustmentStatus status);
                          1000 in the case where CurrencyCode is "0826" (GBP) the amount
                          would be 10.00 pounds or 1000 pense.
  @param handler -        the block that handles the result of the transaction (see definition of tipAdjustmentCompletionHandler)
-                         The block takes on parameter of type TipAdjustmentSTatus and one of three values
+                         The block takes on parameter of type TipAdjustmentStatus and one of three values
                          * TipAdjustmentAuthorised - the tipAdjustment was successfully added to the transaction.
                          * TipAdjustmentDeclined - the system declined to add tip to the transaction. See logs for further details.
                          * TipAdjustmentFailed - an error occurred while trying to add tip. See logs for further details.

@@ -21,7 +21,7 @@ static NSString* remoteHapiHost = @"apitest.handpoint.com";
 #else
 static NSString* remoteHapiHost = @"api.handpoint.com";
 #endif
-static NSString* method_path = @"/sdk/financial/v1/tipadjustment/";
+static NSString* tip_adjustment_method_path = @"/sdk/financial/v1/tipadjustment/";
 
 
 static short     remoteHapiPort = 0;
@@ -127,7 +127,7 @@ BOOL tipAdjustment(NSString* transaction, NSInteger tipAmount, tipAdjustmentComp
     {
         components.port = [NSNumber numberWithShort:remoteHapiPort];
     }
-    components.path = method_path;
+    components.path = tip_adjustment_method_path;
 
 #ifdef DEBUG
     NSLog(@"NSURLComponents string: %@", components.string);
