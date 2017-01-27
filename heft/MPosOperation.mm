@@ -46,7 +46,7 @@ namespace
 {
     LOG(@"mPos Operation run loop starting.");
     currentRunLoop = [NSRunLoop currentRunLoop];
-
+    
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1];
     runLoopRunning = YES;
     while (runLoopRunning)
@@ -62,20 +62,20 @@ namespace
 
 
 enum eConnectCondition{
-	eNoConnectStateCondition
-	, eReadyStateCondition
+    eNoConnectStateCondition
+    , eReadyStateCondition
 };
 
 @interface MPosOperation()<NSStreamDelegate>
 @end
 
 @implementation MPosOperation{
-	RequestCommand*	pRequestCommand;
-	HeftConnection* connection;
-	//int maxFrameSize;
-	__weak id<IResponseProcessor> processor;
-	NSData* sharedSecret;
-
+    RequestCommand*	pRequestCommand;
+    HeftConnection* connection;
+    //int maxFrameSize;
+    __weak id<IResponseProcessor> processor;
+    NSData* sharedSecret;
+    
     // we get the host and the port from the ConnectToHost request command.
     NSURLSessionConfiguration* session_configuration;
     NSURLComponents* components;
@@ -85,16 +85,16 @@ enum eConnectCondition{
     NSCondition* wait_until_done;
     
     /*
-	NSConditionLock* connectLock;
-    enum eConnectionState {
-        eConnectionClosed,
-        eConnectionConnecting,
-        eConnectionConnected,
-        eConnectionSending,
-        eConnectionSendingComplete,
-        eConnectionReceiving,
-        eConnectionReceivingComplete,
-    } connectionState;
+     NSConditionLock* connectLock;
+     enum eConnectionState {
+     eConnectionClosed,
+     eConnectionConnecting,
+     eConnectionConnected,
+     eConnectionSending,
+     eConnectionSendingComplete,
+     eConnectionReceiving,
+     eConnectionReceivingComplete,
+     } connectionState;
      */
 }
 
@@ -116,53 +116,53 @@ enum eConnectCondition{
      resultsProcessor:(id<IResponseProcessor>)aProcessor
          sharedSecret:(NSData*)aSharedSecret
 {
-	if(self = [super init])
+    if(self = [super init])
     {
-		LOG(@"mPos Operation started.");
-		pRequestCommand = aRequest;
-		connection = aConnection;
-		processor = aProcessor;
-		sharedSecret = aSharedSecret;
+        LOG(@"mPos Operation started.");
+        pRequestCommand = aRequest;
+        connection = aConnection;
+        processor = aProcessor;
+        sharedSecret = aSharedSecret;
         host_response_data = nil;
         host_communication_error = nil;
         
         session_configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-	}
-	return self;
+    }
+    return self;
 }
 
 - (void)dealloc{
-	LOG(@"mPos Operation ended.");
+    LOG(@"mPos Operation ended.");
     if (pRequestCommand)
         delete pRequestCommand;
 }
 
 - (void)main{
-	@autoreleasepool {
-		try
+    @autoreleasepool {
+        try
         {
-			RequestCommand* currentRequest = pRequestCommand;
-			[connection resetData];
-			
-			while(true)
+            RequestCommand* currentRequest = pRequestCommand;
+            [connection resetData];
+            
+            while(true)
             {
-				//LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
+                //LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
                 
                 // sending the command to the device
-				FrameManager fm(*currentRequest, connection.maxFrameSize);
-				fm.Write(connection);
-				
+                FrameManager fm(*currentRequest, connection.maxFrameSize);
+                fm.Write(connection);
+                
                 // when/why does this happen?
-				if(pRequestCommand != currentRequest)
+                if(pRequestCommand != currentRequest)
                 {
-					delete currentRequest;
-					currentRequest = 0;
-				}
-				
+                    delete currentRequest;
+                    currentRequest = 0;
+                }
+                
                 std::unique_ptr<ResponseCommand> pResponse;
                 BOOL retry;
                 BOOL already_cancelled = NO;
-				while(true)
+                while(true)
                 {
                     do
                     {
@@ -182,32 +182,32 @@ enum eConnectCondition{
                                 throw to4;
                             }
                         }
-                    } while (retry);                    
-					
-					if(pResponse->isResponse())
+                    } while (retry);
+                    
+                    if(pResponse->isResponse())
                     {
-						pResponse->ProcessResult(processor);
-						if(pResponse->isResponseTo(*pRequestCommand))
+                        pResponse->ProcessResult(processor);
+                        if(pResponse->isResponseTo(*pRequestCommand))
                         {
-							LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
-							return;
-						}
-						continue;
-					}
-					
-					break;
-				}
-				
-				IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
-				currentRequest = pHostRequest->Process(self);
-			}
-		}
-		catch(heft_exception& exception)
+                            LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
+                            return;
+                        }
+                        continue;
+                    }
+                    
+                    break;
+                }
+                
+                IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
+                currentRequest = pHostRequest->Process(self);
+            }
+        }
+        catch(heft_exception& exception)
         {
             LOG(@"MPosOpoeration::main got an exception");
-			[processor sendResponseError:exception.stringId()];
-		}
-	}
+            [processor sendResponseError:exception.stringId()];
+        }
+    }
 }
 
 - (void)cleanUpConnection{
@@ -246,19 +246,19 @@ namespace {
 
 // Declare a new method that will be used by both processSend and processPost, almost all of the
 // duplicate code should be in this method.
-// 
+//
 // POST data to host in the background, locking lock before returning and releasing when done
 // user calls the function and if it returns YES, wait for the lock.
 // BOOL sendMessage(NSString* host, short port, NSString* path, NSData* data, NSCondition* lock);
 
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest
 {
-	LOG_RELEASE(Logger::eFine,
+    LOG_RELEASE(Logger::eFine,
                 @"State of financial transaction changed: connecting to bureau %s:%d timeout:%d",
                 pRequest->GetAddr().c_str(),
                 pRequest->GetPort(),
                 pRequest->GetTimeout()
-    );
+                );
     
     components = [[NSURLComponents alloc] init];
     components.scheme = @"https";
@@ -279,10 +279,10 @@ namespace {
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest
 {
     LOG_RELEASE(Logger::eFine, @"Sending request to bureau (length:%d).", pRequest->GetLength());
-
+    
     // LOG_RELEASE(Logger::eFiner, ::dump(@"Outgoing message"));
     LOG(@"%@",::dump(@"Message to bureau:", pRequest->GetData(), pRequest->GetLength()));
-
+    
     // parse the http header from the request
     //
     // POST /viscus/cr/v1/authorization HTTP/1.1\r\n
@@ -294,7 +294,7 @@ namespace {
     // Content-Length: 1340\r\n\r\n          <--- double linefeed before data
     // 025\xb0\x02\x0b...[1340 bytes total]
     //
-
+    
     NSString* http_request = [[NSString alloc] initWithBytes:pRequest->GetData() length:pRequest->GetLength() encoding:NSISOLatin1StringEncoding];
     
 #ifdef DEBUG
@@ -307,52 +307,52 @@ namespace {
     // should have two parts, the header and the data
     NSString* http_header = [parts objectAtIndex:0];
     NSArray* header_values = [http_header componentsSeparatedByString:@"\r\n"];
-
+    
     // the post data should be NSData, not NSString - copy straight from the buffer
     NSUInteger size_of_http_header = [http_header length];
-
+    
     // the data is everything after the header+double linefeed
     NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
                                   length:pRequest->GetLength() - (size_of_http_header+4)];
-
+    
     // get the first line of the http header
     // POST /viscus/cr/v1/authorization HTTP/1.1
     // split it on spaces
     // get the middle part of that, which is the path on the server
     NSString* first_line = [header_values objectAtIndex:0];
     NSString* path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
-
+    
 #ifdef DEBUG
     LOG_RELEASE(Logger::eFiner, @"first line: %@, path: %@", first_line, path);
 #endif
-
+    
     components.path = path;
-
+    
     NSURL* url = components.URL;
 #ifdef DEBUG
     LOG_RELEASE(Logger::eFiner, [url absoluteString]);
 #endif
-
-
+    
+    
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
-
+    
     // Add values to the request
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
     // is this not a part of the request already? - does it get in the way?
     [request setValue:components.host forHTTPHeaderField:@"Host"];
-
+    
     wait_until_done = [[NSCondition alloc] init];
-
+    
     [wait_until_done lock];
-
+    
 #ifdef DEBUG
     LOG(@"Sending a http request to host");
 #endif
     NSURLSession* session = [NSURLSession sessionWithConfiguration:session_configuration];
-
+    
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                fromData:data
                                                       completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
@@ -390,12 +390,13 @@ namespace {
         [wait_until_done signal];
     }];
 
-    LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
 
+    LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
+    
     //Don't forget this line ever
     [uploadTask resume];
-
-
+    
+    
     return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
@@ -431,8 +432,8 @@ namespace {
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
     [self cleanUpConnection];
-	LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: disconnected");
-	return new HostResponseCommand(CMD_HOST_DISC_RSP, EFT_PP_STATUS_SUCCESS);
+    LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: disconnected");
+    return new HostResponseCommand(CMD_HOST_DISC_RSP, EFT_PP_STATUS_SUCCESS);
 }
 
 - (RequestCommand*)processPost:(PostRequestCommand*)pRequest
@@ -448,7 +449,7 @@ namespace {
     components.port = pRequest->get_port();
     
     timeout = pRequest->GetTimeout();
-
+    
     host_response_data = nil;
     host_communication_error = nil;
     wait_until_done = nil;
@@ -529,38 +530,38 @@ namespace {
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                fromData:data
                                                       completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
-          {
-              LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
-              
-              if (error != nil)
-              {
-                  host_communication_error = error;
-              }
-              else
-              {
-                  NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-                  
-                  LOG(@"%@", [response description]);
-                  
-                  NSInteger status_code = [httpResponse statusCode];
-                  
-                  NSString* status_string = @"";
-                  auto http_code_found = httpCodes.find((int) status_code);
-                  if (http_code_found != httpCodes.end())
-                  {
-                      // status_string = httpCodes[(int) status_code];
-                      status_string = http_code_found->second;
-                  }
-                  
-                  NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
-                  
-                  NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
-                  host_response_data = [tmp_data mutableCopy];
-                  [host_response_data appendData:response_data];
-              }
-              [wait_until_done signal];
-          }
-    ];
+                                          {
+                                              LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
+                                              
+                                              if (error != nil)
+                                              {
+                                                  host_communication_error = error;
+                                              }
+                                              else
+                                              {
+                                                  NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                                                  
+                                                  LOG(@"%@", [response description]);
+                                                  
+                                                  NSInteger status_code = [httpResponse statusCode];
+                                                  
+                                                  NSString* status_string = @"";
+                                                  auto http_code_found = httpCodes.find((int) status_code);
+                                                  if (http_code_found != httpCodes.end())
+                                                  {
+                                                      // status_string = httpCodes[(int) status_code];
+                                                      status_string = http_code_found->second;
+                                                  }
+                                                  
+                                                  NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
+                                                  
+                                                  NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
+                                                  host_response_data = [tmp_data mutableCopy];
+                                                  [host_response_data appendData:response_data];
+                                              }
+                                              [wait_until_done signal];
+                                          }
+                                          ];
     
     // LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
     
@@ -597,28 +598,28 @@ namespace {
 
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
-	LOG(@"Signature required request");
-	int status = [processor processSign:pRequest];
-	return new HostResponseCommand(CMD_STAT_SIGN_RSP, status);
+    LOG(@"Signature required request");
+    int status = [processor processSign:pRequest];
+    return new HostResponseCommand(CMD_STAT_SIGN_RSP, status);
 }
 
 - (RequestCommand*)processChallenge:(ChallengeRequestCommand*)pRequest{
-	LOG(@"Challenge required request");
-
-	CCHmacContext hmacContext;
-	std::vector<std::uint8_t> mx([sharedSecret length]);
+    LOG(@"Challenge required request");
+    
+    CCHmacContext hmacContext;
+    std::vector<std::uint8_t> mx([sharedSecret length]);
     std::vector<std::uint8_t> zx(mx.size());
     std::vector<std::uint8_t> msg(pRequest->GetRandomNum());
-
-	SecRandomCopyBytes(kSecRandomDefault, mx.size(), &mx[0]);
-	msg.resize(mx.size() * 2);
-	memcpy(&msg[mx.size()], &mx[0], mx.size());
-
-	CCHmacInit(&hmacContext, kCCHmacAlgSHA256, [sharedSecret bytes], [sharedSecret length]);
-	CCHmacUpdate(&hmacContext, &msg[0], msg.size());
-	CCHmacFinal(&hmacContext, &zx[0]);
-
-	return new ChallengeResponseCommand(mx, zx);
+    
+    SecRandomCopyBytes(kSecRandomDefault, mx.size(), &mx[0]);
+    msg.resize(mx.size() * 2);
+    memcpy(&msg[mx.size()], &mx[0], mx.size());
+    
+    CCHmacInit(&hmacContext, kCCHmacAlgSHA256, [sharedSecret bytes], [sharedSecret length]);
+    CCHmacUpdate(&hmacContext, &msg[0], msg.size());
+    CCHmacFinal(&hmacContext, &zx[0]);
+    
+    return new ChallengeResponseCommand(mx, zx);
 }
 
 @end
