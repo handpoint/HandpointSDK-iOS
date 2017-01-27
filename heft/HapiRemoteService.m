@@ -14,10 +14,10 @@
 
 // endpoints
 // https://api.handpoint.com/sdk/financial/v1/tipadjustment
-// https://dev-api.handpoint.io/sdk/financial/v1/tipadjustment
+// https://apitest.handpoint.com/sdk/financial/v1/tipadjustment
 
 #ifdef DEBUG
-static NSString* remoteHapiHost = @"dev-api.handpoint.io";
+static NSString* remoteHapiHost = @"apitest.handpoint.com";
 #else
 static NSString* remoteHapiHost = @"api.handpoint.com";
 #endif
@@ -45,7 +45,6 @@ BOOL setupHandpointApiConnection(NSString* shared_secret)
     sharedSecret = shared_secret;
     return YES;
 }
-
 BOOL tipAdjustment(NSString* transaction, NSInteger tipAmount, tipAdjustmentCompletionHandler handler)
 {
     
