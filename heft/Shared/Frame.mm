@@ -31,7 +31,7 @@ Frame::Frame(const uint8_t* pData, int len, bool partial)
 Frame::Frame(const uint8_t* pData, int len) : m_pData(pData), m_len(len){
 	if(len < ciMinSize){
 		LOG(@"Frame less than min size");
-		throw communication_exception();
+		throw communication_exception(@"Frame less than min size");
 	}
 	// const FrameEndPayload* pFrameEnd = GetEndPayload();
 	//if(pFrameEnd->EndSequence != FRAME_END && pFrameEnd->EndSequence != FRAME_PARTIAL_END) throw;

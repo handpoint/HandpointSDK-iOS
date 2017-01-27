@@ -356,40 +356,41 @@ namespace {
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                fromData:data
                                                       completionHandler:^(NSData *response_data, NSURLResponse *response, NSError *error)
-                                          {
-                                              LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
-                                              
-                                              // TODO: handle errors here, for example, The network connection was lost.
-                                              //       Save the error and return it to the reader in processReceive.
-                                              //       See error handling in old code.
-                                              if (error != nil)
-                                              {
-                                                  host_communication_error = error;
-                                              }
-                                              else
-                                              {
-                                                  NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-                                                  
-                                                  LOG(@"%@", [response description]);
-                                                  
-                                                  NSInteger status_code = [httpResponse statusCode];
-                                                  
-                                                  NSString* status_string = @"";
-                                                  auto http_code_found = httpCodes.find((int) status_code);
-                                                  if (http_code_found != httpCodes.end())
-                                                  {
-                                                      status_string = http_code_found->second;
-                                                  }
-                                                  
-                                                  NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
-                                                  
-                                                  NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
-                                                  host_response_data = [tmp_data mutableCopy];
-                                                  [host_response_data appendData:response_data];
-                                              }
-                                              [wait_until_done signal];
-                                          }];
-    
+    {
+        LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
+        
+        // TODO: handle errors here, for example, The network connection was lost.
+        //       Save the error and return it to the reader in processReceive.
+        //       See error handling in old code.
+        if (error != nil)
+        {
+            host_communication_error = error;
+        }
+        else
+        {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+            
+            LOG(@"%@", [response description]);
+            
+            NSInteger status_code = [httpResponse statusCode];
+            
+            NSString* status_string = @"";
+            auto http_code_found = httpCodes.find((int) status_code);
+            if (http_code_found != httpCodes.end())
+            {
+                status_string = http_code_found->second;
+            }
+            
+            NSString *header = [NSString stringWithFormat:@"HTTP/1.1 %d %@\r\n\r\n", (int) status_code, status_string];
+            
+            NSData* tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
+            host_response_data = [tmp_data mutableCopy];
+            [host_response_data appendData:response_data];
+        }
+        [wait_until_done signal];
+    }];
+
+
     LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
     
     //Don't forget this line ever
@@ -402,7 +403,7 @@ namespace {
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest
 {
     LOG(@"processReceive:%lu bytes", (unsigned long) [host_response_data length]);
-    
+
     // wait until upload done... then return
     // first check if we alread have data or error
     if (host_response_data == nil && host_communication_error == nil)

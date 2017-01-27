@@ -26,7 +26,13 @@ public:
 
 class communication_exception : public heft_exception{
 public:
-	virtual NSString* stringId(){return @"Communication error";} // thrown if corruption is detected during communication
+    communication_exception() { message = @""; }
+    communication_exception(NSString* msg) {message = msg;}
+    ~communication_exception() { message = nil; }
+    
+	virtual NSString* stringId(){return [NSString stringWithFormat:@"Communication error <%@>", message];} // thrown if corruption is detected during communication
+private:
+    NSString* message;
 };
 
 class connection_broken_exception : public heft_exception{

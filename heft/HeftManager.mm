@@ -17,14 +17,7 @@
 
 #import "debug.h"
 
-//#define NSLog(...) [log2file appendFormat:@"%f:", CFAbsoluteTimeGetCurrent()];[log2file appendFormat:__VA_ARGS__];[log2file appendString:@"\n"]; \
-//[log2file writeToFile:file atomically:YES encoding:NSUTF8StringEncoding error:NULL]
-
-//NSString* file = nil;
-//NSMutableString* log2file = nil;
-
 NSString* eaProtocol = @"com.datecs.pinpad";
-
 
 @interface HeftRemoteDevice ()
 - (id)initWithName:(NSString*)aName address:(NSString*)aAddress;
@@ -87,27 +80,20 @@ NSString* eaProtocol = @"com.datecs.pinpad";
 
 @implementation HeftManager {
 	BOOL fNotifyForAllDevices;
-    BOOL runLoopRunning;
 	NSMutableArray* eaDevices;
 }
 
 @synthesize devicesCopy, delegate;
 
+static dispatch_once_t onceToken;
 static HeftManager* instance = 0;
-
-+ (void)initialize
-{
-	if(self == [HeftManager class]) {
-		//file = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"log.txt"];
-		//log2file = [NSMutableString string];
-		//freopen([file cStringUsingEncoding:NSASCIIStringEncoding], "w+", stderr);
-		LOG(@"HeftManager::initialize");
-		instance = [HeftManager new];
-	}
-}
 
 + (HeftManager*)sharedManager
 {
+    dispatch_once(&onceToken, ^{
+        instance = [HeftManager new];
+    });
+    
 	return instance;
 }
 
@@ -146,14 +132,13 @@ static HeftManager* instance = 0;
 
 		NSArray* accessories = eaManager.connectedAccessories;
         
-		[accessories indexOfObjectWithOptions:NSEnumerationConcurrent
-                                  passingTest:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop){
-                                      if([accessory.protocolStrings containsObject:eaProtocol]){
-                                          HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
-                                          [eaDevices addObject:newDevice];
-                                      }
-                                      return NO;
-                                  }];
+        [accessories enumerateObjectsUsingBlock:^(EAAccessory* accessory, NSUInteger idx, BOOL *stop) {
+            if([accessory.protocolStrings containsObject:eaProtocol])
+            {
+                HeftRemoteDevice* newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
+                [eaDevices addObject:newDevice];
+            }
+        }];
 #endif
 
         [AnalyticsHelper setupAnalyticsWithGlobalProperties:[self analyticsGlobalProperties]
@@ -203,7 +188,6 @@ static HeftManager* instance = 0;
     LOG(@"HeftManager::cleanup");
     [[EAAccessoryManager sharedAccessoryManager] unregisterForLocalNotifications];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    runLoopRunning = NO; // stop the run loop
 }
 
 - (void)dealloc
@@ -227,6 +211,7 @@ static HeftManager* instance = 0;
 {
 	@autoreleasepool
     {
+        HeftRemoteDevice* device = params[0];
 		NSData* sharedSecret = params[1];
 		NSObject<HeftStatusReportDelegate>* aDelegate = params[2];
 #ifdef HEFT_SIMULATOR
@@ -252,11 +237,11 @@ static HeftManager* instance = 0;
                 }];
 
 #else
+       
+        NSRunLoop* currentRunLoop = [NSRunLoop mainRunLoop];
 
-        NSRunLoop* currentRunLoop = [NSRunLoop currentRunLoop];
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            HeftRemoteDevice* device = params[0];
             HeftConnection* connection = [[HeftConnection alloc] initWithDevice:device
                                                                         runLoop:currentRunLoop];
             
@@ -279,50 +264,18 @@ static HeftManager* instance = 0;
             }];
             
         });
-        
-        // runloop
-        {
-            NSLog(@"Starting runloop in thread.");
-            runLoopRunning = YES;
-            
-            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:15
-                                                              target:self
-                                                            selector:@selector(timerCallback)
-                                                            userInfo:nil
-                                                             repeats:YES];
-            
-            while (runLoopRunning)
-            {
-                @autoreleasepool  // need a nested autoreleasepool. If it's not here the NSDate
-                {                 // leaks memory like crazy in some situations.
-                    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                             beforeDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-                }
-            }
-            
-            [timer invalidate];
-
-            NSLog(@"Runloop stopped.");
-        }
+       
 #endif
 
     }
     
 }
 
-- (void)timerCallback
-{
-    // NSLog(@"Timer callback in HeftManager");
-}
-
 
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecret:(NSData*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
 {
     [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"clientForDevice-NSData" withOptionalParameters:nil];
-
-    [NSThread detachNewThreadSelector:@selector(asyncClientForDevice:)
-                             toTarget:self
-                           withObject:@[device, sharedSecret, aDelegate]];
+    [self asyncClientForDevice:@[device, sharedSecret, aDelegate]];
 }
 
 
@@ -422,6 +375,27 @@ static HeftManager* instance = 0;
 #endif
 }
 
+
+- (NSArray*) connectedCardReaders
+{
+    EAAccessoryManager* eaManager = [EAAccessoryManager sharedAccessoryManager];
+
+    NSMutableArray *readers = [NSMutableArray array];
+    for (EAAccessory* device in eaManager.connectedAccessories)
+    {
+        for (NSString* protocol in device.protocolStrings)
+        {
+            if ([protocol isEqualToString:eaProtocol])
+            {
+                [readers addObject:device];
+            }
+        }
+    }
+    return readers;
+}
+
+
+
 #ifdef HEFT_SIMULATOR
 static EAAccessory* simulatorAccessory = nil;
 
@@ -454,8 +428,6 @@ static EAAccessory* simulatorAccessory = nil;
 {
     NSLog(@"EAAccessoryDidConnect");
     
-    // [self init];  TODO: who put this in here, should it be here?
-
 	EAAccessory* accessory = notification.userInfo[EAAccessoryKey];
 	if([accessory.protocolStrings containsObject:eaProtocol])
     {
@@ -487,11 +459,8 @@ static EAAccessory* simulatorAccessory = nil;
         {
             HeftRemoteDevice* eaDevice = eaDevices[index];
             [eaDevices removeObjectAtIndex:index];
-
             [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"didLostAccessoryDevice" withOptionalParameters:nil];
-
-            [delegate didLostAccessoryDevice:eaDevice];
-            runLoopRunning = NO;
+            [delegate didLostAccessoryDevice:eaDevice]; // todo: stop calling this on delegate unless this is the connected device
 
             NSLog(@"EAAccessoryDidDisconnect index [%lu], device [%@]", (unsigned long)index, [eaDevice name]);
         }

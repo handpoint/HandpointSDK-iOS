@@ -145,3 +145,12 @@
 - (void)timerCallback;
 
 @end
+
+/*
+@interface SimpleHeftManager
+- (NSArray*) connectedCardReaders;
+
+@property(nonatomic,readonly) HeftClient* cardReader;
+
+@end
+*/
