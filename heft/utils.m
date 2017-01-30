@@ -3,14 +3,14 @@
 // Copyright (c) 2017 zdv. All rights reserved.
 //
 
-#import "NSObject+ObjectOrNull.h"
+#import "utils.h"
 
 
-@implementation NSObject (ObjectOrNull)
+@implementation utils
 
-static NSObject* ObjectOrNull(NSObject* object)
-{
++ (NSObject *) ObjectOrNull:(NSObject*) object {
     return object ?: [NSNull null];
 }
+
 
 @end

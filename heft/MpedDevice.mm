@@ -802,7 +802,7 @@ enum eSignConditions{
     });
     cancelAllowed = NO;
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseError" withOptionalParameters:@{@"status": ObjectOrNull(info.status)}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseError" withOptionalParameters:@{@"status": [utils ObjectOrNull:info.status]}];
 }
 
 -(void)sendReportResult:(NSString*)report{

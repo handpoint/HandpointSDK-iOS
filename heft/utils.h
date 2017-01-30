@@ -5,8 +5,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSObject (ObjectOrNull)
 
-static NSObject* ObjectOrNull(NSObject* object);
+@interface utils : NSObject
+
++(NSObject *) ObjectOrNull:(NSObject*) object;
 
 @end
