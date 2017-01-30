@@ -42,7 +42,7 @@ enum eBufferConditions{
     NSRunLoop* streamRunLoop;
     
     InputQueue inputQueue;
-    OutputQueue outputQueue;
+    NSMutableData* outputData;
     NSConditionLock* bufferLock;
 }
 
@@ -57,15 +57,14 @@ enum eBufferConditions{
     BOOL result = NO;
     streamRunLoop = runLoop;
     
+    outputData = [NSMutableData dataWithCapacity: 4096];
+    
     if(aDevice.accessory) {
         LOG(@"protocol strings: %@", aDevice.accessory.protocolStrings);
         eaSession = [[EASession alloc] initWithAccessory:aDevice.accessory
                                              forProtocol:eaProtocol];
         result = eaSession != nil;
         if(result) {
-            // TODO: Testing currentRunLoop instead of mainRunLoop - change or remove ol
-            // NSRunLoop* runLoop = [NSRunLoop mainRunLoop];
-            // NSRunLoop* runLoop = [NSRunLoop currentRunLoop];            
             is = eaSession.inputStream;
             [is scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
             [is open];
@@ -85,6 +84,7 @@ enum eBufferConditions{
             device = aDevice;
             session = eaSession;
             outputStream = os;
+            outputStream.delegate = self;
             inputStream = is;
             inputStream.delegate = self;
             maxFrameSize = ciDefaultMaxFrameSize;
@@ -106,10 +106,6 @@ enum eBufferConditions{
     [self shutdown];
 }
 
-- (void)addClient:(MpedDevice*)pedDevice
-{
-    // self->aPedDevice = pedDevice;
-}
 
 - (void)shutdown
 {
@@ -150,6 +146,8 @@ enum eBufferConditions{
         outputStream = nil;
     }
     
+    outputData = nil;
+    
     [self resetData];
 }
 
@@ -187,49 +185,22 @@ enum eBufferConditions{
 bool isStatusAnError(NSStreamStatus status)
 {
     return status == NSStreamStatusNotOpen ||
-            status == NSStreamStatusClosed  ||
-            status == NSStreamStatusError   ||
-            status == NSStreamStatusAtEnd;
+           status == NSStreamStatusClosed  ||
+           status == NSStreamStatusError   ||
+           status == NSStreamStatusAtEnd;
 }
 
-// TODO: put data into outputqueue...
-//       and write to the stream when
-//       possible.
-//       That means we have to copy the data
-//       And since this is blocking, we must look
-//       at the calling code, writing should be a
-//       fire and forget method
 - (void)writeData:(uint8_t*)data length:(int)len
 {
     LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
 
-    while (len) {
-        while(![outputStream hasSpaceAvailable])
-        {
-            [NSThread sleepForTimeInterval:.025];
-            NSStreamStatus status = [outputStream streamStatus];
-            LOG(@"WriteData sleep, status: %d", (int) status);
-            if (isStatusAnError(status))
-            {
-                throw communication_exception();
-            }
-        }
-        
-        // TODO: just try to write everything here, let the system take care of bookkeeping
-        //       use len as parameter (do not cap at maxFrameSize)
-        // NSInteger nwritten = [outputStream write:data maxLength:min(len, maxFrameSize*2)];
-        NSInteger nwritten = [outputStream write:data maxLength:len];
-        
-        if(nwritten <= 0)
-        {
-            throw communication_exception();
-        }
-
-        // LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d, maxFrameSize=%d", (int) nwritten, len, maxFrameSize);
-        LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d", (int) nwritten, len);
-        
-        len -= nwritten;
-        data += nwritten;
+    NSInteger written = [outputStream write:data maxLength:len];
+    LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d", (int) written, len);
+    
+    if (written < len)
+    {
+        // could not write everything, copy the unwritten data to the output queue
+        [outputData appendBytes:&data[written] length:len-written];
     }
 }
 
@@ -241,30 +212,55 @@ bool isStatusAnError(NSStreamStatus status)
         LOG(@"WriteAck sleep, status: %d", (int) status);
         if (isStatusAnError(status))
         {
-            throw communication_exception();
+            throw communication_exception(@"writeAck: streamStatus is an error");
         }
         
     }
     NSInteger nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
     LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));
     if(nwritten != sizeof(ack))
-        throw communication_exception();
+        throw communication_exception(@"writeAck, written != sizeof(ack)");
+}
+
+- (void) write_from_queue_to_stream;
+{
+    if ([outputData length] > 0)
+    {
+        NSInteger written = [outputStream write:(uint8_t* )[outputData bytes] maxLength:[outputData length]];
+        
+        LOG(@"HeftConnection::write_from_queue_to_stream, sent %d bytes, len=%d", (int) written, (int) [outputData length]);
+        
+        if (written < [outputData length])
+        {
+            // remove the written bytes from the buffer and shift everything else to the front
+            NSRange range = NSMakeRange(0, written);
+            [outputData replaceBytesInRange:range withBytes:NULL length:0];
+            return; // since we could not write all of the data, we wait for the next event
+        }
+        else
+        {
+            // we are done with this packet, remove the buffer from the queue
+            // and send more if there is more to send.
+            [outputData setLength:0];
+        }
+    }
+    
 }
 
 #pragma mark NSStreamDelegate
-
-// - (void)stream:(NSInputStream*)aStream handleEvent:(NSStreamEvent)eventCode
 - (void)stream:(NSStream*)aStream handleEvent:(NSStreamEvent)eventCode
 {
     LOG(@"handleEvent starting, eventCode: %d", (int)eventCode);
     
     switch (eventCode)
     {
+        case NSStreamEventOpenCompleted:
+            break;
         case NSStreamEventHasBytesAvailable:
+            LOG(@"HeftConnection::handleEvent, NSStreamEventHasBytesAvailable");
+
             if (aStream == inputStream)
             {
-                // Assert(aStream == inputStream); // why the assert? what if it is a outputStream?
-                
                 /*
                  * Have a buffer (vector). Read into it until there is no more data
                  * Add the buffer to the input queue.
@@ -314,6 +310,7 @@ bool isStatusAnError(NSStreamStatus status)
             if (aStream == outputStream)
             {
                 LOG(@"HeftConnection::handleEvent, NSStreamEventHasSpaceAvailable on outputStream");
+                [self write_from_queue_to_stream];
             }
             else
             {
