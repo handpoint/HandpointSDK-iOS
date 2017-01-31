@@ -3,6 +3,8 @@
 // Copyright (c) 2017 zdv. All rights reserved.
 //
 
+// A collection of utilities for multiple purposes
+
 #import <Foundation/Foundation.h>
 
 

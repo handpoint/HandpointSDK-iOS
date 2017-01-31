@@ -8,6 +8,7 @@
 
 @implementation utils
 
+// A function that checks if an object is nil and replaces it with an NSNull object which is safe to insert into a NSDictonary
 + (NSObject *) ObjectOrNull:(NSObject*) object {
     return object ?: [NSNull null];
 }
