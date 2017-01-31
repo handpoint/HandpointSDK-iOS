@@ -194,32 +194,16 @@ bool isStatusAnError(NSStreamStatus status)
 {
     LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
 
-    NSInteger written = [outputStream write:data maxLength:len];
-    LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d", (int) written, len);
-    
-    if (written < len)
-    {
-        // could not write everything, copy the unwritten data to the output queue
-        [outputData appendBytes:&data[written] length:len-written];
-    }
+    // add the data to queue and call a method to write it
+    [outputData appendBytes:data length:len];
+    [self write_from_queue_to_stream];
 }
 
 - (void)writeAck:(UInt16)ack {
-    while(![outputStream hasSpaceAvailable])
-    {
-        [NSThread sleepForTimeInterval:.025];
-        NSStreamStatus status = [outputStream streamStatus];
-        LOG(@"WriteAck sleep, status: %d", (int) status);
-        if (isStatusAnError(status))
-        {
-            throw communication_exception(@"writeAck: streamStatus is an error");
-        }
-        
-    }
-    NSInteger nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
-    LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));
-    if(nwritten != sizeof(ack))
-        throw communication_exception(@"writeAck, written != sizeof(ack)");
+
+    // add the data to queue and call a method to write it
+    [outputData appendBytes:(uint8_t*)&ack length:sizeof(ack)];
+    [self write_from_queue_to_stream];
 }
 
 - (void) write_from_queue_to_stream;
@@ -244,7 +228,6 @@ bool isStatusAnError(NSStreamStatus status)
             [outputData setLength:0];
         }
     }
-    
 }
 
 #pragma mark NSStreamDelegate
