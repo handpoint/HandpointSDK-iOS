@@ -230,9 +230,9 @@ static HeftManager* instance = 0;
         [AnalyticsHelper addEventForActionType: actionTypeName.simulatorAction
                                 Action: @"didConnect"
                 withOptionalParameters: @{
-                        @"serialnumber" : mpedInfo[kSerialNumberInfoKey],
-                        @"appNameInfoKey" : mpedInfo[kAppNameInfoKey],
-                        @"appVersionInfoKey" : mpedInfo[kAppVersionInfoKey]
+                        @"serialnumber" : [utils ObjectOrNull:mpedInfo[kSerialNumberInfoKey]],
+                        @"appNameInfoKey" : [utils ObjectOrNull:mpedInfo[kAppNameInfoKey]],
+                        @"appVersionInfoKey" : [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]]
 
                 }];
 
@@ -257,9 +257,9 @@ static HeftManager* instance = 0;
             });
             NSDictionary *mpedInfo = [result mpedInfo];
             [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"didConnect" withOptionalParameters:@{
-                    @"serialnumber": mpedInfo[kSerialNumberInfoKey],
-                    @"appNameInfoKey": mpedInfo[kAppNameInfoKey],
-                    @"appVersionInfoKey": mpedInfo[kAppVersionInfoKey]
+                    @"serialnumber": [utils ObjectOrNull:mpedInfo[kSerialNumberInfoKey]],
+                    @"appNameInfoKey": [utils ObjectOrNull:mpedInfo[kAppNameInfoKey]],
+                    @"appVersionInfoKey": [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]]
 
             }];
             
@@ -319,7 +319,7 @@ static HeftManager* instance = 0;
 #endif
 
     [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"getSDKVersion" withOptionalParameters:@{
-            @"SDKVersion": SDKVersion
+            @"SDKVersion": [utils ObjectOrNull:SDKVersion]
     }];
 	
 	return SDKVersion;
@@ -330,7 +330,7 @@ static HeftManager* instance = 0;
     NSString* SDKBuildNumber = [self buildNumber];
 
     [AnalyticsHelper addEventForActionType:actionTypeName.managerAction Action:@"getSDKBuildNumber" withOptionalParameters:@{
-            @"SDKBuildNumber": SDKBuildNumber
+            @"SDKBuildNumber": [utils ObjectOrNull:SDKBuildNumber]
     }];
 	
 	return SDKBuildNumber;

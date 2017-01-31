@@ -309,9 +309,9 @@ enum eSignConditions{
                 (int)amount, currency, present ? @"is present" : @"is not present", reference);
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
-            @"amount": @(amount),
-            @"currency": currency,
-            @"reference": reference}];
+            @"amount": [utils ObjectOrNull:@(amount)],
+            @"currency": [utils ObjectOrNull:currency],
+            @"reference": [utils ObjectOrNull:reference]}];
     
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
@@ -345,10 +345,10 @@ enum eSignConditions{
                 (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
-            @"amount": @(amount),
-            @"currency": currency,
-            @"reference": reference,
-            @"divideBy": months}];
+            @"amount": [utils ObjectOrNull:@(amount)],
+            @"currency": [utils ObjectOrNull:currency],
+            @"reference": [utils ObjectOrNull:reference],
+            @"divideBy": [utils ObjectOrNull:months]}];
     
     NSString *params = @"";
     NSString *refrenceString = @"";
@@ -400,9 +400,9 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Refund" withOptionalParameters:@{
-            @"amount": @(amount),
-            @"currency": currency,
-            @"reference": reference}];
+            @"amount": [utils ObjectOrNull:@(amount)],
+            @"currency": [utils ObjectOrNull:currency],
+            @"reference": [utils ObjectOrNull:reference]}];
     
     NSString *params = @"";
     if(reference != NULL && reference.length != 0) {
@@ -434,8 +434,8 @@ enum eSignConditions{
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"SaleVoid" withOptionalParameters:@{
-            @"amount": @(amount),
-            @"currency": currency}];
+            @"amount": [utils ObjectOrNull:@(amount)],
+            @"currency": [utils ObjectOrNull:currency]}];
     
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
@@ -458,8 +458,8 @@ enum eSignConditions{
                 transaction, (int)amount, currency, present ? @"is present" : @"is not present");
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"RefundVoid" withOptionalParameters:@{
-            @"amount": @(amount),
-            @"currency": currency}];
+            @"amount": [utils ObjectOrNull:@(amount)],
+            @"currency": [utils ObjectOrNull:currency]}];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ
@@ -505,14 +505,14 @@ enum eSignConditions{
     return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScan" withOptionalParameters:@{@"multiScan": @(multiScan)}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScan" withOptionalParameters:@{@"multiScan": [utils ObjectOrNull:@(multiScan)]}];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScanButtonMode" withOptionalParameters:@{
-            @"multiScan": @(multiScan),
-            @"buttonMode": @(buttonMode)
+            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+            @"buttonMode": [utils ObjectOrNull:@(buttonMode)]
     }];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
@@ -521,15 +521,15 @@ enum eSignConditions{
 //Deprecated enable scanner function names
 -(BOOL)enableScanner:(BOOL)multiScan{
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscan" withOptionalParameters:@{
-            @"multiScan": @(multiScan),
+            @"multiScan": [utils ObjectOrNull:@(multiScan)],
             @"deprecated": @"YES"}];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscanButtonMode" withOptionalParameters:@{
-            @"multiScan": @(multiScan),
-            @"buttonMode": @(buttonMode),
+            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
             @"deprecated": @"YES"
     }];
 
@@ -537,9 +537,9 @@ enum eSignConditions{
 }
 -(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscanButtonModeTimeoutSeconds" withOptionalParameters:@{
-            @"multiScan": @(multiScan),
-            @"buttonMode": @(buttonMode),
-            @"timeoutSeconds": @(timeoutSeconds),
+            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
+            @"timeoutSeconds": [utils ObjectOrNull:@(timeoutSeconds)],
             @"deprecated": @"YES"
     }];
 
@@ -550,9 +550,9 @@ enum eSignConditions{
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
 
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScanButtonModeTimeoutSeconds" withOptionalParameters:@{
-            @"multiScan": @(multiScan),
-            @"buttonMode": @(buttonMode),
-            @"timeoutSeconds": @(timeoutSeconds)
+            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
+            @"timeoutSeconds": [utils ObjectOrNull:@(timeoutSeconds)]
     }];
 
     NSString *params = @"";
@@ -639,7 +639,7 @@ enum eSignConditions{
 }
 
 - (BOOL)logSetLevel:(eLogLevel)level{
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logSetLevel" withOptionalParameters:@{@"logLevel": @(level)}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logSetLevel" withOptionalParameters:@{@"logLevel": [utils ObjectOrNull:@(level)]}];
 
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
                                                            connection:connection
@@ -669,7 +669,7 @@ enum eSignConditions{
 }
 
 - (void)acceptSignature:(BOOL)flag{
-    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"acceptSignature" withOptionalParameters:@{@"flag": @(flag)}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"acceptSignature" withOptionalParameters:@{@"flag": [utils ObjectOrNull:@(flag)]}];
 
     [signLock lock];
     signatureIsOk = flag;
@@ -725,7 +725,7 @@ enum eSignConditions{
     info.scanCode = xml ? xml[@"code"] : @"";
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"responseScannerEvent" withOptionalParameters:@{@"status": status}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"responseScannerEvent" withOptionalParameters:@{@"status": [utils ObjectOrNull:status]}];
 
     if([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
@@ -773,8 +773,8 @@ enum eSignConditions{
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
                                     Action:analyticsAction
                     withOptionalParameters:@{
-                            @"status": status,
-                            @"deprecated" : analyticsDeprecated}];
+                            @"status": [utils ObjectOrNull:status],
+                            @"deprecated" : [utils ObjectOrNull:analyticsDeprecated]}];
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
 {
@@ -802,7 +802,7 @@ enum eSignConditions{
     });
     cancelAllowed = NO;
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseError" withOptionalParameters:@{@"status": info.status}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseError" withOptionalParameters:@{@"status": [utils ObjectOrNull:info.status]}];
 }
 
 -(void)sendReportResult:(NSString*)report{
@@ -976,10 +976,10 @@ enum eSignConditions{
     cancelAllowed = NO;
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:analyticsAction withOptionalParameters:@{
-            @"amount": @(info.authorisedAmount),
-            @"statusCode": @(info.statusCode),
-            @"financialResult": @(info.financialResult),
-            @"status": info.status
+            @"amount": [utils ObjectOrNull:@(info.authorisedAmount)],
+            @"statusCode": [utils ObjectOrNull:@(info.statusCode)],
+            @"financialResult": [utils ObjectOrNull:@(info.financialResult)],
+            @"status": [utils ObjectOrNull:info.status]
     }];
     [AnalyticsHelper upload];
 }
