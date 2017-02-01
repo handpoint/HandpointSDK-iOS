@@ -192,35 +192,41 @@ bool isStatusAnError(NSStreamStatus status)
 {
     LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
 
-    [outputData appendBytes:data length:len];
+    @synchronized (outputData) {
+        [outputData appendBytes:data length:len];
+    }
     [self write_from_queue_to_stream];
 }
 
 - (void)writeAck:(UInt16)ack
 {
-    [outputData appendBytes:(uint8_t*)&ack length:sizeof(ack)];
+    @synchronized (outputData) {
+        [outputData appendBytes:(uint8_t*)&ack length:sizeof(ack)];
+    }
     [self write_from_queue_to_stream];
 }
 
 - (void) write_from_queue_to_stream;
 {
-    if ([outputData length] > 0)
-    {
-        NSInteger written = [outputStream write:(uint8_t* )[outputData bytes] maxLength:[outputData length]];
-        
-        LOG(@"HeftConnection::write_from_queue_to_stream, sent %d bytes, len=%d", (int) written, (int) [outputData length]);
-        
-        if (written < [outputData length])
+    @synchronized (outputData) {
+        if ([outputData length] > 0)
         {
-            // remove the written bytes from the buffer and shift everything else to the front
-            NSRange range = NSMakeRange(0, written);
-            [outputData replaceBytesInRange:range withBytes:NULL length:0];
-            return; // since we could not write all of the data, we wait for the next event
-        }
-        else
-        {
-            // we are done with this packet, remove the buffer from the queue
-            [outputData setLength:0];
+            NSInteger written = [outputStream write:(uint8_t* )[outputData bytes] maxLength:[outputData length]];
+            
+            LOG(@"HeftConnection::write_from_queue_to_stream, sent %d bytes, len=%d", (int) written, (int) [outputData length]);
+            
+            if (written < [outputData length])
+            {
+                // remove the written bytes from the buffer and shift everything else to the front
+                NSRange range = NSMakeRange(0, written);
+                [outputData replaceBytesInRange:range withBytes:NULL length:0];
+                return; // since we could not write all of the data, we wait for the next event
+            }
+            else
+            {
+                // we are done with this packet, remove the buffer from the queue
+                [outputData setLength:0];
+            }
         }
     }
 }
