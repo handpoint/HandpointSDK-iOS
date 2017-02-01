@@ -156,8 +156,6 @@ enum eBufferConditions{
     if(inputQueue.size())
     {
         LOG(@"resetData waiting for read lock");
-        // TODO: simple wait for lock, we know there is data
-        // [bufferLock lockWhenCondition:eHasDataCondition];
         [bufferLock lock];
         LOG(@"resetData got read lock");
         while (!inputQueue.empty())
@@ -194,14 +192,12 @@ bool isStatusAnError(NSStreamStatus status)
 {
     LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
 
-    // add the data to queue and call a method to write it
     [outputData appendBytes:data length:len];
     [self write_from_queue_to_stream];
 }
 
-- (void)writeAck:(UInt16)ack {
-
-    // add the data to queue and call a method to write it
+- (void)writeAck:(UInt16)ack
+{
     [outputData appendBytes:(uint8_t*)&ack length:sizeof(ack)];
     [self write_from_queue_to_stream];
 }
@@ -224,7 +220,6 @@ bool isStatusAnError(NSStreamStatus status)
         else
         {
             // we are done with this packet, remove the buffer from the queue
-            // and send more if there is more to send.
             [outputData setLength:0];
         }
     }
