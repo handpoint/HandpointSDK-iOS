@@ -3,6 +3,9 @@
 //  headstart
 //
 
+#import <Foundation/Foundation.h>
+
+
 /**
  *  @file   HeftStatusReportPublic.h
  *
@@ -238,5 +241,12 @@ DEPRECATED_ATTRIBUTE
  @param info    Includes status code, status text and detailed xml.
  */
 - (void)responseEnableScanner:(id<EnableScannerResponseInfo>)info DEPRECATED_ATTRIBUTE;
+
+
+/**
+Returns the result of a EMV report request
+ @param report  Includes the report
+ */
+- (void)responseEMVReport:(NSString*)report;
 
 @end

@@ -6,6 +6,8 @@
 #import "CrcTest.h"
 #import "../heft/Shared/Crc.h"
 
+#if 0
+
 @implementation CrcTest
 
 - (void)testCrcGeneral{
@@ -40,3 +42,5 @@
 }
 
 @end
+
+#endif

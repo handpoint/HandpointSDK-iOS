@@ -3,7 +3,14 @@
 //  headstart
 //
 
+#include <vector>
+#include <cstdint>
+
+#import <Foundation/Foundation.h>
+
+
 @class HeftRemoteDevice;
+@class MpedDevice;
 
 typedef enum{
 	eAckTimeout
@@ -18,14 +25,16 @@ typedef enum{
 @property(nonatomic) int maxFrameSize;
 @property(nonatomic) int ourBufferSize;
 
-- (id)initWithDevice:(HeftRemoteDevice*)aDevice;
+- (id)initWithDevice:(HeftRemoteDevice*)aDevice runLoop:(NSRunLoop*) runLoop;
+- (void)addClient:(MpedDevice*)pedDevice;
 - (void)shutdown;
 - (void)resetData;
 
 - (void)writeData:(uint8_t*)data length:(int)len;
 - (void)writeAck:(UInt16)ack;
-- (int)readData:(vector<UINT8>&)buffer timeout:(eConnectionTimeout)timeout;
+- (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout;
 - (UInt16)readAck;
+- (void)write_from_queue_to_stream;
 
 @end
 

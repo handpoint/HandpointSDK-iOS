@@ -3,6 +3,7 @@
 class RequestCommand;
 class ConnectRequestCommand;
 class SendRequestCommand;
+class PostRequestCommand;
 class ReceiveRequestCommand;
 class DisconnectRequestCommand;
 class SignatureRequestCommand;
@@ -12,6 +13,7 @@ class ChallengeRequestCommand;
 
 - (RequestCommand*)processConnect:(ConnectRequestCommand*)pRequest;
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest;
+- (RequestCommand*)processPost:(PostRequestCommand*)pRequest;
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest;
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest;
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest;

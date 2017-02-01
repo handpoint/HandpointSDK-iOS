@@ -11,6 +11,9 @@
  *
  **/
 
+#import <Foundation/Foundation.h>
+
+
 @protocol HeftClient;
 @protocol HeftStatusReportDelegate;
 @class HeftRemoteDevice;
@@ -137,4 +140,17 @@
  */
 - (void)clientForDevice:(HeftRemoteDevice*)device sharedSecretString:(NSString*)sharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
 
+- (void)cleanup;
+
+- (void)timerCallback;
+
 @end
+
+/*
+@interface SimpleHeftManager
+- (NSArray*) connectedCardReaders;
+
+@property(nonatomic,readonly) HeftClient* cardReader;
+
+@end
+*/

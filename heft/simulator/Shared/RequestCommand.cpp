@@ -1,12 +1,17 @@
-#include "../../Shared/StdAfx.h"
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
 #include "HeftCmdIds.h"
 
 #include "ResponseParser.h"
+#include "Exception.h"
+
+#include <cstdint>
+
+using std::uint32_t;
+using std::uint8_t;
 
 const int ciTransactionDeclinedAmount = 1000;
 const int ciUserCancelAmount          = 2000;
@@ -27,8 +32,15 @@ const int ciExceptionLimitUpper       = 9999;
 
 SimulatorState simulatorState;
 
-ResponseCommand* RequestCommand::CreateResponse()const{return new ResponseCommand(m_cmd);}
-ResponseCommand* RequestCommand::CreateResponseOnCancel()const{return new ResponseCommand(m_cmd, EFT_PP_STATUS_USER_CANCELLED);}
+ResponseCommand* RequestCommand::CreateResponse() const
+{
+    return new ResponseCommand(m_cmd);
+}
+
+ResponseCommand* RequestCommand::CreateResponseOnCancel() const
+{
+    return new ResponseCommand(m_cmd, EFT_PP_STATUS_USER_CANCELLED);
+}
 
 static bool isNumber(const string& str)
 {
@@ -37,47 +49,216 @@ static bool isNumber(const string& str)
     return !str.empty() && it == str.end();
 }
 
-FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency_code, UINT32 trans_amount, UINT8 card_present, const string& trans_id, const string& xml)
-	: RequestCommand(type)
-	, state(eWaitingCard), amount(trans_amount)
-{
+
+namespace {
     const int currency_code_length = 4;
     
-    static const struct CurrencyCode{
+    struct CurrencyCode{
         char name[4];
         char code[currency_code_length + 1];
-    } ISO4217CurrencyCodes[] = { // in the simulator we want to return the currency code with out the leading zero
-          "USD", "840"
-        , "EUR", "978"
-        , "GBP", "826"
-        , "ISK", "352"
-        , "ZAR", "710"
     };
+    
+    
+    CurrencyCode ISO4217CurrencyCodes[] = {
+       "AED", "0784" //United Arab Emirates dirham
+        ,"AFN", "0971" //Afghani
+        ,"ALL", "0008" //Lek
+        ,"AMD", "0051" //Armenian dram
+        ,"ANG", "0532" //Netherlands Antillean guilder
+        ,"AOA", "0973" //Kwanza
+        ,"ARS", "0032" //Argentine peso
+        ,"AUD", "0036" //Australian dollar
+        ,"AWG", "0533" //Aruban guilder
+        ,"AZN", "0944" //Azerbaijanian manat
+        ,"BAM", "0977" //Convertible marks
+        ,"BBD", "0052" //Barbados dollar
+        ,"BDT", "0050" //Bangladeshi taka
+        ,"BGN", "0975" //Bulgarian lev
+        ,"BHD", "0048" //Bahraini dinar
+        ,"BIF", "0108" //Burundian franc
+        ,"BMD", "0060" //Bermudian dollar
+        ,"BND", "0096" //Brunei dollar
+        ,"BOB", "0068" //Boliviano
+        ,"BOV", "0984" //Bolivian Mvdol (funds code)
+        ,"BRL", "0986" //Brazilian real
+        ,"BSD", "0044" //Bahamian dollar
+        ,"BTN", "0064" //Ngultrum
+        ,"BWP", "0072" //Pula
+        ,"BYR", "0974" //Belarusian ruble
+        ,"BZD", "0084" //Belize dollar
+        ,"CAD", "0124" //Canadian dollar
+        ,"CDF", "0976" //Franc Congolais
+        ,"CHF", "0756" //Swiss franc
+        ,"CLP", "0152" //Chilean peso
+        ,"CNY", "0156" //Chinese Yuan
+        ,"COP", "0170" //Colombian peso
+        ,"COU", "0970" //Unidad de Valor Real
+        ,"CRC", "0188" //Costa Rican colon
+        ,"CUC", "0931" //Cuban convertible peso
+        ,"CUP", "0192" //Cuban peso
+        ,"CVE", "0132" //Cape Verde escudo
+        ,"CZK", "0203" //Czech Koruna
+        ,"DJF", "0262" //Djibouti franc
+        ,"DKK", "0208" //Danish krone
+        ,"DOP", "0214" //Dominican peso
+        ,"DZD", "0012" //Algerian dinar
+        ,"EGP", "0818" //Egyptian pound
+        ,"ERN", "0232" //Nakfa
+        ,"ETB", "0230" //Ethiopian birr
+        ,"EUR", "0978" //euro
+        ,"FJD", "0242" //Fiji dollar
+        ,"FKP", "0238" //Falkland Islands pound
+        ,"GBP", "0826" //Pound sterling
+        ,"GEL", "0981" //Lari
+        ,"GHS", "0936" //Cedi
+        ,"GIP", "0292" //Gibraltar pound
+        ,"GMD", "0270" //Dalasi
+        ,"GNF", "0324" //Guinea franc
+        ,"GTQ", "0320" //Quetzal
+        ,"GYD", "0328" //Guyana dollar
+        ,"HKD", "0344" //Hong Kong dollar
+        ,"HNL", "0340" //Lempira
+        ,"HRK", "0191" //Croatian kuna
+        ,"HTG", "0332" //Haiti gourde
+        ,"HUF", "0348" //Forint
+        ,"IDR", "0360" //Rupiah
+        ,"ILS", "0376" //Israeli new sheqel
+        ,"INR", "0356" //Indian rupee
+        ,"IQD", "0368" //Iraqi dinar
+        ,"IRR", "0364" //Iranian rial
+        ,"ISK", "0352" //Iceland krona
+        ,"JMD", "0388" //Jamaican dollar
+        ,"JOD", "0400" //Jordanian dinar
+        ,"JPY", "0392" //Japanese yen
+        ,"KES", "0404" //Kenyan shilling
+        ,"KGS", "0417" //Som
+        ,"KHR", "0116" //Riel
+        ,"KMF", "0174" //Comoro franc
+        ,"KPW", "0408" //North Korean won
+        ,"KRW", "0410" //South Korean won
+        ,"KWD", "0414" //Kuwaiti dinar
+        ,"KYD", "0136" //Cayman Islands dollar
+        ,"KZT", "0398" //Tenge
+        ,"LAK", "0418" //Kip
+        ,"LBP", "0422" //Lebanese pound
+        ,"LKR", "0144" //Sri Lanka rupee
+        ,"LRD", "0430" //Liberian dollar
+        ,"LSL", "0426" //Lesotho loti
+        ,"LTL", "0440" //Lithuanian litas
+        ,"LYD", "0434" //Libyan dinar
+        ,"MAD", "0504" //Moroccan dirham
+        ,"MDL", "0498" //Moldovan leu
+        ,"MGA", "0969" //Malagasy ariary
+        ,"MKD", "0807" //Denar
+        ,"MMK", "0104" //Kyat
+        ,"MNT", "0496" //Tughrik
+        ,"MOP", "0446" //Pataca
+        ,"MRO", "0478" //Mauritanian ouguiya
+        ,"MUR", "0480" //Mauritius rupee
+        ,"MVR", "0462" //Rufiyaa
+        ,"MWK", "0454" //Kwacha
+        ,"MXN", "0484" //Mexican peso
+        ,"MXV", "0979" //Mexican Unidad de Inversion
+        ,"MYR", "0458" //Malaysian ringgit
+        ,"MZN", "0943" //Metical
+        ,"NAD", "0516" //Namibian dollar
+        ,"NGN", "0566" //Naira
+        ,"NIO", "0558" //Cordoba oro
+        ,"NOK", "0578" //Norwegian krone
+        ,"NPR", "0524" //Nepalese rupee
+        ,"NZD", "0554" //New Zealand dollar
+        ,"OMR", "0512" //Rial Omani
+        ,"PAB", "0590" //Balboa
+        ,"PEN", "0604" //Nuevo sol
+        ,"PGK", "0598" //Kina
+        ,"PHP", "0608" //Philippine peso
+        ,"PKR", "0586" //Pakistan rupee
+        ,"PLN", "0985" //Z?oty
+        ,"PYG", "0600" //Guarani
+        ,"QAR", "0634" //Qatari rial
+        ,"RON", "0946" //Romanian new leu
+        ,"RSD", "0941" //Serbian dinar
+        ,"RUB", "0643" //Russian rouble
+        ,"RWF", "0646" //Rwanda franc
+        ,"SAR", "0682" //Saudi riyal
+        ,"SBD", "0090" //Solomon Islands dollar
+        ,"SCR", "0690" //Seychelles rupee
+        ,"SDG", "0938" //Sudanese pound
+        ,"SEK", "0752" //Swedish krona/kronor
+        ,"SGD", "0702" //Singapore dollar
+        ,"SHP", "0654" //Saint Helena pound
+        ,"SLL", "0694" //Leone
+        ,"SOS", "0706" //Somali shilling
+        ,"SRD", "0968" //Surinam dollar
+        ,"SSP", "0728" //South Sudanese pound
+        ,"STD", "0678" //Dobra
+        ,"SYP", "0760" //Syrian pound
+        ,"SZL", "0748" //Lilangeni
+        ,"THB", "0764" //Baht
+        ,"TJS", "0972" //Somoni
+        ,"TMT", "0934" //Manat
+        ,"TND", "0788" //Tunisian dinar
+        ,"TOP", "0776" //Pa'anga
+        ,"TRY", "0949" //Turkish lira
+        ,"TTD", "0780" //Trinidad and Tobago dollar
+        ,"TWD", "0901" //New Taiwan dollar
+        ,"TZS", "0834" //Tanzanian shilling
+        ,"UAH", "0980" //Hryvnia
+        ,"UGX", "0800" //Uganda shilling
+        ,"USD", "0840" //US dollar
+        ,"UZS", "0860" //Uzbekistan som
+        ,"VEF", "0937" //Venezuelan bolivar fuerte
+        ,"VND", "0704" //Vietnamese Dong
+        ,"VUV", "0548" //Vatu
+        ,"WST", "0882" //Samoan tala
+        ,"XAF", "0950" //CFA franc BEAC
+        ,"XCD", "0951" //East Caribbean dollar
+        ,"XOF", "0952" //CFA Franc BCEAO
+        ,"XPF", "0953" //CFP franc
+        ,"YER", "0886" //Yemeni rial
+        ,"ZAR", "0710" //South African rand
+        ,"ZMW", "0967" //Kwacha
+        ,"ZWL", "0932" //Zimbabwe dollar
+    };
+}
+
+
+FinanceRequestCommand::FinanceRequestCommand(uint32_t type, const string& currency_code, uint32_t trans_amount, uint8_t card_present, const string& trans_id, const string& xml)
+	: RequestCommand(type), state(eWaitingCard), amount(trans_amount)
+{
+
     
     const char* code = currency_code.c_str();
     string abbr;
     
-    if(!isNumber(code)){
+    if(!isNumber(code))
+    {
         bool fCheckCodeSize = true;
-        for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-            CurrencyCode cc = ISO4217CurrencyCodes[i];
-            if(!currency_code.compare(cc.name)){
+        for (CurrencyCode& cc : ISO4217CurrencyCodes)
+        {
+            if(!currency_code.compare(cc.name))
+            {
                 code = cc.code;
                 fCheckCodeSize = false;
                 break;
             }
         }
-
+        
         if(fCheckCodeSize && currency_code.length() != currency_code_length)
             throw std::invalid_argument("invalid currency code");
         
-        abbr = currency_code;
+        
+
     }
-    else{
-        for(int i = 0; i < dim(ISO4217CurrencyCodes); ++i){
-            CurrencyCode cc = ISO4217CurrencyCodes[i];
-            if(!currency_code.compare(cc.code)){
-                abbr = cc.name;
+    else
+    {
+        abbr = currency_code;
+
+        for (CurrencyCode& cc : ISO4217CurrencyCodes)
+        {
+            if(!currency_code.compare(cc.name))
+            {
+                abbr = cc.code;
                 break;
             }
         }
@@ -103,7 +284,8 @@ FinanceRequestCommand::FinanceRequestCommand(UINT32 type, const string& currency
     }
 }
 
-ResponseCommand* FinanceRequestCommand::CreateResponse()const{
+ResponseCommand* FinanceRequestCommand::CreateResponse() const
+{
 	ResponseCommand* result = 0;
 	switch(state++){
 	case eWaitingCard:
@@ -155,7 +337,10 @@ ResponseCommand* FinanceRequestCommand::CreateResponse()const{
 	return result;
 }
 
-ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const{return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);}
+ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const
+{
+    return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);
+}
 
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()
@@ -173,7 +358,7 @@ FinanceInitRequestCommand::FinanceInitRequestCommand()
 {
 }
 
-HostResponseCommand::HostResponseCommand(UINT32 command, UINT32 aFin_cmd, const string& aCurrency, UINT32 aAmount, int aStatus) 
+HostResponseCommand::HostResponseCommand(uint32_t command, uint32_t aFin_cmd, const string& aCurrency, uint32_t aAmount, int aStatus) 
 	: RequestCommand(command)
 	, fin_cmd(aFin_cmd), currency(aCurrency), amount(aAmount), status(aStatus)
 {
@@ -256,27 +441,27 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
 	return reinterpret_cast<ResponseCommand*>(result);
 }
 
-ConnectRequestCommand::ConnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+ConnectRequestCommand::ConnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_CONN_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-SendRequestCommand::SendRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+SendRequestCommand::SendRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_SEND_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-ReceiveRequestCommand::ReceiveRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+ReceiveRequestCommand::ReceiveRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_RECV_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-DisconnectRequestCommand::DisconnectRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aFin_cmd)
+DisconnectRequestCommand::DisconnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
 	: HostRequestCommand(CMD_HOST_DISC_REQ, aCurrency, aAmount, aFin_cmd)
 {
 }
 
-SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, UINT32 aAmount, UINT32 aType)
+SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aType)
 	: RequestCommand(CMD_STAT_SIGN_REQ), currency(aCurrency), amount(aAmount), type(aType)
 {
     NSMutableDictionary* xmlDict = [[NSMutableDictionary alloc] init];
@@ -291,7 +476,7 @@ SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, UINT32
     receipt = simulatorState.generateReceipt(true);
 }
 
-SetLogLevelRequestCommand::SetLogLevelRequestCommand(UINT8 log_level) 
+SetLogLevelRequestCommand::SetLogLevelRequestCommand(uint8_t log_level) 
 	: RequestCommand(CMD_LOG_SET_LEV_REQ)
 {
 }

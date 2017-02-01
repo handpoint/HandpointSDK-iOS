@@ -1,12 +1,17 @@
-#include "../../Shared/StdAfx.h"
 
-#if HEFT_SIMULATOR
+#ifdef HEFT_SIMULATOR
 
 #include "ResponseCommand.h"
 #include "RequestCommand.h"
 #include "HeftCmdIds.h"
 
-extern NSString* statusMessages[];
+#include <cstdint>
+
+using std::uint32_t;
+using std::uint8_t;
+
+
+extern NSArray* statusMessages;
 
 bool ResponseCommand::isResponseTo(const RequestCommand& request){
     return command_hsb == request.GetType();
@@ -55,7 +60,8 @@ EventInfoResponseCommand::EventInfoResponseCommand(int status, bool cancel_allow
     xmlDict[@"ExternalPower"]       = @"false";
     
     // event info specific tags
-    xmlDict[@"StatusMessage"]       = statusMessages[status];
+    xmlDict[@"StatusMessage"]       = status < [statusMessages count] ? statusMessages[status]
+                                                                      :  @"Unknown status";
     xmlDict[@"CancelAllowed"]       = cancel_allowed ? @"true" : @"false";
     
     xml_details = ConvertDictionaryToXML(xmlDict, @"EventInfoResponse");
@@ -65,7 +71,7 @@ NSString* kTransIdSeedKey = @"last_trans_id";
 NSString* fin_type[] = {@"Sale", @"Refund", @"Sale void", @"Refund void", @"Start day", @"End day", @"Finance init", @"Recovered Transaction"};
 NSString* fin_type_transaction[] = {@"SALE", @"REFUND", @"VOID_SALE", @"VOID_REFUND", @"Start day", @"End day", @"HOST_INIT", @"RECOVER_TXN_RESULT"};
 
-FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurrency, UINT32 amount, UINT8 status, BOOL recoveredTransaction)
+FinanceResponseCommand::FinanceResponseCommand(uint32_t cmd, const string& aCurrency, uint32_t amount, uint8_t status, BOOL recoveredTransaction)
 	: ResponseCommand(cmd), 
 	financial_status(status), authorised_amount(amount), trans_id(simulatorState.getTransUID())
     , recovered_transaction(recoveredTransaction)
@@ -82,7 +88,8 @@ FinanceResponseCommand::FinanceResponseCommand(UINT32 cmd, const string& aCurren
     xmlDict[@"ExternalPower"]       = @"false";
     
     // Financial transaction specific tags
-    xmlDict[@"StatusMessage"]       = statusMessages[status];
+    xmlDict[@"StatusMessage"]       = status < [statusMessages count] ? statusMessages[status]
+                                                                      :  @"Unknown status";
     xmlDict[@"TransactionType"]     = fin_type_transaction[((cmd >> 8) & 0xff) - '0'];
 
     bool signature = simulatorState.isIcc() ? false : true;
