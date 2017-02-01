@@ -1731,12 +1731,8 @@
 		FB6B267C1E01549700C422F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1745,12 +1741,8 @@
 		FB6B267D1E01549700C422F1 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1759,12 +1751,8 @@
 		FB6B267E1E01549700C422F1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1773,12 +1761,8 @@
 		FB6B267F1E01549700C422F1 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1787,12 +1771,8 @@
 		FBDA036B1CD018DC00607201 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1801,12 +1781,8 @@
 		FBDA036C1CD018DC00607201 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1815,12 +1791,8 @@
 		FBDA036D1CD018DC00607201 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1829,12 +1801,8 @@
 		FBDA036E1CD018DC00607201 /* Release-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD)";
 				CURRENT_PROJECT_VERSION = 2.6.0;
-=======
-				CURRENT_PROJECT_VERSION = "2.6.0-RC2";
->>>>>>> release
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
