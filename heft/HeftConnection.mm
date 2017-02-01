@@ -156,8 +156,6 @@ enum eBufferConditions{
     if(inputQueue.size())
     {
         LOG(@"resetData waiting for read lock");
-        // TODO: simple wait for lock, we know there is data
-        // [bufferLock lockWhenCondition:eHasDataCondition];
         [bufferLock lock];
         LOG(@"resetData got read lock");
         while (!inputQueue.empty())
@@ -194,57 +192,43 @@ bool isStatusAnError(NSStreamStatus status)
 {
     LOG(@"%@", ::dump(@"HeftConnection::WriteData : ", data, (int) len));
 
-    NSInteger written = [outputStream write:data maxLength:len];
-    LOG(@"HeftConnection::WriteData, sent %d bytes, len=%d", (int) written, len);
-    
-    if (written < len)
-    {
-        // could not write everything, copy the unwritten data to the output queue
-        [outputData appendBytes:&data[written] length:len-written];
+    @synchronized (outputData) {
+        [outputData appendBytes:data length:len];
     }
+    [self write_from_queue_to_stream];
 }
 
-- (void)writeAck:(UInt16)ack {
-    while(![outputStream hasSpaceAvailable])
-    {
-        [NSThread sleepForTimeInterval:.025];
-        NSStreamStatus status = [outputStream streamStatus];
-        LOG(@"WriteAck sleep, status: %d", (int) status);
-        if (isStatusAnError(status))
-        {
-            throw communication_exception(@"writeAck: streamStatus is an error");
-        }
-        
+- (void)writeAck:(UInt16)ack
+{
+    @synchronized (outputData) {
+        [outputData appendBytes:(uint8_t*)&ack length:sizeof(ack)];
     }
-    NSInteger nwritten = [outputStream write:(uint8_t*)&ack maxLength:sizeof(ack)];
-    LOG(@"%@",::dump(@"HeftConnection::writeAck : ", &ack, sizeof(ack)));
-    if(nwritten != sizeof(ack))
-        throw communication_exception(@"writeAck, written != sizeof(ack)");
+    [self write_from_queue_to_stream];
 }
 
 - (void) write_from_queue_to_stream;
 {
-    if ([outputData length] > 0)
-    {
-        NSInteger written = [outputStream write:(uint8_t* )[outputData bytes] maxLength:[outputData length]];
-        
-        LOG(@"HeftConnection::write_from_queue_to_stream, sent %d bytes, len=%d", (int) written, (int) [outputData length]);
-        
-        if (written < [outputData length])
+    @synchronized (outputData) {
+        if ([outputData length] > 0)
         {
-            // remove the written bytes from the buffer and shift everything else to the front
-            NSRange range = NSMakeRange(0, written);
-            [outputData replaceBytesInRange:range withBytes:NULL length:0];
-            return; // since we could not write all of the data, we wait for the next event
-        }
-        else
-        {
-            // we are done with this packet, remove the buffer from the queue
-            // and send more if there is more to send.
-            [outputData setLength:0];
+            NSInteger written = [outputStream write:(uint8_t* )[outputData bytes] maxLength:[outputData length]];
+            
+            LOG(@"HeftConnection::write_from_queue_to_stream, sent %d bytes, len=%d", (int) written, (int) [outputData length]);
+            
+            if (written < [outputData length])
+            {
+                // remove the written bytes from the buffer and shift everything else to the front
+                NSRange range = NSMakeRange(0, written);
+                [outputData replaceBytesInRange:range withBytes:NULL length:0];
+                return; // since we could not write all of the data, we wait for the next event
+            }
+            else
+            {
+                // we are done with this packet, remove the buffer from the queue
+                [outputData setLength:0];
+            }
         }
     }
-    
 }
 
 #pragma mark NSStreamDelegate
