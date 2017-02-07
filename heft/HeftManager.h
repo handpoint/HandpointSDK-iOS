@@ -142,7 +142,6 @@
 
 - (void)cleanup;
 
-- (void)timerCallback;
 
 @end
 
