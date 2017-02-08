@@ -14,6 +14,7 @@
 				FB6B26701E01549700C422F1 /* ShellScript */,
 				FB6B26711E01549700C422F1 /* CopyFiles */,
 				FB6B26761E01549700C422F1 /* CopyFiles */,
+				0D2565B11E4B8193008B2ED8 /* ShellScript */,
 			);
 			dependencies = (
 			);
@@ -859,6 +860,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0D2565B11E4B8193008B2ED8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "zip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/\"";
+		};
 		2D398933165FF23E00F8FA29 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
