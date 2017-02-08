@@ -28,6 +28,7 @@
 				FBDA03701CD018EB00607201 /* ShellScript */,
 				FBDA03711CD018ED00607201 /* CopyFiles */,
 				FBDA03751CD0215500607201 /* CopyFiles */,
+				0D2565B31E4B966D008B2ED8 /* ShellScript */,
 			);
 			dependencies = (
 			);
@@ -871,7 +872,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip\" .";
+			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}-Debug.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}-Debug.zip\" .";
+		};
+		0D2565B31E4B966D008B2ED8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip\" .";
 		};
 		2D398933165FF23E00F8FA29 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
