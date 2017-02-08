@@ -871,7 +871,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "zip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/\"";
+			shellScript = "pushd \"${TARGET_BUILD_DIR}/../\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip \"Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/\"\npopd";
 		};
 		2D398933165FF23E00F8FA29 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
