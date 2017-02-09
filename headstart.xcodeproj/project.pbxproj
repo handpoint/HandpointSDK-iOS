@@ -14,6 +14,7 @@
 				FB6B26701E01549700C422F1 /* ShellScript */,
 				FB6B26711E01549700C422F1 /* CopyFiles */,
 				FB6B26761E01549700C422F1 /* CopyFiles */,
+				0D2565B11E4B8193008B2ED8 /* ShellScript */,
 			);
 			dependencies = (
 			);
@@ -27,6 +28,7 @@
 				FBDA03701CD018EB00607201 /* ShellScript */,
 				FBDA03711CD018ED00607201 /* CopyFiles */,
 				FBDA03751CD0215500607201 /* CopyFiles */,
+				0D2565B31E4B966D008B2ED8 /* ShellScript */,
 			);
 			dependencies = (
 			);
@@ -859,6 +861,32 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0D2565B11E4B8193008B2ED8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}-Debug.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}-Debug.zip\" .";
+		};
+		0D2565B31E4B966D008B2ED8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip\" .";
+		};
 		2D398933165FF23E00F8FA29 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -896,7 +924,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcodebuild -scheme heft -sdk iphonesimulator -configuration Debug\nxcodebuild -scheme heft -sdk iphoneos -configuration Debug\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Debug-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Debug-Simulator\n\n# make a new output folder\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary/include\n# make a new output folder for simulator\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary/include\n\n# combine lib files for various platforms into one\nlipo -create \"${TARGET_BUILD_DIR}/../Debug-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Debug-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary/libheft.a\"\nlipo -create \"${TARGET_BUILD_DIR}/../Debug-Simulator-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Debug-Simulator-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary/libheft.a\"";
+			shellScript = "echo \"PATH = ${TARGET_BUILD_DIR}\"\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Debug\nxcodebuild -scheme heft -sdk iphoneos -configuration Debug\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Debug-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Debug-Simulator\n\n# make a new output folder\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary/include\n# make a new output folder for simulator\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary\nmkdir -p ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary/include\n\n# combine lib files for various platforms into one\nlipo -create \"${TARGET_BUILD_DIR}/../Debug-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Debug-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary/libheft.a\"\nlipo -create \"${TARGET_BUILD_DIR}/../Debug-Simulator-iphoneos/libheft.a\" \"${TARGET_BUILD_DIR}/../Debug-Simulator-iphonesimulator/libheft.a\" -output \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary/libheft.a\"";
 		};
 		FBDA03701CD018EB00607201 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
