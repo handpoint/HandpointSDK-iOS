@@ -292,7 +292,7 @@ static HeftManager* instance = 0;
 
 - (NSString*)version
 {
-	return @"2.6.0";  // TODO: move this to a config file (include file or something else)
+	return @"2.6.1";  // TODO: move this to a config file (include file or something else)
                       //       see old comment below
 }
 
