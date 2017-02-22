@@ -26,7 +26,6 @@ typedef enum{
 @property(nonatomic) int ourBufferSize;
 
 - (id)initWithDevice:(HeftRemoteDevice*)aDevice runLoop:(NSRunLoop*) runLoop;
-- (void)addClient:(MpedDevice*)pedDevice;
 - (void)shutdown;
 - (void)resetData;
 

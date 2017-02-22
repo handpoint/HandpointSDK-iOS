@@ -139,73 +139,75 @@ enum eConnectCondition{
 
 - (void)main{
     @autoreleasepool {
-        try
-        {
-            RequestCommand* currentRequest = pRequestCommand;
-            [connection resetData];
-            
-            while(true)
+        @synchronized ([MPosOperation class]) {
+            try
             {
-                //LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
+                RequestCommand* currentRequest = pRequestCommand;
+                [connection resetData];
                 
-                // sending the command to the device
-                FrameManager fm(*currentRequest, connection.maxFrameSize);
-                fm.Write(connection);
-                
-                // when/why does this happen?
-                if(pRequestCommand != currentRequest)
-                {
-                    delete currentRequest;
-                    currentRequest = 0;
-                }
-                
-                std::unique_ptr<ResponseCommand> pResponse;
-                BOOL retry;
-                BOOL already_cancelled = NO;
                 while(true)
                 {
-                    do
-                    {
-                        retry = NO;
-                        try
-                        {
-                            // read the response from the cardreader
-                            pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
-                        }
-                        catch (timeout4_exception& to4)
-                        {
-                            // to be nice we will try to send a cancel to the card reader
-                            retry = !already_cancelled ? [processor cancelIfPossible] : NO;
-                            already_cancelled = retry;
-                            if(!retry)
-                            {
-                                throw to4;
-                            }
-                        }
-                    } while (retry);
+                    //LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
                     
-                    if(pResponse->isResponse())
+                    // sending the command to the device
+                    FrameManager fm(*currentRequest, connection.maxFrameSize);
+                    fm.Write(connection);
+                    
+                    // when/why does this happen?
+                    if(pRequestCommand != currentRequest)
                     {
-                        pResponse->ProcessResult(processor);
-                        if(pResponse->isResponseTo(*pRequestCommand))
-                        {
-                            LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
-                            return;
-                        }
-                        continue;
+                        delete currentRequest;
+                        currentRequest = 0;
                     }
                     
-                    break;
+                    std::unique_ptr<ResponseCommand> pResponse;
+                    BOOL retry;
+                    BOOL already_cancelled = NO;
+                    while(true)
+                    {
+                        do
+                        {
+                            retry = NO;
+                            try
+                            {
+                                // read the response from the cardreader
+                                pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
+                            }
+                            catch (timeout4_exception& to4)
+                            {
+                                // to be nice we will try to send a cancel to the card reader
+                                retry = !already_cancelled ? [processor cancelIfPossible] : NO;
+                                already_cancelled = retry;
+                                if(!retry)
+                                {
+                                    throw to4;
+                                }
+                            }
+                        } while (retry);
+                        
+                        if(pResponse->isResponse())
+                        {
+                            pResponse->ProcessResult(processor);
+                            if(pResponse->isResponseTo(*pRequestCommand))
+                            {
+                                LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
+                                return;
+                            }
+                            continue;
+                        }
+                        
+                        break;
+                    }
+                    
+                    IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
+                    currentRequest = pHostRequest->Process(self);
                 }
-                
-                IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
-                currentRequest = pHostRequest->Process(self);
             }
-        }
-        catch(heft_exception& exception)
-        {
-            LOG(@"MPosOpoeration::main got an exception");
-            [processor sendResponseError:exception.stringId()];
+            catch(heft_exception& exception)
+            {
+                LOG(@"MPosOpoeration::main got an exception");
+                [processor sendResponseError:exception.stringId()];
+            }
         }
     }
 }

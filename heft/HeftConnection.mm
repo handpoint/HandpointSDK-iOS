@@ -43,7 +43,9 @@ enum eBufferConditions{
     
     InputQueue inputQueue;
     NSMutableData* outputData;
+    NSMutableData* inputData;
     NSConditionLock* bufferLock;
+    dispatch_semaphore_t fd_sema;
 }
 
 @synthesize maxFrameSize;
@@ -58,6 +60,7 @@ enum eBufferConditions{
     streamRunLoop = runLoop;
     
     outputData = [NSMutableData dataWithCapacity: 4096];
+    inputData  = [NSMutableData dataWithCapacity: 16384];
     
     if(aDevice.accessory) {
         LOG(@"protocol strings: %@", aDevice.accessory.protocolStrings);
@@ -90,6 +93,7 @@ enum eBufferConditions{
             maxFrameSize = ciDefaultMaxFrameSize;
             ourBufferSize = ciDefaultMaxFrameSize;
             bufferLock = [[NSConditionLock alloc] initWithCondition:eNoDataCondition];
+            fd_sema = dispatch_semaphore_create(0);
         }
         return self;
     }
@@ -147,6 +151,7 @@ enum eBufferConditions{
     }
     
     outputData = nil;
+    inputData = nil;
     
     [self resetData];
 }
@@ -200,6 +205,7 @@ bool isStatusAnError(NSStreamStatus status)
 
 - (void)writeAck:(UInt16)ack
 {
+    LOG(@"writeAck");
     @synchronized (outputData) {
         [outputData appendBytes:(uint8_t*)&ack length:sizeof(ack)];
     }
@@ -208,6 +214,7 @@ bool isStatusAnError(NSStreamStatus status)
 
 - (void) write_from_queue_to_stream;
 {
+    LOG(@"HeftConnection::write_from_queue_to_stream");
     @synchronized (outputData) {
         if ([outputData length] > 0)
         {
@@ -234,11 +241,12 @@ bool isStatusAnError(NSStreamStatus status)
 #pragma mark NSStreamDelegate
 - (void)stream:(NSStream*)aStream handleEvent:(NSStreamEvent)eventCode
 {
-    LOG(@"handleEvent starting, eventCode: %d", (int)eventCode);
+    LOG(@"handleEvent starting, eventCode: %d, thread: <%@>", (int)eventCode, [NSThread currentThread]);
     
     switch (eventCode)
     {
         case NSStreamEventOpenCompleted:
+            LOG(@"HeftConnection::handleEvent, NSStreamEventOpenCompleted");
             break;
         case NSStreamEventHasBytesAvailable:
             LOG(@"HeftConnection::handleEvent, NSStreamEventHasBytesAvailable");
@@ -255,6 +263,7 @@ bool isStatusAnError(NSStreamStatus status)
                                                                 // just in case things are ... buffered up!
 
                 do {
+                    /*
                     Buffer readBuffer(bufferSize);
                     nread = [inputStream read:&readBuffer[0] maxLength:bufferSize];
                     LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", &readBuffer[0], (int)nread), (int)nread);
@@ -271,8 +280,23 @@ bool isStatusAnError(NSStreamStatus status)
                         [bufferLock lock]; // don't care for a condition, queue can be empty or not
                         inputQueue.push(std::move(readBuffer));
                         [bufferLock unlockWithCondition:eHasDataCondition];
+                     */
+                    uint8_t buf[bufferSize];
+                    nread = [inputStream read:buf maxLength:bufferSize];
+                    LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", buf, (int) nread), (int)nread);
+
+                    if (nread > 0)
+                    {
+                        @synchronized (inputData) {
+                            [inputData appendBytes:buf length:nread];
+                        }
                     }
                 } while ([inputStream hasBytesAvailable]);
+                
+                // LOG(@"bufferlock condition: %ld", (long)[bufferLock condition]);
+                // [bufferLock unlockWithCondition:eHasDataCondition];
+                LOG(@"Signaling semaphore");
+                dispatch_semaphore_signal(fd_sema);
             }
             else
             {
@@ -314,9 +338,12 @@ bool isStatusAnError(NSStreamStatus status)
 
 - (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout
 {
-    auto initSize = buffer.size();
-    
-    if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]])
+    // auto initSize = buffer.size();
+    LOG(@"readData");
+
+    // if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]])
+    // if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * 1000000000))) // n.b. timeout is in nanoseconds
+    if (dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER)) // n.b. timeout is in nanoseconds
     {
         LOG(@"readData read lock timed out. inputQueue.empty() == %@", inputQueue.empty() ? @"True" : @"False");
         
@@ -332,6 +359,19 @@ bool isStatusAnError(NSStreamStatus status)
         }
     }
     
+    NSUInteger length = 0;
+    @synchronized (inputData) {
+        length = [inputData length];
+        if (length)
+        {
+            buffer.insert(std::end(buffer), (uint8_t*)[inputData bytes], (uint8_t*)[inputData bytes] + length);
+            [inputData setLength:0];
+        }
+    }
+    return (int) length;
+
+    
+    /*
     LOG(@"readData got read lock");
     // get everything from the queue
     while (inputQueue.empty() == false)
@@ -347,10 +387,52 @@ bool isStatusAnError(NSStreamStatus status)
     LOG(@"readData returning %lu bytes, total buffer size=%lu", bytes_read, buffer.size());
 
     return static_cast<int>(bytes_read);
+     */
 }
 
 - (UInt16)readAck{
+    LOG(@"readAck");
+
     UInt16 ack = 0;
+
+    @synchronized (inputData) {
+        if ([inputData length] >= 2)
+        {
+            ack = *(UInt16*)[inputData bytes]; // cast int the void* to a UInt16* and then dereference that
+            NSRange range = NSMakeRange(0, 2);
+            [inputData replaceBytesInRange:range withBytes:NULL length:0]; // remove the bytes from inputData
+            return ack;
+        }
+    }
+    
+//    if(![bufferLock lockWhenCondition:eHasDataCondition
+//                           beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
+//    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[eAckTimeout] * 1000000000))) // n.b. timeout is in nanoseconds
+     if (dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER))
+
+    {
+        LOG(@"Ack timeout");
+        throw timeout1_exception();
+    }
+    
+    @synchronized (inputData) {
+        if ([inputData length] >= 2)
+        {
+            ack = *(UInt16*)[inputData bytes]; // cast int the void* to a UInt16* and then dereference that
+            NSRange range = NSMakeRange(0, 2);
+            [inputData replaceBytesInRange:range withBytes:NULL length:0]; // remove the bytes from inputData
+            if ([inputData length])
+            {
+                // still data in buffer, don't want to block on it, so we signal the semaphore
+                dispatch_semaphore_signal(fd_sema);
+            }
+        }
+    }
+    return ack;
+
+    
+    
+    /*
     
     if(![bufferLock lockWhenCondition:eHasDataCondition
                            beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
@@ -390,6 +472,7 @@ bool isStatusAnError(NSStreamStatus status)
     
     LOG(@"HeftConnection::readAck %04X %04X", ack, ntohs(ack));
     return ack;
+     */
 }
 
 #pragma mark property
