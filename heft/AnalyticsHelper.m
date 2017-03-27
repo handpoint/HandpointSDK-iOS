@@ -79,4 +79,44 @@ toEventCollection:(NSString *)eventCollection
     [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
 }
 
++ (NSMutableDictionary *)XMLtoDict:(NSDictionary *)xml
+{
+    NSSet * keys = [NSSet setWithObjects:
+            @"ApplicationVersion",
+            @"CardEntryType",
+            @"CardSchemeName",
+            @"CardTypeId",
+            @"Currency",
+            @"CVM",
+            @"FinancialStatus",
+            @"BudgetNumber",
+            @"GratuityAmount",
+            @"GratuityPercentage",
+            @"RequestedAmount",
+            @"TotalAmount",
+            @"DueAmount",
+            @"BalanceAmount",
+            @"BalanceCurrency",
+            @"BalanceSign",
+            @"TransactionType",
+            @"BatteryCharging",
+            @"BatterymV",
+            @"BatteryStatus",
+            @"ExternalPower",
+            @"SerialNumber",
+            @"StatusMessage",
+            @"ErrorMessage",
+                    nil];
+
+    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:20];
+
+    for (id key in keys) {
+        id object = xml[key];
+        if (object) {
+            result[key] = [utils ObjectOrNull:object];
+        }
+    }
+    return result;
+}
+
 @end
