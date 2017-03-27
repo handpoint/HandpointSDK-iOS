@@ -232,7 +232,8 @@ static HeftManager* instance = 0;
                 withOptionalParameters: @{
                         @"serialnumber" : [utils ObjectOrNull:mpedInfo[kSerialNumberInfoKey]],
                         @"appNameInfoKey" : [utils ObjectOrNull:mpedInfo[kAppNameInfoKey]],
-                        @"appVersionInfoKey" : [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]]
+                        @"appVersionInfoKey" : [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]],
+                        @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:mpedInfo]]
 
                 }];
 
@@ -259,7 +260,8 @@ static HeftManager* instance = 0;
             [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"didConnect" withOptionalParameters:@{
                     @"serialnumber": [utils ObjectOrNull:mpedInfo[kSerialNumberInfoKey]],
                     @"appNameInfoKey": [utils ObjectOrNull:mpedInfo[kAppNameInfoKey]],
-                    @"appVersionInfoKey": [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]]
+                    @"appVersionInfoKey": [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]],
+                    @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:mpedInfo]]
 
             }];
             
@@ -292,7 +294,7 @@ static HeftManager* instance = 0;
 
 - (NSString*)version
 {
-	return @"2.6.0";  // TODO: move this to a config file (include file or something else)
+	return @"2.6.1";  // TODO: move this to a config file (include file or something else)
                       //       see old comment below
 }
 

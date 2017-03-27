@@ -724,7 +724,9 @@ enum eSignConditions{
     info.scanCode = xml ? xml[@"code"] : @"";
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"responseScannerEvent" withOptionalParameters:@{@"status": [utils ObjectOrNull:status]}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"responseScannerEvent" withOptionalParameters:@{
+            @"status": [utils ObjectOrNull:status],
+            @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]}];
 
     if([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
@@ -773,7 +775,8 @@ enum eSignConditions{
                                     Action:analyticsAction
                     withOptionalParameters:@{
                             @"status": [utils ObjectOrNull:status],
-                            @"deprecated" : [utils ObjectOrNull:analyticsDeprecated]}];
+                            @"deprecated" : [utils ObjectOrNull:analyticsDeprecated],
+                            @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]}];
 }
 - (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
 {
@@ -978,7 +981,8 @@ enum eSignConditions{
             @"amount": [utils ObjectOrNull:@(info.authorisedAmount)],
             @"statusCode": [utils ObjectOrNull:@(info.statusCode)],
             @"financialResult": [utils ObjectOrNull:@(info.financialResult)],
-            @"status": [utils ObjectOrNull:info.status]
+            @"status": [utils ObjectOrNull:info.status],
+            @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:info.xml]]
     }];
     [AnalyticsHelper upload];
 }
