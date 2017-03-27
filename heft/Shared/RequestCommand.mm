@@ -272,7 +272,7 @@ XMLCommandRequestCommand::XMLCommandRequestCommand(const std::string& xml)
     memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
 }
 
-static bool isNumber(const std::string str)
+static bool isNumber(const std::string& str)
 {
     std::string::const_iterator it = str.begin();
     while (it != str.end() && isdigit(*it)) ++it;

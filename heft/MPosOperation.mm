@@ -317,10 +317,9 @@ namespace {
     NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
                                   length:pRequest->GetLength() - (size_of_http_header+4)];
     
-    // get the first line of the http header
+    // get the first line of the http header, looks like this
     // POST /viscus/cr/v1/authorization HTTP/1.1
-    // split it on spaces
-    // get the middle part of that, which is the path on the server
+    // split it on spaces, get the middle part, which is the path on the server
     NSString* first_line = [header_values objectAtIndex:0];
     NSString* path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
     
@@ -345,6 +344,29 @@ namespace {
     [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
     // is this not a part of the request already? - does it get in the way?
     [request setValue:components.host forHTTPHeaderField:@"Host"];
+
+    // parse the rest (after first line) of the header values (key: value) and add relevant values to the request.
+    // iterate with a for loop instead of using subarrayWithRange which copies the array
+    
+    static const NSArray* keys_to_ignore = [NSArray arrayWithObjects:@"Accept", @"Content-Type", @"Host", nil];
+    
+    for (int i = 1; i < [header_values count]; i++)
+    {
+        NSString* line = [header_values objectAtIndex:i];
+        NSArray* key_value = [line componentsSeparatedByString:@":"];
+        NSString* key   = [key_value objectAtIndex:0];
+        
+        // ignore keys we already set
+        if ([keys_to_ignore containsObject:key])
+        {
+            NSLog(@"ignore key: %@", key_value);
+            continue;
+        }
+        NSLog(@"add key: %@", key_value);
+
+        NSString* value = [key_value objectAtIndex:1];
+        [request setValue:value forHTTPHeaderField:key];
+    }
     
     wait_until_done = [[NSCondition alloc] init];
     
