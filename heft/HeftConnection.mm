@@ -229,11 +229,6 @@ bool isStatusAnError(NSStreamStatus status)
 
             if (aStream == inputStream)
             {
-                /*
-                 * Have a buffer (vector). Read into it until there is no more data
-                 * Add the buffer to the input queue.
-                 */
-                
                 NSUInteger nread;
                 const int bufferSize = ciDefaultMaxFrameSize*2; // the buffer isn't large - keep a bigger buffer
                                                                 // just in case things are ... buffered up!
@@ -298,7 +293,7 @@ bool isStatusAnError(NSStreamStatus status)
 
     // if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]])
     // if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * 1000000000))) // n.b. timeout is in nanoseconds
-    if (dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER)) // n.b. timeout is in nanoseconds
+    if (dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER)) // TODO: need timeout.
     {
         if(timeout == eFinanceTimeout)
         {
