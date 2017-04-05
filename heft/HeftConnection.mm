@@ -12,14 +12,7 @@
 #import "Logger.h"
 #import "debug.h"
 
-#include <queue>
 #include <vector>
-#include <algorithm> // min
-
-using std::min;
-using Buffer = std::vector<uint8_t>;
-using InputQueue = std::queue<Buffer>;
-using OutputQueue = std::queue<Buffer>;
 
 extern NSString* eaProtocol;
 
@@ -41,7 +34,6 @@ enum eBufferConditions{
     NSOutputStream* outputStream;
     NSRunLoop* streamRunLoop;
     
-    InputQueue inputQueue;
     NSMutableData* outputData;
     NSMutableData* inputData;
     NSConditionLock* bufferLock;
@@ -56,7 +48,6 @@ enum eBufferConditions{
     EASession* eaSession = nil;
     NSInputStream* is = nil;
     NSOutputStream* os = nil;
-    BOOL result = NO;
     streamRunLoop = runLoop;
     
     outputData = [NSMutableData dataWithCapacity: 4096];
@@ -66,38 +57,35 @@ enum eBufferConditions{
         LOG(@"protocol strings: %@", aDevice.accessory.protocolStrings);
         eaSession = [[EASession alloc] initWithAccessory:aDevice.accessory
                                              forProtocol:eaProtocol];
-        result = eaSession != nil;
-        if(result) {
+        if(eaSession != nil)
+        {
             is = eaSession.inputStream;
             [is scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
             [is open];
             os = eaSession.outputStream;
             [os scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
             [os open];
+            
+            if(self = [super init])
+            {
+                LOG(@"Connected to %@", aDevice.name);
+                device = aDevice;
+                session = eaSession;
+                outputStream = os;
+                outputStream.delegate = self;
+                inputStream = is;
+                inputStream.delegate = self;
+                maxFrameSize = ciDefaultMaxFrameSize;
+                ourBufferSize = ciDefaultMaxFrameSize;
+                bufferLock = [[NSConditionLock alloc] initWithCondition:eNoDataCondition];
+                fd_sema = dispatch_semaphore_create(0);
+            }
+            return self;
         }
-        else
-            LOG(@"Connection to %@ failed", aDevice.name);
     }
     
-    if(result)
-    {
-        if(self = [super init])
-        {
-            LOG(@"Connected to %@", aDevice.name);
-            device = aDevice;
-            session = eaSession;
-            outputStream = os;
-            outputStream.delegate = self;
-            inputStream = is;
-            inputStream.delegate = self;
-            maxFrameSize = ciDefaultMaxFrameSize;
-            ourBufferSize = ciDefaultMaxFrameSize;
-            bufferLock = [[NSConditionLock alloc] initWithCondition:eNoDataCondition];
-            fd_sema = dispatch_semaphore_create(0);
-        }
-        return self;
-    }
-    
+    // it failed
+    LOG(@"Connection to %@ failed", aDevice.name);
     self = nil;
     return self;
 }
@@ -158,18 +146,6 @@ enum eBufferConditions{
 
 - (void)resetData
 {
-    if(inputQueue.size())
-    {
-        LOG(@"resetData waiting for read lock");
-        [bufferLock lock];
-        LOG(@"resetData got read lock");
-        while (!inputQueue.empty())
-        {
-            inputQueue.pop();
-        }
-        [bufferLock unlockWithCondition:eNoDataCondition];
-        LOG(@"resetData released read lock");
-    }
 }
 
 
@@ -261,26 +237,7 @@ bool isStatusAnError(NSStreamStatus status)
                 NSUInteger nread;
                 const int bufferSize = ciDefaultMaxFrameSize*2; // the buffer isn't large - keep a bigger buffer
                                                                 // just in case things are ... buffered up!
-
                 do {
-                    /*
-                    Buffer readBuffer(bufferSize);
-                    nread = [inputStream read:&readBuffer[0] maxLength:bufferSize];
-                    LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", &readBuffer[0], (int)nread), (int)nread);
-                    
-                    if (nread > 0)
-                    {
-                        readBuffer.resize(nread);
-                        
-                        // TODO: hafa ekki sama lás hér, lásinn fyrir readData er í raun EVENT
-                        // en þessi þráður á aldrei að blokka eftir readData fallinu
-                        
-                        // nota GCD queue til að stjórna þessu, þá sér stýrikerfið um
-                        // lásana...nota barrier í readData partion (þá blokkar það)
-                        [bufferLock lock]; // don't care for a condition, queue can be empty or not
-                        inputQueue.push(std::move(readBuffer));
-                        [bufferLock unlockWithCondition:eHasDataCondition];
-                     */
                     uint8_t buf[bufferSize];
                     nread = [inputStream read:buf maxLength:bufferSize];
                     LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", buf, (int) nread), (int)nread);
@@ -293,8 +250,6 @@ bool isStatusAnError(NSStreamStatus status)
                     }
                 } while ([inputStream hasBytesAvailable]);
                 
-                // LOG(@"bufferlock condition: %ld", (long)[bufferLock condition]);
-                // [bufferLock unlockWithCondition:eHasDataCondition];
                 LOG(@"Signaling semaphore");
                 dispatch_semaphore_signal(fd_sema);
             }
@@ -345,8 +300,6 @@ bool isStatusAnError(NSStreamStatus status)
     // if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * 1000000000))) // n.b. timeout is in nanoseconds
     if (dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER)) // n.b. timeout is in nanoseconds
     {
-        LOG(@"readData read lock timed out. inputQueue.empty() == %@", inputQueue.empty() ? @"True" : @"False");
-        
         if(timeout == eFinanceTimeout)
         {
             LOG(@"Finance timeout");
@@ -369,25 +322,6 @@ bool isStatusAnError(NSStreamStatus status)
         }
     }
     return (int) length;
-
-    
-    /*
-    LOG(@"readData got read lock");
-    // get everything from the queue
-    while (inputQueue.empty() == false)
-    {
-        Buffer& head = inputQueue.front();
-        buffer.insert(std::end(buffer), std::begin(head), std::end(head));
-        inputQueue.pop();
-    }
-    
-    [bufferLock unlockWithCondition:eNoDataCondition];
-    
-    auto bytes_read = buffer.size() - initSize;
-    LOG(@"readData returning %lu bytes, total buffer size=%lu", bytes_read, buffer.size());
-
-    return static_cast<int>(bytes_read);
-     */
 }
 
 - (UInt16)readAck{
@@ -429,50 +363,6 @@ bool isStatusAnError(NSStreamStatus status)
         }
     }
     return ack;
-
-    
-    
-    /*
-    
-    if(![bufferLock lockWhenCondition:eHasDataCondition
-                           beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
-    {
-        LOG(@"Ack timeout");
-        throw timeout1_exception();
-    }
-    
-    Buffer& head = inputQueue.front();
-    if (head.size() >= sizeof(ack))
-    {
-        memcpy(&ack, &head[0], sizeof(ack));
-        if (head.size() > sizeof(ack))
-        {
-            // remove the first elements from the buffer and shift everything else to the front
-            // do not remove the buffer from queue
-            head.erase(head.begin(), head.begin() + sizeof(ack));
-        }
-        else
-        {
-            // we are done with this packet, remove the buffer from the queue
-            inputQueue.pop();
-        }
-    }
-    
-    if (inputQueue.empty())
-    {
-        LOG(@"readAck, queue empty");
-
-        [bufferLock unlockWithCondition:eNoDataCondition];
-    }
-    else
-    {
-        LOG(@"readAck, data still in queue - %lu items and %lu bytes at head", inputQueue.size(), head.size());
-        [bufferLock unlockWithCondition:eHasDataCondition];
-    }
-    
-    LOG(@"HeftConnection::readAck %04X %04X", ack, ntohs(ack));
-    return ack;
-     */
 }
 
 #pragma mark property
