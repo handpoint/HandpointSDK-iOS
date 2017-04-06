@@ -37,4 +37,4 @@ typedef enum{
 
 @end
 
-extern const int ciTimeout[];
+extern const int64_t ciTimeout[];

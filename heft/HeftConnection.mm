@@ -17,7 +17,7 @@
 extern NSString* eaProtocol;
 
 int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
-const int ciTimeout[] = {20, 15, 1, 5*60};
+const int64_t ciTimeout[] = {20, 15, 1, 5*60};
 
 enum eBufferConditions{
     eNoDataCondition
@@ -288,12 +288,9 @@ bool isStatusAnError(NSStreamStatus status)
 
 - (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout
 {
-    // auto initSize = buffer.size();
     LOG(@"readData");
 
-    // if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]])
-    // if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * 1000000000))) // n.b. timeout is in nanoseconds
-    if (dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER)) // TODO: need timeout.
+    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * 1000000000))) // n.b. timeout is in nanoseconds
     {
         if(timeout == eFinanceTimeout)
         {
@@ -337,11 +334,7 @@ bool isStatusAnError(NSStreamStatus status)
     
     // need to wait for data since buffer did not have two bytes
     
-//    if(![bufferLock lockWhenCondition:eHasDataCondition
-//                           beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
-//    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[eAckTimeout] * 1000000000))) // n.b. timeout is in nanoseconds
-     if (dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER))
-
+    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[eAckTimeout] * 1000000000))) // n.b. timeout is in nanoseconds
     {
         LOG(@"Ack timeout");
         throw timeout1_exception();
