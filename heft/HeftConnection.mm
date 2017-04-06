@@ -327,12 +327,15 @@ bool isStatusAnError(NSStreamStatus status)
     @synchronized (inputData) {
         if ([inputData length] >= 2)
         {
-            ack = *(UInt16*)[inputData bytes]; // cast int the void* to a UInt16* and then dereference that
+            ack = *(UInt16*)[inputData bytes]; // cast the void* to a UInt16* and then dereference that
             NSRange range = NSMakeRange(0, 2);
             [inputData replaceBytesInRange:range withBytes:NULL length:0]; // remove the bytes from inputData
             return ack;
         }
     }
+    
+    
+    // need to wait for data since buffer did not have two bytes
     
 //    if(![bufferLock lockWhenCondition:eHasDataCondition
 //                           beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
