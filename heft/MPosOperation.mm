@@ -278,6 +278,31 @@ namespace {
 }
 
 
+// header_values: a list of strings where each string is a key: value pair
+void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* request)
+{
+    static const NSArray* keys_to_ignore
+        = [NSArray arrayWithObjects:@"Accept", @"Content-Type", @"Host", @"Connection", @"Content-Length", @"Accept-Language", nil];
+
+    for (int i = 1; i < [header_values count]; i++)
+    {
+        NSString* line = [header_values objectAtIndex:i];
+        NSArray* key_value = [line componentsSeparatedByString:@":"];
+        NSString* key   = [key_value objectAtIndex:0];
+
+        // ignore keys we already set
+        if ([keys_to_ignore containsObject:key])
+        {
+            NSLog(@"ignore key: %@", key_value);
+            continue;
+        }
+        NSLog(@"add key: %@", key_value);
+
+        NSString* value = [[key_value objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        [request setValue:value forHTTPHeaderField:key];
+    }
+}
+
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest
 {
     LOG_RELEASE(Logger::eFine, @"Sending request to bureau (length:%d).", pRequest->GetLength());
@@ -347,7 +372,8 @@ namespace {
 
     // parse the rest (after first line) of the header values (key: value) and add relevant values to the request.
     // iterate with a for loop instead of using subarrayWithRange which copies the array
-    
+
+    /*
     static const NSArray* keys_to_ignore = [NSArray arrayWithObjects:@"Accept", @"Content-Type", @"Host", nil];
     
     for (int i = 1; i < [header_values count]; i++)
@@ -367,6 +393,8 @@ namespace {
         NSString* value = [key_value objectAtIndex:1];
         [request setValue:value forHTTPHeaderField:key];
     }
+     */
+    copy_headervalues_to_request(header_values, request);
     
     wait_until_done = [[NSCondition alloc] init];
     
@@ -416,7 +444,7 @@ namespace {
 
 
     LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
-    
+
     //Don't forget this line ever
     [uploadTask resume];
     
@@ -504,14 +532,9 @@ namespace {
     NSArray* header_values = [http_header componentsSeparatedByString:@"\r\n"];
     
     // the post data should be NSData, not NSString - copy straight from the buffer
-    // NSUInteger size_of_http_header = [http_header length];
-    
+
     // the data is everything after the header+double linefeed
-    
-    // NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
-    //                              length:pRequest->GetLength() - (size_of_http_header+4)];
-    // NSData* data = [[parts objectAtIndex:1] dataUsingEncoding:NSISOLatin1StringEncoding];
-    
+
     // get the first line of the http header
     // POST /viscus/cr/v1/authorization HTTP/1.1
     // split it on spaces
@@ -538,7 +561,9 @@ namespace {
     [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
     // is this not a part of the request already? - does it get in the way?
     [request setValue:components.host forHTTPHeaderField:@"Host"];
-    
+
+    copy_headervalues_to_request(header_values, request);
+
     wait_until_done = [[NSCondition alloc] init];
     
     [wait_until_done lock];
