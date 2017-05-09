@@ -482,7 +482,7 @@ ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, std::uint32_t 
 }
 
 ReceiveResponseCommand::ReceiveResponseCommand(NSData* payload)
-: HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)[payload length])
+    : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)[payload length])
 
 {
     ReceiveResponsePayload* pPayload = GetPayload<ReceiveResponsePayload>();

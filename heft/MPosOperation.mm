@@ -372,28 +372,6 @@ void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* r
 
     // parse the rest (after first line) of the header values (key: value) and add relevant values to the request.
     // iterate with a for loop instead of using subarrayWithRange which copies the array
-
-    /*
-    static const NSArray* keys_to_ignore = [NSArray arrayWithObjects:@"Accept", @"Content-Type", @"Host", nil];
-    
-    for (int i = 1; i < [header_values count]; i++)
-    {
-        NSString* line = [header_values objectAtIndex:i];
-        NSArray* key_value = [line componentsSeparatedByString:@":"];
-        NSString* key   = [key_value objectAtIndex:0];
-        
-        // ignore keys we already set
-        if ([keys_to_ignore containsObject:key])
-        {
-            NSLog(@"ignore key: %@", key_value);
-            continue;
-        }
-        NSLog(@"add key: %@", key_value);
-
-        NSString* value = [key_value objectAtIndex:1];
-        [request setValue:value forHTTPHeaderField:key];
-    }
-     */
     copy_headervalues_to_request(header_values, request);
     
     wait_until_done = [[NSCondition alloc] init];
