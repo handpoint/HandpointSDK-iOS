@@ -72,7 +72,6 @@ enum eConnectCondition{
 @implementation MPosOperation{
     RequestCommand*	pRequestCommand;
     HeftConnection* connection;
-    //int maxFrameSize;
     __weak id<IResponseProcessor> processor;
     NSData* sharedSecret;
     
@@ -83,19 +82,6 @@ enum eConnectCondition{
     NSMutableData* host_response_data;
     NSError* host_communication_error;
     NSCondition* wait_until_done;
-    
-    /*
-     NSConditionLock* connectLock;
-     enum eConnectionState {
-     eConnectionClosed,
-     eConnectionConnecting,
-     eConnectionConnected,
-     eConnectionSending,
-     eConnectionSendingComplete,
-     eConnectionReceiving,
-     eConnectionReceivingComplete,
-     } connectionState;
-     */
 }
 
 
@@ -147,8 +133,6 @@ enum eConnectCondition{
                 
                 while(true)
                 {
-                    //LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
-                    
                     // sending the command to the device
                     FrameManager fm(*currentRequest, connection.maxFrameSize);
                     fm.Write(connection);
@@ -288,7 +272,7 @@ void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* r
     {
         NSString* line = [header_values objectAtIndex:i];
         NSArray* key_value = [line componentsSeparatedByString:@":"];
-        NSString* key   = [key_value objectAtIndex:0];
+        NSString* key   = [key_value firstObject];
 
         // ignore keys we already set
         if ([keys_to_ignore containsObject:key])
@@ -389,9 +373,6 @@ void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* r
     {
         LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
         
-        // TODO: handle errors here, for example, The network connection was lost.
-        //       Save the error and return it to the reader in processReceive.
-        //       See error handling in old code.
         if (error != nil)
         {
             host_communication_error = error;
@@ -470,7 +451,6 @@ void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* r
 {
     LOG_RELEASE(Logger::eFine, @"Posting request to bureau (length:%d).", pRequest->GetLength());
     
-    // LOG_RELEASE(Logger::eFiner, ::dump(@"Outgoing message"));
     LOG(@"%@",::dump(@"Message to bureau:", pRequest->GetData(), pRequest->GetLength()));
     
     components = [[NSURLComponents alloc] init];
@@ -510,7 +490,6 @@ void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* r
     NSArray* header_values = [http_header componentsSeparatedByString:@"\r\n"];
     
     // the post data should be NSData, not NSString - copy straight from the buffer
-
     // the data is everything after the header+double linefeed
 
     // get the first line of the http header
@@ -549,7 +528,6 @@ void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* r
 #ifdef DEBUG
     LOG(@"Sending a http request to host");
 #endif
-    //    NSURLSession *session = [NSURLSession sharedSession];
     NSURLSession* session = [NSURLSession sessionWithConfiguration:session_configuration];
     
     NSData* data = [[parts objectAtIndex:1] dataUsingEncoding:NSISOLatin1StringEncoding];
@@ -589,9 +567,7 @@ void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* r
                                               [wait_until_done signal];
                                           }
                                           ];
-    
-    // LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
-    
+        
     [uploadTask resume];
     
     LOG(@"Waiting for lock");
