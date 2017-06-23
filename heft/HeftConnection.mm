@@ -19,6 +19,8 @@ extern NSString* eaProtocol;
 int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
 const int64_t ciTimeout[] = {20, 15, 1, 5*60};
 
+const int64_t SECOND_IN_NANOSECONDS = 1000000000;
+
 enum eBufferConditions{
     eNoDataCondition
     , eHasDataCondition
@@ -49,9 +51,12 @@ enum eBufferConditions{
     NSInputStream* is = nil;
     NSOutputStream* os = nil;
     streamRunLoop = runLoop;
-    
-    outputData = [NSMutableData dataWithCapacity: 4096];
-    inputData  = [NSMutableData dataWithCapacity: 16384];
+
+    NSUInteger outputDataCapacitySize = 4096;
+    NSUInteger inputDataCapacitySize = 16384;
+
+    outputData = [NSMutableData dataWithCapacity: outputDataCapacitySize];
+    inputData  = [NSMutableData dataWithCapacity: inputDataCapacitySize];
     
     if(aDevice.accessory) {
         LOG(@"protocol strings: %@", aDevice.accessory.protocolStrings);
@@ -290,7 +295,7 @@ bool isStatusAnError(NSStreamStatus status)
 {
     LOG(@"readData");
 
-    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * 1000000000))) // n.b. timeout is in nanoseconds
+    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * SECOND_IN_NANOSECONDS)))
     {
         if(timeout == eFinanceTimeout)
         {
@@ -333,8 +338,7 @@ bool isStatusAnError(NSStreamStatus status)
     
     
     // need to wait for data since buffer did not have two bytes
-    
-    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[eAckTimeout] * 1000000000))) // n.b. timeout is in nanoseconds
+    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[eAckTimeout] * SECOND_IN_NANOSECONDS)))
     {
         LOG(@"Ack timeout");
         throw timeout1_exception();
