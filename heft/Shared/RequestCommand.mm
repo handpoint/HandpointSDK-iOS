@@ -272,7 +272,7 @@ XMLCommandRequestCommand::XMLCommandRequestCommand(const std::string& xml)
     memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
 }
 
-static bool isNumber(const std::string str)
+static bool isNumber(const std::string& str)
 {
     std::string::const_iterator it = str.begin();
     while (it != str.end() && isdigit(*it)) ++it;
@@ -482,7 +482,7 @@ ReceiveRequestCommand::ReceiveRequestCommand(const void* payload, std::uint32_t 
 }
 
 ReceiveResponseCommand::ReceiveResponseCommand(NSData* payload)
-: HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)[payload length])
+    : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int)[payload length])
 
 {
     ReceiveResponsePayload* pPayload = GetPayload<ReceiveResponsePayload>();

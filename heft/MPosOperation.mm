@@ -72,7 +72,6 @@ enum eConnectCondition{
 @implementation MPosOperation{
     RequestCommand*	pRequestCommand;
     HeftConnection* connection;
-    //int maxFrameSize;
     __weak id<IResponseProcessor> processor;
     NSData* sharedSecret;
     
@@ -83,19 +82,6 @@ enum eConnectCondition{
     NSMutableData* host_response_data;
     NSError* host_communication_error;
     NSCondition* wait_until_done;
-    
-    /*
-     NSConditionLock* connectLock;
-     enum eConnectionState {
-     eConnectionClosed,
-     eConnectionConnecting,
-     eConnectionConnected,
-     eConnectionSending,
-     eConnectionSendingComplete,
-     eConnectionReceiving,
-     eConnectionReceivingComplete,
-     } connectionState;
-     */
 }
 
 
@@ -139,73 +125,73 @@ enum eConnectCondition{
 
 - (void)main{
     @autoreleasepool {
-        try
-        {
-            RequestCommand* currentRequest = pRequestCommand;
-            [connection resetData];
-            
-            while(true)
+        @synchronized ([MPosOperation class]) {
+            try
             {
-                //LOG_RELEASE(Logger:eFiner, currentRequest->dump(@"Outgoing message")));
+                RequestCommand* currentRequest = pRequestCommand;
+                [connection resetData];
                 
-                // sending the command to the device
-                FrameManager fm(*currentRequest, connection.maxFrameSize);
-                fm.Write(connection);
-                
-                // when/why does this happen?
-                if(pRequestCommand != currentRequest)
-                {
-                    delete currentRequest;
-                    currentRequest = 0;
-                }
-                
-                std::unique_ptr<ResponseCommand> pResponse;
-                BOOL retry;
-                BOOL already_cancelled = NO;
                 while(true)
                 {
-                    do
-                    {
-                        retry = NO;
-                        try
-                        {
-                            // read the response from the cardreader
-                            pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
-                        }
-                        catch (timeout4_exception& to4)
-                        {
-                            // to be nice we will try to send a cancel to the card reader
-                            retry = !already_cancelled ? [processor cancelIfPossible] : NO;
-                            already_cancelled = retry;
-                            if(!retry)
-                            {
-                                throw to4;
-                            }
-                        }
-                    } while (retry);
+                    // sending the command to the device
+                    FrameManager fm(*currentRequest, connection.maxFrameSize);
+                    fm.Write(connection);
                     
-                    if(pResponse->isResponse())
+                    // when/why does this happen?
+                    if(pRequestCommand != currentRequest)
                     {
-                        pResponse->ProcessResult(processor);
-                        if(pResponse->isResponseTo(*pRequestCommand))
-                        {
-                            LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
-                            return;
-                        }
-                        continue;
+                        delete currentRequest;
+                        currentRequest = 0;
                     }
                     
-                    break;
+                    std::unique_ptr<ResponseCommand> pResponse;
+                    BOOL retry;
+                    BOOL already_cancelled = NO;
+                    while(true)
+                    {
+                        do
+                        {
+                            retry = NO;
+                            try
+                            {
+                                // read the response from the cardreader
+                                pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
+                            }
+                            catch (timeout4_exception& to4)
+                            {
+                                // to be nice we will try to send a cancel to the card reader
+                                retry = !already_cancelled ? [processor cancelIfPossible] : NO;
+                                already_cancelled = retry;
+                                if(!retry)
+                                {
+                                    throw to4;
+                                }
+                            }
+                        } while (retry);
+                        
+                        if(pResponse->isResponse())
+                        {
+                            pResponse->ProcessResult(processor);
+                            if(pResponse->isResponseTo(*pRequestCommand))
+                            {
+                                LOG_RELEASE(Logger::eInfo, @"Current mPos operation completed.");
+                                return;
+                            }
+                            continue;
+                        }
+                        
+                        break;
+                    }
+                    
+                    IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
+                    currentRequest = pHostRequest->Process(self);
                 }
-                
-                IRequestProcess* pHostRequest = dynamic_cast<IRequestProcess*>(reinterpret_cast<RequestCommand*>(pResponse.get()));
-                currentRequest = pHostRequest->Process(self);
             }
-        }
-        catch(heft_exception& exception)
-        {
-            LOG(@"MPosOpoeration::main got an exception");
-            [processor sendResponseError:exception.stringId()];
+            catch(heft_exception& exception)
+            {
+                LOG(@"MPosOpoeration::main got an exception");
+                [processor sendResponseError:exception.stringId()];
+            }
         }
     }
 }
@@ -276,6 +262,31 @@ namespace {
 }
 
 
+// header_values: a list of strings where each string is a key: value pair
+void copy_headervalues_to_request(NSArray* header_values, NSMutableURLRequest* request)
+{
+    static const NSArray* keys_to_ignore
+        = [NSArray arrayWithObjects:@"Accept", @"Content-Type", @"Host", @"Connection", @"Content-Length", @"Accept-Language", nil];
+
+    for (int i = 1; i < [header_values count]; i++)
+    {
+        NSString* line = [header_values objectAtIndex:i];
+        NSArray* key_value = [line componentsSeparatedByString:@":"];
+        NSString* key   = [key_value firstObject];
+
+        // ignore keys we already set
+        if ([keys_to_ignore containsObject:key])
+        {
+            NSLog(@"ignore key: %@", key_value);
+            continue;
+        }
+        NSLog(@"add key: %@", key_value);
+
+        NSString* value = [[key_value objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        [request setValue:value forHTTPHeaderField:key];
+    }
+}
+
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest
 {
     LOG_RELEASE(Logger::eFine, @"Sending request to bureau (length:%d).", pRequest->GetLength());
@@ -315,10 +326,9 @@ namespace {
     NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
                                   length:pRequest->GetLength() - (size_of_http_header+4)];
     
-    // get the first line of the http header
+    // get the first line of the http header, looks like this
     // POST /viscus/cr/v1/authorization HTTP/1.1
-    // split it on spaces
-    // get the middle part of that, which is the path on the server
+    // split it on spaces, get the middle part, which is the path on the server
     NSString* first_line = [header_values objectAtIndex:0];
     NSString* path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
     
@@ -343,6 +353,10 @@ namespace {
     [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
     // is this not a part of the request already? - does it get in the way?
     [request setValue:components.host forHTTPHeaderField:@"Host"];
+
+    // parse the rest (after first line) of the header values (key: value) and add relevant values to the request.
+    // iterate with a for loop instead of using subarrayWithRange which copies the array
+    copy_headervalues_to_request(header_values, request);
     
     wait_until_done = [[NSCondition alloc] init];
     
@@ -359,9 +373,6 @@ namespace {
     {
         LOG_RELEASE(Logger::eFiner, @"Response received from host, error: %@", [error localizedDescription])
         
-        // TODO: handle errors here, for example, The network connection was lost.
-        //       Save the error and return it to the reader in processReceive.
-        //       See error handling in old code.
         if (error != nil)
         {
             host_communication_error = error;
@@ -392,7 +403,7 @@ namespace {
 
 
     LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
-    
+
     //Don't forget this line ever
     [uploadTask resume];
     
@@ -440,7 +451,6 @@ namespace {
 {
     LOG_RELEASE(Logger::eFine, @"Posting request to bureau (length:%d).", pRequest->GetLength());
     
-    // LOG_RELEASE(Logger::eFiner, ::dump(@"Outgoing message"));
     LOG(@"%@",::dump(@"Message to bureau:", pRequest->GetData(), pRequest->GetLength()));
     
     components = [[NSURLComponents alloc] init];
@@ -480,14 +490,8 @@ namespace {
     NSArray* header_values = [http_header componentsSeparatedByString:@"\r\n"];
     
     // the post data should be NSData, not NSString - copy straight from the buffer
-    // NSUInteger size_of_http_header = [http_header length];
-    
     // the data is everything after the header+double linefeed
-    
-    // NSData* data = [NSData dataWithBytes:pRequest->GetData() + (int) size_of_http_header+4
-    //                              length:pRequest->GetLength() - (size_of_http_header+4)];
-    // NSData* data = [[parts objectAtIndex:1] dataUsingEncoding:NSISOLatin1StringEncoding];
-    
+
     // get the first line of the http header
     // POST /viscus/cr/v1/authorization HTTP/1.1
     // split it on spaces
@@ -514,7 +518,9 @@ namespace {
     [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
     // is this not a part of the request already? - does it get in the way?
     [request setValue:components.host forHTTPHeaderField:@"Host"];
-    
+
+    copy_headervalues_to_request(header_values, request);
+
     wait_until_done = [[NSCondition alloc] init];
     
     [wait_until_done lock];
@@ -522,7 +528,6 @@ namespace {
 #ifdef DEBUG
     LOG(@"Sending a http request to host");
 #endif
-    //    NSURLSession *session = [NSURLSession sharedSession];
     NSURLSession* session = [NSURLSession sessionWithConfiguration:session_configuration];
     
     NSData* data = [[parts objectAtIndex:1] dataUsingEncoding:NSISOLatin1StringEncoding];
@@ -562,9 +567,7 @@ namespace {
                                               [wait_until_done signal];
                                           }
                                           ];
-    
-    // LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
-    
+        
     [uploadTask resume];
     
     LOG(@"Waiting for lock");

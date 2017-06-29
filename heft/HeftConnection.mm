@@ -12,19 +12,14 @@
 #import "Logger.h"
 #import "debug.h"
 
-#include <queue>
 #include <vector>
-#include <algorithm> // min
-
-using std::min;
-using Buffer = std::vector<uint8_t>;
-using InputQueue = std::queue<Buffer>;
-using OutputQueue = std::queue<Buffer>;
 
 extern NSString* eaProtocol;
 
 int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
-const int ciTimeout[] = {20, 15, 1, 5*60};
+const int64_t ciTimeout[] = {20, 15, 1, 5*60};
+
+const int64_t SECOND_IN_NANOSECONDS = 1000000000;
 
 enum eBufferConditions{
     eNoDataCondition
@@ -41,9 +36,10 @@ enum eBufferConditions{
     NSOutputStream* outputStream;
     NSRunLoop* streamRunLoop;
     
-    InputQueue inputQueue;
     NSMutableData* outputData;
+    NSMutableData* inputData;
     NSConditionLock* bufferLock;
+    dispatch_semaphore_t fd_sema;
 }
 
 @synthesize maxFrameSize;
@@ -54,46 +50,47 @@ enum eBufferConditions{
     EASession* eaSession = nil;
     NSInputStream* is = nil;
     NSOutputStream* os = nil;
-    BOOL result = NO;
     streamRunLoop = runLoop;
-    
-    outputData = [NSMutableData dataWithCapacity: 4096];
+
+    NSUInteger outputDataCapacitySize = 4096;
+    NSUInteger inputDataCapacitySize = 16384;
+
+    outputData = [NSMutableData dataWithCapacity: outputDataCapacitySize];
+    inputData  = [NSMutableData dataWithCapacity: inputDataCapacitySize];
     
     if(aDevice.accessory) {
         LOG(@"protocol strings: %@", aDevice.accessory.protocolStrings);
         eaSession = [[EASession alloc] initWithAccessory:aDevice.accessory
                                              forProtocol:eaProtocol];
-        result = eaSession != nil;
-        if(result) {
+        if(eaSession != nil)
+        {
             is = eaSession.inputStream;
             [is scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
             [is open];
             os = eaSession.outputStream;
             [os scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
             [os open];
+            
+            if(self = [super init])
+            {
+                LOG(@"Connected to %@", aDevice.name);
+                device = aDevice;
+                session = eaSession;
+                outputStream = os;
+                outputStream.delegate = self;
+                inputStream = is;
+                inputStream.delegate = self;
+                maxFrameSize = ciDefaultMaxFrameSize;
+                ourBufferSize = ciDefaultMaxFrameSize;
+                bufferLock = [[NSConditionLock alloc] initWithCondition:eNoDataCondition];
+                fd_sema = dispatch_semaphore_create(0);
+            }
+            return self;
         }
-        else
-            LOG(@"Connection to %@ failed", aDevice.name);
     }
     
-    if(result)
-    {
-        if(self = [super init])
-        {
-            LOG(@"Connected to %@", aDevice.name);
-            device = aDevice;
-            session = eaSession;
-            outputStream = os;
-            outputStream.delegate = self;
-            inputStream = is;
-            inputStream.delegate = self;
-            maxFrameSize = ciDefaultMaxFrameSize;
-            ourBufferSize = ciDefaultMaxFrameSize;
-            bufferLock = [[NSConditionLock alloc] initWithCondition:eNoDataCondition];
-        }
-        return self;
-    }
-    
+    // it failed
+    LOG(@"Connection to %@ failed", aDevice.name);
     self = nil;
     return self;
 }
@@ -147,24 +144,13 @@ enum eBufferConditions{
     }
     
     outputData = nil;
+    inputData = nil;
     
     [self resetData];
 }
 
 - (void)resetData
 {
-    if(inputQueue.size())
-    {
-        LOG(@"resetData waiting for read lock");
-        [bufferLock lock];
-        LOG(@"resetData got read lock");
-        while (!inputQueue.empty())
-        {
-            inputQueue.pop();
-        }
-        [bufferLock unlockWithCondition:eNoDataCondition];
-        LOG(@"resetData released read lock");
-    }
 }
 
 
@@ -200,6 +186,7 @@ bool isStatusAnError(NSStreamStatus status)
 
 - (void)writeAck:(UInt16)ack
 {
+    LOG(@"writeAck");
     @synchronized (outputData) {
         [outputData appendBytes:(uint8_t*)&ack length:sizeof(ack)];
     }
@@ -208,6 +195,7 @@ bool isStatusAnError(NSStreamStatus status)
 
 - (void) write_from_queue_to_stream;
 {
+    LOG(@"HeftConnection::write_from_queue_to_stream");
     @synchronized (outputData) {
         if ([outputData length] > 0)
         {
@@ -234,45 +222,36 @@ bool isStatusAnError(NSStreamStatus status)
 #pragma mark NSStreamDelegate
 - (void)stream:(NSStream*)aStream handleEvent:(NSStreamEvent)eventCode
 {
-    LOG(@"handleEvent starting, eventCode: %d", (int)eventCode);
+    LOG(@"handleEvent starting, eventCode: %d, thread: <%@>", (int)eventCode, [NSThread currentThread]);
     
     switch (eventCode)
     {
         case NSStreamEventOpenCompleted:
+            LOG(@"HeftConnection::handleEvent, NSStreamEventOpenCompleted");
             break;
         case NSStreamEventHasBytesAvailable:
             LOG(@"HeftConnection::handleEvent, NSStreamEventHasBytesAvailable");
 
             if (aStream == inputStream)
             {
-                /*
-                 * Have a buffer (vector). Read into it until there is no more data
-                 * Add the buffer to the input queue.
-                 */
-                
                 NSUInteger nread;
                 const int bufferSize = ciDefaultMaxFrameSize*2; // the buffer isn't large - keep a bigger buffer
                                                                 // just in case things are ... buffered up!
-
                 do {
-                    Buffer readBuffer(bufferSize);
-                    nread = [inputStream read:&readBuffer[0] maxLength:bufferSize];
-                    LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", &readBuffer[0], (int)nread), (int)nread);
-                    
+                    uint8_t buf[bufferSize];
+                    nread = [inputStream read:buf maxLength:bufferSize];
+                    LOG(@"%@ (%d bytes)",::dump(@"HeftConnection::handleEvent: ", buf, (int) nread), (int)nread);
+
                     if (nread > 0)
                     {
-                        readBuffer.resize(nread);
-                        
-                        // TODO: hafa ekki sama lás hér, lásinn fyrir readData er í raun EVENT
-                        // en þessi þráður á aldrei að blokka eftir readData fallinu
-                        
-                        // nota GCD queue til að stjórna þessu, þá sér stýrikerfið um
-                        // lásana...nota barrier í readData partion (þá blokkar það)
-                        [bufferLock lock]; // don't care for a condition, queue can be empty or not
-                        inputQueue.push(std::move(readBuffer));
-                        [bufferLock unlockWithCondition:eHasDataCondition];
+                        @synchronized (inputData) {
+                            [inputData appendBytes:buf length:nread];
+                        }
                     }
                 } while ([inputStream hasBytesAvailable]);
+                
+                LOG(@"Signaling semaphore");
+                dispatch_semaphore_signal(fd_sema);
             }
             else
             {
@@ -314,12 +293,10 @@ bool isStatusAnError(NSStreamStatus status)
 
 - (int)readData:(std::vector<std::uint8_t>&)buffer timeout:(eConnectionTimeout)timeout
 {
-    auto initSize = buffer.size();
-    
-    if(![bufferLock lockWhenCondition:eHasDataCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[timeout]]])
+    LOG(@"readData");
+
+    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[timeout] * SECOND_IN_NANOSECONDS)))
     {
-        LOG(@"readData read lock timed out. inputQueue.empty() == %@", inputQueue.empty() ? @"True" : @"False");
-        
         if(timeout == eFinanceTimeout)
         {
             LOG(@"Finance timeout");
@@ -332,63 +309,54 @@ bool isStatusAnError(NSStreamStatus status)
         }
     }
     
-    LOG(@"readData got read lock");
-    // get everything from the queue
-    while (inputQueue.empty() == false)
-    {
-        Buffer& head = inputQueue.front();
-        buffer.insert(std::end(buffer), std::begin(head), std::end(head));
-        inputQueue.pop();
+    NSUInteger length = 0;
+    @synchronized (inputData) {
+        length = [inputData length];
+        if (length)
+        {
+            buffer.insert(std::end(buffer), (uint8_t*)[inputData bytes], (uint8_t*)[inputData bytes] + length);
+            [inputData setLength:0];
+        }
     }
-    
-    [bufferLock unlockWithCondition:eNoDataCondition];
-    
-    auto bytes_read = buffer.size() - initSize;
-    LOG(@"readData returning %lu bytes, total buffer size=%lu", bytes_read, buffer.size());
-
-    return static_cast<int>(bytes_read);
+    return (int) length;
 }
 
 - (UInt16)readAck{
+    LOG(@"readAck");
+
     UInt16 ack = 0;
+
+    @synchronized (inputData) {
+        if ([inputData length] >= 2)
+        {
+            ack = *(UInt16*)[inputData bytes]; // cast the void* to a UInt16* and then dereference that
+            NSRange range = NSMakeRange(0, 2);
+            [inputData replaceBytesInRange:range withBytes:NULL length:0]; // remove the bytes from inputData
+            return ack;
+        }
+    }
     
-    if(![bufferLock lockWhenCondition:eHasDataCondition
-                           beforeDate:[NSDate dateWithTimeIntervalSinceNow:ciTimeout[eAckTimeout]]])
+    
+    // need to wait for data since buffer did not have two bytes
+    if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW , ciTimeout[eAckTimeout] * SECOND_IN_NANOSECONDS)))
     {
         LOG(@"Ack timeout");
         throw timeout1_exception();
     }
     
-    Buffer& head = inputQueue.front();
-    if (head.size() >= sizeof(ack))
-    {
-        memcpy(&ack, &head[0], sizeof(ack));
-        if (head.size() > sizeof(ack))
+    @synchronized (inputData) {
+        if ([inputData length] >= 2)
         {
-            // remove the first elements from the buffer and shift everything else to the front
-            // do not remove the buffer from queue
-            head.erase(head.begin(), head.begin() + sizeof(ack));
-        }
-        else
-        {
-            // we are done with this packet, remove the buffer from the queue
-            inputQueue.pop();
+            ack = *(UInt16*)[inputData bytes]; // cast int the void* to a UInt16* and then dereference that
+            NSRange range = NSMakeRange(0, 2);
+            [inputData replaceBytesInRange:range withBytes:NULL length:0]; // remove the bytes from inputData
+            if ([inputData length])
+            {
+                // still data in buffer, don't want to block on it, so we signal the semaphore
+                dispatch_semaphore_signal(fd_sema);
+            }
         }
     }
-    
-    if (inputQueue.empty())
-    {
-        LOG(@"readAck, queue empty");
-
-        [bufferLock unlockWithCondition:eNoDataCondition];
-    }
-    else
-    {
-        LOG(@"readAck, data still in queue - %lu items and %lu bytes at head", inputQueue.size(), head.size());
-        [bufferLock unlockWithCondition:eHasDataCondition];
-    }
-    
-    LOG(@"HeftConnection::readAck %04X %04X", ack, ntohs(ack));
     return ack;
 }
 
