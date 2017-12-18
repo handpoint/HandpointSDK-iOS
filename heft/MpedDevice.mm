@@ -778,49 +778,6 @@ enum eSignConditions
     }
 }
 
--(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
-{
-    LOG_RELEASE(Logger::eFine, @"Scanner disabled");
-    NSString *analyticsAction;
-    NSString *analyticsDeprecated;
-
-    if([delegate respondsToSelector:@selector(responseEnableScanner:)])
-    {
-        EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
-        info.statusCode = code;
-        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-        info.xml = xml;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
-            [tmp responseEnableScanner:info];
-        });
-        analyticsAction = @"responseEnableScanner";
-        analyticsDeprecated = @"YES";
-    }
-
-    if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
-    {
-        ScannerDisabledResponseInfo* info = [ScannerDisabledResponseInfo new];
-        info.statusCode =  code;
-        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-        info.xml = xml;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
-            [tmp responseScannerDisabled:info];
-        });
-
-        analyticsAction = @"responseScannerDisabled";
-        analyticsDeprecated = @"NO";
-    }
-    cancelAllowed = NO;
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
-                                    Action:analyticsAction
-                    withOptionalParameters:@{
-                            @"status": [utils ObjectOrNull:status],
-                            @"deprecated" : [utils ObjectOrNull:analyticsDeprecated],
-                            @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]}];
-}
-
 - (void)sendResponseInfo:(NSString *)status code:(int)code xml:(NSDictionary *)xml
 {
     ResponseInfo *info = [ResponseInfo new];
