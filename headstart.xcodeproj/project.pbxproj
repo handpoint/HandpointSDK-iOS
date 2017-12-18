@@ -68,10 +68,8 @@
 		31F2B585C78ECC319D38E60F /* SimulatorAccessory.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */; };
 		31F2B5D92AC501D248724494 /* ScannerDisabledResponseInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponseInfo.m */; };
 		31F2B60647E49970A501FC0B /* HeftDiscovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */; };
-		31F2B6556DB61E5309BB3D1A /* LogInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B06091216BBFD224388E /* LogInfo.h */; };
 		31F2B655F01456FF059346E9 /* AnalyticsConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B0975C4D66430BEA6C04 /* AnalyticsConfig.h */; };
 		31F2B679E1FB2D82AA43D80B /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		31F2B699A7AF4501E896DA13 /* LogInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BF7CB20C8F0506296877 /* LogInfo.m */; };
 		31F2B7F5A96A1999A4340FF7 /* ScannerDisabledResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B17C983602F428AFCFCE /* ScannerDisabledResponseInfo.h */; };
 		31F2B86CDAFA82C3D0B2AC83 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BF27AEBB3A4C942FA73D /* utils.m */; };
 		31F2B91BC26BB2DD2CA45F6F /* HapiRemoteService.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,7 +80,9 @@
 		31F2BC3D5E8563B5928814D4 /* HeftDiscoveryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */; };
 		31F2BC456D60FB3D8F11A2BD /* ScannerEventResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B75CCB456D6F3F6A05E7 /* ScannerEventResponseInfo.h */; };
 		31F2BC4BA1B84700604D4191 /* HandpointAll.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3D82C2C03756E7BF898 /* HandpointAll.h */; };
+		31F2BDB39113E0C30845294E /* LogInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B6BFA57C5FF6C1D20E6B /* LogInfo.m */; };
 		31F2BE397C210A320A8EF783 /* AnalyticsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B18C5E7DCD1A732EE5E2 /* AnalyticsHelper.m */; };
+		31F2BFC129B7690078527E2B /* LogInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BBBC458764557DFB7937 /* LogInfo.h */; };
 		31F2BFF6DE798A269FFFBB9F /* AnalyticsHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BB46BDA866215BE9A922 /* AnalyticsHelper.h */; };
 		491951891DDB66FC004D78FA /* HeftRemoteDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D398954165FF88800F8FA29 /* HeftRemoteDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		495132C51DCB75DE00E245C0 /* HapiRemoteService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */; };
@@ -271,7 +271,6 @@
 		2DEDA3741628B0590043AFBC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2DEDA3761628B0590043AFBC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		31F2B03D78D872E11526BA51 /* AnalyticsConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsConfig.m; sourceTree = "<group>"; };
-		31F2B06091216BBFD224388E /* LogInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInfo.h; sourceTree = "<group>"; };
 		31F2B0975C4D66430BEA6C04 /* AnalyticsConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyticsConfig.h; sourceTree = "<group>"; };
 		31F2B134F950AC98170C7743 /* ResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseInfo.h; sourceTree = "<group>"; };
 		31F2B17C983602F428AFCFCE /* ScannerDisabledResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerDisabledResponseInfo.h; sourceTree = "<group>"; };
@@ -285,11 +284,13 @@
 		31F2B41E970099A064C54E74 /* SimulatorAccessory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatorAccessory.h; sourceTree = "<group>"; };
 		31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HapiRemoteService.h; sourceTree = "<group>"; };
 		31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftStatusReportDelegate.h; sourceTree = "<group>"; };
+		31F2B6BFA57C5FF6C1D20E6B /* LogInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogInfo.m; path = Shared/api/LogInfo.m; sourceTree = "<group>"; };
 		31F2B75CCB456D6F3F6A05E7 /* ScannerEventResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerEventResponseInfo.h; sourceTree = "<group>"; };
 		31F2B7983A6A20892C8472F0 /* ScannerEventResponseInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerEventResponseInfo.m; sourceTree = "<group>"; };
 		31F2B9345A2C45B1FB74AC3B /* FinanceResponseInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FinanceResponseInfo.m; sourceTree = "<group>"; };
 		31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscovery.h; sourceTree = "<group>"; };
 		31F2BB46BDA866215BE9A922 /* AnalyticsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyticsHelper.h; sourceTree = "<group>"; };
+		31F2BBBC458764557DFB7937 /* LogInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInfo.h; sourceTree = "<group>"; };
 		31F2BC845D0AAC6DF2A910BC /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		31F2BD15EEFCEA7DB6821342 /* HeftClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftClient.h; sourceTree = "<group>"; };
 		31F2BD38E7D46FC2C576ED0A /* FinanceResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinanceResponseInfo.h; sourceTree = "<group>"; };
@@ -297,7 +298,6 @@
 		31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscoveryDelegate.h; sourceTree = "<group>"; };
 		31F2BF27AEBB3A4C942FA73D /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "heft-Prefix.pch"; sourceTree = "<group>"; };
-		31F2BF7CB20C8F0506296877 /* LogInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogInfo.m; sourceTree = "<group>"; };
 		495132B91DCB5BC300E245C0 /* rpc_test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rpc_test.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		495132BD1DCB5BC300E245C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		495132C61DCB777200E245C0 /* tipAdjustTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tipAdjustTest.m; sourceTree = "<group>"; };
@@ -447,6 +447,8 @@
 				31F2BB46BDA866215BE9A922 /* AnalyticsHelper.h */,
 				31F2B18A909E97283E73A518 /* debug.h */,
 				31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */,
+				31F2BBBC458764557DFB7937 /* LogInfo.h */,
+				31F2B6BFA57C5FF6C1D20E6B /* LogInfo.m */,
 			);
 			path = heft;
 			sourceTree = "<group>";
@@ -518,8 +520,6 @@
 				31F2B3D82C2C03756E7BF898 /* HandpointAll.h */,
 				31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */,
 				31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */,
-				31F2BF7CB20C8F0506296877 /* LogInfo.m */,
-				31F2B06091216BBFD224388E /* LogInfo.h */,
 				31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */,
 				31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */,
 			);
@@ -712,7 +712,6 @@
 				31F2BC4BA1B84700604D4191 /* HandpointAll.h in Headers */,
 				31F2B91BC26BB2DD2CA45F6F /* HapiRemoteService.h in Headers */,
 				31F2B162C4231D087E2F251C /* FinanceResponseInfo.h in Headers */,
-				31F2B6556DB61E5309BB3D1A /* LogInfo.h in Headers */,
 				31F2B7F5A96A1999A4340FF7 /* ScannerDisabledResponseInfo.h in Headers */,
 				31F2B60647E49970A501FC0B /* HeftDiscovery.h in Headers */,
 				31F2BC3D5E8563B5928814D4 /* HeftDiscoveryDelegate.h in Headers */,
@@ -720,6 +719,7 @@
 				31F2B655F01456FF059346E9 /* AnalyticsConfig.h in Headers */,
 				31F2BC15E169EE3A731C18C0 /* utils.h in Headers */,
 				31F2BFF6DE798A269FFFBB9F /* AnalyticsHelper.h in Headers */,
+				31F2BFC129B7690078527E2B /* LogInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -978,12 +978,12 @@
 				31F2BA0C66A5552B883B755D /* ScannerEventResponseInfo.m in Sources */,
 				31F2B3E4E662D0AF3C2EA1EA /* ResponseInfo.m in Sources */,
 				31F2B3FC64D5D7A8DBB8C944 /* FinanceResponseInfo.m in Sources */,
-				31F2B699A7AF4501E896DA13 /* LogInfo.m in Sources */,
 				31F2B5D92AC501D248724494 /* ScannerDisabledResponseInfo.m in Sources */,
 				31F2B585C78ECC319D38E60F /* SimulatorAccessory.m in Sources */,
 				31F2BA7DF337E6FECB23C0ED /* AnalyticsConfig.m in Sources */,
 				31F2BE397C210A320A8EF783 /* AnalyticsHelper.m in Sources */,
 				31F2B86CDAFA82C3D0B2AC83 /* utils.m in Sources */,
+				31F2BDB39113E0C30845294E /* LogInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
