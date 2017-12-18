@@ -103,7 +103,7 @@ enum eSignConditions
                          , kAppVersionInfoKey:@0x0107
                          , kXMLDetailsInfoKey:@""
                          };
-            
+
             isTransactionResultPending = simulatorState.isInException();
 #else
             connection = aConnection;
@@ -249,11 +249,11 @@ enum eSignConditions
 
 - (BOOL)postOperationToQueueIfNew:(MPosOperation *)operation
 {
-    // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^ {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
     {
         [operation start];
     });
+
     return YES;
 }
 
@@ -763,7 +763,10 @@ enum eSignConditions
 
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
                                     Action:@"responseScannerEvent"
-                    withOptionalParameters:@{@"status": [utils ObjectOrNull:status]}];
+                    withOptionalParameters:@{
+                            @"status": [utils ObjectOrNull:status],
+                            @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]
+                    }];
 
     if ([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
@@ -773,6 +776,49 @@ enum eSignConditions
             [tmp responseScannerEvent:info];
         });
     }
+}
+
+-(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+{
+    LOG_RELEASE(Logger::eFine, @"Scanner disabled");
+    NSString *analyticsAction;
+    NSString *analyticsDeprecated;
+
+    if([delegate respondsToSelector:@selector(responseEnableScanner:)])
+    {
+        EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
+        info.statusCode = code;
+        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+        info.xml = xml;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseEnableScanner:info];
+        });
+        analyticsAction = @"responseEnableScanner";
+        analyticsDeprecated = @"YES";
+    }
+
+    if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
+    {
+        ScannerDisabledResponseInfo* info = [ScannerDisabledResponseInfo new];
+        info.statusCode =  code;
+        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+        info.xml = xml;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseScannerDisabled:info];
+        });
+
+        analyticsAction = @"responseScannerDisabled";
+        analyticsDeprecated = @"NO";
+    }
+    cancelAllowed = NO;
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:analyticsAction
+                    withOptionalParameters:@{
+                            @"status": [utils ObjectOrNull:status],
+                            @"deprecated" : [utils ObjectOrNull:analyticsDeprecated],
+                            @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]}];
 }
 
 - (void)sendResponseInfo:(NSString *)status code:(int)code xml:(NSDictionary *)xml

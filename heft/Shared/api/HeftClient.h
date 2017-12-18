@@ -16,12 +16,13 @@
 /**
  @brief param values for HeftClient -(BOOL)logSetLevel:(eLogLevel)level.
  */
-typedef enum{
-	eLogNone
-	, eLogInfo
-	, eLogFull
-	, eLogDebug
-} eLogLevel;
+typedef NS_ENUM(NSUInteger, eLogLevel){
+	eLogNone, // 0
+	eLogError,// 1
+	eLogInfo, // 2
+	eLogFull, // 3
+	eLogDebug,// 4
+};
 
 /** 
 @brief HeftClient protocol methods.

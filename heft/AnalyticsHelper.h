@@ -41,4 +41,6 @@ extern const struct ActionTypeStrings actionTypeName;
 
 + (void)upload;
 
++ (NSMutableDictionary *)XMLtoDict:(NSDictionary *)xml;
+
 @end
