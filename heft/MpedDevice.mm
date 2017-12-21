@@ -106,7 +106,7 @@ enum eSignConditions{
 
 @implementation MpedDevice{
     HeftConnection* connection;
-    NSData* sharedSecret;
+
     __weak NSObject<HeftStatusReportDelegate>* delegate;
     NSConditionLock* signLock;
     BOOL signatureIsOk;
@@ -145,7 +145,7 @@ enum eSignConditions{
             isTransactionResultPending = simulatorState.isInException();
 #else
             connection = aConnection;
-            sharedSecret = aSharedSecret;
+            self.sharedSecret = aSharedSecret;
             
             try
             {
@@ -333,7 +333,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -385,7 +385,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -422,7 +422,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -446,7 +446,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -471,7 +471,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -490,7 +490,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     BOOL return_value = [self postOperationToQueueIfNew:operation];
     if(return_value){
         isTransactionResultPending = NO;
@@ -592,7 +592,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     
     // hardcoded here - should be able to cancel multiscan when nothing has been scanned
     cancelAllowed = YES;
@@ -610,7 +610,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -621,7 +621,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -632,7 +632,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
@@ -643,7 +643,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     return [self postOperationToQueueIfNew:operation];
 }
 
@@ -653,7 +653,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     return [self postOperationToQueueIfNew:operation];
 }
 
@@ -663,7 +663,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     return [self postOperationToQueueIfNew:operation];
 }
 
@@ -691,7 +691,7 @@ enum eSignConditions{
     MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
                                                            connection:connection
                                                      resultsProcessor:self
-                                                         sharedSecret:sharedSecret];
+                                                         sharedSecret:self.sharedSecret];
     
     return [self postOperationToQueueIfNew:operation];
 }
