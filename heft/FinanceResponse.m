@@ -1,11 +1,10 @@
 //
-// Created by Juan Nuñez on 14/12/2017.
+// Created by Juan Nuñez on 18/12/2017.
 // Copyright (c) 2017 zdv. All rights reserved.
 //
 
-#import "FinanceResponseInfo.h"
+#import "FinanceResponse.h"
 
-
-@implementation FinanceResponseInfo
+@implementation FinanceResponse
 @synthesize financialResult, isRestarting, authorisedAmount, transactionId, customerReceipt, merchantReceipt;
 @end

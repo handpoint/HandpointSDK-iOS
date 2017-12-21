@@ -30,7 +30,7 @@
               serialNumber:(NSString *)newSerialNumber
           firmwareRevision:(NSString *)newFirmwareRevision
           hardwareRevision:(NSString *)newHardwareRevision
-           protocolStrings:(NSArray *)newProtocolStrings;
+           protocolStrings:(NSArray *)newProtocolStrings
 {
     self = [super init];
 

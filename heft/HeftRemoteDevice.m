@@ -5,26 +5,28 @@
 
 #import "HeftRemoteDevice.h"
 
+@interface EAAccessory ()
+
+@property (nonatomic, readonly) NSString *macAddress;
+
+@end
+
+
+@interface HeftRemoteDevice ()
+
+@property(nonatomic) NSString* name;
+@property(nonatomic) NSString* address;
+@property(nonatomic) EAAccessory* accessory;
+
+@end
 
 @implementation HeftRemoteDevice
 
-@synthesize name, address, accessory;
-
-- (id)initWithName:(NSString*)aName address:(NSString*)aAddress
+- (id)initWithAccessory:(EAAccessory*)accessory
 {
 	if(self = [super init])
     {
-		name = aName;
-		address = aAddress;
-	}
-	return self;
-}
-
-- (id)initWithAccessory:(EAAccessory*)aAccessory
-{
-	if(self = [super init])
-    {
-		accessory = aAccessory;
+		self.accessory = accessory;
 	}
 	return self;
 }
@@ -33,16 +35,16 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:name forKey:@"name"];
-	[aCoder encodeObject:address forKey:@"address"];
+	[aCoder encodeObject:self.name forKey:@"name"];
+	[aCoder encodeObject:self.address forKey:@"address"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
 	if(self = [super init])
     {
-		name = [aDecoder decodeObjectForKey:@"name"];
-		address = [aDecoder decodeObjectForKey:@"address"];
+		self.name = [aDecoder decodeObjectForKey:@"name"];
+        self.address = [aDecoder decodeObjectForKey:@"address"];
 	}
 	return self;
 }
@@ -51,12 +53,17 @@
 
 - (NSString*)name
 {
-	return name ? name : accessory.name;
+	return self.name ?: self.accessory.name;
+}
+
+- (NSString *)address
+{
+    return self.accessory.macAddress;
 }
 
 - (EAAccessory*)accessory
 {
-    return accessory ? accessory : nil;
+    return self.accessory;
 }
 
 @end

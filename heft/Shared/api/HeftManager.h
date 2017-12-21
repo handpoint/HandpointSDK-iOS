@@ -21,8 +21,10 @@
 
 @interface HeftManager : NSObject <HeftDiscovery>
 
-+ (HeftManager *)sharedManager;
 @property (nonatomic, readonly) NSString *version;
+
+
++ (HeftManager *)sharedManager;
 
 /**
  Starts creation of a connection to the specified device.
@@ -34,7 +36,19 @@
            sharedSecret:(NSString *)sharedSecret
                delegate:(NSObject <HeftStatusReportDelegate> *)delegate;
 
-- (void)cleanup;
+/**
+@brief Stored array which contains all found devices.
+*/
+@property(nonatomic, readonly) NSArray* devicesCopy DEPRECATED_ATTRIBUTE;
+@property(nonatomic, readonly) NSArray* connectedCardReaders;
+/**
+ Delegate object. Will handle notifications which contain in HeftDiscoveryDelegate protocol.
+ */
+@property(nonatomic, weak) id<HeftDiscoveryDelegate> delegate;
+/**
+ Start search for all available BT devices.
+ */
+- (void)startDiscovery;
 
 @end
 

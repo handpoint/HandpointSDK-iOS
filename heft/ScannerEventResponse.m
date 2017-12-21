@@ -1,5 +1,5 @@
 //
-//  ResponseInfo.m
+//  ScannerEventResponse.m
 //  headstart
 //
 //  Created by Juan Nuñez on 14/12/2017.
@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ResponseInfo.h"
+#import "ScannerEventResponse.h"
 
-@implementation ResponseInfo
-@synthesize statusCode, status, xml;
+@implementation ScannerEventResponse
+@synthesize scanCode;
 @end

@@ -15,6 +15,3 @@
 @property (nonatomic) NSDictionary *xml;
 
 @end
-
-@interface ResponseInfo : NSObject<ResponseInfo>
-@end

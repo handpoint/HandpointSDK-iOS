@@ -57,6 +57,3 @@
 /**@}*/
 
 @end
-
-@interface FinanceResponseInfo : ResponseInfo<FinanceResponseInfo>
-@end

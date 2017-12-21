@@ -1,5 +1,5 @@
 //
-//  HeftStatusReportPublic.h
+//  HeftStatusReportDelegate.h
 //  headstart
 //
 

@@ -3,8 +3,6 @@
 //  headstart
 //
 
-// #import "StdAfx.h"
-
 #include <string>
 
 #import "MpedDevice.h"
@@ -17,17 +15,20 @@
 #import "Logger.h"
 #import "debug.h"
 
-#import "ScannerDisabledResponseInfo.h"
+#import "ScannerDisabledResponse.h"
 #import "HeftStatusReportDelegate.h"
 #import "ScannerEventResponseInfo.h"
-#import "ResponseInfo.h"
 #import "FinanceResponseInfo.h"
-#import "LogInfo.h"
+#import "LogInfoObject.h"
+#import "ScannerEventResponse.h"
+#import "FinanceResponse.h"
 
 #ifdef HEFT_SIMULATOR
+
 #import "simulator/Shared/RequestCommand.h"
 #import "simulator/Shared/ResponseCommand.h"
 #import "simulator/MPosOperation.h"
+
 #else
 
 #import "FrameManager.h"
@@ -76,7 +77,7 @@ enum eSignConditions
 
 - (id)initWithConnection:(HeftConnection *)aConnection
             sharedSecret:(NSData *)aSharedSecret
-                delegate:(NSObject <HeftStatusReportDelegate> *)aDelegate
+                delegate:(id <HeftStatusReportDelegate>)aDelegate
 {
     LOG(@"MpedDevice::initWithConnection");
 
@@ -108,7 +109,7 @@ enum eSignConditions
 #else
             connection = aConnection;
             self.sharedSecret = aSharedSecret;
-            
+
             try
             {
 
@@ -161,8 +162,8 @@ enum eSignConditions
                                                       path:@"InitResponse"];
                 if ([xml count] > 0)
                 {
-                    NSString *trp = [xml objectForKey:@"TransactionResultPending"];
-                    isTransactionResultPending = ((trp != nil) && [trp isEqualToString:@"true"]) ? YES : NO;
+                    NSString *trp = xml[@"TransactionResultPending"];
+                    isTransactionResultPending = (trp != nil) && [trp isEqualToString:@"true"];
                 }
                 else
                 {
@@ -600,7 +601,7 @@ enum eSignConditions
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
-    
+
     // hardcoded here - should be able to cancel multiscan when nothing has been scanned
     cancelAllowed = YES;
     return [self postOperationToQueueIfNew:operation];
@@ -727,7 +728,7 @@ enum eSignConditions
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
-    
+
     return [self postOperationToQueueIfNew:operation];
 }
 
@@ -755,10 +756,11 @@ enum eSignConditions
 
 - (void)sendScannerEvent:(NSString *)status code:(int)code xml:(NSDictionary *)xml
 {
-    ScannerEventResponseInfo *info = [ScannerEventResponseInfo new];
+    ScannerEventResponse *info = [ScannerEventResponse new];
     info.statusCode = code;
     info.status = xml ? xml[@"StatusMessage"] : status;
     info.scanCode = xml ? xml[@"code"] : @"";
+
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
 
     [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
@@ -780,9 +782,9 @@ enum eSignConditions
 
 - (void)sendResponseInfo:(NSString *)status code:(int)code xml:(NSDictionary *)xml
 {
-    ResponseInfo *info = [ResponseInfo new];
+    ResponseInfoObject *info = [ResponseInfoObject new];
     info.statusCode = code;
-    info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+    info.status = xml ? xml[@"StatusMessage"] : status;
     info.xml = xml;
     LOG_RELEASE(Logger::eFine, @"%@", info.status);
     dispatch_async(dispatch_get_main_queue(), ^
@@ -796,7 +798,7 @@ enum eSignConditions
 
 - (void)sendResponseError:(NSString *)status
 {
-    ResponseInfo *info = [ResponseInfo new];
+    ResponseInfoObject *info = [ResponseInfoObject new];
     info.status = status;
     LOG_RELEASE(Logger::eFine, @"sendResponseError: %@", status);
 
@@ -910,10 +912,7 @@ enum eSignConditions
         xml = [self getValuesFromXml:@(pResponse->GetXmlReturn().c_str()) path:@"getReportResponse"];
         if ([xml count] > 0)
         {
-            // NSString* xml_status = xml[@"StatusMesssage"];
-            // LOG(@"xml_status: %@", xml_status);
             NSString *report_data = xml[@"Data"];
-            // call some method with these parameters
             [self sendReportResult:report_data];
         }
 
@@ -932,15 +931,15 @@ enum eSignConditions
     if ([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]) count] > 0)
     {
         NSString *ca = [xml objectForKey:@"CancelAllowed"];
-        cancelAllowed = ((ca != nil) && [ca isEqualToString:@"true"]) ? YES : NO;
+        cancelAllowed = (ca != nil) && [ca isEqualToString:@"true"];
 
         [self sendResponseInfo:statusMessage code:status xml:xml];
     }
     else if ([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"]) count] > 0)
     {
         // the card reader scannerEvent message doesn't include a CancelAllowed flag, but we know the card reader accepts a cancel at this stage
-        NSString *ca = [xml objectForKey:@"CancelAllowed"];
-        cancelAllowed = ((ca == nil) || [ca isEqualToString:@"true"]) ? YES : NO; // i.e. NO if not there or not set to "true" (e.g. if set to "false")
+        NSString *ca = xml[@"CancelAllowed"];
+        cancelAllowed = (ca == nil) || [ca isEqualToString:@"true"]; // i.e. NO if not there or not set to "true" (e.g. if set to "false")
         [self sendScannerEvent:statusMessage code:status xml:xml];
     }
 #ifdef HEFT_SIMULATOR
@@ -952,7 +951,7 @@ enum eSignConditions
 - (void)processFinanceResponse:(FinanceResponseCommand *)pResponse
 {
     int status = pResponse->GetStatus();
-    FinanceResponseInfo *info = [FinanceResponseInfo new];
+    FinanceResponse *info = [FinanceResponse new];
     info.financialResult = pResponse->GetFinancialStatus();
     info.isRestarting = pResponse->isRestarting();
     info.statusCode = status;
@@ -1015,7 +1014,7 @@ enum eSignConditions
 
 - (void)processLogInfoResponse:(GetLogInfoResponseCommand *)pResponse
 {
-    LogInfo *info = [LogInfo new];
+    LogInfoObject *info = [LogInfoObject new];
     int status = pResponse->GetStatus();
     info.statusCode = status;
     info.status = statusMessages[status];

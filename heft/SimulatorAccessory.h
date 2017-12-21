@@ -19,4 +19,13 @@
 @property(nonatomic, readonly) NSString *hardwareRevision;
 @property(nonatomic, readonly) NSArray *protocolStrings;
 
+- (id)initWithConnectionID:(NSUInteger)newConnectionID
+              manufacturer:(NSString *)newManufacturer
+                      name:(NSString *)newName
+               modelNumber:(NSString *)newModelNumber
+              serialNumber:(NSString *)newSerialNumber
+          firmwareRevision:(NSString *)newFirmwareRevision
+          hardwareRevision:(NSString *)newHardwareRevision
+           protocolStrings:(NSArray *)newProtocolStrings;
+
 @end

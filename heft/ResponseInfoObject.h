@@ -6,7 +6,5 @@
 #import <Foundation/Foundation.h>
 #import "ResponseInfo.h"
 
-@protocol ScannerEventResponseInfo <ResponseInfo>
-//The code that was scanned.
-@property (nonatomic) NSString *scanCode;
+@interface ResponseInfoObject : NSObject<ResponseInfo>
 @end

@@ -3,9 +3,10 @@
 // Copyright (c) 2017 zdv. All rights reserved.
 //
 
-#import "ScannerDisabledResponseInfo.h"
+#import "ResponseInfo.h"
+#import "ScannerDisabledResponse.h"
 
 
-@implementation ScannerDisabledResponseInfo
+@implementation ScannerDisabledResponse
 
 @end

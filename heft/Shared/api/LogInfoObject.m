@@ -3,8 +3,8 @@
 // Copyright (c) 2017 zdv. All rights reserved.
 //
 
-#import "LogInfo.h"
+#import "LogInfoObject.h"
 
-@implementation LogInfo
+@implementation LogInfoObject
 @synthesize log;
 @end

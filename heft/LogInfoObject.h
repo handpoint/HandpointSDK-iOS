@@ -5,10 +5,8 @@
 
 #import <Foundation/Foundation.h>
 #import "ResponseInfo.h"
+#import "ResponseInfoObject.h"
+#import "LogInfo.h"
 
-@protocol ScannerDisabledResponseInfo <ResponseInfo>
-
-@end
-
-@interface ScannerDisabledResponseInfo : ResponseInfo<ScannerDisabledResponseInfo>
+@interface LogInfoObject : ResponseInfoObject<LogInfo>
 @end
