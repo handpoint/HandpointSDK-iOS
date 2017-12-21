@@ -14,7 +14,14 @@
 #import "HapiRemoteService.h"
 #import "HeftClient.h"
 #import "HeftManager.h"
-#import "HeftStatusReport.h"
+#import "CmdIds.h"
+#import "ResponseInfo.h"
+#import "FinanceResponseInfo.h"
+#import "HeftDiscovery.h"
+#import "HeftDiscoveryDelegate.h"
+#import "HeftStatusReportDelegate.h"
+#import "ScannerEventResponseInfo.h"
+#import "ScannerDisabledResponseInfo.h"
 
 #endif
 

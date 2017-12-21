@@ -56,7 +56,6 @@ static HeftManager *instance = nil;
     if (self)
     {
         LOG(@"HeftManager::init");
-        self.eaDevices = [NSMutableArray new];
 
 #ifndef HEFT_SIMULATOR
         NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
@@ -230,11 +229,6 @@ static HeftManager *instance = nil;
 
 #pragma mark HeftDiscovery
 
-- (void)startDiscovery:(BOOL)fDiscoverAllDevices
-{
-    [self startDiscovery];
-}
-
 - (void)startDiscovery
 {
 #ifdef HEFT_SIMULATOR
@@ -270,6 +264,10 @@ static HeftManager *instance = nil;
 
 - (NSArray *)connectedCardReaders
 {
+    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
+                                    Action:@"connectedCardReaders"
+                    withOptionalParameters:nil];
+    
     EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
 
     NSMutableArray *readers = [NSMutableArray array];
@@ -329,10 +327,6 @@ static EAAccessory *simulatorAccessory = nil;
 
 #endif
 
-- (void)resetDevices
-{
-    self.eaDevices = [NSMutableArray new];
-}
 
 #pragma mark EAAccessory notificationss
 

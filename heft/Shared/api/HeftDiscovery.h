@@ -12,5 +12,16 @@
  */
 @protocol HeftDiscovery
 /**
+ @brief Stored array which contains all found devices.
+ */
+@property(nonatomic, readonly) NSArray* connectedCardReaders;
+/**
+ Delegate object. Will handle notifications which contain in HeftDiscoveryDelegate protocol.
+ */
+@property(nonatomic, weak) id<HeftDiscoveryDelegate> delegate;
+/**
+ Start search for all available BT devices.
+ */
+- (void)startDiscovery;
 
 @end
