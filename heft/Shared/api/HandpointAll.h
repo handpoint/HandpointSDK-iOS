@@ -12,6 +12,7 @@
 #define HandpointAll_h
 
 #import "HapiRemoteService.h"
+#import "HeftRemoteDevice.h"
 #import "HeftClient.h"
 #import "HeftManager.h"
 #import "CmdIds.h"

@@ -86,6 +86,8 @@
 		0D2DF8A31FED1BB7006F1AAB /* ScannerDisabledResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
 		0D2DF8A41FED1BB7006F1AAB /* ScannerEventResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; };
 		0D2DF8A51FED1BB7006F1AAB /* LogInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; };
+		0D2DF8A81FED2353006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
+		0D2DF8A91FED235A006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
@@ -264,6 +266,7 @@
 			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/include";
 			dstSubfolderSpec = 0;
 			files = (
+				0D2DF8A91FED235A006F1AAB /* HeftRemoteDevice.h in CopyFiles */,
 				0D2DF8761FED1B2D006F1AAB /* ResponseInfo.h in CopyFiles */,
 				0D2DF8771FED1B2D006F1AAB /* FinanceResponseInfo.h in CopyFiles */,
 				0D2DF8781FED1B2D006F1AAB /* HeftClient.h in CopyFiles */,
@@ -286,6 +289,7 @@
 			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include";
 			dstSubfolderSpec = 0;
 			files = (
+				0D2DF8A81FED2353006F1AAB /* HeftRemoteDevice.h in CopyFiles */,
 				0D2DF8821FED1B37006F1AAB /* ResponseInfo.h in CopyFiles */,
 				0D2DF8831FED1B37006F1AAB /* FinanceResponseInfo.h in CopyFiles */,
 				0D2DF8841FED1B37006F1AAB /* HeftClient.h in CopyFiles */,
