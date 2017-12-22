@@ -20,7 +20,10 @@ void simulateDeviceDisconnect();
 	__weak id<IResponseProcessor> processor;
 }
 
-- (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret{
+- (id)initWithRequest:(RequestCommand *)aRequest
+		   connection:(HeftConnection *)aConnection
+	 resultsProcessor:(id <IResponseProcessor>)aProcessor
+		 sharedSecret:(NSString *)aSharedSecret{
 	if(self = [super init]){
 		LOG(@"Operation started");
 		pRequestCommand = aRequest;

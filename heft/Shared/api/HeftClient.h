@@ -33,7 +33,7 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  @{
  */
 
-@property (readwrite, nonatomic) NSData *sharedSecret;
+@property (readwrite, nonatomic) NSString *sharedSecret;
 
 //- (void)setDelegate:(NSObject<HeftClientDelegate>*)aDelegate;
 

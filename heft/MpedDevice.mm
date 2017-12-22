@@ -76,7 +76,7 @@ enum eSignConditions
 @synthesize isTransactionResultPending;
 
 - (id)initWithConnection:(HeftConnection *)aConnection
-            sharedSecret:(NSData *)aSharedSecret
+            sharedSecret:(NSString *)aSharedSecret
                 delegate:(id <HeftStatusReportDelegate>)aDelegate
 {
     LOG(@"MpedDevice::initWithConnection");
@@ -1008,9 +1008,6 @@ enum eSignConditions
                     }];
     [AnalyticsHelper upload];
 }
-
-/*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
- }*/
 
 - (void)processLogInfoResponse:(GetLogInfoResponseCommand *)pResponse
 {

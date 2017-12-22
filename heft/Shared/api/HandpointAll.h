@@ -16,6 +16,7 @@
 #import "HeftClient.h"
 #import "HeftManager.h"
 #import "CmdIds.h"
+#import "LogInfo.h"
 #import "ResponseInfo.h"
 #import "FinanceResponseInfo.h"
 #import "HeftDiscovery.h"

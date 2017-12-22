@@ -12,6 +12,9 @@ class RequestCommand;
 
 @interface MPosOperation : NSOperation<IHostProcessor>
 
-- (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)aProcessor sharedSecret:(NSData*)aSharedSecret;
+- (id)initWithRequest:(RequestCommand *)aRequest
+           connection:(HeftConnection *)aConnection
+     resultsProcessor:(id <IResponseProcessor>)aProcessor
+         sharedSecret:(NSString *)aSharedSecret;
 
 @end

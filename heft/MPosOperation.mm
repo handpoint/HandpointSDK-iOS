@@ -73,7 +73,7 @@ enum eConnectCondition
     RequestCommand *pRequestCommand;
     HeftConnection *connection;
     __weak id <IResponseProcessor> processor;
-    NSData *sharedSecret;
+    NSString *sharedSecret;
 
     // we get the host and the port from the ConnectToHost request command.
     NSURLSessionConfiguration *session_configuration;
@@ -100,7 +100,7 @@ enum eConnectCondition
 - (id)initWithRequest:(RequestCommand *)aRequest
            connection:(HeftConnection *)aConnection
      resultsProcessor:(id <IResponseProcessor>)aProcessor
-         sharedSecret:(NSData *)aSharedSecret
+         sharedSecret:(NSString *)aSharedSecret
 {
     if (self = [super init])
     {
@@ -256,7 +256,7 @@ namespace {
     components = [[NSURLComponents alloc] init];
     components.scheme = @"https";
     components.host = [NSString stringWithUTF8String:pRequest->GetAddr().c_str()];
-    components.port = [NSNumber numberWithInt:pRequest->GetPort()];
+    components.port = @(pRequest->GetPort());
 
     timeout = pRequest->GetTimeout();
     host_response_data = nil;
@@ -294,7 +294,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
         }
         NSLog(@"add key: %@", key_value);
 
-        NSString *value = [[key_value objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString *value = [key_value[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         [request setValue:value forHTTPHeaderField:key];
     }
 }
@@ -502,7 +502,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
     // split on double linefeed
     NSArray *parts = [http_request componentsSeparatedByString:@"\r\n\r\n"];
     // should have two parts, the header and the data
-    NSString *http_header = [parts objectAtIndex:0];
+    NSString *http_header = parts[0];
     NSArray *header_values = [http_header componentsSeparatedByString:@"\r\n"];
 
     // the post data should be NSData, not NSString - copy straight from the buffer
@@ -512,8 +512,8 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
     // POST /viscus/cr/v1/authorization HTTP/1.1
     // split it on spaces
     // get the middle part of that, which is the path on the server
-    NSString *first_line = [header_values objectAtIndex:0];
-    NSString *path = [[first_line componentsSeparatedByString:@" "] objectAtIndex:1];
+    NSString *first_line = header_values[0];
+    NSString *path = [first_line componentsSeparatedByString:@" "][1];
 
 #ifdef DEBUG
     LOG_RELEASE(Logger::eFiner, @"first line: %@, path: %@", first_line, path);
@@ -546,7 +546,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 #endif
     NSURLSession *session = [NSURLSession sessionWithConfiguration:session_configuration];
 
-    NSData *data = [[parts objectAtIndex:1] dataUsingEncoding:NSISOLatin1StringEncoding];
+    NSData *data = [parts[1] dataUsingEncoding:NSISOLatin1StringEncoding];
 
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                fromData:data
@@ -616,7 +616,6 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
     }
 }
 
-
 - (RequestCommand *)processSignature:(SignatureRequestCommand *)pRequest
 {
     LOG(@"Signature required request");
@@ -628,8 +627,10 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 {
     LOG(@"Challenge required request");
 
+    NSData *sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
+
     CCHmacContext hmacContext;
-    std::vector<std::uint8_t> mx([sharedSecret length]);
+    std::vector<std::uint8_t> mx([sharedSecretData length]);
     std::vector<std::uint8_t> zx(mx.size());
     std::vector<std::uint8_t> msg(pRequest->GetRandomNum());
 
@@ -637,11 +638,35 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
     msg.resize(mx.size() * 2);
     memcpy(&msg[mx.size()], &mx[0], mx.size());
 
-    CCHmacInit(&hmacContext, kCCHmacAlgSHA256, [sharedSecret bytes], [sharedSecret length]);
+    CCHmacInit(&hmacContext, kCCHmacAlgSHA256, [sharedSecretData bytes], [sharedSecretData length]);
     CCHmacUpdate(&hmacContext, &msg[0], msg.size());
     CCHmacFinal(&hmacContext, &zx[0]);
 
     return new ChallengeResponseCommand(mx, zx);
+}
+
+- (NSData *)SharedSecretDataFromString:(NSString *)sharedSecretString;
+{
+    NSUInteger sharedSecretLength = 64; //Shared secret string length
+    NSMutableData *data = [NSMutableData data];
+    //Check if shared secret has correct length, othervise we create a string of zeros with the correct length. That will result in a "shared secret invalid"
+    if ([sharedSecretString length] != sharedSecretLength)
+    {
+        LOG(@"Shared secret string must be exactly %@ characters.", @(sharedSecretLength));
+        sharedSecretString = [@"0" stringByPaddingToLength:sharedSecretLength withString:@"0" startingAtIndex:0];
+    }
+
+    for (int i = 0; i < 32; i++)
+    {
+        NSUInteger index = static_cast<NSUInteger>(i * 2);
+        NSRange range = NSMakeRange(index, 2);
+        NSString *bytes = [sharedSecretString substringWithRange:range];
+        NSScanner *scanner = [NSScanner scannerWithString:bytes];
+        unsigned int intValue;
+        [scanner scanHexInt:&intValue];
+        [data appendBytes:&intValue length:1];
+    }
+    return data;
 }
 
 @end

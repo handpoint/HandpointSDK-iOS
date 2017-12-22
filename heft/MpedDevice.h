@@ -10,9 +10,9 @@
 
 @interface MpedDevice : NSObject<HeftClient>
 
-@property (readwrite, nonatomic) NSData *sharedSecret;
+@property (readwrite, nonatomic) NSString *sharedSecret;
 
-- (id)initWithConnection:(HeftConnection*)aConnection sharedSecret:(NSData*)aSharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate;
+- (id)initWithConnection:(HeftConnection *)aConnection sharedSecret:(NSString *)aSharedSecret delegate:(id <HeftStatusReportDelegate>)aDelegate;
 - (void)shutdown;
 
 @end

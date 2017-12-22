@@ -122,8 +122,6 @@ static HeftManager *instance = nil;
 {
     @autoreleasepool
     {
-        NSData *sharedSecretData = [self SharedSecretDataFromString:sharedSecret];
-
 #ifdef HEFT_SIMULATOR
         [NSThread sleepForTimeInterval:2];
         id <HeftClient> result = nil;
@@ -161,7 +159,7 @@ static HeftManager *instance = nil;
             id <HeftClient> result = nil;
 
             result = [[MpedDevice alloc] initWithConnection:connection
-                                               sharedSecret:sharedSecretData
+                                               sharedSecret:sharedSecret
                                                    delegate:delegate];
 
             dispatch_async(dispatch_get_main_queue(), ^
@@ -267,7 +265,7 @@ static HeftManager *instance = nil;
     [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
                                     Action:@"connectedCardReaders"
                     withOptionalParameters:nil];
-    
+
     EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
 
     NSMutableArray *readers = [NSMutableArray array];
