@@ -192,7 +192,7 @@ static HeftManager *instance = nil;
 // A real kludge, need to automate this so it can be independent of Xcode project settings
 - (NSString *)version
 {
-    NSString *version = @"2.6.2";
+    NSString *version = @"2.7.0";
     NSString *SDKVersion;
 #ifdef HEFT_SIMULATOR
     //Simulator
