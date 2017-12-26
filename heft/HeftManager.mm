@@ -126,7 +126,7 @@ static HeftManager *instance = nil;
         [NSThread sleepForTimeInterval:2];
         id <HeftClient> result = nil;
         result = [[MpedDevice alloc] initWithConnection:nil
-                                           sharedSecret:sharedSecretData
+                                           sharedSecret:sharedSecret
                                                delegate:delegate];
 
         dispatch_async(dispatch_get_main_queue(), ^
@@ -275,7 +275,8 @@ static HeftManager *instance = nil;
         {
             if ([protocol isEqualToString:eaProtocol])
             {
-                [readers addObject:device];
+                HeftRemoteDevice *remoteDevice = [[HeftRemoteDevice alloc] initWithAccessory:device];
+                [readers addObject:remoteDevice];
             }
         }
     }

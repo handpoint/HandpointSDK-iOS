@@ -24,9 +24,12 @@
 
 - (id)initWithAccessory:(EAAccessory*)accessory
 {
-	if(self = [super init])
+    self = [super init];
+
+	if(self)
     {
 		self.accessory = accessory;
+        self.address = [accessory valueForKey:@"macAddress"]; //accessory.macAddress;
 	}
 	return self;
 }
@@ -41,10 +44,12 @@
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-	if(self = [super init])
+    self = [super init];
+
+	if(self)
     {
 		self.name = [aDecoder decodeObjectForKey:@"name"];
-        self.address = [aDecoder decodeObjectForKey:@"address"];
+		self.address = [aDecoder decodeObjectForKey:@"address"];
 	}
 	return self;
 }
@@ -54,11 +59,6 @@
 - (NSString*)name
 {
 	return self.name ?: self.accessory.name;
-}
-
-- (NSString *)address
-{
-    return self.accessory.macAddress;
 }
 
 - (EAAccessory*)accessory

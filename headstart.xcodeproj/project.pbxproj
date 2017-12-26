@@ -88,6 +88,8 @@
 		0D2DF8A51FED1BB7006F1AAB /* LogInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; };
 		0D2DF8A81FED2353006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0D2DF8A91FED235A006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
+		0D2DF8AE1FED7CC3006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
+		0D2DF8AF1FED7CC9006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
@@ -222,6 +224,7 @@
 			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary/include";
 			dstSubfolderSpec = 0;
 			files = (
+				0D2DF8AF1FED7CC9006F1AAB /* HeftRemoteDevice.h in CopyFiles */,
 				0D2DF88E1FED1BAF006F1AAB /* ResponseInfo.h in CopyFiles */,
 				0D2DF88F1FED1BAF006F1AAB /* FinanceResponseInfo.h in CopyFiles */,
 				0D2DF8901FED1BAF006F1AAB /* HeftClient.h in CopyFiles */,
@@ -244,6 +247,7 @@
 			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary/include";
 			dstSubfolderSpec = 0;
 			files = (
+				0D2DF8AE1FED7CC3006F1AAB /* HeftRemoteDevice.h in CopyFiles */,
 				0D2DF89A1FED1BB7006F1AAB /* ResponseInfo.h in CopyFiles */,
 				0D2DF89B1FED1BB7006F1AAB /* FinanceResponseInfo.h in CopyFiles */,
 				0D2DF89C1FED1BB7006F1AAB /* HeftClient.h in CopyFiles */,
@@ -513,40 +517,39 @@
 		2D398929165FF23D00F8FA29 /* heft */ = {
 			isa = PBXGroup;
 			children = (
-				2D5ACC95169B229200BA0D48 /* simulator */,
-				2D39895C165FF88800F8FA29 /* Shared */,
-				2D398953165FF88800F8FA29 /* HeftManager.mm */,
+				31F2B0975C4D66430BEA6C04 /* AnalyticsConfig.h */,
+				31F2B03D78D872E11526BA51 /* AnalyticsConfig.m */,
+				31F2BB46BDA866215BE9A922 /* AnalyticsHelper.h */,
+				31F2B18C5E7DCD1A732EE5E2 /* AnalyticsHelper.m */,
+				31F2B18A909E97283E73A518 /* debug.h */,
+				31F2B73CFE0D39398E355B51 /* FinanceResponse.h */,
+				31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */,
+				4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */,
+				31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */,
 				2D398950165FF88800F8FA29 /* HeftConnection.h */,
 				2D398951165FF88800F8FA29 /* HeftConnection.mm */,
+				2D398953165FF88800F8FA29 /* HeftManager.mm */,
+				31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */,
+				31F2BBBC458764557DFB7937 /* LogInfoObject.h */,
+				31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */,
 				2D398958165FF88800F8FA29 /* MpedDevice.h */,
 				2D398959165FF88800F8FA29 /* MpedDevice.mm */,
-				2D39895A165FF88800F8FA29 /* ResponseParser.h */,
-				2D39895B165FF88800F8FA29 /* ResponseParser.m */,
 				2D39894D165FF88800F8FA29 /* MPosOperation.h */,
 				2D39894E165FF88800F8FA29 /* MPosOperation.mm */,
-				4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */,
-				31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */,
+				31F2BF3A34E4715103899656 /* ResponseInfoObject.h */,
+				31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */,
+				2D39895A165FF88800F8FA29 /* ResponseParser.h */,
+				2D39895B165FF88800F8FA29 /* ResponseParser.m */,
 				31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */,
 				31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponse.m */,
-				31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */,
-				31F2B41E970099A064C54E74 /* SimulatorAccessory.h */,
-				31F2B0975C4D66430BEA6C04 /* AnalyticsConfig.h */,
-				31F2BC845D0AAC6DF2A910BC /* utils.h */,
-				31F2B03D78D872E11526BA51 /* AnalyticsConfig.m */,
-				31F2B18C5E7DCD1A732EE5E2 /* AnalyticsHelper.m */,
-				31F2BF27AEBB3A4C942FA73D /* utils.m */,
-				31F2BB46BDA866215BE9A922 /* AnalyticsHelper.h */,
-				31F2B18A909E97283E73A518 /* debug.h */,
-				31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */,
-				31F2BBBC458764557DFB7937 /* LogInfoObject.h */,
-				31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */,
-				31F2BF3A34E4715103899656 /* ResponseInfoObject.h */,
-				31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */,
-				31F2B73CFE0D39398E355B51 /* FinanceResponse.h */,
-				31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */,
-				31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */,
 				31F2B0BBFCF9313B5B65CE37 /* ScannerEventResponse.h */,
-				31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */,
+				31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */,
+				2D39895C165FF88800F8FA29 /* Shared */,
+				2D5ACC95169B229200BA0D48 /* simulator */,
+				31F2B41E970099A064C54E74 /* SimulatorAccessory.h */,
+				31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */,
+				31F2BC845D0AAC6DF2A910BC /* utils.h */,
+				31F2BF27AEBB3A4C942FA73D /* utils.m */,
 			);
 			path = heft;
 			sourceTree = "<group>";
@@ -609,6 +612,7 @@
 		2D39895D165FF88800F8FA29 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */,
 				2D39895E165FF88800F8FA29 /* CmdIds.h */,
 				31F2B134F950AC98170C7743 /* ResponseInfo.h */,
 				31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */,
