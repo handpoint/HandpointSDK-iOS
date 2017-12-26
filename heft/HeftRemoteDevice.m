@@ -5,37 +5,39 @@
 
 #import "HeftRemoteDevice.h"
 
-@interface EAAccessory ()
+/*@interface EAAccessory ()
 
 @property (nonatomic, readonly) NSString *macAddress;
 
-@end
+@end*/
 
 
 @interface HeftRemoteDevice ()
 
-@property(nonatomic) NSString* name;
-@property(nonatomic) NSString* address;
+//@property(nonatomic) NSString* name;
+//@property(nonatomic) NSString* address;
 @property(nonatomic) EAAccessory* accessory;
 
 @end
 
 @implementation HeftRemoteDevice
 
-- (id)initWithAccessory:(EAAccessory*)accessory
+@synthesize accessory;
+
+- (id)initWithAccessory:(EAAccessory*)aAccessory
 {
     self = [super init];
 
 	if(self)
     {
-		self.accessory = accessory;
-        self.address = [accessory valueForKey:@"macAddress"]; //accessory.macAddress;
+		accessory = aAccessory;
 	}
+    
 	return self;
 }
 
 #pragma mark NSCoding
-
+/*
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
 	[aCoder encodeObject:self.name forKey:@"name"];
@@ -53,17 +55,23 @@
 	}
 	return self;
 }
-
+ 
+*/
 #pragma mark property
 
 - (NSString*)name
 {
-	return self.name ?: self.accessory.name;
+    return accessory.name;
+}
+
+- (NSString*)address
+{
+    return [accessory valueForKey:@"macAddress"];
 }
 
 - (EAAccessory*)accessory
 {
-    return self.accessory;
+    return accessory;
 }
 
 @end
