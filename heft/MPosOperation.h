@@ -11,7 +11,10 @@ class RequestCommand;
 
 @interface MPosOperation : NSOperation<IHostProcessor>
 
-- (id)initWithRequest:(RequestCommand*)aRequest connection:(HeftConnection*)aConnection resultsProcessor:(id<IResponseProcessor>)processor sharedSecret:(NSData*)aSharedSecret;
+- (id)initWithRequest:(RequestCommand *)aRequest
+           connection:(HeftConnection *)aConnection
+     resultsProcessor:(id <IResponseProcessor>)processor
+         sharedSecret:(NSString *)aSharedSecret;
 
 + (void)startRunLoop;
 @end

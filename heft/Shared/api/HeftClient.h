@@ -17,11 +17,11 @@
  @brief param values for HeftClient -(BOOL)logSetLevel:(eLogLevel)level.
  */
 typedef NS_ENUM(NSUInteger, eLogLevel){
-	eLogNone                    // 0
-    , eLogError                 // 1
-	, eLogInfo                  // 2
-	, eLogFull                  // 3
-	, eLogDebug                 // 4
+	eLogNone, // 0
+	eLogError,// 1
+	eLogInfo, // 2
+	eLogFull, // 3
+	eLogDebug,// 4
 };
 
 /** 
@@ -33,7 +33,7 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  @{
  */
 
-@property (readwrite, nonatomic) NSData *sharedSecret;
+@property (readwrite, nonatomic) NSString *sharedSecret;
 
 //- (void)setDelegate:(NSObject<HeftClientDelegate>*)aDelegate;
 

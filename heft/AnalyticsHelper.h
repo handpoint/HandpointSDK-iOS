@@ -23,9 +23,9 @@ struct ActionTypeStrings
 };
 extern const struct ActionTypeStrings actionTypeName;
 
-+ (void)setupAnalyticsWithGlobalProperties:(NSDictionary *)properties
-                                 projectID:(NSString *)projectID
-                                  writeKey:(NSString *)writeKey;
++ (void)setupAnalyticsWithVersion:(NSString *)version
+                        projectID:(NSString *)projectID
+                         writeKey:(NSString *)writeKey;
 
 + (void)enableGeoLocation;
 

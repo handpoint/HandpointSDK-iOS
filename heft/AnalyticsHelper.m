@@ -6,6 +6,7 @@
 //  Copyright © 2016 zdv. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "AnalyticsHelper.h"
 #import "KeenClient.h"
 
@@ -19,15 +20,42 @@ const struct ActionTypeStrings actionTypeName = {
     .scannerAction = @"scannerAction"
 };
 
-+ (void)setupAnalyticsWithGlobalProperties:(NSDictionary *)properties
-                                 projectID:(NSString *)projectID
-                                  writeKey:(NSString *)writeKey
++ (void)setupAnalyticsWithVersion:(NSString *)version
+                        projectID:(NSString *)projectID
+                         writeKey:(NSString *)writeKey
 {
     KeenClient *keenClient = [KeenClient sharedClientWithProjectID:projectID
                                                        andWriteKey:writeKey
                                                         andReadKey:nil];
 
-    keenClient.globalPropertiesDictionary = properties;
+    keenClient.globalPropertiesDictionary = [self analyticsGlobalPropertiesWithVersion:version];
+}
+
++ (NSDictionary *)analyticsGlobalPropertiesWithVersion:(NSString *)version
+{
+    UIDevice *currentDevice = [UIDevice currentDevice];
+
+    NSDictionary *device = @{
+            @"model": [currentDevice model],
+            @"systemName": [currentDevice systemName],
+            @"systemVersion": [currentDevice systemVersion],
+            @"deviceID": [[currentDevice identifierForVendor] UUIDString]
+    };
+
+    NSBundle *mainBundle = [NSBundle mainBundle];
+
+    NSDictionary *app = @{
+            @"handpointSDKVersion": version,
+            @"bundleId": [mainBundle bundleIdentifier],
+            @"version": [mainBundle infoDictionary][@"CFBundleShortVersionString"]
+    };
+
+    NSDictionary *properties = @{
+            @"Device": device,
+            @"App": app
+    };
+
+    return properties;
 }
 
 + (void)disableGeoLocation

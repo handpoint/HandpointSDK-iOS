@@ -3,13 +3,10 @@
 //  headstart
 //
 
-// #import "StdAfx.h"
-
 #include <string>
 
 #import "MpedDevice.h"
 #import "HeftConnection.h"
-#import "HeftStatusReport.h"
 #import "ResponseParser.h"
 #import "HeftCmdIds.h"
 #import "HeftManager.h"
@@ -18,93 +15,55 @@
 #import "Logger.h"
 #import "debug.h"
 
+#import "ScannerDisabledResponse.h"
+#import "HeftStatusReportDelegate.h"
+#import "ScannerEventResponseInfo.h"
+#import "FinanceResponseInfo.h"
+#import "LogInfoObject.h"
+#import "ScannerEventResponse.h"
+#import "FinanceResponse.h"
+
 #ifdef HEFT_SIMULATOR
+
 #import "simulator/Shared/RequestCommand.h"
 #import "simulator/Shared/ResponseCommand.h"
 #import "simulator/MPosOperation.h"
+
 #else
+
 #import "FrameManager.h"
 #import "Frame.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
 #import "MPosOperation.h"
+
 #endif
 
 
-const NSString* kSerialNumberInfoKey = @"SerialNumber";
-const NSString* kPublicKeyVersionInfoKey = @"PublicKeyVersion";
-const NSString* kEMVParamVersionInfoKey = @"EMVParamVersion";
-const NSString* kGeneralParamInfoKey = @"GeneralParam";
-const NSString* kManufacturerCodeInfoKey = @"ManufacturerCode";
-const NSString* kModelCodeInfoKey = @"ModelCode";
-const NSString* kAppNameInfoKey = @"AppName";
-const NSString* kAppVersionInfoKey = @"AppVersion";
-const NSString* kXMLDetailsInfoKey = @"XMLDetails";
+const NSString *kSerialNumberInfoKey = @"SerialNumber";
+const NSString *kPublicKeyVersionInfoKey = @"PublicKeyVersion";
+const NSString *kEMVParamVersionInfoKey = @"EMVParamVersion";
+const NSString *kGeneralParamInfoKey = @"GeneralParam";
+const NSString *kManufacturerCodeInfoKey = @"ManufacturerCode";
+const NSString *kModelCodeInfoKey = @"ModelCode";
+const NSString *kAppNameInfoKey = @"AppName";
+const NSString *kAppVersionInfoKey = @"AppVersion";
+const NSString *kXMLDetailsInfoKey = @"XMLDetails";
 
-NSArray* statusMessages = @[
-                            @"Undefined"
-                            ,@"Success"
-                            ,@"Invalid data"
-                            ,@"Processing error"
-                            ,@"Command not allowed"
-                            ,@"Device is not initialized"
-                            ,@"Connection timeout detected"
-                            ,@"Connection error"
-                            ,@"Send error"
-                            ,@"Receiving error"
-                            ,@"No data available"
-                            ,@"Transaction not allowed"
-                            ,@"Currency not supported"
-                            ,@"No host configuration found"
-                            ,@"Card reader error"
-                            ,@"Failed to read card data"
-                            ,@"Invalid card"
-                            ,@"Timeout waiting for user input"
-                            ,@"User cancelled the transaction"
-                            ,@"Invalid signature"
-                            ,@"Waiting for card"
-                            ,@"Card detected"
-                            ,@"Waiting for application selection"
-                            ,@"Waiting for application confirmation"
-                            ,@"Waiting for amount validation"
-                            ,@"Waiting for PIN entry"
-                            ,@"Waiting for manual card data"
-                            ,@"Waiting for card removal"
-                            ,@"Waiting for gratuity"
-                            ,@"Shared secret invalid"
-                            ,@"Authenticating POS"
-                            ,@"Waiting for signature"
-                            ,@"Connecting to host"
-                            ,@"Sending data to host"
-                            ,@"Waiting for data from host"
-                            ,@"Disconnecting from host"
-                            ,@"PIN entry completed"
-                            ,@"Merchant cancelled the transaction"
-                            ,@"Request invalid"
-                            ,@"Card cancelled the transaction"
-                            ,@"Blocked card"
-                            ,@"Request for authorisation timed out"
-                            ,@"Request for payment timed out"
-                            ,@"Response to authorisation request timed out"
-                            ,@"Response to payment request timed out"
-                            ,@"Please insert card in chip reader"
-                            ,@"Remove the card from the reader"
-                            ,@"This device does not have a scanner"
-                            ,@""
-                            ,@"Operation cancelled, the battery is too low. Please charge."
-                            ,@"Waiting for accoutn type selection"
-                            ,@"Bluetooth is not supported on this device" ];
+NSArray *statusMessages = @[
+        @"Undefined", @"Success", @"Invalid data", @"Processing error", @"Command not allowed", @"Device is not initialized", @"Connection timeout detected", @"Connection error", @"Send error", @"Receiving error", @"No data available", @"Transaction not allowed", @"Currency not supported", @"No host configuration found", @"Card reader error", @"Failed to read card data", @"Invalid card", @"Timeout waiting for user input", @"User cancelled the transaction", @"Invalid signature", @"Waiting for card", @"Card detected", @"Waiting for application selection", @"Waiting for application confirmation", @"Waiting for amount validation", @"Waiting for PIN entry", @"Waiting for manual card data", @"Waiting for card removal", @"Waiting for gratuity", @"Shared secret invalid", @"Authenticating POS", @"Waiting for signature", @"Connecting to host", @"Sending data to host", @"Waiting for data from host", @"Disconnecting from host", @"PIN entry completed", @"Merchant cancelled the transaction", @"Request invalid", @"Card cancelled the transaction", @"Blocked card", @"Request for authorisation timed out", @"Request for payment timed out", @"Response to authorisation request timed out", @"Response to payment request timed out", @"Please insert card in chip reader", @"Remove the card from the reader", @"This device does not have a scanner", @"", @"Operation cancelled, the battery is too low. Please charge.", @"Waiting for accoutn type selection", @"Bluetooth is not supported on this device"];
 
 
-@interface MpedDevice ()<IResponseProcessor>
+@interface MpedDevice () <IResponseProcessor>
 @end
 
-enum eSignConditions{
-    eNoSignCondition
-    , eSignCondition
+enum eSignConditions
+{
+    eNoSignCondition, eSignCondition
 };
 
-@implementation MpedDevice{
+@implementation MpedDevice
+{
     HeftConnection* connection;
 
     __weak NSObject<HeftStatusReportDelegate>* delegate;
@@ -116,19 +75,23 @@ enum eSignConditions{
 @synthesize mpedInfo;
 @synthesize isTransactionResultPending;
 
-- (id)initWithConnection:(HeftConnection*)aConnection sharedSecret:(NSData*)aSharedSecret delegate:(NSObject<HeftStatusReportDelegate>*)aDelegate
+- (id)initWithConnection:(HeftConnection *)aConnection
+            sharedSecret:(NSString *)aSharedSecret
+                delegate:(id <HeftStatusReportDelegate>)aDelegate
 {
     LOG(@"MpedDevice::initWithConnection");
 
 #ifndef HEFT_SIMULATOR
-    if(aConnection){
+    if (aConnection)
+    {
 #endif
-        if(self = [super init]){
+        if (self = [super init])
+        {
             LOG(@"MpedDevice::init");
             delegate = aDelegate;
             signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
             cancelAllowed = NO; // cancel is only allowed when an operation is under way.
-            
+
 #ifdef HEFT_SIMULATOR
             mpedInfo = @{
                          kSerialNumberInfoKey:@"000123400123"
@@ -141,30 +104,30 @@ enum eSignConditions{
                          , kAppVersionInfoKey:@0x0107
                          , kXMLDetailsInfoKey:@""
                          };
-            
+
             isTransactionResultPending = simulatorState.isInException();
 #else
             connection = aConnection;
             self.sharedSecret = aSharedSecret;
-            
+
             try
             {
-                
+
                 FrameManager fm(InitRequestCommand(connection.maxFrameSize,
-                                                   [HeftManager sharedManager].version
-                                                   ),
-                                connection.maxFrameSize
-                                );
-                
+                        [HeftManager sharedManager].version
+                        ),
+                        connection.maxFrameSize
+                );
+
                 fm.Write(connection);
-                
+
                 std::unique_ptr<InitResponseCommand> pResponse(fm.ReadResponse<InitResponseCommand>(connection, false));
-                
-                if(!pResponse)
+
+                if (!pResponse)
                 {
                     throw communication_exception(@"initWithConnection: pResponse is empty");
                 }
-                
+
                 LOG(@"Status: %d", pResponse->GetStatus());
                 if (pResponse->GetStatus() == EFT_PP_STATUS_INVALID_DATA)
                 {
@@ -180,7 +143,7 @@ enum eSignConditions{
                         throw communication_exception(@"Error trying to initialize. EFT_PP_STATUS_INVALID_DATA");
                     }
                 }
-                
+
                 auto bufferSize = pResponse->GetBufferSize();
                 LOG(@"Buffersize from reader: %d", bufferSize);
                 if (bufferSize >= 2048 && connection.maxFrameSize <= 2048)
@@ -194,13 +157,13 @@ enum eSignConditions{
                 {
                     connection.maxFrameSize = bufferSize;
                 }
-                
-                NSDictionary* xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
+
+                NSDictionary *xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
                                                       path:@"InitResponse"];
-                if([xml count] > 0)
+                if ([xml count] > 0)
                 {
-                    NSString* trp = [xml objectForKey:@"TransactionResultPending"];
-                    isTransactionResultPending = ((trp != nil) && [trp isEqualToString:@"true"]) ? YES : NO;
+                    NSString *trp = xml[@"TransactionResultPending"];
+                    isTransactionResultPending = (trp != nil) && [trp isEqualToString:@"true"];
                 }
                 else
                 {
@@ -212,26 +175,18 @@ enum eSignConditions{
                  there is no need for it as mpedInfo already provides all important information.
                  But, in preparation for the future, I´ve decided that we should deprecate the kXMLDetailsInfoKey tag.
                  */
-                
+
                 mpedInfo = @{
-                             kSerialNumberInfoKey:@(pResponse->GetSerialNumber().c_str())
-                             , kPublicKeyVersionInfoKey:@(pResponse->GetPublicKeyVer())
-                             , kEMVParamVersionInfoKey:@(pResponse->GetEmvParamVer())
-                             , kGeneralParamInfoKey:@(pResponse->GetGeneralParamVer())
-                             , kManufacturerCodeInfoKey:@(pResponse->GetManufacturerCode())
-                             , kModelCodeInfoKey:@(pResponse->GetModelCode())
-                             , kAppNameInfoKey:@(pResponse->GetAppName().c_str())
-                             , kAppVersionInfoKey:@(pResponse->GetAppVer())
-                             , kXMLDetailsInfoKey:@(pResponse->GetXmlDetails().c_str())
-                             };
+                        kSerialNumberInfoKey: @(pResponse->GetSerialNumber().c_str()), kPublicKeyVersionInfoKey: @(pResponse->GetPublicKeyVer()), kEMVParamVersionInfoKey: @(pResponse->GetEmvParamVer()), kGeneralParamInfoKey: @(pResponse->GetGeneralParamVer()), kManufacturerCodeInfoKey: @(pResponse->GetManufacturerCode()), kModelCodeInfoKey: @(pResponse->GetModelCode()), kAppNameInfoKey: @(pResponse->GetAppName().c_str()), kAppVersionInfoKey: @(pResponse->GetAppVer()), kXMLDetailsInfoKey: @(pResponse->GetXmlDetails().c_str())
+                };
             }
-            catch(connection_broken_exception& cb_exception)
+            catch (connection_broken_exception &cb_exception)
             {
                 LOG(@"MpedDevice, CONNECTION BROKEN EXCEPTION - NEED TO HANDLE EOT.");
                 [self sendResponseError:cb_exception.stringId()];
                 self = nil;
             }
-            catch(heft_exception& exception)
+            catch (heft_exception &exception)
             {
                 [self sendResponseError:exception.stringId()];
                 self = nil;
@@ -240,12 +195,13 @@ enum eSignConditions{
         }
 #ifndef HEFT_SIMULATOR
     }
-    else{
+    else
+    {
         [self sendResponseError:@"Can't create bluetooth connection"];
         self = nil;
     }
 #endif
-    
+
     return self;
 }
 
@@ -266,21 +222,24 @@ enum eSignConditions{
 
 - (void)cancel
 {
-    if(!cancelAllowed){
+    if (!cancelAllowed)
+    {
         LOG_RELEASE(Logger::eFine, @"Cancelling is not allowed at this stage.");
 
-        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"cancel-NotAllowed" withOptionalParameters:nil];
+        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                        Action:@"cancel-NotAllowed"
+                        withOptionalParameters:nil];
 
         return;
     }
-    
+
     LOG_RELEASE(Logger::eFine, @"Cancelling current operation");
     cancelAllowed = NO;
-    
+
 #if HEFT_SIMULATOR
     // [queue cancelAllOperations];
 #else
-    FrameManager fm(IdleRequestCommand(), connection.maxFrameSize);
+    FrameManager fm (IdleRequestCommand(), connection.maxFrameSize);
     fm.WriteWithoutAck(connection);
 #endif
     LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
@@ -289,48 +248,55 @@ enum eSignConditions{
 }
 
 
-- (BOOL)postOperationToQueueIfNew:(MPosOperation*)operation
+- (BOOL)postOperationToQueueIfNew:(MPosOperation *)operation
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^ {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+    {
         [operation start];
     });
+
     return YES;
 }
 
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString *)currency cardholder:(BOOL)present
 {
     return [self saleWithAmount:amount currency:currency cardholder:present reference:@""];
 }
 
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference{
+- (BOOL)saleWithAmount:(NSInteger)amount
+              currency:(NSString *)currency
+            cardholder:(BOOL)present
+             reference:(NSString *)reference
+{
     LOG_RELEASE(Logger::eInfo,
-                @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
-                (int)amount, currency, present ? @"is present" : @"is not present", reference);
+            @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
+            (int) amount, currency, present ? @"is present" : @"is not present", reference);
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
             @"amount": [utils ObjectOrNull:@(amount)],
             @"currency": [utils ObjectOrNull:currency],
             @"reference": [utils ObjectOrNull:reference]}];
-    
+
     NSString *params = @"";
-    if(reference != NULL && reference.length != 0) {
+    if (reference != NULL && reference.length != 0)
+    {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                  @"<FinancialTransactionRequest>"
-                  @"<CustomerReference>"
-                  @"%@"
-                  @"</CustomerReference>"
-                  @"</FinancialTransactionRequest>",
-                  reference];
+                                                    @"<FinancialTransactionRequest>"
+                                                    @"<CustomerReference>"
+                                                    @"%@"
+                                                    @"</CustomerReference>"
+                                                    @"</FinancialTransactionRequest>",
+                                            reference];
     }
-    
-    FinanceRequestCommand* frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
-                                                           std::string([currency UTF8String]),
-                                                           (std::uint32_t)amount,
-                                                           present,
-                                                           std::string(),
-                                                           std::string([params UTF8String])
-                                                           );
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
+
+    FinanceRequestCommand *frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
+            std::string([currency UTF8String]),
+            (std::uint32_t) amount,
+            present,
+            std::string(),
+            std::string([params UTF8String])
+    );
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frq
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -338,51 +304,59 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString *)months{
+- (BOOL)saleWithAmount:(NSInteger)amount
+              currency:(NSString *)currency
+            cardholder:(BOOL)present
+             reference:(NSString *)reference
+              divideBy:(NSString *)months
+{
     LOG_RELEASE(Logger::eInfo,
-                @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
-                (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
+            @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
+            (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
             @"amount": [utils ObjectOrNull:@(amount)],
             @"currency": [utils ObjectOrNull:currency],
             @"reference": [utils ObjectOrNull:reference],
             @"divideBy": [utils ObjectOrNull:months]}];
-    
+
     NSString *params = @"";
     NSString *refrenceString = @"";
     NSString *monthsString = @"";
-    if(reference != NULL && reference.length != 0) {
+    if (reference != NULL && reference.length != 0)
+    {
         refrenceString = [NSString stringWithFormat:
-                          @"<CustomerReference>"
-                          @"%@"
-                          @"</CustomerReference>",
-                          reference];
+                @"<CustomerReference>"
+                        @"%@"
+                        @"</CustomerReference>",
+                reference];
     }
-    if(months != NULL && months.length != 0) {
+    if (months != NULL && months.length != 0)
+    {
         monthsString = [NSString stringWithFormat:
-                        @"<BudgetNumber>"
+                @"<BudgetNumber>"
                         @"%@"
                         @"</BudgetNumber>",
-                        months];
+                months];
     }
-    if( refrenceString.length != 0 || monthsString.length != 0) {
+    if (refrenceString.length != 0 || monthsString.length != 0)
+    {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                  @"<FinancialTransactionRequest>"
-                  @"%@"
-                  @"%@"
-                  @"</FinancialTransactionRequest>",
-                  refrenceString, monthsString];
+                                                    @"<FinancialTransactionRequest>"
+                                                    @"%@"
+                                                    @"%@"
+                                                    @"</FinancialTransactionRequest>",
+                                            refrenceString, monthsString];
     }
-    
-    FinanceRequestCommand* frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
-                                                           std::string([currency UTF8String]),
-                                                           (std::uint32_t)amount,
-                                                           present,
-                                                           std::string(),
-                                                           std::string([params UTF8String])
-                                                           );
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frq
+
+    FinanceRequestCommand *frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
+            std::string([currency UTF8String]),
+            (std::uint32_t) amount,
+            present,
+            std::string(),
+            std::string([params UTF8String])
+    );
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frq
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -391,35 +365,41 @@ enum eSignConditions{
 }
 
 
-- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present{
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString *)currency cardholder:(BOOL)present
+{
     return [self refundWithAmount:amount currency:currency cardholder:present reference:@""];
 }
 
-- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString *)reference{
+- (BOOL)refundWithAmount:(NSInteger)amount
+                currency:(NSString *)currency
+              cardholder:(BOOL)present
+               reference:(NSString *)reference
+{
     LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Refund" withOptionalParameters:@{
             @"amount": [utils ObjectOrNull:@(amount)],
             @"currency": [utils ObjectOrNull:currency],
             @"reference": [utils ObjectOrNull:reference]}];
-    
+
     NSString *params = @"";
-    if(reference != NULL && reference.length != 0) {
+    if (reference != NULL && reference.length != 0)
+    {
         params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                  @"<FinancialTransactionRequest>"
-                  @"<CustomerReference>"
-                  @"%@"
-                  @"</CustomerReference>"
-                  @"</FinancialTransactionRequest>",
-                  reference];
+                                                    @"<FinancialTransactionRequest>"
+                                                    @"<CustomerReference>"
+                                                    @"%@"
+                                                    @"</CustomerReference>"
+                                                    @"</FinancialTransactionRequest>",
+                                            reference];
     }
-    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_REFUND_REQ,
-                                                           std::string([currency UTF8String]),
-                                                           (std::uint32_t)amount,
-                                                           present,
-                                                           std::string(),
-                                                           std::string([params UTF8String]));
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
+    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_REFUND_REQ,
+            std::string([currency UTF8String]),
+            (std::uint32_t) amount,
+            present,
+            std::string(),
+            std::string([params UTF8String]));
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -427,23 +407,27 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
+- (BOOL)saleVoidWithAmount:(NSInteger)amount
+                  currency:(NSString *)currency
+                cardholder:(BOOL)present
+               transaction:(NSString *)transaction
+{
     LOG_RELEASE(Logger::eInfo,
-                @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
-                transaction, (int)amount, currency, present ? @"is present" : @"is not present");
+            @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
+            transaction, (int) amount, currency, present ? @"is present" : @"is not present");
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"SaleVoid" withOptionalParameters:@{
             @"amount": [utils ObjectOrNull:@(amount)],
             @"currency": [utils ObjectOrNull:currency]}];
-    
+
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
-                                                           std::string([currency UTF8String]),
-                                                           (std::uint32_t)amount,
-                                                           present,
-                                                           std::string([transaction UTF8String]),
-                                                           std::string());
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
+    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
+            std::string([currency UTF8String]),
+            (std::uint32_t) amount,
+            present,
+            std::string([transaction UTF8String]),
+            std::string());
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -451,24 +435,23 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction{
+- (BOOL)refundVoidWithAmount:(NSInteger)amount
+                    currency:(NSString *)currency
+                  cardholder:(BOOL)present
+                 transaction:(NSString *)transaction
+{
     LOG_RELEASE(Logger::eInfo,
-                @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
-                transaction, (int)amount, currency, present ? @"is present" : @"is not present");
+            @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
+            transaction, (int) amount, currency, present ? @"is present" : @"is not present");
 
     [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"RefundVoid" withOptionalParameters:@{
             @"amount": [utils ObjectOrNull:@(amount)],
             @"currency": [utils ObjectOrNull:currency]}];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ
-                                                           , std::string([currency UTF8String])
-                                                           , (std::uint32_t)amount
-                                                           , present
-                                                           , std::string([transaction UTF8String])
-                                                           , std::string());
-    
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
+    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ, std::string([currency UTF8String]), (std::uint32_t) amount, present, std::string([transaction UTF8String]), std::string());
+
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -476,97 +459,122 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)retrievePendingTransaction{
+- (BOOL)retrievePendingTransaction
+{
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"retrievePendingTransaction" withOptionalParameters:nil];
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction
+                                    Action:@"retrievePendingTransaction"
+                    withOptionalParameters:nil];
 
-    FinanceRequestCommand* frc = new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT
-                                                           , "0" // must be like this or we throw an invalid currency exception
-                                                           , 0
-                                                           , YES
-                                                           , std::string()
-                                                           , std::string());
-    
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:frc
+    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT, "0" // must be like this or we throw an invalid currency exception
+            , 0, YES, std::string(), std::string());
+
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
     BOOL return_value = [self postOperationToQueueIfNew:operation];
-    if(return_value){
+    if (return_value)
+    {
         isTransactionResultPending = NO;
     }
     return return_value;
 }
 
--(BOOL)enableScanner{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScanner" withOptionalParameters:nil];
+- (BOOL)enableScanner
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"enableScanner"
+                    withOptionalParameters:nil];
 
     return [self enableScannerWithMultiScan:TRUE buttonMode:TRUE timeoutSeconds:0];
 }
--(BOOL)enableScannerWithMultiScan:(BOOL)multiScan{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScan" withOptionalParameters:@{@"multiScan": [utils ObjectOrNull:@(multiScan)]}];
+
+- (BOOL)enableScannerWithMultiScan:(BOOL)multiScan
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"enableScannerWithMultiScan"
+                    withOptionalParameters:@{@"multiScan": [utils ObjectOrNull:@(multiScan)]}];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
--(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScanButtonMode" withOptionalParameters:@{
-            @"multiScan": [utils ObjectOrNull:@(multiScan)],
-            @"buttonMode": [utils ObjectOrNull:@(buttonMode)]
-    }];
+
+- (BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"enableScannerWithMultiScanButtonMode"
+                    withOptionalParameters:@{
+                            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+                            @"buttonMode": [utils ObjectOrNull:@(buttonMode)]
+                    }];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 
 //Deprecated enable scanner function names
--(BOOL)enableScanner:(BOOL)multiScan{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscan" withOptionalParameters:@{
-            @"multiScan": [utils ObjectOrNull:@(multiScan)],
-            @"deprecated": @"YES"}];
+- (BOOL)enableScanner:(BOOL)multiScan
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"enableScannerMultiscan"
+                    withOptionalParameters:@{
+                            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+                            @"deprecated": @"YES"}];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
 }
--(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscanButtonMode" withOptionalParameters:@{
-            @"multiScan": [utils ObjectOrNull:@(multiScan)],
-            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
-            @"deprecated": @"YES"
-    }];
+
+- (BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"enableScannerMultiscanButtonMode"
+                    withOptionalParameters:@{
+                            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+                            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
+                            @"deprecated": @"YES"
+                    }];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
--(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerMultiscanButtonModeTimeoutSeconds" withOptionalParameters:@{
-            @"multiScan": [utils ObjectOrNull:@(multiScan)],
-            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
-            @"timeoutSeconds": [utils ObjectOrNull:@(timeoutSeconds)],
-            @"deprecated": @"YES"
-    }];
+
+- (BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"enableScannerMultiscanButtonModeTimeoutSeconds"
+                    withOptionalParameters:@{
+                            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+                            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
+                            @"timeoutSeconds": [utils ObjectOrNull:@(timeoutSeconds)],
+                            @"deprecated": @"YES"
+                    }];
 
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
 }
 
--(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds{
+- (BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds
+{
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"enableScannerWithMultiScanButtonModeTimeoutSeconds" withOptionalParameters:@{
-            @"multiScan": [utils ObjectOrNull:@(multiScan)],
-            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
-            @"timeoutSeconds": [utils ObjectOrNull:@(timeoutSeconds)]
-    }];
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"enableScannerWithMultiScanButtonModeTimeoutSeconds"
+                    withOptionalParameters:@{
+                            @"multiScan": [utils ObjectOrNull:@(multiScan)],
+                            @"buttonMode": [utils ObjectOrNull:@(buttonMode)],
+                            @"timeoutSeconds": [utils ObjectOrNull:@(timeoutSeconds)]
+                    }];
 
     NSString *params = @"";
-    
-    NSString* multiScanString = [NSString stringWithFormat:
-                                 @"<multiScan>"
-                                 @"%s"
-                                 @"</multiScan>",
-                                 multiScan ? "true" : "false"];
-    NSString* buttonModeString = [NSString stringWithFormat:
-                                  @"<buttonMode>"
-                                  @"%s"
-                                  @"</buttonMode>",
-                                  buttonMode ? "true" : "false"];
-    
+
+    NSString *multiScanString = [NSString stringWithFormat:
+            @"<multiScan>"
+                    @"%s"
+                    @"</multiScan>",
+            multiScan ? "true" : "false"];
+    NSString *buttonModeString = [NSString stringWithFormat:
+            @"<buttonMode>"
+                    @"%s"
+                    @"</buttonMode>",
+            buttonMode ? "true" : "false"];
+
     // default timeoutvalue is 60 seconds
     long timeoutSecondsParameter = timeoutSeconds == 0 ? 60 : timeoutSeconds;
     if (timeoutSecondsParameter > 65535)
@@ -574,40 +582,47 @@ enum eSignConditions{
         // the max value supported by the reader
         timeoutSecondsParameter = 65535;
     }
-    NSString* timeoutSecondsString = [NSString stringWithFormat:
-                                      @"<timeoutSeconds>"
-                                      @"%ld"
-                                      @"</timeoutSeconds>",
-                                      timeoutSecondsParameter];
-    
+    NSString *timeoutSecondsString = [NSString stringWithFormat:
+            @"<timeoutSeconds>"
+                    @"%ld"
+                    @"</timeoutSeconds>",
+            timeoutSecondsParameter];
+
     params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-              @"<enableScanner>"
-              @"%@"
-              @"%@"
-              @"%@"
-              @"</enableScanner>",
-              multiScanString, buttonModeString, timeoutSecondsString];
-    
-    XMLCommandRequestCommand* xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
+                                                @"<enableScanner>"
+                                                @"%@"
+                                                @"%@"
+                                                @"%@"
+                                                @"</enableScanner>",
+                                        multiScanString, buttonModeString, timeoutSecondsString];
+
+    XMLCommandRequestCommand *xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:xcr
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
-    
+
     // hardcoded here - should be able to cancel multiscan when nothing has been scanned
     cancelAllowed = YES;
     return [self postOperationToQueueIfNew:operation];
 }
 
--(void)disableScanner{
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"disableScanner" withOptionalParameters:nil];
+- (void)disableScanner
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"disableScanner"
+                    withOptionalParameters:nil];
 
     [self cancel];
 }
-- (BOOL)financeStartOfDay{
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"financeStartOfDay" withOptionalParameters:nil];
 
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
+- (BOOL)financeStartOfDay
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"financeStartOfDay"
+                    withOptionalParameters:nil];
+
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -615,10 +630,13 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)financeEndOfDay{
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"financeEndOfDay" withOptionalParameters:nil];
+- (BOOL)financeEndOfDay
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"financeEndOfDay"
+                    withOptionalParameters:nil];
 
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -626,10 +644,13 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)financeInit{
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"financeInit" withOptionalParameters:nil];
+- (BOOL)financeInit
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"financeInit"
+                    withOptionalParameters:nil];
 
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
@@ -637,75 +658,91 @@ enum eSignConditions{
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)logSetLevel:(eLogLevel)level{
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logSetLevel" withOptionalParameters:@{@"logLevel": [utils ObjectOrNull:@(level)]}];
+- (BOOL)logSetLevel:(eLogLevel)level
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"logSetLevel"
+                    withOptionalParameters:@{@"logLevel": [utils ObjectOrNull:@(level)]}];
 
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)logReset{
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logReset" withOptionalParameters:nil];
+- (BOOL)logReset
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"logReset"
+                    withOptionalParameters:nil];
 
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (BOOL)logGetInfo{
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"logGetInfo" withOptionalParameters:nil];
+- (BOOL)logGetInfo
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"logGetInfo"
+                    withOptionalParameters:nil];
 
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
     return [self postOperationToQueueIfNew:operation];
 }
 
-- (void)acceptSignature:(BOOL)flag{
-    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"acceptSignature" withOptionalParameters:@{@"flag": [utils ObjectOrNull:@(flag)]}];
+- (void)acceptSignature:(BOOL)flag
+{
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction
+                                    Action:@"acceptSignature"
+                    withOptionalParameters:@{@"flag": [utils ObjectOrNull:@(flag)]}];
 
     [signLock lock];
     signatureIsOk = flag;
     [signLock unlockWithCondition:eSignCondition];
 }
 
-- (BOOL)getEMVConfiguration {
+- (BOOL)getEMVConfiguration
+{
     LOG(@"MpedDevice getEMVConfiguration");
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"getEMVConfiguration" withOptionalParameters:nil];
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"getEMVConfiguration"
+                    withOptionalParameters:nil];
 
-    NSString* params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-    @"<getReport>"
-    @"<name>"
-    @"EMVConfiguration"
-    @"</name>"
-    @"</getReport>";
-    
-    XMLCommandRequestCommand* xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
-    MPosOperation* operation = [[MPosOperation alloc] initWithRequest:xcr
+    NSString *params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            @"<getReport>"
+            @"<name>"
+            @"EMVConfiguration"
+            @"</name>"
+            @"</getReport>";
+
+    XMLCommandRequestCommand *xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:xcr
                                                            connection:connection
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
-    
+
     return [self postOperationToQueueIfNew:operation];
 }
 
 
 #pragma mark -
 
-- (NSDictionary*)getValuesFromXml:(NSString*)xml path:(NSString*)path{
-    NSData* xmlData = [[NSData alloc] initWithBytesNoCopy:(void*)[xml UTF8String]
+- (NSDictionary *)getValuesFromXml:(NSString *)xml path:(NSString *)path
+{
+    NSData *xmlData = [[NSData alloc] initWithBytesNoCopy:(void *) [xml UTF8String]
                                                    length:[xml length]
                                              freeWhenDone:NO];
-    
-    NSXMLParser* xmlParser = [[NSXMLParser alloc] initWithData:xmlData];
-    ResponseParser* parser = [[ResponseParser alloc] initWithPath:path];
+
+    NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithData:xmlData];
+    ResponseParser *parser = [[ResponseParser alloc] initWithPath:path];
     xmlParser.delegate = parser;
     //LOG(@"%@", xml);
     [xmlParser parse];
@@ -716,133 +753,113 @@ enum eSignConditions{
 }
 
 #pragma mark IResponseProcessor
-- (void)sendScannerEvent:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+
+- (void)sendScannerEvent:(NSString *)status code:(int)code xml:(NSDictionary *)xml
 {
-    ScannerEventResponseInfo* info = [ScannerEventResponseInfo new];
+    ScannerEventResponse *info = [ScannerEventResponse new];
     info.statusCode = code;
     info.status = xml ? xml[@"StatusMessage"] : status;
     info.scanCode = xml ? xml[@"code"] : @"";
+
     LOG_RELEASE(Logger::eFine, @"%@", info.scanCode);
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction Action:@"responseScannerEvent" withOptionalParameters:@{
-            @"status": [utils ObjectOrNull:status],
-            @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
+                                    Action:@"responseScannerEvent"
+                    withOptionalParameters:@{
+                            @"status": [utils ObjectOrNull:status],
+                            @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]
+                    }];
 
-    if([delegate respondsToSelector:@selector(responseScannerEvent:)])
+    if ([delegate respondsToSelector:@selector(responseScannerEvent:)])
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            id <HeftStatusReportDelegate> tmp = delegate;
             [tmp responseScannerEvent:info];
         });
     }
 }
--(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
-{
-    LOG_RELEASE(Logger::eFine, @"Scanner disabled");
-    NSString *analyticsAction;
-    NSString *analyticsDeprecated;
-    
-    if([delegate respondsToSelector:@selector(responseEnableScanner:)])
-    {
-        EnableScannerResponseInfo* info = [EnableScannerResponseInfo new];
-        info.statusCode = code;
-        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-        info.xml = xml;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
-            [tmp responseEnableScanner:info];
-        });
-        analyticsAction = @"responseEnableScanner";
-        analyticsDeprecated = @"YES";
-    }
-    
-    if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
-    {
-        ScannerDisabledResponseInfo* info = [ScannerDisabledResponseInfo new];
-        info.statusCode =  code;
-        info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
-        info.xml = xml;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
-            [tmp responseScannerDisabled:info];
-        });
 
-        analyticsAction = @"responseScannerDisabled";
-        analyticsDeprecated = @"NO";
-    }
-    cancelAllowed = NO;
-    [AnalyticsHelper addEventForActionType:actionTypeName.scannerAction
-                                    Action:analyticsAction
-                    withOptionalParameters:@{
-                            @"status": [utils ObjectOrNull:status],
-                            @"deprecated" : [utils ObjectOrNull:analyticsDeprecated],
-                            @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:xml]]}];
-}
-- (void)sendResponseInfo:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+- (void)sendResponseInfo:(NSString *)status code:(int)code xml:(NSDictionary *)xml
 {
-    ResponseInfo* info = [ResponseInfo new];
+    ResponseInfoObject *info = [ResponseInfoObject new];
     info.statusCode = code;
-    info.status = xml ? [xml objectForKey:@"StatusMessage"] : status;
+    info.status = xml ? xml[@"StatusMessage"] : status;
     info.xml = xml;
     LOG_RELEASE(Logger::eFine, @"%@", info.status);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        id<HeftStatusReportDelegate> tmp = delegate;
+    dispatch_async(dispatch_get_main_queue(), ^
+    {
+        id <HeftStatusReportDelegate> tmp = delegate;
         LOG_RELEASE(Logger::eFine, @"calling responseStatus");
         [tmp responseStatus:info];
     });
     //cancelAllowed is already set in the caller
 }
 
--(void)sendResponseError:(NSString*)status{
-    ResponseInfo* info = [ResponseInfo new];
+- (void)sendResponseError:(NSString *)status
+{
+    ResponseInfoObject *info = [ResponseInfoObject new];
     info.status = status;
     LOG_RELEASE(Logger::eFine, @"sendResponseError: %@", status);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        id<HeftStatusReportDelegate> tmp = delegate;
+
+    dispatch_async(dispatch_get_main_queue(), ^
+    {
+        id <HeftStatusReportDelegate> tmp = delegate;
         [tmp responseError:info];
     });
     cancelAllowed = NO;
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseError" withOptionalParameters:@{@"status": [utils ObjectOrNull:info.status]}];
+    [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                    Action:@"responseError"
+                    withOptionalParameters:@{@"status": [utils ObjectOrNull:info.status]}];
 }
 
--(void)sendReportResult:(NSString*)report{
-    if([delegate respondsToSelector: @selector(responseEMVReport:)])
+- (void)sendReportResult:(NSString *)report
+{
+    if ([delegate respondsToSelector:@selector(responseEMVReport:)])
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            id <HeftStatusReportDelegate> tmp = delegate;
             [tmp responseEMVReport:report];
 
-            [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseEMVReport" withOptionalParameters:nil];
+            [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                            Action:@"responseEMVReport"
+                            withOptionalParameters:nil];
         });
     }
     else
     {
         LOG_RELEASE(Logger::eFine,
-                    @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
+                @"%@", @"responseEMVReport not implemented in delegate. Report not returned to client");
 
-        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseEMVReport-delegateNotImplemented" withOptionalParameters:nil];
+        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                        Action:@"responseEMVReport-delegateNotImplemented"
+                        withOptionalParameters:nil];
     }
 }
 
-- (int)processSign:(SignatureRequestCommand*)pRequest{
+- (int)processSign:(SignatureRequestCommand *)pRequest
+{
     int result = EFT_PP_STATUS_PROCESSING_ERROR;
-    
+
     // note: cancelAllowed = NO; // is not needed here as the card reader will send us a status message with the flag set correctly just before
-    dispatch_async(dispatch_get_main_queue(), ^{
-        id<HeftStatusReportDelegate> tmp = delegate;
+    dispatch_async(dispatch_get_main_queue(), ^
+    {
+        id <HeftStatusReportDelegate> tmp = delegate;
         [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
 
-        [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"requestSignature" withOptionalParameters:nil];
+        [AnalyticsHelper addEventForActionType:actionTypeName.financialAction
+                                        Action:@"requestSignature"
+                        withOptionalParameters:nil];
     });
-    
-    NSDictionary* xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str())
+
+    NSDictionary *xml = [self getValuesFromXml:@(pRequest->GetXmlDetails().c_str())
                                           path:@"SignatureRequiredRequest"];
-    
+
     double wait_time = [xml[@"timeout"] doubleValue];
-    
-    if([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:wait_time]])
+
+    if ([signLock lockWhenCondition:eSignCondition beforeDate:[NSDate dateWithTimeIntervalSinceNow:wait_time]])
     {
         result = signatureIsOk ? EFT_PP_STATUS_SUCCESS : EFT_PP_STATUS_INVALID_SIGNATURE;
         signatureIsOk = NO;
@@ -850,20 +867,25 @@ enum eSignConditions{
     }
     else
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            id <HeftStatusReportDelegate> tmp = delegate;
             [tmp cancelSignature];
 
-            [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"cancelSignature" withOptionalParameters:nil];
+            [AnalyticsHelper addEventForActionType:actionTypeName.financialAction
+                                            Action:@"cancelSignature"
+                            withOptionalParameters:nil];
         });
     }
-    
+
     return result;
 }
 
--(void)processResponse:(ResponseCommand*)pResponse{
+- (void)processResponse:(ResponseCommand *)pResponse
+{
     int status = pResponse->GetStatus();
-    if(status != EFT_PP_STATUS_SUCCESS){
+    if (status != EFT_PP_STATUS_SUCCESS)
+    {
         [self sendResponseInfo:statusMessages[status]
                           code:status
                            xml:nil];
@@ -873,54 +895,51 @@ enum eSignConditions{
     }
 }
 
--(void)processXMLCommandResponseCommand:(XMLCommandResponseCommand*)pResponse{
-    NSDictionary* xml;
+- (void)processXMLCommandResponseCommand:(XMLCommandResponseCommand *)pResponse
+{
+    NSDictionary *xml;
     // the XML response can be of various types, here we must check the type (perhaps just best/fastest
     // to search for a string in the start of the XML response string instead of trying to parse)
     // the type of the xml is always at the top (first two lines)
     xml = [self getValuesFromXml:@(pResponse->GetXmlReturn().c_str()) path:@"enableScannerResponse"];
-    if([xml count]> 0)
+    if ([xml count] > 0)
     {
         int status = pResponse->GetStatus();
-        NSString* statusMessage = status < ([statusMessages count]-1) ? statusMessages[status] : @"Unknown status";
-        [self sendEnableScannerResponse:statusMessage code:status xml:xml];
+        NSString *statusMessage = status < ([statusMessages count] - 1) ? statusMessages[status] : @"Unknown status";
     }
     else
     {
         xml = [self getValuesFromXml:@(pResponse->GetXmlReturn().c_str()) path:@"getReportResponse"];
-        if([xml count]> 0)
+        if ([xml count] > 0)
         {
-            // NSString* xml_status = xml[@"StatusMesssage"];
-            // LOG(@"xml_status: %@", xml_status);
-            NSString* report_data = xml[@"Data"];
-            // call some method with these parameters
+            NSString *report_data = xml[@"Data"];
             [self sendReportResult:report_data];
         }
-        
+
     }
-    
+
 #ifdef HEFT_SIMULATOR
     [NSThread sleepForTimeInterval:1.];
 #endif
 }
 
--(void)processEventInfoResponse:(EventInfoResponseCommand*)pResponse
+- (void)processEventInfoResponse:(EventInfoResponseCommand *)pResponse
 {
     int status = pResponse->GetStatus();
-    NSString* statusMessage = status < ([statusMessages count]-1) ? statusMessages[status] : @"Unknown status";
-    NSDictionary* xml;
-    if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]) count]> 0)
+    NSString *statusMessage = status < ([statusMessages count] - 1) ? statusMessages[status] : @"Unknown status";
+    NSDictionary *xml;
+    if ([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]) count] > 0)
     {
-        NSString* ca = [xml objectForKey:@"CancelAllowed"];
-        cancelAllowed = ((ca != nil) && [ca isEqualToString:@"true"]) ? YES : NO;
-        
+        NSString *ca = [xml objectForKey:@"CancelAllowed"];
+        cancelAllowed = (ca != nil) && [ca isEqualToString:@"true"];
+
         [self sendResponseInfo:statusMessage code:status xml:xml];
     }
-    else if([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"]) count]> 0)
+    else if ([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"scannerEvent"]) count] > 0)
     {
         // the card reader scannerEvent message doesn't include a CancelAllowed flag, but we know the card reader accepts a cancel at this stage
-        NSString* ca = [xml objectForKey:@"CancelAllowed"];
-        cancelAllowed = ((ca == nil) || [ca isEqualToString:@"true"]) ? YES : NO; // i.e. NO if not there or not set to "true" (e.g. if set to "false")
+        NSString *ca = xml[@"CancelAllowed"];
+        cancelAllowed = (ca == nil) || [ca isEqualToString:@"true"]; // i.e. NO if not there or not set to "true" (e.g. if set to "false")
         [self sendScannerEvent:statusMessage code:status xml:xml];
     }
 #ifdef HEFT_SIMULATOR
@@ -929,38 +948,39 @@ enum eSignConditions{
     return;
 }
 
--(void)processFinanceResponse:(FinanceResponseCommand*)pResponse
+- (void)processFinanceResponse:(FinanceResponseCommand *)pResponse
 {
     int status = pResponse->GetStatus();
-    FinanceResponseInfo* info = [FinanceResponseInfo new];
+    FinanceResponse *info = [FinanceResponse new];
     info.financialResult = pResponse->GetFinancialStatus();
     info.isRestarting = pResponse->isRestarting();
     info.statusCode = status;
-    NSDictionary* xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
+    NSDictionary *xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
                                                  path:@"FinancialTransactionResponse"];
     info.xml = xmlDetails;
     info.status = status == EFT_PP_STATUS_SUCCESS ?
-    [xmlDetails objectForKey:@"FinancialStatus"] :
-    [xmlDetails objectForKey:@"StatusMessage"];
+            xmlDetails[@"FinancialStatus"] :
+            xmlDetails[@"StatusMessage"];
     info.authorisedAmount = pResponse->GetAmount();
     info.transactionId = @(pResponse->GetTransID().c_str());
     info.customerReceipt = @(pResponse->GetCustomerReceipt().c_str());
     info.merchantReceipt = @(pResponse->GetMerchantReceipt().c_str());
-    
-    NSString* rt = [xmlDetails objectForKey:@"RecoveredTransaction"];
-    BOOL transactionResultPending = ((rt != nil) && [rt isEqualToString:@"true"]) ? YES : NO;
-    
+
+    NSString *rt = xmlDetails[@"RecoveredTransaction"];
+    BOOL transactionResultPending = (rt != nil) && [rt isEqualToString:@"true"];
+
     LOG_RELEASE(Logger::eFine, @"%@", info.status);
-    
+
     NSString *analyticsAction;
-    
+
     // check if we have a block - if so, post that block instead of calling the event/callback
     // although it looks the same, we just call the block with parameters instead of the other
 
-    if(!pResponse->isRecoveredTransaction())
+    if (!pResponse->isRecoveredTransaction())
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            id <HeftStatusReportDelegate> tmp = delegate;
             [tmp responseFinanceStatus:info];
         });
         analyticsAction = @"responseFinanceStatus";
@@ -968,8 +988,9 @@ enum eSignConditions{
     else
     {
         info = transactionResultPending ? info : nil;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            id <HeftStatusReportDelegate> tmp = delegate;
             [tmp responseRecoveredTransactionStatus:info];
         });
 
@@ -977,42 +998,44 @@ enum eSignConditions{
     }
     cancelAllowed = NO;
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:analyticsAction withOptionalParameters:@{
-            @"amount": [utils ObjectOrNull:@(info.authorisedAmount)],
-            @"statusCode": [utils ObjectOrNull:@(info.statusCode)],
-            @"financialResult": [utils ObjectOrNull:@(info.financialResult)],
-            @"status": [utils ObjectOrNull:info.status],
-            @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:info.xml]]
-    }];
+    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction
+                                    Action:analyticsAction
+                    withOptionalParameters:@{
+                            @"amount": [utils ObjectOrNull:@(info.authorisedAmount)],
+                            @"statusCode": [utils ObjectOrNull:@(info.statusCode)],
+                            @"financialResult": [utils ObjectOrNull:@(info.financialResult)],
+                            @"status": [utils ObjectOrNull:info.status]
+                    }];
     [AnalyticsHelper upload];
 }
 
-/*-(void)processDebugInfoResponse:(DebugInfoResponseCommand*)pResponse{
- }*/
-
--(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse
+- (void)processLogInfoResponse:(GetLogInfoResponseCommand *)pResponse
 {
-    LogInfo* info = [LogInfo new];
+    LogInfoObject *info = [LogInfoObject new];
     int status = pResponse->GetStatus();
     info.statusCode = status;
     info.status = statusMessages[status];
-    if(status == EFT_PP_STATUS_SUCCESS)
+    if (status == EFT_PP_STATUS_SUCCESS)
     {
         info.log = @(pResponse->GetData().c_str());
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        id<HeftStatusReportDelegate> tmp = delegate;
+    dispatch_async(dispatch_get_main_queue(), ^
+    {
+        id <HeftStatusReportDelegate> tmp = delegate;
         [tmp responseLogInfo:info];
 
-        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction Action:@"responseLogInfo" withOptionalParameters:nil];
+        [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
+                                        Action:@"responseLogInfo"
+                        withOptionalParameters:nil];
     });
 
     cancelAllowed = NO;
 }
 
--(BOOL)cancelIfPossible{
-    if(cancelAllowed)
+- (BOOL)cancelIfPossible
+{
+    if (cancelAllowed)
     {
         [self cancel];
         return YES;
