@@ -8,9 +8,8 @@
 
 @interface HeftRemoteDevice : NSObject
 
-@property(nonatomic, readonly) EAAccessory* accessory;
-
 - (NSString *)name;
 - (NSString *)address;
+- (EAAccessory *)accessory;
 
 @end
