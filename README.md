@@ -1,1 +1,1 @@
-# Handpoint-iOS-SDK
+# Handpoint iOS SDK
