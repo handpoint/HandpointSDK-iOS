@@ -13,13 +13,13 @@
 
 @implementation HeftRemoteDevice
 
-- (id)initWithAccessory:(EAAccessory*)aAccessory
+- (id)initWithAccessory:(EAAccessory*)accessory
 {
     self = [super init];
 
 	if(self)
     {
-		self.internalAccessory = aAccessory;
+		self.internalAccessory = accessory;
 	}
     
 	return self;
@@ -34,7 +34,7 @@
 
 - (NSString*)address
 {
-    return [self.internalAccessory valueForKey:@"macAddress"];
+    return [NSString stringWithFormat:@"68:AA:%@", @([self.internalAccessory connectionID])];
 }
 
 - (EAAccessory*)accessory
