@@ -42,7 +42,8 @@ static HeftManager *instance = nil;
 
 + (HeftManager *)sharedManager
 {
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&onceToken, ^
+    {
         instance = [HeftManager new];
     });
 
@@ -156,25 +157,24 @@ static HeftManager *instance = nil;
             HeftConnection *connection = [[HeftConnection alloc] initWithDevice:device
                                                                         runLoop:currentRunLoop];
 
-            id <HeftClient> result = nil;
-
-            result = [[MpedDevice alloc] initWithConnection:connection
-                                               sharedSecret:sharedSecret
-                                                   delegate:delegate];
+            id <HeftClient> result = [[MpedDevice alloc] initWithConnection:connection
+                                                               sharedSecret:sharedSecret
+                                                                   delegate:delegate];
 
             dispatch_async(dispatch_get_main_queue(), ^
             {
                 id <HeftStatusReportDelegate> tmp = delegate;
                 [tmp didConnect:result];
             });
+
             NSDictionary *mpedInfo = [result mpedInfo];
             [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
                                             Action:@"didConnect"
                             withOptionalParameters:@{
                                     @"serialnumber": [utils ObjectOrNull:mpedInfo[kSerialNumberInfoKey]],
                                     @"appNameInfoKey": [utils ObjectOrNull:mpedInfo[kAppNameInfoKey]],
-                                    @"appVersionInfoKey" : [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]],
-                                    @"xml" : [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:mpedInfo]]
+                                    @"appVersionInfoKey": [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]],
+                                    @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:mpedInfo]]
 
                             }];
 
