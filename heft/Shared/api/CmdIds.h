@@ -169,6 +169,7 @@
 #define EFT_PP_STATUS_BATTERY_TOO_LOW           0x0031
 #define EFT_PP_STATUS_ACCOUNT_TYPE_SELECTION    0x0032 // Viscus: status code
 #define EFT_PP_STATUS_BT_IS_NOT_SUPPORTED       0x0033
+#define EFT_PP_STATUS_INITIALISATION_COMPLETE   0x9999 //Hand crafted
 
 //transaction statuses
 #define EFT_FINANC_STATUS_UNDEFINED                0x00

@@ -38,8 +38,12 @@ public:
         [processor processResponse:this];
     }
 
-	int GetStatus() {
+    int GetStatus() {
         return iStatus;
+    }
+
+    void SetStatus(int status) {
+        iStatus = status;
     }
 	
     int GetLength() {
