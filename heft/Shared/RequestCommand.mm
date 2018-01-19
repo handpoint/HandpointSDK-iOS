@@ -4,7 +4,6 @@
 
 #include "RequestCommand.h"
 #include "BCDCoder.h"
-#include "HeftCmdIds.h"
 #include "api/CmdIds.h"
 #include "debug.h"
 
@@ -227,7 +226,7 @@ int RequestCommand::ReadLength (const RequestPayload *pRequest)
 
 
 InitRequestCommand::InitRequestCommand (int bufferSize, NSString *version)
-        : RequestCommand(ciMinSize, CMD_INIT_REQ)
+        : RequestCommand(ciMinSize, EFT_PACKET_INIT)
 {
     InitPayload *payload = GetPayload<InitPayload>();
 
@@ -263,13 +262,13 @@ InitRequestCommand::InitRequestCommand (int bufferSize, NSString *version)
 }
 
 
-IdleRequestCommand::IdleRequestCommand () : RequestCommand(ciMinSize, CMD_IDLE_REQ)
+IdleRequestCommand::IdleRequestCommand () : RequestCommand(ciMinSize, EFT_PACKET_IDLE)
 {
 }
 
 
 XMLCommandRequestCommand::XMLCommandRequestCommand (const std::string &xml)
-        : RequestCommand((int) xml.size(), CMD_XCMD_REQ)
+        : RequestCommand((int) xml.size(), EFT_PACKET_COMMAND)
 {
     XMLCommandPayload *pRequest = GetPayload<XMLCommandPayload>();
     memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
@@ -356,17 +355,17 @@ FinanceRequestCommand::FinanceRequestCommand (std::uint32_t type,
 }
 
 StartOfDayRequestCommand::StartOfDayRequestCommand ()
-        : RequestCommand(0, CMD_FIN_STARTDAY_REQ)
+        : RequestCommand(0, EFT_PACKET_START_DAY)
 {
 }
 
 EndOfDayRequestCommand::EndOfDayRequestCommand ()
-        : RequestCommand(0, CMD_FIN_ENDDAY_REQ)
+        : RequestCommand(0, EFT_PACKET_END_DAY)
 {
 }
 
 FinanceInitRequestCommand::FinanceInitRequestCommand ()
-        : RequestCommand(0, CMD_FIN_INIT_REQ)
+        : RequestCommand(0, EFT_PACKET_HOST_INIT)
 {
 }
 
@@ -380,15 +379,15 @@ HostRequestCommand *HostRequestCommand::Create (const void *payload, std::uint32
     const RequestPayload *pRequestPayload = reinterpret_cast<const RequestPayload *>(payload);
     switch (ntohl(pRequestPayload->command))
     {
-        case CMD_HOST_CONN_REQ:
+        case EFT_PACKET_HOST_CONNECT:
             return new ConnectRequestCommand(payload, payloadSize);
-        case CMD_HOST_SEND_REQ:
+        case EFT_PACKET_HOST_SEND:
             return new SendRequestCommand(payload, payloadSize);
-        case CMD_HOST_RECV_REQ:
+        case EFT_PACKET_HOST_RECEIVE:
             return new ReceiveRequestCommand(payload, payloadSize);
-        case CMD_HOST_DISC_REQ:
+        case EFT_PACKET_HOST_DISCONNECT:
             return new DisconnectRequestCommand(payload, payloadSize);
-        case CMD_HOST_MSG_TO_HOST:
+        case EFT_PACKET_HOST_MSG_TO_HOST:
             return new PostRequestCommand(payload, payloadSize);
 
         default:
@@ -491,7 +490,7 @@ ReceiveRequestCommand::ReceiveRequestCommand (const void *payload, std::uint32_t
 }
 
 ReceiveResponseCommand::ReceiveResponseCommand (NSData *payload)
-        : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int) [payload length])
+        : HostResponseCommand(EFT_PACKET_HOST_RECEIVE_RESP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int) [payload length])
 {
     ReceiveResponsePayload *pPayload = GetPayload<ReceiveResponsePayload>();
     NSUInteger l = [payload length];
@@ -502,7 +501,7 @@ ReceiveResponseCommand::ReceiveResponseCommand (NSData *payload)
 
 
 ReceiveResponseCommand::ReceiveResponseCommand (const std::vector<std::uint8_t> &payload)
-        : HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int) payload.size())
+        : HostResponseCommand(EFT_PACKET_HOST_RECEIVE_RESP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int) payload.size())
 {
     ReceiveResponsePayload *pPayload = GetPayload<ReceiveResponsePayload>();
     pPayload->data_len = htonl(payload.size());
@@ -546,7 +545,7 @@ ChallengeRequestCommand::ChallengeRequestCommand (const void *payload, std::uint
 }
 
 ChallengeResponseCommand::ChallengeResponseCommand (const std::vector<std::uint8_t> &mx, const std::vector<std::uint8_t> &zx)
-        : HostResponseCommand(CMD_STAT_CHALENGE_RSP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int) mx.size() + (int) zx.size())
+        : HostResponseCommand(EFT_PACKET_SHARE_SECRET_REQ_RESP, EFT_PP_STATUS_SUCCESS, ciMinSize + (int) mx.size() + (int) zx.size())
 {
     ChallengeResponsePayload *pPayload = GetPayload<ChallengeResponsePayload>();
     pPayload->mx_len = ntohs(mx.size());
@@ -573,19 +572,19 @@ DebugInfoRequestCommand::DebugInfoRequestCommand()
 {}*/
 
 SetLogLevelRequestCommand::SetLogLevelRequestCommand (std::uint8_t log_level)
-        : RequestCommand(ciMinSize, CMD_LOG_SET_LEV_REQ)
+        : RequestCommand(ciMinSize, EFT_PACKET_LOG_SET_LEVEL)
 {
     SetLogLevelPayload *pRequest = GetPayload<SetLogLevelPayload>();
     pRequest->log_level = log_level;
 }
 
 ResetLogInfoRequestCommand::ResetLogInfoRequestCommand ()
-        : RequestCommand(0, CMD_LOG_RST_INF_REQ)
+        : RequestCommand(0, EFT_PACKET_LOG_RESET)
 {
 }
 
 GetLogInfoRequestCommand::GetLogInfoRequestCommand ()
-        : RequestCommand(0, CMD_LOG_GET_INF_REQ)
+        : RequestCommand(0, EFT_PACKET_LOG_GETINFO)
 {
 }
 

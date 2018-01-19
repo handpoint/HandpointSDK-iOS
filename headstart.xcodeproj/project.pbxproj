@@ -27,7 +27,7 @@
 			buildPhases = (
 				FBDA03701CD018EB00607201 /* ShellScript */,
 				FBDA03711CD018ED00607201 /* CopyFiles */,
-				FBDA03751CD0215500607201 /* CopyFiles */,
+				FBDA03751CD0215500607201 /* Copy Files */,
 				0D2DF8A71FED1C32006F1AAB /* ShellScript */,
 			);
 			dependencies = (
@@ -50,18 +50,18 @@
 		0D2DF87F1FED1B2D006F1AAB /* ScannerDisabledResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
 		0D2DF8801FED1B2D006F1AAB /* ScannerEventResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; };
 		0D2DF8811FED1B2D006F1AAB /* LogInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; };
-		0D2DF8821FED1B37006F1AAB /* ResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B134F950AC98170C7743 /* ResponseInfo.h */; };
-		0D2DF8831FED1B37006F1AAB /* FinanceResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */; };
-		0D2DF8841FED1B37006F1AAB /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; };
-		0D2DF8851FED1B37006F1AAB /* HeftManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B2DE6C951F89AC732ED3 /* HeftManager.h */; };
-		0D2DF8861FED1B37006F1AAB /* HandpointAll.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B3D82C2C03756E7BF898 /* HandpointAll.h */; };
-		0D2DF8871FED1B37006F1AAB /* HapiRemoteService.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */; };
-		0D2DF8881FED1B37006F1AAB /* HeftStatusReportDelegate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; };
-		0D2DF8891FED1B37006F1AAB /* HeftDiscovery.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */; };
-		0D2DF88A1FED1B37006F1AAB /* HeftDiscoveryDelegate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */; };
-		0D2DF88B1FED1B37006F1AAB /* ScannerDisabledResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
-		0D2DF88C1FED1B37006F1AAB /* ScannerEventResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; };
-		0D2DF88D1FED1B37006F1AAB /* LogInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; };
+		0D2DF8821FED1B37006F1AAB /* ResponseInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B134F950AC98170C7743 /* ResponseInfo.h */; };
+		0D2DF8831FED1B37006F1AAB /* FinanceResponseInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */; };
+		0D2DF8841FED1B37006F1AAB /* HeftClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; };
+		0D2DF8851FED1B37006F1AAB /* HeftManager.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B2DE6C951F89AC732ED3 /* HeftManager.h */; };
+		0D2DF8861FED1B37006F1AAB /* HandpointAll.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B3D82C2C03756E7BF898 /* HandpointAll.h */; };
+		0D2DF8871FED1B37006F1AAB /* HapiRemoteService.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */; };
+		0D2DF8881FED1B37006F1AAB /* HeftStatusReportDelegate.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; };
+		0D2DF8891FED1B37006F1AAB /* HeftDiscovery.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */; };
+		0D2DF88A1FED1B37006F1AAB /* HeftDiscoveryDelegate.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */; };
+		0D2DF88B1FED1B37006F1AAB /* ScannerDisabledResponseInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
+		0D2DF88C1FED1B37006F1AAB /* ScannerEventResponseInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; };
+		0D2DF88D1FED1B37006F1AAB /* LogInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; };
 		0D2DF88E1FED1BAF006F1AAB /* ResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B134F950AC98170C7743 /* ResponseInfo.h */; };
 		0D2DF88F1FED1BAF006F1AAB /* FinanceResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */; };
 		0D2DF8901FED1BAF006F1AAB /* HeftClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; };
@@ -86,11 +86,12 @@
 		0D2DF8A31FED1BB7006F1AAB /* ScannerDisabledResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
 		0D2DF8A41FED1BB7006F1AAB /* ScannerEventResponseInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; };
 		0D2DF8A51FED1BB7006F1AAB /* LogInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; };
-		0D2DF8A81FED2353006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
+		0D2DF8A81FED2353006F1AAB /* HeftRemoteDevice.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0D2DF8A91FED235A006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0D2DF8AE1FED7CC3006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0D2DF8AF1FED7CC9006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0D41FA0C1FF2B6A30033A2C7 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
+		0D5A12E3200D4DD100C5B847 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A12E2200D4DD100C5B847 /* CoreBluetooth.framework */; };
 		0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
@@ -176,7 +177,7 @@
 		FB6B26721E01549700C422F1 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
 		FB6B26771E01549700C422F1 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
 		FBDA03801CD031D200607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
-		FBDA03811CD031D800607201 /* CmdIds.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
+		FBDA03811CD031D800607201 /* CmdIds.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; };
 		FBFA750A1DB11CE300641641 /* HTTPCodes.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74E81DB11CE300641641 /* HTTPCodes.m */; };
 		FBFA750B1DB11CE300641641 /* KeenClient.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74EB1DB11CE300641641 /* KeenClient.m */; };
 		FBFA750C1DB11CE300641641 /* KeenConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = FBFA74ED1DB11CE300641641 /* KeenConstants.m */; };
@@ -288,32 +289,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FBDA03751CD0215500607201 /* CopyFiles */ = {
+		FBDA03751CD0215500607201 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include";
 			dstSubfolderSpec = 0;
 			files = (
-				0D2DF8A81FED2353006F1AAB /* HeftRemoteDevice.h in CopyFiles */,
-				0D2DF8821FED1B37006F1AAB /* ResponseInfo.h in CopyFiles */,
-				0D2DF8831FED1B37006F1AAB /* FinanceResponseInfo.h in CopyFiles */,
-				0D2DF8841FED1B37006F1AAB /* HeftClient.h in CopyFiles */,
-				0D2DF8851FED1B37006F1AAB /* HeftManager.h in CopyFiles */,
-				0D2DF8861FED1B37006F1AAB /* HandpointAll.h in CopyFiles */,
-				0D2DF8871FED1B37006F1AAB /* HapiRemoteService.h in CopyFiles */,
-				0D2DF8881FED1B37006F1AAB /* HeftStatusReportDelegate.h in CopyFiles */,
-				0D2DF8891FED1B37006F1AAB /* HeftDiscovery.h in CopyFiles */,
-				0D2DF88A1FED1B37006F1AAB /* HeftDiscoveryDelegate.h in CopyFiles */,
-				0D2DF88B1FED1B37006F1AAB /* ScannerDisabledResponseInfo.h in CopyFiles */,
-				0D2DF88C1FED1B37006F1AAB /* ScannerEventResponseInfo.h in CopyFiles */,
-				0D2DF88D1FED1B37006F1AAB /* LogInfo.h in CopyFiles */,
-				FBDA03811CD031D800607201 /* CmdIds.h in CopyFiles */,
+				0D2DF8A81FED2353006F1AAB /* HeftRemoteDevice.h in Copy Files */,
+				0D2DF8821FED1B37006F1AAB /* ResponseInfo.h in Copy Files */,
+				0D2DF8831FED1B37006F1AAB /* FinanceResponseInfo.h in Copy Files */,
+				0D2DF8841FED1B37006F1AAB /* HeftClient.h in Copy Files */,
+				0D2DF8851FED1B37006F1AAB /* HeftManager.h in Copy Files */,
+				0D2DF8861FED1B37006F1AAB /* HandpointAll.h in Copy Files */,
+				0D2DF8871FED1B37006F1AAB /* HapiRemoteService.h in Copy Files */,
+				0D2DF8881FED1B37006F1AAB /* HeftStatusReportDelegate.h in Copy Files */,
+				0D2DF8891FED1B37006F1AAB /* HeftDiscovery.h in Copy Files */,
+				0D2DF88A1FED1B37006F1AAB /* HeftDiscoveryDelegate.h in Copy Files */,
+				0D2DF88B1FED1B37006F1AAB /* ScannerDisabledResponseInfo.h in Copy Files */,
+				0D2DF88C1FED1B37006F1AAB /* ScannerEventResponseInfo.h in Copy Files */,
+				0D2DF88D1FED1B37006F1AAB /* LogInfo.h in Copy Files */,
+				FBDA03811CD031D800607201 /* CmdIds.h in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D5A12E2200D4DD100C5B847 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		283D2AE0D17B51B9CE673CA5 /* Pods-heft.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.release.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.release.xcconfig"; sourceTree = "<group>"; };
 		2D0D3F3B162C64450057301F /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		2D1A425116F7448B00CD6781 /* CrcTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrcTest.h; sourceTree = "<group>"; };
@@ -350,7 +353,6 @@
 		2D398966165FF88800F8FA29 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
 		2D398967165FF88800F8FA29 /* FrameManager.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FrameManager.mm; sourceTree = "<group>"; };
 		2D398968165FF88800F8FA29 /* FrameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameManager.h; sourceTree = "<group>"; };
-		2D398969165FF88800F8FA29 /* HeftCmdIds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftCmdIds.h; sourceTree = "<group>"; };
 		2D39896A165FF88800F8FA29 /* IHostProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHostProcessor.h; sourceTree = "<group>"; };
 		2D39896B165FF88800F8FA29 /* IResponseProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IResponseProcessor.h; sourceTree = "<group>"; };
 		2D39896C165FF88800F8FA29 /* Logger.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Logger.mm; sourceTree = "<group>"; };
@@ -458,9 +460,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D5A12E3200D4DD100C5B847 /* CoreBluetooth.framework in Frameworks */,
 				0D41FA0C1FF2B6A30033A2C7 /* ExternalAccessory.framework in Frameworks */,
-				FBFA751E1DB27CCE00641641 /* libextLib.a in Frameworks */,
 				2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */,
+				FBFA751E1DB27CCE00641641 /* libextLib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -593,7 +596,6 @@
 				2D398962165FF88800F8FA29 /* Command.h */,
 				2D398963165FF88800F8FA29 /* Crc.mm */,
 				2D398964165FF88800F8FA29 /* Crc.h */,
-				2D398969165FF88800F8FA29 /* HeftCmdIds.h */,
 				2D39896A165FF88800F8FA29 /* IHostProcessor.h */,
 				2D39896B165FF88800F8FA29 /* IResponseProcessor.h */,
 				2D39896E165FF88800F8FA29 /* RequestCommand.mm */,
@@ -683,6 +685,7 @@
 		2DEDA3711628B0580043AFBC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0D5A12E2200D4DD100C5B847 /* CoreBluetooth.framework */,
 				FBFA75151DB11CF900641641 /* SystemConfiguration.framework */,
 				FBFA75131DB11CF300641641 /* CoreLocation.framework */,
 				AD87936016E09AEF00A2C326 /* MessageUI.framework */,

@@ -8,7 +8,6 @@
 #import "MPosOperation.h"
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
-#include "HeftCmdIds.h"
 #include "debug.h"
 #include "Logger.h"
 #include "Exception.h"
@@ -93,7 +92,7 @@ void simulateDeviceDisconnect();
     EventInfoResponseCommand responseCommand(EFT_PP_STATUS_CONNECTING, false);
     responseCommand.ProcessResult(processor);
 	
-	return new HostResponseCommand(CMD_HOST_CONN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
+	return new HostResponseCommand(EFT_PACKET_HOST_CONNECT_RESP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processSend:(SendRequestCommand*)pRequest{
@@ -102,7 +101,7 @@ void simulateDeviceDisconnect();
     EventInfoResponseCommand spStatus(EFT_PP_STATUS_SENDING, false);
     spStatus.ProcessResult(processor);
 
-	return new HostResponseCommand(CMD_HOST_SEND_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
+	return new HostResponseCommand(EFT_PACKET_HOST_SEND_RESP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processReceive:(ReceiveRequestCommand*)pRequest{
@@ -112,7 +111,7 @@ void simulateDeviceDisconnect();
     EventInfoResponseCommand spStatus(EFT_PP_STATUS_RECEIVEING, false);
     spStatus.ProcessResult(processor);
 	
-	return new HostResponseCommand(CMD_HOST_RECV_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
+	return new HostResponseCommand(EFT_PACKET_HOST_RECEIVE_RESP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processDisconnect:(DisconnectRequestCommand*)pRequest{
@@ -120,13 +119,13 @@ void simulateDeviceDisconnect();
     spStatus.ProcessResult(processor);
 	
 	LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: disconnected");
-	return new HostResponseCommand(CMD_HOST_DISC_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
+	return new HostResponseCommand(EFT_PACKET_HOST_DISCONNECT_RESP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount());
 }
 
 - (RequestCommand*)processSignature:(SignatureRequestCommand*)pRequest{
 	LOG(@"Signature required request");
 	int status = [processor processSign:pRequest];
-	return new HostResponseCommand(CMD_STAT_SIGN_RSP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount(), status);
+	return new HostResponseCommand(EFT_PACKET_SIGNATURE_REQ_RESP, pRequest->GetFinCommand(), pRequest->GetCurrency(), pRequest->GetAmount(), status);
 }
 
 - (RequestCommand*)processChallenge:(ChallengeRequestCommand*)pRequest{
