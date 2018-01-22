@@ -115,7 +115,7 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, std::u
 {
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS) {
 		const InitPayload* pResponse = static_cast<const InitPayload*>(pPayload);
-		//ATLASSERT(ReadLength(pResponse) == sizeof(InitPayload) - sizeof(ResponsePayload));
+
 		com_buffer_size = ntohs(pResponse->com_buffer_size);
 		serial_number = BCDCoder::Decode(pResponse->serial_number, sizeof(pResponse->serial_number));
 		public_key_ver = ntohs(pResponse->public_key_ver);

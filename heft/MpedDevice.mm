@@ -888,6 +888,7 @@ enum eSignConditions
         [self sendResponseInfo:statusMessages[status]
                           code:status
                            xml:nil];
+
 #ifdef HEFT_SIMULATOR
         [NSThread sleepForTimeInterval:1.];
 #endif

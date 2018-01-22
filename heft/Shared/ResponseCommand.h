@@ -38,10 +38,10 @@ public:
         [processor processResponse:this];
     }
 
-	int GetStatus() {
+    int GetStatus() {
         return iStatus;
     }
-	
+
     int GetLength() {
         return length;
     }
