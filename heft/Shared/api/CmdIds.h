@@ -20,6 +20,14 @@
 #ifndef _CMDIDS_H_
 #define _CMDIDS_H_
 
+#define FRAME_START			0x0210
+#define FRAME_END			0x0310
+#define FRAME_PARTIAL_END	0x1710
+#define SESSION_END			0x0410
+#define POLLING_SEQ			0x0510
+#define POSITIVE_ACK		0x0610
+#define NEGATIVE_ACK		0x1510
+
 //Command groups
 #define EFT_PACKET_TYPE_POWER_ON        '@'
 #define EFT_PACKET_TYPE_COMMAND         'C'
@@ -33,85 +41,87 @@
 #define EFT_PACKET_TYPE_LOGGING         'L'
 
 //Command
-#define EFT_PACKET_COMMAND              "C000"
-#define EFT_PACKET_COMMAND_RESP         "C001"
+#define EFT_PACKET_COMMAND              'C000'
+#define EFT_PACKET_COMMAND_RESP         'C001'
 
 //Idle commands
-#define EFT_PACKET_INIT                 "I000"
-#define EFT_PACKET_INIT_RESP            "I001"
-#define EFT_PACKET_IDLE                 "I010"
-#define EFT_PACKET_IDLE_RESP            "I011"
+#define EFT_PACKET_INIT                 'I000'
+#define EFT_PACKET_INIT_RESP            'I001'
+#define EFT_PACKET_IDLE                 'I010'
+#define EFT_PACKET_IDLE_RESP            'I011'
 
 //Parameter downloading
-#define EFT_PACKET_START_PARAM          "P000"
-#define EFT_PACKET_START_PARAM_RESP     "P001"
-#define EFT_PACKET_PARAM_DATA           "P010"
-#define EFT_PACKET_PARAM_DATA_RESP      "P011"
-#define EFT_PACKET_END_PARAM            "P020"
-#define EFT_PACKET_END_PARAM_RESP       "P021"
+#define EFT_PACKET_START_PARAM          'P000'
+#define EFT_PACKET_START_PARAM_RESP     'P001'
+#define EFT_PACKET_PARAM_DATA           'P010'
+#define EFT_PACKET_PARAM_DATA_RESP      'P011'
+#define EFT_PACKET_END_PARAM            'P020'
+#define EFT_PACKET_END_PARAM_RESP       'P021'
 
 //Software downloading
-#define EFT_PACKET_SOFT_REQUEST         "S000"
-#define EFT_PACKET_SOFT_REQUEST_RESP    "S001"
-#define EFT_PACKET_FILE_HEADER          "S010"
-#define EFT_PACKET_FILE_HEADER_RESP     "S011"
-#define EFT_PACKET_FILE_DATA            "S020"
-#define EFT_PACKET_FILE_DATA_RESP       "S021"
-#define EFT_PACKET_SOFT_CONFIRM         "S030"
-#define EFT_PACKET_SOFT_CONFIRM_RESP    "S031"
+#define EFT_PACKET_SOFT_REQUEST         'S000'
+#define EFT_PACKET_SOFT_REQUEST_RESP    'S001'
+#define EFT_PACKET_FILE_HEADER          'S010'
+#define EFT_PACKET_FILE_HEADER_RESP     'S011'
+#define EFT_PACKET_FILE_DATA            'S020'
+#define EFT_PACKET_FILE_DATA_RESP       'S021'
+#define EFT_PACKET_SOFT_CONFIRM         'S030'
+#define EFT_PACKET_SOFT_CONFIRM_RESP    'S031'
 
 //Financial transactions
-#define EFT_PACKET_SALE                 "F000"
-#define EFT_PACKET_SALE_RESP            "F001"
-#define EFT_PACKET_REFUND               "F010"
-#define EFT_PACKET_REFUND_RESP          "F011"
-#define EFT_PACKET_SALE_VOID            "F020"
-#define EFT_PACKET_SALE_VOID_RESP       "F021"
-#define EFT_PACKET_REFUND_VOID          "F030"
-#define EFT_PACKET_REFUND_VOID_RESP     "F031"
-#define EFT_PACKET_START_DAY            "F040"
-#define EFT_PACKET_START_DAY_RESP       "F041"
-#define EFT_PACKET_END_DAY              "F050"
-#define EFT_PACKET_END_DAY_RESP         "F051"
-#define EFT_PACKET_HOST_INIT            "F060"
-#define EFT_PACKET_HOST_INIT_RESP       "F061"
-#define EFT_PACKET_RECOVERED_TXN_RESULT         "F070"
-#define EFT_PACKET_RECOVERED_TXN_RESULT_RESP    "F071"
+#define EFT_PACKET_SALE                 'F000'
+#define EFT_PACKET_SALE_RESP            'F001'
+#define EFT_PACKET_REFUND               'F010'
+#define EFT_PACKET_REFUND_RESP          'F011'
+#define EFT_PACKET_SALE_VOID            'F020'
+#define EFT_PACKET_SALE_VOID_RESP       'F021'
+#define EFT_PACKET_REFUND_VOID          'F030'
+#define EFT_PACKET_REFUND_VOID_RESP     'F031'
+#define EFT_PACKET_START_DAY            'F040'
+#define EFT_PACKET_START_DAY_RESP       'F041'
+#define EFT_PACKET_END_DAY              'F050'
+#define EFT_PACKET_END_DAY_RESP         'F051'
+#define EFT_PACKET_HOST_INIT            'F060'
+#define EFT_PACKET_HOST_INIT_RESP       'F061'
+#define EFT_PACKET_RECOVERED_TXN_RESULT         'F070'
+#define EFT_PACKET_RECOVERED_TXN_RESULT_RESP    'F071'
 
 //Host communication
-#define EFT_PACKET_HOST_CONNECT         "H000"
-#define EFT_PACKET_HOST_CONNECT_RESP    "H001"
-#define EFT_PACKET_HOST_SEND            "H010"
-#define EFT_PACKET_HOST_SEND_RESP       "H011"
-#define EFT_PACKET_HOST_RECEIVE         "H020"
-#define EFT_PACKET_HOST_RECEIVE_RESP    "H021"
-#define EFT_PACKET_HOST_DISCONNECT      "H030"
-#define EFT_PACKET_HOST_DISCONNECT_RESP "H031"
+#define EFT_PACKET_HOST_CONNECT         'H000'
+#define EFT_PACKET_HOST_CONNECT_RESP    'H001'
+#define EFT_PACKET_HOST_SEND            'H010'
+#define EFT_PACKET_HOST_SEND_RESP       'H011'
+#define EFT_PACKET_HOST_RECEIVE         'H020'
+#define EFT_PACKET_HOST_RECEIVE_RESP    'H021'
+#define EFT_PACKET_HOST_DISCONNECT      'H030'
+#define EFT_PACKET_HOST_DISCONNECT_RESP 'H031'
+#define EFT_PACKET_HOST_MSG_TO_HOST	    'H040'
+#define EFT_PACKET_HOST_MSG_RESP	    'H041'
 
 //Status report
-#define EFT_PACKET_EVENT_INFO_RESP      "R001"
-#define EFT_PACKET_SIGNATURE_REQ        "R010"
-#define EFT_PACKET_SIGNATURE_REQ_RESP   "R011"
-#define EFT_PACKET_SHARE_SECRET_REQ     "R020"
-#define EFT_PACKET_SHARE_SECRET_REQ_RESP "R021"
+#define EFT_PACKET_EVENT_INFO_RESP      'R001'
+#define EFT_PACKET_SIGNATURE_REQ        'R010'
+#define EFT_PACKET_SIGNATURE_REQ_RESP   'R011'
+#define EFT_PACKET_SHARE_SECRET_REQ     'R020'
+#define EFT_PACKET_SHARE_SECRET_REQ_RESP 'R021'
 
 //Debugging
-#define EFT_PACKET_DEBUG_ENABLE         "D000"
-#define EFT_PACKET_DEBUG_ENABLE_RESP    "D001"
-#define EFT_PACKET_DEBUG_DISABLE        "D010"
-#define EFT_PACKET_DEBUG_DISABLE_RESP   "D011"
-#define EFT_PACKET_DEBUG_RESET          "D020"
-#define EFT_PACKET_DEBUG_RESET_RESP     "D021"
-#define EFT_PACKET_DEBUG_GETINFO        "D030"
-#define EFT_PACKET_DEBUG_GETINFO_RESP   "D031"
+#define EFT_PACKET_DEBUG_ENABLE         'D000'
+#define EFT_PACKET_DEBUG_ENABLE_RESP    'D001'
+#define EFT_PACKET_DEBUG_DISABLE        'D010'
+#define EFT_PACKET_DEBUG_DISABLE_RESP   'D011'
+#define EFT_PACKET_DEBUG_RESET          'D020'
+#define EFT_PACKET_DEBUG_RESET_RESP     'D021'
+#define EFT_PACKET_DEBUG_GETINFO        'D030'
+#define EFT_PACKET_DEBUG_GETINFO_RESP   'D031'
 
 //Logging
-#define EFT_PACKET_LOG_SET_LEVEL        "L000"
-#define EFT_PACKET_LOG_SET_LEVEL_RESP   "L001"
-#define EFT_PACKET_LOG_RESET			"L010"
-#define EFT_PACKET_LOG_RESET_RESP		"L011"
-#define EFT_PACKET_LOG_GETINFO			"L020"
-#define EFT_PACKET_LOG_GETINFO_RESP		"L021"
+#define EFT_PACKET_LOG_SET_LEVEL        'L000'
+#define EFT_PACKET_LOG_SET_LEVEL_RESP   'L001'
+#define EFT_PACKET_LOG_RESET			'L010'
+#define EFT_PACKET_LOG_RESET_RESP		'L011'
+#define EFT_PACKET_LOG_GETINFO			'L020'
+#define EFT_PACKET_LOG_GETINFO_RESP		'L021'
 
 //MPED status messages 
 #define EFT_PP_STATUS_SUCCESS                   0x0001

@@ -5,7 +5,6 @@
 #include "ResponseCommand.h"
 #include "RequestCommand.h"
 #include "BCDCoder.h"
-#include "HeftCmdIds.h"
 #include "api/CmdIds.h"
 #include "debug.h"
 
@@ -27,46 +26,45 @@ ResponseCommand* ResponseCommand::Create(const std::vector<std::uint8_t>& buf)
 	}
 	switch(ntohl(pResponse->command))
     {
-	case CMD_INIT_RSP:
-		// ATLASSERT(buf.size() >= sizeof(ResponsePayload));
+	case EFT_PACKET_INIT_RESP:
 		return new InitResponseCommand(pResponse, (std::uint32_t)buf.size());
         // return std::make_shared<InitResponseCommand>(pResponse, (std::uint32_t)buf.size());
-	case CMD_FIN_SALE_RSP:
-	case CMD_FIN_REFUND_RSP:
-	case CMD_FIN_SALEV_RSP:
-	case CMD_FIN_REFUNDV_RSP:
-	case CMD_FIN_STARTDAY_RSP:
-	case CMD_FIN_ENDDAY_RSP:
-	case CMD_FIN_INIT_RSP:
-		NSCAssert(buf.size() >= sizeof(ResponsePayload), @"CMD_FIN_INIT_RSP, buf size too small");
+	case EFT_PACKET_SALE_RESP:
+	case EFT_PACKET_REFUND_RESP:
+	case EFT_PACKET_SALE_VOID_RESP:
+	case EFT_PACKET_REFUND_VOID_RESP:
+	case EFT_PACKET_START_DAY_RESP:
+	case EFT_PACKET_END_DAY_RESP:
+	case EFT_PACKET_HOST_INIT_RESP:
+		NSCAssert(buf.size() >= sizeof(ResponsePayload), @"EFT_PACKET_INIT_RESP, buf size too small");
 		return new FinanceResponseCommand(pResponse, (std::uint32_t)buf.size(), NO);
-    case CMD_FIN_RCVRD_TXN_RSLT_RSP:
-        NSCAssert(buf.size() >= sizeof(ResponsePayload), @"CMD_FIN_RCVRD_TXN_RSLT_RSP, buf size too small");
+    case EFT_PACKET_RECOVERED_TXN_RESULT_RESP:
+        NSCAssert(buf.size() >= sizeof(ResponsePayload), @"EFT_PACKET_RCVRD_TXN_RSLT_RESP, buf size too small");
         return new FinanceResponseCommand(pResponse, (std::uint32_t)buf.size(), YES);
-	case CMD_HOST_CONN_REQ:
-	case CMD_HOST_SEND_REQ:
-	case CMD_HOST_RECV_REQ:
-	case CMD_HOST_DISC_REQ:
-    case CMD_HOST_MSG_TO_HOST:
+	case EFT_PACKET_HOST_CONNECT:
+	case EFT_PACKET_HOST_SEND:
+	case EFT_PACKET_HOST_RECEIVE:
+	case EFT_PACKET_HOST_DISCONNECT:
+    case EFT_PACKET_HOST_MSG_TO_HOST:
 		return reinterpret_cast<ResponseCommand*>(HostRequestCommand::Create(pResponse, (std::uint32_t)buf.size()));
-	case CMD_STAT_SIGN_REQ:
+	case EFT_PACKET_SIGNATURE_REQ:
 		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse, (std::uint32_t)buf.size()));
-	case CMD_STAT_CHALENGE_REQ:
+	case EFT_PACKET_SHARE_SECRET_REQ:
 		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse, (std::uint32_t)buf.size()));
-	case CMD_LOG_GET_INF_RSP:
+	case EFT_PACKET_LOG_GETINFO_RESP:
 		return new GetLogInfoResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case CMD_STAT_INFO_RSP:
+	case EFT_PACKET_EVENT_INFO_RESP:
 		return new EventInfoResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case CMD_IDLE_RSP:
+	case EFT_PACKET_IDLE_RESP:
 		return new IdleResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case CMD_DBG_ENABLE_RSP:
-	case CMD_DBG_DISABLE_RSP:
-	case CMD_DBG_RESET_RSP:
-	case CMD_LOG_SET_LEV_RSP:
-	case CMD_LOG_RST_INF_RSP:
-		NSCAssert(buf.size() >= sizeof(ResponsePayload), @"CMD_LOG_RST_INF_RSP");
+	case EFT_PACKET_DEBUG_ENABLE_RESP:
+	case EFT_PACKET_DEBUG_DISABLE_RESP:
+	case EFT_PACKET_DEBUG_RESET_RESP:
+	case EFT_PACKET_LOG_SET_LEVEL_RESP:
+	case EFT_PACKET_LOG_RESET_RESP:
+		NSCAssert(buf.size() >= sizeof(ResponsePayload), @"EFT_PACKET_LOG_RESET_RESP");
 		return new ResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case CMD_XCMD_RSP:
+	case EFT_PACKET_COMMAND_RESP:
 		return new XMLCommandResponseCommand(pResponse, buf.size());
 	default:
 		LOG(@"Unknown command");

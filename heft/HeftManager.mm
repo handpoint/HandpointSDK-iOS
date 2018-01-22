@@ -11,7 +11,7 @@
 #import "HeftStatusReportDelegate.h"
 #import "debug.h"
 #import "AnalyticsConfig.h"
-
+#import <CoreBluetooth/CoreBluetooth.h>
 
 #ifdef HEFT_SIMULATOR
 
@@ -27,9 +27,13 @@ NSString *eaProtocol = @"com.datecs.pinpad";
 
 @end
 
-@interface HeftManager ()
+@interface HeftManager () <CBCentralManagerDelegate>
 
-//@property (nonatomic) NSMutableArray *eaDevices;
+#ifndef HEFT_SIMULATOR
+@property (nonatomic) CBCentralManager *centralManager;
+#endif
+
+@property (nonatomic) BOOL hardwareReady;
 
 @end
 
@@ -71,6 +75,11 @@ static HeftManager *instance = nil;
 
         EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
         [eaManager registerForLocalNotifications];
+        
+        self.hardwareReady = NO;
+        self.centralManager = [[CBCentralManager alloc] initWithDelegate:self
+                                                                   queue:nil
+                                                                 options:nil];
 
 #endif
         AnalyticsConfig *analyticsConfig = [AnalyticsConfig new];
@@ -365,6 +374,21 @@ static EAAccessory *simulatorAccessory = nil;
         [self.delegate didLostAccessoryDevice:remoteDevice];
     }
 }
+
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central;
+{
+    self.hardwareReady = (central.state == CBManagerStatePoweredOn);
+}
+
+- (BOOL)isConnectionHardwareReady
+{
+#ifdef HEFT_SIMULATOR
+    return YES;
+#else
+    return self.hardwareReady || (self.connectedCardReaders.count > 0);
+#endif
+}
+    
 
 #pragma mark - Utilities
 

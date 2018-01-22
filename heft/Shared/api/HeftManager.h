@@ -50,6 +50,8 @@
  */
 - (void)startDiscovery;
 
+- (BOOL)isConnectionHardwareReady;
+
 @end
 
 /*

@@ -3,7 +3,6 @@
 
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
-#include "HeftCmdIds.h"
 
 #include "ResponseParser.h"
 #include "Exception.h"
@@ -270,7 +269,7 @@ FinanceRequestCommand::FinanceRequestCommand(uint32_t type, const string& curren
 
     currency = code;
     
-    if(GetType() != CMD_FIN_RCVRD_TXN_RSLT)
+    if(GetType() != EFT_PACKET_RECOVERED_TXN_RESULT)
     {
         simulatorState.clearException();
         
@@ -291,23 +290,23 @@ ResponseCommand* FinanceRequestCommand::CreateResponse() const
 	case eWaitingCard:
         switch (GetType()) {
             default:
-            case CMD_FIN_SALE_REQ:
-            case CMD_FIN_REFUND_REQ:
+            case EFT_PACKET_SALE:
+            case EFT_PACKET_REFUND:
                 simulatorState.inc_trans_id();
                 result = new EventInfoResponseCommand(EFT_PP_STATUS_WAITING_CARD);
                 break;
-            case CMD_FIN_SALEV_REQ:
-            case CMD_FIN_REFUNDV_REQ:
+            case EFT_PACKET_SALE_VOID:
+            case EFT_PACKET_REFUND_VOID:
                 simulatorState.inc_trans_id();
                 // result = new FinanceResponseCommand(GetType(), currency, amount, !(amount % 2) ? EFT_FINANC_STATUS_TRANS_APPROVED : EFT_FINANC_STATUS_TRANS_DECLINED, NO);
                 result = reinterpret_cast<ResponseCommand*>(new ConnectRequestCommand(currency, amount, GetType()));
                 break;
-            case CMD_FIN_STARTDAY_REQ:
-            case CMD_FIN_ENDDAY_REQ:
-            case CMD_FIN_INIT_REQ:
+            case EFT_PACKET_START_DAY:
+            case EFT_PACKET_END_DAY:
+            case EFT_PACKET_HOST_INIT:
                 result = new FinanceResponseCommand(GetType(), "0", 0, EFT_FINANC_STATUS_TRANS_PROCESSED, NO);
                 break;
-            case CMD_FIN_RCVRD_TXN_RSLT:
+            case EFT_PACKET_RECOVERED_TXN_RESULT:
                 if(simulatorState.isInException()) {
                     result = new FinanceResponseCommand(GetType(), simulatorState.getCurrency(), simulatorState.getAmount(), simulatorState.isAuthorized() ? EFT_FINANC_STATUS_TRANS_APPROVED : EFT_FINANC_STATUS_TRANS_DECLINED, YES);
                 } else {
@@ -344,17 +343,17 @@ ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const
 
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()
-	: FinanceRequestCommand(CMD_FIN_STARTDAY_REQ, "0", 0, 0, "", "")
+	: FinanceRequestCommand(EFT_PACKET_START_DAY, "0", 0, 0, "", "")
 {
 }
 
 EndOfDayRequestCommand::EndOfDayRequestCommand()
-    : FinanceRequestCommand(CMD_FIN_ENDDAY_REQ, "0", 0, 0, "", "")
+    : FinanceRequestCommand(EFT_PACKET_END_DAY, "0", 0, 0, "", "")
 {
 }
 
 FinanceInitRequestCommand::FinanceInitRequestCommand()
-    : FinanceRequestCommand(CMD_FIN_INIT_REQ, "0", 0, 0, "", "")
+    : FinanceRequestCommand(EFT_PACKET_HOST_INIT, "0", 0, 0, "", "")
 {
 }
 
@@ -367,21 +366,21 @@ HostResponseCommand::HostResponseCommand(uint32_t command, uint32_t aFin_cmd, co
 ResponseCommand* HostResponseCommand::CreateResponse()const{
 	RequestCommand* result = 0;
 	switch(m_cmd){
-	case CMD_HOST_CONN_RSP:
+	case EFT_PACKET_HOST_CONNECT_RESP:
 		result = new SendRequestCommand(currency, amount, fin_cmd);
 		break;
-	case CMD_HOST_SEND_RSP:
+	case EFT_PACKET_HOST_SEND_RESP:
 		result = new ReceiveRequestCommand(currency, amount, fin_cmd);
 		break;
-	case CMD_HOST_RECV_RSP:
+	case EFT_PACKET_HOST_RECEIVE_RESP:
 		result = new DisconnectRequestCommand(currency, amount, fin_cmd);
 		break;
-	case CMD_HOST_DISC_RSP:
+	case EFT_PACKET_HOST_DISCONNECT_RESP:
             simulatorState.setAsAuthorized();
             simulatorState.setOrgTransUID(simulatorState.getTransUID());
             simulatorState.setTransUID([[[[NSUUID UUID] UUIDString] lowercaseString] cStringUsingEncoding:NSUTF8StringEncoding]);
             
-            if((fin_cmd != CMD_FIN_SALEV_REQ) && (fin_cmd != CMD_FIN_REFUNDV_REQ)) {
+            if((fin_cmd != EFT_PACKET_SALE_VOID) && (fin_cmd != EFT_PACKET_REFUND_VOID)) {
                 if(amount == ciSignRequestAmount) {
                     simulatorState.setUsingMsr();
                     result = new SignatureRequestCommand(currency, amount, fin_cmd);
@@ -430,7 +429,7 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
             }
             return new FinanceResponseCommand(fin_cmd, currency, amount, EFT_FINANC_STATUS_TRANS_APPROVED);
             break;
-	case CMD_STAT_SIGN_RSP:
+	case EFT_PACKET_SIGNATURE_REQ_RESP:
         if(status == EFT_PP_STATUS_SUCCESS){
             simulatorState.setAsAuthorized();
         } else {
@@ -442,27 +441,27 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
 }
 
 ConnectRequestCommand::ConnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
-	: HostRequestCommand(CMD_HOST_CONN_REQ, aCurrency, aAmount, aFin_cmd)
+	: HostRequestCommand(EFT_PACKET_HOST_CONNECT, aCurrency, aAmount, aFin_cmd)
 {
 }
 
 SendRequestCommand::SendRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
-	: HostRequestCommand(CMD_HOST_SEND_REQ, aCurrency, aAmount, aFin_cmd)
+	: HostRequestCommand(EFT_PACKET_HOST_SEND, aCurrency, aAmount, aFin_cmd)
 {
 }
 
 ReceiveRequestCommand::ReceiveRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
-	: HostRequestCommand(CMD_HOST_RECV_REQ, aCurrency, aAmount, aFin_cmd)
+	: HostRequestCommand(EFT_PACKET_HOST_RECEIVE, aCurrency, aAmount, aFin_cmd)
 {
 }
 
 DisconnectRequestCommand::DisconnectRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aFin_cmd)
-	: HostRequestCommand(CMD_HOST_DISC_REQ, aCurrency, aAmount, aFin_cmd)
+	: HostRequestCommand(EFT_PACKET_HOST_DISCONNECT, aCurrency, aAmount, aFin_cmd)
 {
 }
 
 SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, uint32_t aAmount, uint32_t aType)
-	: RequestCommand(CMD_STAT_SIGN_REQ), currency(aCurrency), amount(aAmount), type(aType)
+	: RequestCommand(EFT_PACKET_SIGNATURE_REQ), currency(aCurrency), amount(aAmount), type(aType)
 {
     NSMutableDictionary* xmlDict = [[NSMutableDictionary alloc] init];
     
@@ -477,16 +476,16 @@ SignatureRequestCommand::SignatureRequestCommand(const string& aCurrency, uint32
 }
 
 SetLogLevelRequestCommand::SetLogLevelRequestCommand(uint8_t log_level) 
-	: RequestCommand(CMD_LOG_SET_LEV_REQ)
+	: RequestCommand(EFT_PACKET_LOG_SET_LEVEL)
 {
 }
 
 ResetLogInfoRequestCommand::ResetLogInfoRequestCommand()
-	: RequestCommand(CMD_LOG_RST_INF_REQ)
+	: RequestCommand(EFT_PACKET_LOG_RESET)
 {}
 
 GetLogInfoRequestCommand::GetLogInfoRequestCommand()
-	: RequestCommand(CMD_LOG_GET_INF_REQ)
+	: RequestCommand(EFT_PACKET_LOG_GETINFO)
 {}
 
 ResponseCommand* GetLogInfoRequestCommand::CreateResponse()const{return new GetLogInfoResponseCommand;}
@@ -502,7 +501,7 @@ NSDictionary* getValuesFromXml(NSString* xml, NSString* path){
 }
 
 XMLCommandRequestCommand::XMLCommandRequestCommand(const string& xml)
-    : RequestCommand(CMD_XCMD_REQ)
+    : RequestCommand(EFT_PACKET_COMMAND)
     , xml_data(xml)
 {
 }

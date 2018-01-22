@@ -265,7 +265,7 @@ namespace {
 
     session_configuration.timeoutIntervalForResource = timeout;
 
-    return new HostResponseCommand(CMD_HOST_CONN_RSP, EFT_PP_STATUS_SUCCESS);
+    return new HostResponseCommand(EFT_PACKET_HOST_CONNECT_RESP, EFT_PP_STATUS_SUCCESS);
 }
 
 
@@ -423,7 +423,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
     [uploadTask resume];
 
 
-    return new HostResponseCommand(CMD_HOST_SEND_RSP, EFT_PP_STATUS_SUCCESS);
+    return new HostResponseCommand(EFT_PACKET_HOST_SEND_RESP, EFT_PP_STATUS_SUCCESS);
 }
 
 - (RequestCommand *)processReceive:(ReceiveRequestCommand *)pRequest
@@ -448,7 +448,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 
     if (error != nil)
     {
-        return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVING_ERROR);
+        return new HostResponseCommand(EFT_PACKET_HOST_RECEIVE_RESP, EFT_PP_STATUS_RECEIVING_ERROR);
     }
     else
     {
@@ -460,7 +460,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 {
     [self cleanUpConnection];
     LOG_RELEASE(Logger::eFine, @"State of financial transaction changed: disconnected");
-    return new HostResponseCommand(CMD_HOST_DISC_RSP, EFT_PP_STATUS_SUCCESS);
+    return new HostResponseCommand(EFT_PACKET_HOST_DISCONNECT_RESP, EFT_PP_STATUS_SUCCESS);
 }
 
 - (RequestCommand *)processPost:(PostRequestCommand *)pRequest
@@ -604,11 +604,11 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 
     if (finished_in_time == NO)
     {
-        return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_CONNECT_TIMEOUT);
+        return new HostResponseCommand(EFT_PACKET_HOST_RECEIVE_RESP, EFT_PP_STATUS_CONNECT_TIMEOUT);
     }
     else if (error != nil)
     {
-        return new HostResponseCommand(CMD_HOST_RECV_RSP, EFT_PP_STATUS_RECEIVING_ERROR);
+        return new HostResponseCommand(EFT_PACKET_HOST_RECEIVE_RESP, EFT_PP_STATUS_RECEIVING_ERROR);
     }
     else
     {
@@ -620,7 +620,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 {
     LOG(@"Signature required request");
     int status = [processor processSign:pRequest];
-    return new HostResponseCommand(CMD_STAT_SIGN_RSP, status);
+    return new HostResponseCommand(EFT_PACKET_SIGNATURE_REQ_RESP, status);
 }
 
 - (RequestCommand *)processChallenge:(ChallengeRequestCommand *)pRequest

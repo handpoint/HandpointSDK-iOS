@@ -8,7 +8,6 @@
 #import "MpedDevice.h"
 #import "HeftConnection.h"
 #import "ResponseParser.h"
-#import "HeftCmdIds.h"
 #import "HeftManager.h"
 
 #import "exception.h"
@@ -289,7 +288,7 @@ enum eSignConditions
                                             reference];
     }
 
-    FinanceRequestCommand *frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
+    FinanceRequestCommand *frq = new FinanceRequestCommand(EFT_PACKET_SALE,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
             present,
@@ -349,7 +348,7 @@ enum eSignConditions
                                             refrenceString, monthsString];
     }
 
-    FinanceRequestCommand *frq = new FinanceRequestCommand(CMD_FIN_SALE_REQ,
+    FinanceRequestCommand *frq = new FinanceRequestCommand(EFT_PACKET_SALE,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
             present,
@@ -393,7 +392,7 @@ enum eSignConditions
                                                     @"</FinancialTransactionRequest>",
                                             reference];
     }
-    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_REFUND_REQ,
+    FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_REFUND,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
             present,
@@ -421,7 +420,7 @@ enum eSignConditions
             @"currency": [utils ObjectOrNull:currency]}];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_SALEV_REQ,
+    FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_SALE_VOID,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
             present,
@@ -449,7 +448,7 @@ enum eSignConditions
             @"currency": [utils ObjectOrNull:currency]}];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_REFUNDV_REQ, std::string([currency UTF8String]), (std::uint32_t) amount, present, std::string([transaction UTF8String]), std::string());
+    FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_REFUND_VOID, std::string([currency UTF8String]), (std::uint32_t) amount, present, std::string([transaction UTF8String]), std::string());
 
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
                                                            connection:connection
@@ -466,7 +465,7 @@ enum eSignConditions
                                     Action:@"retrievePendingTransaction"
                     withOptionalParameters:nil];
 
-    FinanceRequestCommand *frc = new FinanceRequestCommand(CMD_FIN_RCVRD_TXN_RSLT, "0" // must be like this or we throw an invalid currency exception
+    FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_RECOVERED_TXN_RESULT, "0" // must be like this or we throw an invalid currency exception
             , 0, YES, std::string(), std::string());
 
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc

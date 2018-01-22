@@ -3,7 +3,6 @@
 
 #include "ResponseCommand.h"
 #include "RequestCommand.h"
-#include "HeftCmdIds.h"
 
 #include <cstdint>
 
@@ -49,7 +48,7 @@ string ConvertDictionaryToXML(NSDictionary* dict, NSString* root)
 }
 
 EventInfoResponseCommand::EventInfoResponseCommand(int status, bool cancel_allowed)
-	: ResponseCommand(CMD_STAT_INFO_RSP, status)
+	: ResponseCommand(EFT_PACKET_EVENT_INFO_RESP, status)
 {
     NSMutableDictionary* xmlDict = [[NSMutableDictionary alloc] init];
     
@@ -95,7 +94,7 @@ FinanceResponseCommand::FinanceResponseCommand(uint32_t cmd, const string& aCurr
     bool signature = simulatorState.isIcc() ? false : true;
     
     switch (cmd) {
-        case CMD_FIN_RCVRD_TXN_RSLT:
+        case EFT_PACKET_RECOVERED_TXN_RESULT:
             
             if(!simulatorState.isInException())
             {
@@ -114,10 +113,10 @@ FinanceResponseCommand::FinanceResponseCommand(uint32_t cmd, const string& aCurr
             
             // fallthrough
         default:
-        case CMD_FIN_SALEV_REQ:
-        case CMD_FIN_REFUNDV_REQ:
-        case CMD_FIN_SALE_REQ:
-        case CMD_FIN_REFUND_REQ:
+        case EFT_PACKET_SALE_VOID:
+        case EFT_PACKET_REFUND_VOID:
+        case EFT_PACKET_SALE:
+        case EFT_PACKET_REFUND:
             
             merchant_receipt = !(signature && simulatorState.isAuthorized()) ? simulatorState.generateReceipt(true) : string(); // signature receipt will already have been delivered
             customer_receipt = simulatorState.generateReceipt(false);
@@ -131,7 +130,7 @@ FinanceResponseCommand::FinanceResponseCommand(uint32_t cmd, const string& aCurr
             xmlDict[@"EFTTimestamp"]        = [iso_time stringFromDate:[NSDate date]]; //@"20141212094555"; // variable
             xmlDict[@"SerialNumber"]        = @"123400123";
             
-            if((cmd == CMD_FIN_SALEV_REQ) || (cmd == CMD_FIN_REFUNDV_REQ))
+            if((cmd == EFT_PACKET_SALE_VOID) || (cmd == EFT_PACKET_REFUND_VOID))
             {
                 if(simulatorState.isAuthorized())
                 {
@@ -170,9 +169,9 @@ FinanceResponseCommand::FinanceResponseCommand(uint32_t cmd, const string& aCurr
             
             break;
 
-        case CMD_FIN_STARTDAY_REQ:
-        case CMD_FIN_ENDDAY_REQ:
-        case CMD_FIN_INIT_REQ:
+        case EFT_PACKET_START_DAY:
+        case EFT_PACKET_END_DAY:
+        case EFT_PACKET_HOST_INIT:
             
             // note: no status message is included as a result of these functions
             [xmlDict removeObjectForKey:@"StatusMessage"];
@@ -187,13 +186,13 @@ FinanceResponseCommand::FinanceResponseCommand(uint32_t cmd, const string& aCurr
     xml_details = ConvertDictionaryToXML(xmlDict, @"FinancialTransactionResponse");
 }
 
-GetLogInfoResponseCommand::GetLogInfoResponseCommand() : ResponseCommand(CMD_LOG_GET_INF_REQ)
+GetLogInfoResponseCommand::GetLogInfoResponseCommand() : ResponseCommand(EFT_PACKET_LOG_GETINFO)
 {
 	data = "Log info data";
 }
 
 XMLCommandResponseCommand::XMLCommandResponseCommand(int status, string xml)
-    : ResponseCommand(CMD_XCMD_REQ, status)
+    : ResponseCommand(EFT_PACKET_COMMAND, status)
     , xml_details(xml)
 {
 }
@@ -221,9 +220,9 @@ void SimulatorState::inc_trans_id(){
 string SimulatorState::generateReceipt(bool merchant_copy) const
 {
     bool authorized = simulatorState.isAuthorized() ? true : false;
-    bool reversal = (simulatorState.getType() == CMD_FIN_SALEV_REQ) || (simulatorState.getType() == CMD_FIN_REFUNDV_REQ) ? true : false;
-    bool refund = simulatorState.getType() == CMD_FIN_REFUND_REQ ? true : false;
-    bool sale = simulatorState.getType() == CMD_FIN_SALE_REQ ? true : false;
+    bool reversal = (simulatorState.getType() == EFT_PACKET_SALE_VOID) || (simulatorState.getType() == EFT_PACKET_REFUND_VOID) ? true : false;
+    bool refund = simulatorState.getType() == EFT_PACKET_REFUND ? true : false;
+    bool sale = simulatorState.getType() == EFT_PACKET_SALE ? true : false;
     bool verified_by_pin = simulatorState.isIcc() ? true : false;
     bool verified_by_signature = simulatorState.isIcc() ? false : true;
     
@@ -246,7 +245,7 @@ string SimulatorState::generateReceipt(bool merchant_copy) const
                      , authorized ? [NSString stringWithFormat:@"Reference: %s<br/>", simulatorState.getTransUID().c_str()] : @"" // @"Reference: 6dc8d0ff-b49a-4f57-8ed7-5ef5d1cb1d1e<br/>" : @"" // variable
                      , authorized && reversal ? [NSString stringWithFormat:@"Original Reference: %s<br/>", simulatorState.getOrgTransUID().c_str()] : @""// @"Original Reference: ec174bfe-5aaa-4192-840f-c9a18666914b<br/>" : @"" // input
                      , merchant_copy ? @"** MERCHANT COPY **" : @"** CARDHOLDER COPY **"
-                     , !reversal ? (sale ? @"SALE" : @"REFUND") : (simulatorState.getType() == CMD_FIN_SALEV_REQ ? @"SALE VOID" : @"REFUND VOID")
+                     , !reversal ? (sale ? @"SALE" : @"REFUND") : (simulatorState.getType() == EFT_PACKET_SALE_VOID ? @"SALE VOID" : @"REFUND VOID")
                      , [NSString stringWithFormat:@"%s%@", simulatorState.getCurrencyAbbreviation().c_str(), [currencyStyle stringFromNumber:[NSNumber numberWithDouble:(((double)simulatorState.getAmount())/100.0)]]] //[[NSNumber numberWithDouble:((double)simulatorState.getAmount())/100.0] descriptionWithLocale:[NSLocale currentLocale]]] // @"GBP1,00" // input
                      , refund ? @"Cr" : @""
                      , sale ? @"Your account will be debited with the above amount" : @"Your account will be credited with the above amount"
