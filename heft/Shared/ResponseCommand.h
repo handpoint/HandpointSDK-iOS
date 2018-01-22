@@ -42,10 +42,6 @@ public:
         return iStatus;
     }
 
-    void SetStatus(int status) {
-        iStatus = status;
-    }
-	
     int GetLength() {
         return length;
     }

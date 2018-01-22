@@ -883,13 +883,9 @@ enum eSignConditions
 
 - (void)processResponse:(ResponseCommand *)pResponse
 {
-
-    NSLog(@"Hola");
     int status = pResponse->GetStatus();
     if (status != EFT_PP_STATUS_SUCCESS)
     {
-
-        NSLog(@"Hola2");
         [self sendResponseInfo:statusMessages[status]
                           code:status
                            xml:nil];
@@ -930,8 +926,6 @@ enum eSignConditions
 
 - (void)processEventInfoResponse:(EventInfoResponseCommand *)pResponse
 {
-    NSLog(@"Adios");
-
     int status = pResponse->GetStatus();
     NSString *statusMessage = status < ([statusMessages count] - 1) ? statusMessages[status] : @"Unknown status";
     NSDictionary *xml;

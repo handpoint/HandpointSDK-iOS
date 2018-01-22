@@ -118,13 +118,6 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, std::u
 	if(GetStatus() == EFT_PP_STATUS_SUCCESS) {
 		const InitPayload* pResponse = static_cast<const InitPayload*>(pPayload);
 
-		SetStatus(EFT_PP_STATUS_INITIALISATION_COMPLETE);
-		/*
-		 	const EventInfoPayload* pResponse = static_cast<const EventInfoPayload*>(pPayload);
-	std::uint32_t xml_len = ntohl(pResponse->xml_details_length);
-	xml_details.assign(pResponse->xml_details, xml_len);
-		 * */
-
 		com_buffer_size = ntohs(pResponse->com_buffer_size);
 		serial_number = BCDCoder::Decode(pResponse->serial_number, sizeof(pResponse->serial_number));
 		public_key_ver = ntohs(pResponse->public_key_ver);
