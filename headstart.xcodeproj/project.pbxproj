@@ -91,7 +91,6 @@
 		0D2DF8AE1FED7CC3006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0D2DF8AF1FED7CC9006F1AAB /* HeftRemoteDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; };
 		0D41FA0C1FF2B6A30033A2C7 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
-		0D5A12E3200D4DD100C5B847 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A12E2200D4DD100C5B847 /* CoreBluetooth.framework */; };
 		0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
@@ -460,7 +459,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0D5A12E3200D4DD100C5B847 /* CoreBluetooth.framework in Frameworks */,
 				0D41FA0C1FF2B6A30033A2C7 /* ExternalAccessory.framework in Frameworks */,
 				2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */,
 				FBFA751E1DB27CCE00641641 /* libextLib.a in Frameworks */,

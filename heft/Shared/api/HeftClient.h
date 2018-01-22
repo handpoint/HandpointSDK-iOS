@@ -35,8 +35,6 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
 
 @property (readwrite, nonatomic) NSString *sharedSecret;
 
-//- (void)setDelegate:(NSObject<HeftClientDelegate>*)aDelegate;
-
 /**
  Cancels current operation if it's possible.
  That is financial transaction or scanner mode. 

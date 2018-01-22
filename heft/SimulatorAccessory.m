@@ -32,8 +32,10 @@
           hardwareRevision:(NSString *)newHardwareRevision
            protocolStrings:(NSArray *)newProtocolStrings
 {
+    NSLog(@"\n\nHey\n\n");
     self = [super init];
 
+    NSLog(@"\n\nHo\n\n");
     if(self)
     {
         self.connectionID = newConnectionID;
@@ -46,6 +48,8 @@
         self.protocolStrings = newProtocolStrings;
     }
 
+    
+    NSLog(@"\n\nLet's Go!\n\n");
     return self;
 }
 

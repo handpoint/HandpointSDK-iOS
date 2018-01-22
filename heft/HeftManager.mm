@@ -11,7 +11,6 @@
 #import "HeftStatusReportDelegate.h"
 #import "debug.h"
 #import "AnalyticsConfig.h"
-#import <CoreBluetooth/CoreBluetooth.h>
 
 #ifdef HEFT_SIMULATOR
 
@@ -25,15 +24,9 @@ NSString *eaProtocol = @"com.datecs.pinpad";
 
 - (id)initWithAccessory:(EAAccessory *)accessory;
 
-@end
-
-@interface HeftManager () <CBCentralManagerDelegate>
-
-#ifndef HEFT_SIMULATOR
-@property (nonatomic) CBCentralManager *centralManager;
+#ifdef HEFT_SIMULATOR
++ (instancetype)Simulator;
 #endif
-
-@property (nonatomic) BOOL hardwareReady;
 
 @end
 
@@ -76,11 +69,6 @@ static HeftManager *instance = nil;
 
         EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
         [eaManager registerForLocalNotifications];
-        
-        self.hardwareReady = NO;
-        self.centralManager = [[CBCentralManager alloc] initWithDelegate:self
-                                                                   queue:nil
-                                                                 options:nil];
 
 #endif
         AnalyticsConfig *analyticsConfig = [AnalyticsConfig new];
@@ -252,20 +240,20 @@ static HeftManager *instance = nil;
                                     Action:@"startDiscovery"
                     withOptionalParameters:nil];
 
-    EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
-    [eaManager showBluetoothAccessoryPickerWithNameFilter:nil
-                                               completion:^(NSError *error)
-                                               {
-                                                   if (error)
-                                                   {
-                                                       NSLog(@"showBluetoothAccessoryPickerWithNameFilter error :%@", error);
-                                                   }
-                                                   else
-                                                   {
-                                                       NSLog(@"showBluetoothAccessoryPickerWithNameFilter working");
-                                                   }
-                                                   [self.delegate didDiscoverFinished];
-                                               }];
+    [[EAAccessoryManager sharedAccessoryManager]
+            showBluetoothAccessoryPickerWithNameFilter:nil
+                                            completion:^(NSError *error)
+                                            {
+                                                if (error)
+                                                {
+                                                    NSLog(@"showBluetoothAccessoryPickerWithNameFilter error :%@", error);
+                                                }
+                                                else
+                                                {
+                                                    NSLog(@"showBluetoothAccessoryPickerWithNameFilter working");
+                                                }
+                                                [self.delegate didDiscoverFinished];
+                                            }];
 #endif
 }
 
@@ -295,40 +283,24 @@ static HeftManager *instance = nil;
 
 #ifdef HEFT_SIMULATOR
 
-static EAAccessory *simulatorAccessory = nil;
+static HeftRemoteDevice *simulatorAccessory = [HeftRemoteDevice Simulator];
 
 - (void)simulateDiscovery
 {
     if (simulatorAccessory == nil)
     {
-        simulatorAccessory = [[SimulatorAccessory alloc] initWithConnectionID:24373085
-                                                                 manufacturer:@"Handpoint"
-                                                                         name:@"Simulator"
-                                                                  modelNumber:@""
-                                                                 serialNumber:@"123400123"
-                                                             firmwareRevision:@"2.2.7"
-                                                             hardwareRevision:@"1.0.0"
-                                                              protocolStrings:@[eaProtocol]];
-
-        NSDictionary *dictionary = @{EAAccessoryKey: simulatorAccessory};
-        NSNotification *notification = [[NSNotification alloc] initWithName:@"EAAccessoryDidConnectNotification"
-                                                                     object:nil
-                                                                   userInfo:dictionary];
-
-        [self EAAccessoryDidConnect:notification];
-        [self.delegate didDiscoverFinished];
+        simulatorAccessory = [HeftRemoteDevice Simulator];
     }
+
+    [self.delegate didFindAccessoryDevice:simulatorAccessory];
+    [self.delegate didDiscoverFinished];
 }
 
 - (void)simulateDisconnect
 {
     if (simulatorAccessory != nil)
     {
-        NSDictionary *dictionary = @{EAAccessoryKey: simulatorAccessory};
-        NSNotification *notification = [[NSNotification alloc] initWithName:@"EAAccessoryDidDisconnectNotification"
-                                                                     object:nil
-                                                                   userInfo:dictionary];
-        [self EAAccessoryDidDisconnect:notification];
+        [self.delegate didLostAccessoryDevice:simulatorAccessory];
         simulatorAccessory = nil;
     }
 }
@@ -374,21 +346,6 @@ static EAAccessory *simulatorAccessory = nil;
         [self.delegate didLostAccessoryDevice:remoteDevice];
     }
 }
-
-- (void)centralManagerDidUpdateState:(CBCentralManager *)central;
-{
-    self.hardwareReady = (central.state == CBManagerStatePoweredOn);
-}
-
-- (BOOL)isConnectionHardwareReady
-{
-#ifdef HEFT_SIMULATOR
-    return YES;
-#else
-    return self.hardwareReady || (self.connectedCardReaders.count > 0);
-#endif
-}
-    
 
 #pragma mark - Utilities
 

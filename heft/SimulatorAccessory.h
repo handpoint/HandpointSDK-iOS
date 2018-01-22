@@ -7,7 +7,7 @@
 #import <ExternalAccessory/ExternalAccessory.h>
 
 
-@interface SimulatorAccessory: EAAccessory
+@interface SimulatorAccessory: NSObject
 
 @property(nonatomic, readonly, getter=isConnected) BOOL connected;
 @property(nonatomic, readonly) NSUInteger connectionID;

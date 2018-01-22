@@ -50,15 +50,4 @@
  */
 - (void)startDiscovery;
 
-- (BOOL)isConnectionHardwareReady;
-
 @end
-
-/*
-@interface SimpleHeftManager
-- (NSArray*) connectedCardReaders;
-
-@property(nonatomic,readonly) HeftClient* cardReader;
-
-@end
-*/
