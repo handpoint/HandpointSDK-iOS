@@ -157,7 +157,11 @@ static HeftManager *instance = nil;
             id <HeftClient> result = [[MpedDevice alloc] initWithConnection:connection
                                                                sharedSecret:sharedSecret
                                                                    delegate:delegate];
-
+            
+            [result logSetLevel:eLogDebug];
+            [result logReset];
+            LOG(@"version: %@", self.version);
+            
             dispatch_async(dispatch_get_main_queue(), ^
             {
                 id <HeftStatusReportDelegate> tmp = delegate;
@@ -189,7 +193,7 @@ static HeftManager *instance = nil;
 // A real kludge, need to automate this so it can be independent of Xcode project settings
 - (NSString *)version
 {
-    NSString *version = @"3.0.0";
+    NSString *version = @"3.0.1";
     NSString *SDKVersion;
 #ifdef HEFT_SIMULATOR
     //Simulator

@@ -16,7 +16,7 @@
 
 extern NSString *eaProtocol;
 
-int ciDefaultMaxFrameSize = 256; // Bluetooth frame is 0 - ~343 bytes
+int ciDefaultMaxFrameSize = 200; // Bluetooth frame is 0 - ~343 bytes
 const int64_t ciTimeout[] = {20, 15, 1, 5 * 60};
 
 const int64_t SECOND_IN_NANOSECONDS = 1000000000;

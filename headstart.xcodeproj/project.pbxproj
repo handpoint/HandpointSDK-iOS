@@ -1903,7 +1903,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1913,7 +1913,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1923,7 +1923,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1933,7 +1933,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1943,7 +1943,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1953,7 +1953,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1963,7 +1963,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1973,7 +1973,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.0.0;
+				CURRENT_PROJECT_VERSION = 3.0.1;
 				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
