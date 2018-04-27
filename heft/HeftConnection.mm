@@ -203,10 +203,16 @@ bool isStatusAnError (NSStreamStatus status)
     {
         if ([outputData length] > 0)
         {
+            if ([outputStream hasSpaceAvailable] == NO)
+            {
+                return; // since we could not write all of the data, we wait for the next event
+            }
+            
             NSInteger written = [outputStream write:(uint8_t *) [outputData bytes] maxLength:[outputData length]];
 
             LOG(@"HeftConnection::write_from_queue_to_stream, sent %d bytes, len=%d", (int) written, (int) [outputData length]);
-
+            
+            //Do not worry about written being -1, somewhere else the exception will be captured
             if (written < [outputData length])
             {
                 // remove the written bytes from the buffer and shift everything else to the front

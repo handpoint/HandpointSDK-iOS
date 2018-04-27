@@ -158,8 +158,6 @@ static HeftManager *instance = nil;
                                                                sharedSecret:sharedSecret
                                                                    delegate:delegate];
             
-            [result logSetLevel:eLogDebug];
-            [result logReset];
             LOG(@"version: %@", self.version);
             
             dispatch_async(dispatch_get_main_queue(), ^
@@ -178,6 +176,9 @@ static HeftManager *instance = nil;
                                     @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:mpedInfo]]
 
                             }];
+            
+            [result logSetLevel:eLogFull];
+            
 
         });
 
