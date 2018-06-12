@@ -17,9 +17,8 @@ class FrameManager{
     bool ReadFrames(HeftConnection* connection, std::vector<std::uint8_t>& buf);
 
 	static int EndPos(const std::uint8_t* pData, int pos, int len);
-
 public:
-	FrameManager(const RequestCommand& request, int max_frame_size);
+    FrameManager(const RequestCommand& request, int max_frame_size);
     
     // copy and move constructors
     /*
@@ -29,7 +28,7 @@ public:
     FrameManager & operator= (const FrameManager& other);
     ~FrameManager();
      */
-    
+    static void TearDown();
 	void Write(HeftConnection* connection/*, volatile bool& bCancel*/);
 	void WriteWithoutAck(HeftConnection* connection/*, volatile bool& bCancel*/);
 

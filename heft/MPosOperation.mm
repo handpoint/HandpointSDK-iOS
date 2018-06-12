@@ -17,6 +17,7 @@
 #import "HeftConnection.h"
 
 #import <CommonCrypto/CommonHMAC.h>
+#import <ExternalAccessory/ExternalAccessory.h>
 
 #include "Exception.h"
 #include "Logger.h"
@@ -72,9 +73,11 @@ enum eConnectCondition
 {
     RequestCommand *pRequestCommand;
     HeftConnection *connection;
+    NSNotificationCenter *defaultCenter;
     __weak id <IResponseProcessor> processor;
     NSString *sharedSecret;
-
+    BOOL runLoop;
+    
     // we get the host and the port from the ConnectToHost request command.
     NSURLSessionConfiguration *session_configuration;
     NSURLComponents *components;
@@ -97,6 +100,18 @@ enum eConnectCondition
     });
 }
 
+- (void)EAAccessoryDidDisconnect:(NSNotification *)notification
+{
+    LOG(@"EAAccessoryDidDisconnect");
+    EAAccessory *accessory = notification.userInfo[EAAccessoryKey];
+    
+    if ([accessory.protocolStrings containsObject:@"com.datecs.pinpad"])
+    {
+        runLoop = NO;
+        FrameManager::TearDown();
+    }
+}
+
 - (id)initWithRequest:(RequestCommand *)aRequest
            connection:(HeftConnection *)aConnection
      resultsProcessor:(id <IResponseProcessor>)aProcessor
@@ -104,7 +119,17 @@ enum eConnectCondition
 {
     if (self = [super init])
     {
+        defaultCenter = [NSNotificationCenter defaultCenter];
+        [defaultCenter addObserver:self
+                          selector:@selector(EAAccessoryDidDisconnect:)
+                              name:EAAccessoryDidDisconnectNotification
+                            object:nil];
+        
+        EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
+        [eaManager registerForLocalNotifications];
+        
         LOG(@"mPos Operation started.");
+        runLoop = YES;
         pRequestCommand = aRequest;
         connection = aConnection;
         processor = aProcessor;
@@ -124,6 +149,9 @@ enum eConnectCondition
     {
         delete pRequestCommand;
     }
+    if (defaultCenter != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
 }
 
 - (void)main
@@ -137,7 +165,7 @@ enum eConnectCondition
                 RequestCommand *currentRequest = pRequestCommand;
                 [connection resetData];
 
-                while (true)
+                while (true && runLoop)
                 {
                     // sending the command to the device
                     FrameManager fm(*currentRequest, connection.maxFrameSize);
@@ -153,7 +181,7 @@ enum eConnectCondition
                     std::unique_ptr<ResponseCommand> pResponse;
                     BOOL retry;
                     BOOL already_cancelled = NO;
-                    while (true)
+                    while (true && runLoop)
                     {
                         do
                         {
@@ -161,7 +189,10 @@ enum eConnectCondition
                             try
                             {
                                 // read the response from the cardreader
-                                pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
+                                if (runLoop)
+                                {
+                                    pResponse.reset(fm.ReadResponse<ResponseCommand>(connection, true));
+                                }
                             }
                             catch (timeout4_exception &to4)
                             {
@@ -173,7 +204,7 @@ enum eConnectCondition
                                     throw to4;
                                 }
                             }
-                        } while (retry);
+                        } while (retry && runLoop);
 
                         if (pResponse->isResponse())
                         {
@@ -185,7 +216,6 @@ enum eConnectCondition
                             }
                             continue;
                         }
-
                         break;
                     }
 
