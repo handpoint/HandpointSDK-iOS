@@ -73,6 +73,7 @@ enum eConnectCondition
 {
     RequestCommand *pRequestCommand;
     HeftConnection *connection;
+    NSNotificationCenter *defaultCenter;
     __weak id <IResponseProcessor> processor;
     NSString *sharedSecret;
     BOOL runLoop;
@@ -118,7 +119,7 @@ enum eConnectCondition
 {
     if (self = [super init])
     {
-        NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+        defaultCenter = [NSNotificationCenter defaultCenter];
         [defaultCenter addObserver:self
                           selector:@selector(EAAccessoryDidDisconnect:)
                               name:EAAccessoryDidDisconnectNotification
@@ -147,6 +148,9 @@ enum eConnectCondition
     if (pRequestCommand)
     {
         delete pRequestCommand;
+    }
+    if (defaultCenter != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
     }
 }
 

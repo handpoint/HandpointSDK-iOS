@@ -33,6 +33,7 @@ enum eBufferConditions
 {
     HeftRemoteDevice *device;
     EASession *session;
+    NSNotificationCenter *defaultCenter;
     NSInputStream *inputStream;
     NSOutputStream *outputStream;
     NSRunLoop *streamRunLoop;
@@ -87,7 +88,7 @@ enum eBufferConditions
                 bufferLock = [[NSConditionLock alloc] initWithCondition:eNoDataCondition];
                 fd_sema = dispatch_semaphore_create(0);
                 
-                NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+                defaultCenter = [NSNotificationCenter defaultCenter];
                 [defaultCenter addObserver:self
                                   selector:@selector(EAAccessoryDidDisconnect:)
                                       name:EAAccessoryDidDisconnectNotification
@@ -110,6 +111,9 @@ enum eBufferConditions
 - (void)dealloc
 {
     LOG(@"Heftconnection dealloc [%@]", device.name);
+    if (defaultCenter != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
     [self shutdown];
 }
 
