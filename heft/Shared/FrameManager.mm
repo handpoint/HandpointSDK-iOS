@@ -26,9 +26,12 @@ const std::uint8_t cuiAck = 0x06;
 const std::uint8_t cuiNak = 0x15;
  */
 const int MAX_ATTEMPTS = 3;
+BOOL stop = false;
 
 FrameManager::FrameManager(const RequestCommand& request, int max_frame_size)
 {
+    
+    stop = false;
     // max_frame_size is the total frame size, i.e. the combined length of [stx] [data] [ptx/etx] [crc]
     if( max_frame_size >= ( Frame::GetMetaDataSize() + 2 ) ) // the +2 is because we need to be
                                                              // able to escape one DLE character into two DLE DLE
@@ -80,7 +83,6 @@ FrameManager::FrameManager(const RequestCommand& request, int max_frame_size)
     }
 }
 
-
 /*
 // a copy constructor
 FrameManager::FrameManager(const FrameManager& other)
@@ -113,9 +115,14 @@ FrameManager::~FrameManager()
 }
 */
 
+void FrameManager::TearDown()
+{
+    stop = true;
+}
 
 void FrameManager::Write(HeftConnection* connection)
 {
+    stop = false;
     for(auto& frame : frames) {
 		int i = 0;
         
@@ -152,6 +159,7 @@ void FrameManager::Write(HeftConnection* connection)
 }
 
 void FrameManager::WriteWithoutAck(HeftConnection* connection){
+    stop = false;
 	// ATLASSERT(frames.size() == 1);
     for(auto& frame: frames)
     {
@@ -161,7 +169,7 @@ void FrameManager::WriteWithoutAck(HeftConnection* connection){
 }
 
 int FrameManager::EndPos(const std::uint8_t* pData, int pos, int len){
-	for(int i = pos; i <= len - 4; ++i)
+    for(int i = pos; i <= len - 4; ++i)
     {
 		if(pData[i] == cuiDle)
         {
@@ -181,6 +189,7 @@ int FrameManager::EndPos(const std::uint8_t* pData, int pos, int len){
 
 bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8_t>& buf){
 	int pos = 0;
+    stop = false;
 	do{
 		std::uint8_t* pData = &buf[0];
 		int len = (int)buf.size();
@@ -190,43 +199,44 @@ bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8
         {
 			len = frame_len;
 			Frame frame(pData, len);
-
 			if(!frame.isValidCrc()){
 				LOG_RELEASE(Logger::eWarning, frame.dump(@"Received invalid frame:"));
 				[connection writeAck:NEGATIVE_ACK];
 				LOG_RELEASE(Logger::eFinest, @"Acknowledgment sent: NAK");
-				buf.erase(buf.begin(), buf.begin() + len);
-				return false;
-			}
-			LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame received:"));
-			[connection writeAck:POSITIVE_ACK];
-			LOG_RELEASE(Logger::eFinest, @"Acknowledgment sent: ACK");
-
-			//remove DLE doubles
+                buf.erase(buf.begin(), buf.begin() + len);
+                return false;
+            }
+            LOG_RELEASE(Logger::eFinest, frame.dump(@"Frame received:"));
+            [connection writeAck:POSITIVE_ACK];
+            LOG_RELEASE(Logger::eFinest, @"Acknowledgment sent: ACK");
+            //remove DLE doubles
 			data.reserve(data.size() + len - Frame::ciMinSize);
-			for(int j = 2; j < len - 4; ++j){
+            for(int j = 2; j < len - 4; ++j){
+                if (stop) {
+                    break;
+                }
 				data.push_back(pData[j]);
 				if(pData[j] == cuiDle)
 					++j;
 			}
 
-			if(!frame.isPartial()){
+            if(!frame.isPartial()){
 				// ATLASSERT(buf.size() == len);
 				break;
 			}
 
-			buf.erase(buf.begin(), buf.begin() + len);
+            buf.erase(buf.begin(), buf.begin() + len);
 			pos = 0;
 			if(buf.size())
 				continue;
 		}
 		else
         {
-			pos = std::max(static_cast<int>(buf.size()) - 4, 0);
+            pos = std::max(static_cast<int>(buf.size()) - 4, 0);
         }
 
 		[connection readData:buf timeout:eResponseTimeout];
-	} while(true);
+	} while(true && !stop);
 
 	return true;
 }
@@ -237,9 +247,10 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
 	std::vector<std::uint8_t> buf;
     buf.reserve(8192); // reserve a "big" buffer since we can afford it - and because reasons!
 	data.clear();
-	while(true)
+    stop = false;
+    while(true && !stop)
     {
-        while(buf.size() < sizeof(pCommand->StartSequence))
+        while((buf.size() < sizeof(pCommand->StartSequence)) && !stop)
         {
             nread = [connection readData:buf timeout:finance_timeout ? eFinanceTimeout : eResponseTimeout];
             LOG(@"FrameManager::Read, got %d bytes from readData", nread);
@@ -249,24 +260,14 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
                 else
                     throw timeout2_exception();
             }
-            // if(nread < sizeof(pCommand->StartSequence))
-            /*
-            if(buf.size() < sizeof(pCommand->StartSequence))
-            {
-                // this is not an error ...
-                // ... it just means that more bytes are required
-                LOG(@"FrameManager::Read I need more data. Read size: %i  Total read: %lu, Read bytes: %02X", nread, buf.size(), buf[0]);
-                continue;
-            }
-             */
         }
 		pCommand = reinterpret_cast<FramePayload*>(&buf[0]);
-		switch(pCommand->StartSequence){
+        switch(pCommand->StartSequence){
 		case FRAME_START:
             LOG(@"FrameManager::Read FRAME_START");
 			if(ReadFrames(connection, buf))
             {
-				return ResponseCommand::Create(data);
+            	return ResponseCommand::Create(data);
             }
             else
             {
@@ -275,18 +276,19 @@ ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_tim
             }
 			break;
 		case SESSION_END:
-			LOG(@"FrameManager::Read SESSION_END");
+            LOG(@"FrameManager::Read SESSION_END");
 			throw connection_broken_exception();
 		case POSITIVE_ACK:
-			LOG_RELEASE(Logger::eWarning, @"Acknowledgement received instead of data frame, this is only OK in case of transaction cancelling");
+            LOG_RELEASE(Logger::eWarning, @"Acknowledgement received instead of data frame, this is only OK in case of transaction cancelling");
 			buf.erase(buf.begin(), buf.begin() + sizeof(pCommand->StartSequence));
 			continue;
 		case NEGATIVE_ACK:
-			LOG(@"FrameManager::Read NEGATIVE_ACK");
+            LOG(@"FrameManager::Read NEGATIVE_ACK");
 		case POLLING_SEQ:
 		default:
 			throw communication_exception(@"pCommand->StartSequence POLLING_SEQ or default case.");
 		}
 	}
+    
 	return 0;
 }

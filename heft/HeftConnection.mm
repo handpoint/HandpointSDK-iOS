@@ -86,6 +86,15 @@ enum eBufferConditions
                 ourBufferSize = ciDefaultMaxFrameSize;
                 bufferLock = [[NSConditionLock alloc] initWithCondition:eNoDataCondition];
                 fd_sema = dispatch_semaphore_create(0);
+                
+                NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+                [defaultCenter addObserver:self
+                                  selector:@selector(EAAccessoryDidDisconnect:)
+                                      name:EAAccessoryDidDisconnectNotification
+                                    object:nil];
+                
+                EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
+                [eaManager registerForLocalNotifications];
             }
             return self;
         }
@@ -154,6 +163,18 @@ enum eBufferConditions
 {
 }
 
+- (void)EAAccessoryDidDisconnect:(NSNotification *)notification
+{
+    LOG(@"EAAccessoryDidDisconnect");
+    EAAccessory *accessory = notification.userInfo[EAAccessoryKey];
+    
+    if ([accessory.protocolStrings containsObject:@"com.datecs.pinpad"])
+    {
+        LOG(@"Signaling semaphore after disconnection");
+        // Release sem when disconnedted
+        dispatch_semaphore_signal(fd_sema);
+    }
+}
 
 /*
  NSStreamStatus
@@ -307,7 +328,6 @@ bool isStatusAnError (NSStreamStatus status)
 - (int)readData:(std::vector<std::uint8_t> &)buffer timeout:(eConnectionTimeout)timeout
 {
     LOG(@"readData");
-
     if (dispatch_semaphore_wait(fd_sema, dispatch_time(DISPATCH_TIME_NOW, ciTimeout[timeout] * SECOND_IN_NANOSECONDS)))
     {
         if (timeout == eFinanceTimeout)
