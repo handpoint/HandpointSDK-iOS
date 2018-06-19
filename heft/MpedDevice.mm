@@ -259,7 +259,9 @@ enum eSignConditions
 
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString *)currency cardholder:(BOOL)present
 {
-    return [self saleWithAmount:amount currency:currency cardholder:present reference:@""];
+    return [self saleWithAmount:amount
+                       currency:currency
+                     dictionary:@{}];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount
@@ -267,40 +269,16 @@ enum eSignConditions
             cardholder:(BOOL)present
              reference:(NSString *)reference
 {
-    LOG_RELEASE(Logger::eInfo,
-            @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@",
-            (int) amount, currency, present ? @"is present" : @"is not present", reference);
+    NSMutableDictionary *map = [NSMutableDictionary new];
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
-            @"amount": [utils ObjectOrNull:@(amount)],
-            @"currency": [utils ObjectOrNull:currency],
-            @"reference": [utils ObjectOrNull:reference]}];
-
-    NSString *params = @"";
-    if (reference != NULL && reference.length != 0)
+    if ([reference length])
     {
-        params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                                                    @"<FinancialTransactionRequest>"
-                                                    @"<CustomerReference>"
-                                                    @"%@"
-                                                    @"</CustomerReference>"
-                                                    @"</FinancialTransactionRequest>",
-                                            reference];
+        map[@"CustomerReference"] = reference;
     }
 
-    FinanceRequestCommand *frq = new FinanceRequestCommand(EFT_PACKET_SALE,
-            std::string([currency UTF8String]),
-            (std::uint32_t) amount,
-            present,
-            std::string(),
-            std::string([params UTF8String])
-    );
-    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frq
-                                                           connection:connection
-                                                     resultsProcessor:self
-                                                         sharedSecret:self.sharedSecret];
-    isTransactionResultPending = NO;
-    return [self postOperationToQueueIfNew:operation];
+    return [self saleWithAmount:amount
+                       currency:currency
+                     dictionary:map];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount
@@ -309,49 +287,37 @@ enum eSignConditions
              reference:(NSString *)reference
               divideBy:(NSString *)months
 {
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([reference length])
+    {
+        map[@"CustomerReference"] = reference;
+    }
+
+    if ([months length])
+    {
+        map[@"BudgetNumber"] = reference;
+    }
+
+    return [self saleWithAmount:amount
+                       currency:currency
+                     dictionary:map];
+}
+
+- (BOOL)saleWithAmount:(NSInteger)amount
+              currency:(NSString *)currency
+            dictionary:(NSDictionary *)dictionary
+{
     LOG_RELEASE(Logger::eInfo,
-            @"Starting SALE operation (amount:%d, currency:%@, card %@, customer reference:%@, divided by: %@ months",
-            (int) amount, currency, present ? @"is present" : @"is not present", reference, months);
+            @"Starting SALE operation (amount:%d, currency:%@, card %@, %@",
+            (int) amount, currency, @"is present", dictionary);
 
-    [AnalyticsHelper addEventForActionType:actionTypeName.financialAction Action:@"Sale" withOptionalParameters:@{
-            @"amount": [utils ObjectOrNull:@(amount)],
-            @"currency": [utils ObjectOrNull:currency],
-            @"reference": [utils ObjectOrNull:reference],
-            @"divideBy": [utils ObjectOrNull:months]}];
-
-    NSString *params = @"";
-    NSString *refrenceString = @"";
-    NSString *monthsString = @"";
-    if (reference != NULL && reference.length != 0)
-    {
-        refrenceString = [NSString stringWithFormat:
-                @"<CustomerReference>"
-                        @"%@"
-                        @"</CustomerReference>",
-                reference];
-    }
-    if (months != NULL && months.length != 0)
-    {
-        monthsString = [NSString stringWithFormat:
-                @"<BudgetNumber>"
-                        @"%@"
-                        @"</BudgetNumber>",
-                months];
-    }
-    if (refrenceString.length != 0 || monthsString.length != 0)
-    {
-        params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                                                    @"<FinancialTransactionRequest>"
-                                                    @"%@"
-                                                    @"%@"
-                                                    @"</FinancialTransactionRequest>",
-                                            refrenceString, monthsString];
-    }
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
 
     FinanceRequestCommand *frq = new FinanceRequestCommand(EFT_PACKET_SALE,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
-            present,
+            YES,
             std::string(),
             std::string([params UTF8String])
     );
@@ -361,6 +327,83 @@ enum eSignConditions
                                                          sharedSecret:self.sharedSecret];
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
+}
+
+- (NSString *)generateXMLFromDictionary:(NSDictionary *)dictionary
+                           appendHeader:(BOOL)appendHeader
+{
+    NSMutableString *result = [NSMutableString new];
+
+    if(appendHeader)
+    {
+        [result appendString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"];
+    }
+
+    for(NSString *key in dictionary.allKeys)
+    {
+        if(dictionary[key])
+        {
+            NSObject *obj = dictionary[key];
+            if([obj isKindOfClass:[NSDictionary class]])
+            {
+                [result appendString:[self generateXMLFromDictionary:(NSDictionary *) obj
+                                                        appendHeader:NO]];
+            }
+            else
+            {
+                [result appendFormat:@"<%@>%@<%@>", key, obj, key];
+            }
+        }
+    }
+
+    return result;
+}
+
+- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency
+{
+        [self saleWithAmount:amount
+                    currency:currency
+                  dictionary:@{@"tokenizeCard": @"1"}];
+}
+
+- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency reference:(NSString*)reference
+{
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([reference length])
+    {
+        map[@"CustomerReference"] = reference;
+    }
+
+    map[@"tokenizeCard"] = @"1";
+
+    return [self saleWithAmount:amount
+                       currency:currency
+                     dictionary:map];
+}
+
+- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
+                             currency:(NSString*)currency
+                            reference:(NSString*)reference
+                             divideBy:(NSString*)months
+{
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([reference length])
+    {
+        map[@"CustomerReference"] = reference;
+    }
+
+    if ([months length])
+    {
+        map[@"BudgetNumber"] = reference;
+    }
+
+    map[@"tokenizeCard"] = @"1";
+
+    return [self saleWithAmount:amount
+                       currency:currency
+                     dictionary:map];
 }
 
 
@@ -433,6 +476,7 @@ enum eSignConditions
     isTransactionResultPending = NO;
     return [self postOperationToQueueIfNew:operation];
 }
+
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount
                     currency:(NSString *)currency
