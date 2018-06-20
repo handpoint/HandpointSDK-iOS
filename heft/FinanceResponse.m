@@ -4,7 +4,131 @@
 //
 
 #import "FinanceResponse.h"
+#import "XMLTags.h"
 
 @implementation FinanceResponse
-@synthesize financialResult, isRestarting, authorisedAmount, transactionId, customerReceipt, merchantReceipt;
+@synthesize financialResult, isRestarting, authorisedAmount,
+transactionId, customerReceipt, merchantReceipt;
+
+- (NSString *)statusMessage
+{
+    return self.xml[XMLTags.StatusMessage] ?: @"";
+}
+
+- (NSString *)type
+{
+    return self.xml[XMLTags.TransactionType] ?: @"";
+}
+
+- (NSString *)finStatus
+{
+    return self.xml[XMLTags.FinancialStatus] ?: @"";
+}
+
+- (NSString *)requestedAmount
+{
+    return self.xml[XMLTags.RequestedAmount] ?: @"0";
+}
+
+- (NSString *)gratuityAmount
+{
+    return self.xml[XMLTags.GratuityAmount] ?: @"0";
+}
+
+- (NSString *)gratuityPercentage
+{
+    return self.xml[XMLTags.GratuityPercentage] ?: @"0%";
+}
+
+- (NSString *)totalAmount
+{
+    return self.xml[XMLTags.TotalAmount] ?: @"0";
+}
+
+- (NSString *)currency
+{
+    return self.xml[XMLTags.Currency] ?: @"Unknown";
+}
+
+- (NSString *)eFTTransactionID
+{
+    return self.xml[XMLTags.EFTTransactionID] ?: @"";
+}
+
+- (NSString *)originalEFTTransactionID
+{
+    return self.xml[XMLTags.OriginalEFTTransactionID] ?: @"";
+}
+
+- (NSString *)eFTTimestamp
+{
+    return self.xml[XMLTags.EFTTimestamp] ?: @"";
+}
+
+- (NSString *)authorisationCode
+{
+    return self.xml[XMLTags.AuthorisationCode] ?: @"";
+}
+
+- (NSString *)verificationMethod
+{
+    return self.xml[XMLTags.CVM] ?: @"";
+}
+
+- (NSString *)cardEntryType
+{
+    return self.xml[XMLTags.CardEntryType] ?: @"";
+}
+
+- (NSString *)cardSchemeName
+{
+    return self.xml[XMLTags.CardSchemeName] ?: @"";
+}
+
+- (NSString *)errorMessage
+{
+    return self.xml[XMLTags.ErrorMessage] ?: @"";
+}
+
+- (NSString *)customerReference
+{
+    return self.xml[XMLTags.CustomerReference] ?: @"";
+}
+
+- (NSString *)budgetNumber
+{
+    return self.xml[XMLTags.BudgetNumber] ?: @"";
+}
+
+- (BOOL)recoveredTransaction
+{
+    NSString *recoveredTransaction = self.xml[XMLTags.RecoveredTransaction];
+    return (recoveredTransaction) ? [recoveredTransaction boolValue] : NO;
+}
+
+- (NSString *)cardTypeId
+{
+    return self.xml[XMLTags.CardTypeId] ?: @"";
+}
+
+- (NSString *)chipTransactionReport
+{
+    return self.xml[XMLTags.ChipTransactionReport] ?: @"";
+}
+
+- (NSString *)dueAmount
+{
+    return self.xml[XMLTags.DueAmount] ?: @"0";
+}
+
+- (NSString *)balance
+{
+    return self.xml[XMLTags.BalanceAmount] ?: @"0";
+}
+
+- (NSString *)cardToken
+{
+    return self.xml[XMLTags.CardToken] ?: @"";
+}
+
 @end
