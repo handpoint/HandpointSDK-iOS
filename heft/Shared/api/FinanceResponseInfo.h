@@ -5,6 +5,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ResponseInfo.h"
+#import "DeviceStatus.h"
 
 
 /**
@@ -81,8 +82,11 @@
 @property (nonatomic) BOOL recoveredTransaction;
 @property (nonatomic) NSString *cardTypeId;
 @property (nonatomic) NSString *chipTransactionReport;
+@property (nonatomic) DeviceStatus *deviceStatus;
 @property (nonatomic) NSString *dueAmount;
 @property (nonatomic) NSString *balance;
 @property (nonatomic) NSString *cardToken;
+
+- (NSDictionary *)toDictionary;
 
 @end

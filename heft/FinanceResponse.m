@@ -111,6 +111,11 @@ transactionId, customerReceipt, merchantReceipt;
     return self.xml[XMLTags.CardTypeId] ?: @"";
 }
 
+- (DeviceStatus *)deviceStatus
+{
+    return [[DeviceStatus alloc] initWithDictionary:self.xml];
+}
+
 - (NSString *)chipTransactionReport
 {
     return self.xml[XMLTags.ChipTransactionReport] ?: @"";
@@ -129,6 +134,40 @@ transactionId, customerReceipt, merchantReceipt;
 - (NSString *)cardToken
 {
     return self.xml[XMLTags.CardToken] ?: @"";
+}
+
+
+- (NSDictionary *)toDictionary
+{
+    return @{
+             @"statusMessage": self.statusMessage,
+             @"type": self.type,
+             @"finStatus": self.finStatus,
+             @"requestedAmount": self.requestedAmount,
+             @"gratuityAmount": self.gratuityAmount,
+             @"gratuityPercentage": self.gratuityPercentage,
+             @"totalAmount": self.totalAmount,
+             @"currency": self.currency,
+             @"transactionID": self.transactionId,
+             @"eFTTransactionID": self.eFTTransactionID,
+             @"originalEFTTransactionID": self.originalEFTTransactionID,
+             @"eFTTimestamp": self.eFTTimestamp,
+             @"authorisationCode": self.authorisationCode,
+             @"verificationMethod": self.verificationMethod,
+             @"cardEntryType": self.cardEntryType,
+             @"cardSchemeName": self.cardSchemeName,
+             @"errorMessage": self.errorMessage,
+             @"customerReference": self.customerReference,
+             @"budgetNumber": self.budgetNumber,
+             @"recoveredTransaction": @(self.recoveredTransaction),
+             @"cardTypeId": self.cardTypeId,
+             @"merchantReceipt": self.merchantReceipt,
+             @"customerReceipt": self.customerReceipt,
+             @"deviceStatus": self.deviceStatus.toDictionary,
+             @"chipTransactionReport": self.chipTransactionReport,
+             @"dueAmount": self.dueAmount,
+             @"balance": self.balance
+             };
 }
 
 @end
