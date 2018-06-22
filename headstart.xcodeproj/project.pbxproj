@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -94,6 +94,7 @@
 		0D39ED7820DAF7A100CD8C9C /* DeviceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B8262A11A7170E20B36B /* DeviceStatus.m */; };
 		0D39ED7920DAF7A800CD8C9C /* BaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA0D0DE20DA89EF003F34AA /* BaseModel.m */; };
 		0D41FA0C1FF2B6A30033A2C7 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
+		0D72755520DD6ACE003997C9 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D72755420DD6ACE003997C9 /* Version.h */; };
 		0D750F6420D9BD3500B882F3 /* XMLTags.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D750F6220D9BD3400B882F3 /* XMLTags.m */; };
 		0D750F6520D9BD3500B882F3 /* XMLTags.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D750F6220D9BD3400B882F3 /* XMLTags.m */; };
 		0D750F6620D9BD3500B882F3 /* XMLTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D750F6320D9BD3500B882F3 /* XMLTags.h */; };
@@ -352,6 +353,7 @@
 
 /* Begin PBXFileReference section */
 		0D5A12E2200D4DD100C5B847 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		0D72755420DD6ACE003997C9 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		0D750F6220D9BD3400B882F3 /* XMLTags.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLTags.m; sourceTree = "<group>"; };
 		0D750F6320D9BD3500B882F3 /* XMLTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTags.h; sourceTree = "<group>"; };
 		0DA0D0DB20DA89ED003F34AA /* BaseModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseModel.h; sourceTree = "<group>"; };
@@ -602,6 +604,7 @@
 				31F2BF27AEBB3A4C942FA73D /* utils.m */,
 				0D750F6320D9BD3500B882F3 /* XMLTags.h */,
 				0D750F6220D9BD3400B882F3 /* XMLTags.m */,
+				0D72755420DD6ACE003997C9 /* Version.h */,
 			);
 			path = heft;
 			sourceTree = "<group>";
@@ -881,6 +884,7 @@
 				31F2B655F01456FF059346E9 /* AnalyticsConfig.h in Headers */,
 				31F2BC15E169EE3A731C18C0 /* utils.h in Headers */,
 				31F2BFF6DE798A269FFFBB9F /* AnalyticsHelper.h in Headers */,
+				0D72755520DD6ACE003997C9 /* Version.h in Headers */,
 				0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */,
 				31F2BFC129B7690078527E2B /* LogInfoObject.h in Headers */,
 				31F2BCAF85707EA7B7F74428 /* ScannerDisabledResponseInfo.h in Headers */,
@@ -897,6 +901,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D398945165FF23E00F8FA29 /* Build configuration list for PBXNativeTarget "heft" */;
 			buildPhases = (
+				0D72755320DD5DFF003997C9 /* ShellScript */,
 				2D398923165FF23D00F8FA29 /* Sources */,
 				2D398924165FF23D00F8FA29 /* Frameworks */,
 				AD4C085A170C0C3D0005EDC0 /* Headers */,
@@ -990,7 +995,7 @@
 			attributes = {
 				LastTestingUpgradeCheck = 0640;
 				LastUpgradeCheck = 0820;
-				ORGANIZATIONNAME = zdv;
+				ORGANIZATIONNAME = Handpoint;
 				TargetAttributes = {
 					495132B81DCB5BC300E245C0 = {
 						CreatedOnToolsVersion = 8.1;
@@ -1010,7 +1015,7 @@
 				};
 			};
 			buildConfigurationList = 2DEDA3681628B0580043AFBC /* Build configuration list for PBXProject "headstart" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1062,7 +1067,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}-Debug.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}-Debug.zip\" .";
+			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}-Debug/\"\nzip -r handpoint-ios-sdk-${VERSION}-Debug.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}-Debug/handpoint-ios-sdk-${VERSION}-Debug.zip\" .";
 		};
 		0D2DF8A71FED1C32006F1AAB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1075,7 +1080,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "pushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/\"\nzip -r handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/handpoint-ios-sdk-${CURRENT_PROJECT_VERSION}.zip\" .";
+			shellScript = "VERSION=$(<version.txt)\n\npushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/\"\nzip -r handpoint-ios-sdk-${VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/handpoint-ios-sdk-${VERSION}.zip\" .";
+		};
+		0D72755320DD5DFF003997C9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo ${SDK_VERSION} > version.txt\necho \"#define CODE_GENERATED_VERSION @\\\"${SDK_VERSION}\\\"\" > heft/Version.h";
 		};
 		2D398933165FF23E00F8FA29 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1114,7 +1132,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphonesimulator -configuration Debug\nxcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphoneos -configuration Debug\n\nxcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphonesimulator -configuration Debug-Simulator\nxcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphoneos -configuration Debug-Simulator\n\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary/include\"\n# make a new output folder for simulator\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\nlipo -create \"${DIR}/Debug-iphoneos/libheft.a\" \"${DIR}/Debug-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftLibrary/libheft.a\"\nlipo -create \"${DIR}/Debug-Simulator-iphoneos/libheft.a\" \"${DIR}/Debug-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}-Debug/HeftSimulatorLibrary/libheft.a\"";
+			shellScript = "VERSION=$(<version.txt)\n\nxcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphonesimulator -configuration Debug\nxcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphoneos -configuration Debug\n\nxcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphonesimulator -configuration Debug-Simulator\nxcodebuild -scheme heft -configuration ${CONFIGURATION} -sdk iphoneos -configuration Debug-Simulator\n\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftLibrary/include\"\n# make a new output folder for simulator\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftSimulatorLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\nlipo -create \"${DIR}/Debug-iphoneos/libheft.a\" \"${DIR}/Debug-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftLibrary/libheft.a\"\nlipo -create \"${DIR}/Debug-Simulator-iphoneos/libheft.a\" \"${DIR}/Debug-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftSimulatorLibrary/libheft.a\"";
 		};
 		FBDA03701CD018EB00607201 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1127,7 +1145,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcodebuild -scheme heft -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -sdk iphoneos -configuration Release\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Release-Simulator\n\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/include\"\n# make a new output folder for simulator\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\nlipo -create \"${DIR}/Release-iphoneos/libheft.a\" \"${DIR}/Release-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftLibrary/libheft.a\"\nlipo -create \"${DIR}/Release-Simulator-iphoneos/libheft.a\" \"${DIR}/Release-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${CURRENT_PROJECT_VERSION}/HeftSimulatorLibrary/libheft.a\"";
+			shellScript = "VERSION=$(<version.txt)\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -sdk iphoneos -configuration Release\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Release-Simulator\n\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\"\n# make a new output folder for simulator\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\nlipo -create \"${DIR}/Release-iphoneos/libheft.a\" \"${DIR}/Release-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/libheft.a\"\nlipo -create \"${DIR}/Release-Simulator-iphoneos/libheft.a\" \"${DIR}/Release-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/libheft.a\"";
 		};
 		FBFA751A1DB11F7400641641 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1354,6 +1372,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -1461,6 +1480,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -1516,6 +1536,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -1553,6 +1574,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -1724,7 +1746,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = rpc_test/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.handpoint.rpc-test";
@@ -1764,7 +1790,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = rpc_test/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.handpoint.rpc-test";
@@ -1802,7 +1832,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = rpc_test/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.handpoint.rpc-test";
@@ -1840,7 +1874,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = rpc_test/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.handpoint.rpc-test";
@@ -1979,8 +2017,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
-				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1989,8 +2025,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
-				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-Simulator";
@@ -1999,8 +2033,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
-				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -2009,8 +2041,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
-				New_Setting = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-Simulator";
@@ -2019,7 +2049,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2028,7 +2057,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-Simulator";
@@ -2037,7 +2065,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -2046,7 +2073,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CURRENT_PROJECT_VERSION = 3.1.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-Simulator";

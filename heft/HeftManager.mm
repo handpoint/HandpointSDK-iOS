@@ -11,6 +11,7 @@
 #import "HeftStatusReportDelegate.h"
 #import "debug.h"
 #import "AnalyticsConfig.h"
+#import "Version.h"
 
 #ifdef HEFT_SIMULATOR
 
@@ -191,10 +192,9 @@ static HeftManager *instance = nil;
 
 #pragma mark property
 
-// A real kludge, need to automate this so it can be independent of Xcode project settings
 - (NSString *)version
 {
-    NSString *version = [NSString stringWithFormat:@"%@", ${CURRENT_PROJECT_VERSION}]; //@"3.0.Y";
+    NSString *version = CODE_GENERATED_VERSION;
     NSString *SDKVersion;
 #ifdef HEFT_SIMULATOR
     //Simulator
