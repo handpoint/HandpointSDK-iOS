@@ -10,7 +10,7 @@
 #import "HeftRemoteDevice.h"
 #import "HeftStatusReportDelegate.h"
 #import "debug.h"
-#import "AnalyticsConfig.h"
+#import "Version.h"
 
 #ifdef HEFT_SIMULATOR
 
@@ -71,17 +71,6 @@ static HeftManager *instance = nil;
         [eaManager registerForLocalNotifications];
 
 #endif
-        AnalyticsConfig *analyticsConfig = [AnalyticsConfig new];
-
-        [AnalyticsHelper setupAnalyticsWithVersion:[self version]
-                                         projectID:analyticsConfig.KeenProjectID
-                                          writeKey:analyticsConfig.KeenWriteKey];
-
-        [AnalyticsHelper disableGeoLocation];
-        [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                        Action:@"heftManager created"
-                        withOptionalParameters:nil];
-        [AnalyticsHelper upload];
     }
 
     return self;
@@ -92,10 +81,6 @@ static HeftManager *instance = nil;
            sharedSecret:(NSString *)sharedSecret
                delegate:(NSObject <HeftStatusReportDelegate> *)delegate
 {
-    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                    Action:@"clientForDevice-NSString"
-                    withOptionalParameters:nil];
-
     [self asyncClientForDevice:device
                   sharedSecret:sharedSecret
                       delegate:delegate];
@@ -134,15 +119,6 @@ static HeftManager *instance = nil;
         });
 
         NSDictionary *mpedInfo = [result mpedInfo];
-        [AnalyticsHelper addEventForActionType:actionTypeName.simulatorAction
-                                        Action:@"didConnect"
-                        withOptionalParameters:@{
-                                @"serialnumber": [utils ObjectOrNull:mpedInfo[kSerialNumberInfoKey]],
-                                @"appNameInfoKey": [utils ObjectOrNull:mpedInfo[kAppNameInfoKey]],
-                                @"appVersionInfoKey": [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]],
-                                @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:mpedInfo]]
-
-                        }];
 
 #else
 
@@ -166,20 +142,7 @@ static HeftManager *instance = nil;
                 [tmp didConnect:result];
             });
 
-            NSDictionary *mpedInfo = [result mpedInfo];
-            [AnalyticsHelper addEventForActionType:actionTypeName.cardReaderAction
-                                            Action:@"didConnect"
-                            withOptionalParameters:@{
-                                    @"serialnumber": [utils ObjectOrNull:mpedInfo[kSerialNumberInfoKey]],
-                                    @"appNameInfoKey": [utils ObjectOrNull:mpedInfo[kAppNameInfoKey]],
-                                    @"appVersionInfoKey": [utils ObjectOrNull:mpedInfo[kAppVersionInfoKey]],
-                                    @"xml": [utils ObjectOrNull:[AnalyticsHelper XMLtoDict:mpedInfo]]
-
-                            }];
-            
             [result logSetLevel:eLogFull];
-            
-
         });
 
 #endif
@@ -191,10 +154,9 @@ static HeftManager *instance = nil;
 
 #pragma mark property
 
-// A real kludge, need to automate this so it can be independent of Xcode project settings
 - (NSString *)version
 {
-    NSString *version = @"3.0.2";
+    NSString *version = CODE_GENERATED_VERSION;
     NSString *SDKVersion;
 #ifdef HEFT_SIMULATOR
     //Simulator
@@ -208,22 +170,11 @@ static HeftManager *instance = nil;
     SDKVersion = version;
 #endif
 #endif
-
-    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                    Action:@"getSDKVersion"
-                    withOptionalParameters:@{
-                            @"SDKVersion": [utils ObjectOrNull:SDKVersion]
-                    }];
-
     return SDKVersion;
 }
 
 - (NSArray *)devicesCopy
 {
-    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                    Action:@"devicesCopy"
-                    withOptionalParameters:nil];
-
     return [self connectedCardReaders];
 }
 
@@ -232,19 +183,8 @@ static HeftManager *instance = nil;
 - (void)startDiscovery
 {
 #ifdef HEFT_SIMULATOR
-
-    [AnalyticsHelper addEventForActionType:actionTypeName.simulatorAction
-                                    Action:@"startDiscovery"
-                    withOptionalParameters:nil];
-
     [self performSelector:@selector(simulateDiscovery) withObject:nil afterDelay:5.];
-
 #else
-
-    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                    Action:@"startDiscovery"
-                    withOptionalParameters:nil];
-
     [[EAAccessoryManager sharedAccessoryManager]
             showBluetoothAccessoryPickerWithNameFilter:nil
                                             completion:^(NSError *error)
@@ -264,10 +204,6 @@ static HeftManager *instance = nil;
 
 - (NSArray *)connectedCardReaders
 {
-    [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                    Action:@"connectedCardReaders"
-                    withOptionalParameters:nil];
-
     EAAccessoryManager *eaManager = [EAAccessoryManager sharedAccessoryManager];
 
     NSMutableArray *readers = [NSMutableArray array];
@@ -324,10 +260,6 @@ static HeftRemoteDevice *simulatorAccessory = [HeftRemoteDevice Simulator];
     {
         HeftRemoteDevice *newDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
 
-        [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                        Action:@"didFindAccessoryDevice"
-                        withOptionalParameters:nil];
-
         NSLog(@"didFindAccessoryDevice: %@ - %@", newDevice.name, newDevice.address);
         [self.delegate didFindAccessoryDevice:newDevice];
     }
@@ -340,10 +272,6 @@ static HeftRemoteDevice *simulatorAccessory = [HeftRemoteDevice Simulator];
 
     if ([accessory.protocolStrings containsObject:eaProtocol])
     {
-        [AnalyticsHelper addEventForActionType:actionTypeName.managerAction
-                                        Action:@"didLostAccessoryDevice"
-                        withOptionalParameters:nil];
-
         HeftRemoteDevice *remoteDevice = [[HeftRemoteDevice alloc] initWithAccessory:accessory];
 
 

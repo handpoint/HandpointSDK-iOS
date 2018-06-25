@@ -24,6 +24,8 @@
 #import "HeftStatusReportDelegate.h"
 #import "ScannerEventResponseInfo.h"
 #import "ScannerDisabledResponseInfo.h"
+#import "DeviceStatus.h"
+#import "StatusInfo.h"
 
 #endif
 
