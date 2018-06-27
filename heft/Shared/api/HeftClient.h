@@ -52,9 +52,11 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  @param months Budget facility indicator. Decides how many months a payment can be divided into. Is required for budget transactions. Accepted values are:  03, 06, 12, 18, 24, 30, 36, 42, 48, 54, 60 
  @return YES if request is sent and NO if there is active transaction already.
  */
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency;
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString*)months;
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency dictionary:(NSDictionary *)dictionary;
 
 /**
  Performs SALE (see saleWithAmount:) transaction and tries to tokenize the card.
@@ -79,8 +81,10 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  @param reference An optional reference id (max 25 characters) that can be associated with the authorization. Example value: 45678135.
  @return YES if request is sent and NO if there is active transaction already.
  */
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency;
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency dictionary:(NSDictionary *)dictionary;
 
 /**
  Voids SALE transaction.
@@ -98,7 +102,10 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  @param transaction - The id of transaction to void.
  @return YES if request is sent and NO if there is active transaction already.
  */
+- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction;
+- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction reference:(NSString*)reference;
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction;
+- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction dictionary:(NSDictionary *)dictionary;
 
 /**
  Voids REFUND transaction.
@@ -116,7 +123,10 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  @param transaction - The id of transaction to void.
  @return YES if request is sent and NO if there is active transaction already.
  */
+- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction;
+- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction reference:(NSString*)reference;
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction;
+- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction dictionary:(NSDictionary *)dictionary;
 
 /**
  Fetches a pending transaction result from the card reader.

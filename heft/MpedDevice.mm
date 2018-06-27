@@ -253,11 +253,17 @@ enum eSignConditions
     return YES;
 }
 
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString *)currency cardholder:(BOOL)present
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString *)currency
 {
     return [self saleWithAmount:amount
                        currency:currency
                      dictionary:@{}];
+}
+
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString *)currency cardholder:(BOOL)present
+{
+    return [self saleWithAmount:amount
+                       currency:currency];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount
@@ -305,8 +311,8 @@ enum eSignConditions
             dictionary:(NSDictionary *)dictionary
 {
     LOG_RELEASE(Logger::eInfo,
-            @"Starting SALE operation (amount:%d, currency:%@, card %@, %@",
-            (int) amount, currency, @"is present", dictionary);
+            @"Starting SALE operation (amount:%d, currency:%@, %@",
+            (int) amount, currency, dictionary);
 
     NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
 
@@ -317,52 +323,21 @@ enum eSignConditions
             std::string(),
             std::string([params UTF8String])
     );
-    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frq
-                                                           connection:connection
-                                                     resultsProcessor:self
-                                                         sharedSecret:self.sharedSecret];
-    isTransactionResultPending = NO;
-    return [self postOperationToQueueIfNew:operation];
+
+    return [self postFinanceRequestCommand:frq];
 }
 
-- (NSString *)generateXMLFromDictionary:(NSDictionary *)dictionary
-                           appendHeader:(BOOL)appendHeader
-{
-    NSMutableString *result = [NSMutableString new];
-
-    if(appendHeader)
-    {
-        [result appendString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"];
-    }
-
-    for(NSString *key in dictionary.allKeys)
-    {
-        if(dictionary[key])
-        {
-            NSObject *obj = dictionary[key];
-            if([obj isKindOfClass:[NSDictionary class]])
-            {
-                [result appendString:[self generateXMLFromDictionary:(NSDictionary *) obj
-                                                        appendHeader:NO]];
-            }
-            else
-            {
-                [result appendFormat:@"<%@>%@<%@>", key, obj, key];
-            }
-        }
-    }
-
-    return result;
-}
-
-- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency
+- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
+                             currency:(NSString*)currency
 {
         [self saleWithAmount:amount
                     currency:currency
                   dictionary:@{@"tokenizeCard": @"1"}];
 }
 
-- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency reference:(NSString*)reference
+- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
+                             currency:(NSString*)currency
+                            reference:(NSString*)reference
 {
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -403,9 +378,20 @@ enum eSignConditions
 }
 
 
-- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString *)currency cardholder:(BOOL)present
+- (BOOL)refundWithAmount:(NSInteger)amount
+                currency:(NSString *)currency
 {
-    return [self refundWithAmount:amount currency:currency cardholder:present reference:@""];
+    [self refundWithAmount:amount
+                  currency:currency
+                dictionary:@{}];
+}
+
+- (BOOL)refundWithAmount:(NSInteger)amount
+                currency:(NSString *)currency
+              cardholder:(BOOL)present
+{
+    return [self refundWithAmount:amount
+                         currency:currency];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount
@@ -413,31 +399,43 @@ enum eSignConditions
               cardholder:(BOOL)present
                reference:(NSString *)reference
 {
-    LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, card %@, customer reference:%@", amount, currency, present ? @"is present" : @"is not present", reference);
+    NSMutableDictionary *map = [NSMutableDictionary new];
 
-    NSString *params = @"";
-    if (reference != NULL && reference.length != 0)
+    if ([reference length])
     {
-        params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                                                    @"<FinancialTransactionRequest>"
-                                                    @"<CustomerReference>"
-                                                    @"%@"
-                                                    @"</CustomerReference>"
-                                                    @"</FinancialTransactionRequest>",
-                                            reference];
+        map[@"CustomerReference"] = reference;
     }
+
+    return [self refundWithAmount:amount currency:currency dictionary:map];
+}
+
+- (BOOL)refundWithAmount:(NSInteger)amount
+                currency:(NSString *)currency
+              dictionary:(NSDictionary *)dictionary
+{
+    LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, %@",
+            amount, currency, dictionary);
+
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
+
     FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_REFUND,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
-            present,
+            YES,
             std::string(),
             std::string([params UTF8String]));
-    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
-                                                           connection:connection
-                                                     resultsProcessor:self
-                                                         sharedSecret:self.sharedSecret];
-    isTransactionResultPending = NO;
-    return [self postOperationToQueueIfNew:operation];
+
+    return [self postFinanceRequestCommand:frc];
+}
+
+- (BOOL)saleVoidWithAmount:(NSInteger)amount
+                  currency:(NSString *)currency
+               transaction:(NSString *)transaction
+{
+    return [self saleVoidWithAmount:amount
+                           currency:currency
+                        transaction:transaction
+                         dictionary:@{}];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount
@@ -445,44 +443,112 @@ enum eSignConditions
                 cardholder:(BOOL)present
                transaction:(NSString *)transaction
 {
+   return [self saleVoidWithAmount:amount
+                          currency:currency
+                       transaction:transaction
+                        dictionary:@{}];
+}
+
+- (BOOL)saleVoidWithAmount:(NSInteger)amount
+                  currency:(NSString *)currency
+                cardholder:(BOOL)present
+               transaction:(NSString *)transaction
+                 reference:(NSString*)reference
+{
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([reference length])
+    {
+        map[@"CustomerReference"] = reference;
+    }
+
+   return [self saleVoidWithAmount:amount
+                          currency:currency
+                       transaction:transaction
+                        dictionary:map];
+}
+
+- (BOOL)saleVoidWithAmount:(NSInteger)amount
+                  currency:(NSString *)currency
+               transaction:(NSString *)transaction
+                dictionary:(NSDictionary *)dictionary
+{
     LOG_RELEASE(Logger::eInfo,
-            @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
-            transaction, (int) amount, currency, present ? @"is present" : @"is not present");
+            @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, %@", transaction, (int) amount, currency, dictionary);
+
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_SALE_VOID,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
-            present,
+            YES,
             std::string([transaction UTF8String]),
-            std::string());
-    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
-                                                           connection:connection
-                                                     resultsProcessor:self
-                                                         sharedSecret:self.sharedSecret];
-    isTransactionResultPending = NO;
-    return [self postOperationToQueueIfNew:operation];
+            std::string([params UTF8String]));
+
+    return [self postFinanceRequestCommand:frc];
 }
 
+- (BOOL)refundVoidWithAmount:(NSInteger)amount
+                    currency:(NSString*)currency
+                 transaction:(NSString*)transaction
+{
+    return [self refundVoidWithAmount:amount
+                             currency:currency
+                          transaction:transaction
+                           dictionary:@{}];
+}
+
+- (BOOL)refundVoidWithAmount:(NSInteger)amount
+                    currency:(NSString*)currency
+                 transaction:(NSString*)transaction
+                   reference:(NSString*)reference
+{
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([reference length])
+    {
+        map[@"CustomerReference"] = reference;
+    }
+
+    return [self refundVoidWithAmount:amount
+                             currency:currency
+                          transaction:transaction
+                           dictionary:map];
+}
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount
                     currency:(NSString *)currency
                   cardholder:(BOOL)present
                  transaction:(NSString *)transaction
 {
+    return [self refundVoidWithAmount:amount
+                             currency:currency
+                          transaction:transaction
+                           dictionary:@{}];
+}
+
+- (BOOL)refundVoidWithAmount:(NSInteger)amount
+                    currency:(NSString*)currency
+                 transaction:(NSString*)transaction
+                  dictionary:(NSDictionary *)dictionary
+{
     LOG_RELEASE(Logger::eInfo,
-            @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, card %@",
-            transaction, (int) amount, currency, present ? @"is present" : @"is not present");
+            @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, %@",
+            transaction, (int) amount, currency, dictionary);
+
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-    FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_REFUND_VOID, std::string([currency UTF8String]), (std::uint32_t) amount, present, std::string([transaction UTF8String]), std::string());
+    FinanceRequestCommand *frc = new FinanceRequestCommand(
+            EFT_PACKET_REFUND_VOID,
+            std::string([currency UTF8String]),
+            (std::uint32_t) amount,
+            YES,
+            std::string([transaction UTF8String]),
+            std::string([params UTF8String]));
 
-    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:frc
-                                                           connection:connection
-                                                     resultsProcessor:self
-                                                         sharedSecret:self.sharedSecret];
-    isTransactionResultPending = NO;
-    return [self postOperationToQueueIfNew:operation];
+    return [self postFinanceRequestCommand:frc];
 }
 
 - (BOOL)retrievePendingTransaction
@@ -537,18 +603,7 @@ enum eSignConditions
 {
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
 
-    NSString *params = @"";
-
-    NSString *multiScanString = [NSString stringWithFormat:
-            @"<multiScan>"
-                    @"%s"
-                    @"</multiScan>",
-            multiScan ? "true" : "false"];
-    NSString *buttonModeString = [NSString stringWithFormat:
-            @"<buttonMode>"
-                    @"%s"
-                    @"</buttonMode>",
-            buttonMode ? "true" : "false"];
+    NSMutableDictionary *map = [@{} mutableCopy];
 
     // default timeoutvalue is 60 seconds
     long timeoutSecondsParameter = timeoutSeconds == 0 ? 60 : timeoutSeconds;
@@ -557,19 +612,12 @@ enum eSignConditions
         // the max value supported by the reader
         timeoutSecondsParameter = 65535;
     }
-    NSString *timeoutSecondsString = [NSString stringWithFormat:
-            @"<timeoutSeconds>"
-                    @"%ld"
-                    @"</timeoutSeconds>",
-            timeoutSecondsParameter];
 
-    params = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                                                @"<enableScanner>"
-                                                @"%@"
-                                                @"%@"
-                                                @"%@"
-                                                @"</enableScanner>",
-                                        multiScanString, buttonModeString, timeoutSecondsString];
+    map[@"multiScan"] = multiScan ? @"true" : @"false";
+    map[@"buttonMode"] = buttonMode ? @"true" : @"false";
+    map[@"timeoutSeconds"] = @(timeoutSecondsParameter);
+
+    NSString *params = [self generateXMLFromDictionary:@{@"enableScanner": map} appendHeader:YES];
 
     XMLCommandRequestCommand *xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:xcr
@@ -655,12 +703,7 @@ enum eSignConditions
 {
     LOG(@"MpedDevice getEMVConfiguration");
 
-    NSString *params = @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            @"<getReport>"
-            @"<name>"
-            @"EMVConfiguration"
-            @"</name>"
-            @"</getReport>";
+    NSString *params = [self generateXMLFromDictionary:@{@"getReport": @{@"name": @"EMVConfiguration"}} appendHeader:YES];
 
     XMLCommandRequestCommand *xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:xcr
@@ -839,7 +882,7 @@ enum eSignConditions
     NSDictionary *xml;
     if ([(xml = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str()) path:@"EventInfoResponse"]) count] > 0)
     {
-        NSString *ca = [xml objectForKey:@"CancelAllowed"];
+        NSString *ca = xml[@"CancelAllowed"];
         cancelAllowed = (ca != nil) && [ca isEqualToString:@"true"];
 
         [self sendResponseInfo:statusMessage code:status xml:xml];
@@ -939,6 +982,47 @@ enum eSignConditions
     {
         return NO;
     }
+}
+
+
+- (NSString *)generateXMLFromDictionary:(NSDictionary *)dictionary
+                           appendHeader:(BOOL)appendHeader
+{
+    NSMutableString *result = [NSMutableString new];
+
+    if(appendHeader)
+    {
+        [result appendString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"];
+    }
+
+    for(NSString *key in dictionary.allKeys)
+    {
+        if(dictionary[key])
+        {
+            NSObject *obj = dictionary[key];
+            if([obj isKindOfClass:[NSDictionary class]])
+            {
+                [result appendString:[self generateXMLFromDictionary:(NSDictionary *) obj
+                                                        appendHeader:NO]];
+            }
+            else
+            {
+                [result appendFormat:@"<%@>%@<%@>", key, obj, key];
+            }
+        }
+    }
+
+    return result;
+}
+
+- (BOOL)postFinanceRequestCommand:(FinanceRequestCommand *)financeRequestCommand
+{
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:financeRequestCommand
+                                                           connection:connection
+                                                     resultsProcessor:self
+                                                         sharedSecret:self.sharedSecret];
+    isTransactionResultPending = NO;
+    return [self postOperationToQueueIfNew:operation];
 }
 
 @end
