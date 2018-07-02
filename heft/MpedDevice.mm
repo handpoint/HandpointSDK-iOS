@@ -1002,8 +1002,8 @@ enum eSignConditions
             NSObject *obj = dictionary[key];
             if([obj isKindOfClass:[NSDictionary class]])
             {
-                [result appendString:[self generateXMLFromDictionary:(NSDictionary *) obj
-                                                        appendHeader:NO]];
+                [result appendFormat:@"<%@>%@<%@>", key, [self generateXMLFromDictionary:(NSDictionary *) obj
+                                                                            appendHeader:NO], key];
             }
             else
             {
