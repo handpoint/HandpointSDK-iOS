@@ -330,9 +330,9 @@ enum eSignConditions
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
                              currency:(NSString*)currency
 {
-        [self saleWithAmount:amount
-                    currency:currency
-                  dictionary:@{@"tokenizeCard": @"1"}];
+        return [self saleWithAmount:amount
+                           currency:currency
+                         dictionary:@{@"tokenizeCard": @"1"}];
 }
 
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
@@ -381,9 +381,9 @@ enum eSignConditions
 - (BOOL)refundWithAmount:(NSInteger)amount
                 currency:(NSString *)currency
 {
-    [self refundWithAmount:amount
-                  currency:currency
-                dictionary:@{}];
+    return [self refundWithAmount:amount
+                         currency:currency
+                       dictionary:@{}];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount
@@ -452,6 +452,24 @@ enum eSignConditions
 - (BOOL)saleVoidWithAmount:(NSInteger)amount
                   currency:(NSString *)currency
                 cardholder:(BOOL)present
+               transaction:(NSString *)transaction
+                 reference:(NSString*)reference
+{
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([reference length])
+    {
+        map[@"CustomerReference"] = reference;
+    }
+
+   return [self saleVoidWithAmount:amount
+                          currency:currency
+                       transaction:transaction
+                        dictionary:map];
+}
+
+- (BOOL)saleVoidWithAmount:(NSInteger)amount
+                  currency:(NSString *)currency
                transaction:(NSString *)transaction
                  reference:(NSString*)reference
 {
@@ -1006,7 +1024,7 @@ enum eSignConditions
                 obj = [self generateXMLFromDictionary:(NSDictionary *) obj appendHeader:NO];
             }
 
-            [result appendFormat:@"<%@>%@<%@>", key, obj, key];
+            [result appendFormat:@"<%@>%@</%@>", key, obj, key];
         }
     }
 
