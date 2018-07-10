@@ -117,9 +117,6 @@ static HeftManager *instance = nil;
             id <HeftStatusReportDelegate> tmp = delegate;
             [tmp didConnect:result];
         });
-
-        NSDictionary *mpedInfo = [result mpedInfo];
-
 #else
 
         NSRunLoop *currentRunLoop = [NSRunLoop mainRunLoop];

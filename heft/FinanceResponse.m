@@ -3,8 +3,10 @@
 // Copyright (c) 2017 zdv. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import "FinanceResponse.h"
 #import "XMLTags.h"
+#import "Currency.h"
 
 @implementation FinanceResponse
 @synthesize financialResult, isRestarting, authorisedAmount,
@@ -47,7 +49,16 @@ transactionId, customerReceipt, merchantReceipt;
 
 - (NSString *)currency
 {
-    return self.xml[XMLTags.Currency] ?: @"Unknown";
+    NSString *currencyCodeString = self.xml[XMLTags.Currency];
+
+    if(currencyCodeString)
+    {
+        int currencyCode = [currencyCodeString intValue];
+        Currency *currency = [Currency currencyFromCode:@(currencyCode)];
+        return  currency.alpha;
+    }
+
+    return @"Unknown";
 }
 
 - (NSString *)eFTTransactionID
@@ -139,35 +150,58 @@ transactionId, customerReceipt, merchantReceipt;
 
 - (NSDictionary *)toDictionary
 {
-    return @{
-             @"statusMessage": self.statusMessage,
-             @"type": self.type,
-             @"finStatus": self.finStatus,
-             @"requestedAmount": self.requestedAmount,
-             @"gratuityAmount": self.gratuityAmount,
-             @"gratuityPercentage": self.gratuityPercentage,
-             @"totalAmount": self.totalAmount,
-             @"currency": self.currency,
-             @"transactionID": self.transactionId,
-             @"eFTTransactionID": self.eFTTransactionID,
-             @"originalEFTTransactionID": self.originalEFTTransactionID,
-             @"eFTTimestamp": self.eFTTimestamp,
-             @"authorisationCode": self.authorisationCode,
-             @"verificationMethod": self.verificationMethod,
-             @"cardEntryType": self.cardEntryType,
-             @"cardSchemeName": self.cardSchemeName,
-             @"errorMessage": self.errorMessage,
-             @"customerReference": self.customerReference,
-             @"budgetNumber": self.budgetNumber,
-             @"recoveredTransaction": @(self.recoveredTransaction),
-             @"cardTypeId": self.cardTypeId,
-             @"merchantReceipt": self.merchantReceipt,
-             @"customerReceipt": self.customerReceipt,
-             @"deviceStatus": self.deviceStatus.toDictionary,
-             @"chipTransactionReport": self.chipTransactionReport,
-             @"dueAmount": self.dueAmount,
-             @"balance": self.balance
+    NSMutableDictionary *dict = [@{} mutableCopy];
+
+    NSDictionary *response = @{
+                     @"statusMessage": self.statusMessage,
+                     @"type": self.type,
+                     @"finStatus": self.finStatus,
+                     @"requestedAmount": self.requestedAmount,
+                     @"gratuityAmount": self.gratuityAmount,
+                     @"gratuityPercentage": self.gratuityPercentage,
+                     @"totalAmount": self.totalAmount,
+                     @"currency": self.currency,
+                     @"transactionID": self.transactionId,
+                     @"eFTTransactionID": self.eFTTransactionID,
+                     @"originalEFTTransactionID": self.originalEFTTransactionID,
+                     @"eFTTimestamp": self.eFTTimestamp,
+                     @"authorisationCode": self.authorisationCode,
+                     @"verificationMethod": self.verificationMethod,
+                     @"cardEntryType": self.cardEntryType,
+                     @"cardSchemeName": self.cardSchemeName,
+                     @"errorMessage": self.errorMessage,
+                     @"customerReference": self.customerReference,
+                     @"budgetNumber": self.budgetNumber,
+                     @"recoveredTransaction": @(self.recoveredTransaction),
+                     @"cardTypeId": self.cardTypeId,
+                     @"merchantReceipt": self.merchantReceipt,
+                     @"customerReceipt": self.customerReceipt,
+                     @"chipTransactionReport": self.chipTransactionReport,
+                     @"dueAmount": self.dueAmount,
+                     @"balance": self.balance,
+                     @"cardToken": self.cardToken
              };
+
+    for(NSString *key in [response allKeys])
+    {
+        NSObject *obj = response[key];
+
+        if([obj isKindOfClass:NSString.class])
+        {
+            NSString *string =  (NSString *)obj;
+
+            if(![string isEqualToString:@""])
+            {
+                dict[key] = response[key];
+            }
+        }
+        else
+        {
+            dict[key] = response[key];
+        }
+    }
+
+    return dict;
 }
 
 @end
