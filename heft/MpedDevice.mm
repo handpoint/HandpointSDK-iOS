@@ -769,6 +769,27 @@ enum eSignConditions
     }
 }
 
+-(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+{
+    LOG_RELEASE(Logger::eFine, @"Scanner disabled");
+    NSString *analyticsAction;
+    NSString *analyticsDeprecated;
+
+    if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
+    {
+        ScannerDisabledResponse* info = [ScannerDisabledResponse new];
+        info.statusCode =  code;
+        info.status = xml ? xml[@"StatusMessage"] : status;
+        info.xml = xml;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id<HeftStatusReportDelegate> tmp = delegate;
+            [tmp responseScannerDisabled:info];
+        });
+    }
+
+    cancelAllowed = NO;
+}
+
 - (void)sendResponseInfo:(NSString *)status code:(int)code xml:(NSDictionary *)xml
 {
     ResponseInfoObject *info = [ResponseInfoObject new];
@@ -876,6 +897,7 @@ enum eSignConditions
     {
         int status = pResponse->GetStatus();
         NSString *statusMessage = status < ([statusMessages count] - 1) ? statusMessages[status] : @"Unknown status";
+        [self sendEnableScannerResponse:statusMessage code:status xml:xml];
     }
     else
     {
