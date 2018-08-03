@@ -51,7 +51,9 @@
     
 - (NSDictionary *)toDictionary
 {
-    return @{
+    NSMutableDictionary *dict = [@{} mutableCopy];
+    
+    NSDictionary *info = @{
              @"serialNumber": self.serialNumber,
              @"batteryStatus": self.batteryStatus,
              @"batterymV": self.batterymV,
@@ -62,6 +64,27 @@
              @"statusMessage": self.statusMessage,
              @"bluetoothName": self.bluetoothName
              };
+    
+    for(NSString *key in [info allKeys])
+    {
+        NSObject *obj = info[key];
+        
+        if([obj isKindOfClass:NSString.class])
+        {
+            NSString *string =  (NSString *)obj;
+            
+            if(![string isEqualToString:@""])
+            {
+                dict[key] = info[key];
+            }
+        }
+        else
+        {
+            dict[key] = info[key];
+        }
+    }
+    
+    return dict;
 }
 
 @end
