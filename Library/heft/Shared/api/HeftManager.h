@@ -29,8 +29,8 @@
 /**
  Starts creation of a connection to the specified device.
  @param device					Device to be connected.
- @param sharedSecretString		Shared Secret information in string format
- @param aDelegate				Delegate which will be perform HeftStatusReportDelegate notifications.
+ @param sharedSecret		Shared Secret information in string format
+ @param delegate				Delegate which will be perform HeftStatusReportDelegate notifications.
  */
 - (void)clientForDevice:(HeftRemoteDevice *)device
            sharedSecret:(NSString *)sharedSecret

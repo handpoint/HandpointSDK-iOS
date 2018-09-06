@@ -253,7 +253,7 @@ InitRequestCommand::InitRequestCommand (int bufferSize, NSString *version)
 
         // set the parameter length again, now with the size of the xml
         // plus the size of the header
-        FormatLength<RequestPayload>(xml_utf8_len + 11);
+        FormatLength<RequestPayload>((int)xml_utf8_len + 11);
 
         // insert the xml and the size
         payload->xml_size = htonl(xml_utf8_len);

@@ -169,7 +169,7 @@ BOOL tipAdjustment(NSString* transaction, NSInteger tipAmount, tipAdjustmentComp
                                               if (error != nil)
                                               {
                                                   NSString* error_code = error.description;
-                                                  NSLog([NSString stringWithFormat:@"http status: [%ld] error: [%@]", (long)status_code, error_code]);
+                                                  NSLog(@"%@", [NSString stringWithFormat:@"http status: [%@] error: [%@]", @(status_code), error_code]);
                                               }
                                               else
                                               {

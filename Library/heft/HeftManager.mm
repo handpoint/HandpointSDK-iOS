@@ -101,7 +101,7 @@ static HeftManager *instance = nil;
 
 - (void)asyncClientForDevice:(HeftRemoteDevice *)device
                 sharedSecret:(NSString *)sharedSecret
-                    delegate:(id <HeftStatusReportDelegate>)delegate
+                    delegate:(NSObject <HeftStatusReportDelegate> *)delegate
 {
     @autoreleasepool
     {

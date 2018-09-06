@@ -3,6 +3,7 @@
 //  headstart
 //
 
+#import <Foundation/Foundation.h>
 #import "HeftClient.h"
 
 @class HeftConnection;
@@ -12,7 +13,10 @@
 
 @property (readwrite, nonatomic) NSString *sharedSecret;
 
-- (id)initWithConnection:(HeftConnection *)aConnection sharedSecret:(NSString *)aSharedSecret delegate:(id <HeftStatusReportDelegate>)aDelegate;
+- (id)initWithConnection:(HeftConnection *)aConnection
+            sharedSecret:(NSString *)aSharedSecret
+                delegate:(NSObject <HeftStatusReportDelegate>  *)aDelegate;
+
 - (void)shutdown;
 
 @end

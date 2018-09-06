@@ -63,10 +63,10 @@ enum eSignConditions
 
 @implementation MpedDevice
 {
-    HeftConnection* connection;
+    HeftConnection *connection;
 
-    __weak NSObject<HeftStatusReportDelegate>* delegate;
-    NSConditionLock* signLock;
+    __weak NSObject <HeftStatusReportDelegate> *delegate;
+    NSConditionLock *signLock;
     BOOL signatureIsOk;
     BOOL cancelAllowed;
 }
@@ -76,7 +76,7 @@ enum eSignConditions
 
 - (id)initWithConnection:(HeftConnection *)aConnection
             sharedSecret:(NSString *)aSharedSecret
-                delegate:(id <HeftStatusReportDelegate>)aDelegate
+                delegate:(NSObject <HeftStatusReportDelegate> *)aDelegate
 {
     LOG(@"MpedDevice::initWithConnection");
 
@@ -234,7 +234,7 @@ enum eSignConditions
 #if HEFT_SIMULATOR
     // [queue cancelAllOperations];
 #else
-    FrameManager fm (IdleRequestCommand(), connection.maxFrameSize);
+    FrameManager fm(IdleRequestCommand(), connection.maxFrameSize);
     fm.WriteWithoutAck(connection);
 #endif
     LOG_RELEASE(Logger::eFiner, @"Cancel request sent to PED");
@@ -328,16 +328,16 @@ enum eSignConditions
 }
 
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
-                             currency:(NSString*)currency
+                             currency:(NSString *)currency
 {
-        return [self saleWithAmount:amount
-                           currency:currency
-                         dictionary:@{@"tokenizeCard": @"1"}];
+    return [self saleWithAmount:amount
+                       currency:currency
+                     dictionary:@{@"tokenizeCard": @"1"}];
 }
 
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
-                             currency:(NSString*)currency
-                            reference:(NSString*)reference
+                             currency:(NSString *)currency
+                            reference:(NSString *)reference
 {
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -354,9 +354,9 @@ enum eSignConditions
 }
 
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
-                             currency:(NSString*)currency
-                            reference:(NSString*)reference
-                             divideBy:(NSString*)months
+                             currency:(NSString *)currency
+                            reference:(NSString *)reference
+                             divideBy:(NSString *)months
 {
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -443,17 +443,17 @@ enum eSignConditions
                 cardholder:(BOOL)present
                transaction:(NSString *)transaction
 {
-   return [self saleVoidWithAmount:amount
-                          currency:currency
-                       transaction:transaction
-                        dictionary:@{}];
+    return [self saleVoidWithAmount:amount
+                           currency:currency
+                        transaction:transaction
+                         dictionary:@{}];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount
                   currency:(NSString *)currency
                 cardholder:(BOOL)present
                transaction:(NSString *)transaction
-                 reference:(NSString*)reference
+                 reference:(NSString *)reference
 {
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -462,16 +462,16 @@ enum eSignConditions
         map[@"CustomerReference"] = reference;
     }
 
-   return [self saleVoidWithAmount:amount
-                          currency:currency
-                       transaction:transaction
-                        dictionary:map];
+    return [self saleVoidWithAmount:amount
+                           currency:currency
+                        transaction:transaction
+                         dictionary:map];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount
                   currency:(NSString *)currency
                transaction:(NSString *)transaction
-                 reference:(NSString*)reference
+                 reference:(NSString *)reference
 {
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -480,10 +480,10 @@ enum eSignConditions
         map[@"CustomerReference"] = reference;
     }
 
-   return [self saleVoidWithAmount:amount
-                          currency:currency
-                       transaction:transaction
-                        dictionary:map];
+    return [self saleVoidWithAmount:amount
+                           currency:currency
+                        transaction:transaction
+                         dictionary:map];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount
@@ -508,8 +508,8 @@ enum eSignConditions
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount
-                    currency:(NSString*)currency
-                 transaction:(NSString*)transaction
+                    currency:(NSString *)currency
+                 transaction:(NSString *)transaction
 {
     return [self refundVoidWithAmount:amount
                              currency:currency
@@ -518,9 +518,9 @@ enum eSignConditions
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount
-                    currency:(NSString*)currency
-                 transaction:(NSString*)transaction
-                   reference:(NSString*)reference
+                    currency:(NSString *)currency
+                 transaction:(NSString *)transaction
+                   reference:(NSString *)reference
 {
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -547,8 +547,8 @@ enum eSignConditions
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount
-                    currency:(NSString*)currency
-                 transaction:(NSString*)transaction
+                    currency:(NSString *)currency
+                 transaction:(NSString *)transaction
                   dictionary:(NSDictionary *)dictionary
 {
     LOG_RELEASE(Logger::eInfo,
@@ -721,7 +721,8 @@ enum eSignConditions
 {
     LOG(@"MpedDevice getEMVConfiguration");
 
-    NSString *params = [self generateXMLFromDictionary:@{@"getReport": @{@"name": @"EMVConfiguration"}} appendHeader:YES];
+    NSString *params = [self generateXMLFromDictionary:@{@"getReport": @{@"name": @"EMVConfiguration"}}
+                                          appendHeader:YES];
 
     XMLCommandRequestCommand *xcr = new XMLCommandRequestCommand(std::string([params UTF8String]));
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:xcr
@@ -769,20 +770,19 @@ enum eSignConditions
     }
 }
 
--(void)sendEnableScannerResponse:(NSString*)status code:(int)code xml:(NSDictionary*)xml
+- (void)sendEnableScannerResponse:(NSString *)status code:(int)code xml:(NSDictionary *)xml
 {
     LOG_RELEASE(Logger::eFine, @"Scanner disabled");
-    NSString *analyticsAction;
-    NSString *analyticsDeprecated;
 
-    if([delegate respondsToSelector: @selector(responseScannerDisabled:)])
+    if ([delegate respondsToSelector:@selector(responseScannerDisabled:)])
     {
-        ScannerDisabledResponse* info = [ScannerDisabledResponse new];
-        info.statusCode =  code;
+        ScannerDisabledResponse *info = [ScannerDisabledResponse new];
+        info.statusCode = code;
         info.status = xml ? xml[@"StatusMessage"] : status;
         info.xml = xml;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            id<HeftStatusReportDelegate> tmp = delegate;
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            id <HeftStatusReportDelegate> tmp = delegate;
             [tmp responseScannerDisabled:info];
         });
     }
@@ -1030,18 +1030,18 @@ enum eSignConditions
 {
     NSMutableString *result = [NSMutableString new];
 
-    if(appendHeader)
+    if (appendHeader)
     {
         [result appendString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"];
     }
 
-    for(NSString *key in dictionary.allKeys)
+    for (NSString *key in dictionary.allKeys)
     {
         NSObject *obj = dictionary[key];
 
-        if(obj)
+        if (obj)
         {
-            if([obj isKindOfClass:[NSDictionary class]])
+            if ([obj isKindOfClass:[NSDictionary class]])
             {
                 obj = [self generateXMLFromDictionary:(NSDictionary *) obj appendHeader:NO];
             }
