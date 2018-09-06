@@ -89,6 +89,7 @@
 		0D56EDAA21409B1B00BC00CF /* LogInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56ED5A21409B1B00BC00CF /* LogInfoObject.m */; };
 		0D56EDAB21409B1B00BC00CF /* MpedDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56ED5B21409B1B00BC00CF /* MpedDevice.h */; };
 		0D56EDAC21409B1B00BC00CF /* XMLTags.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56ED5C21409B1B00BC00CF /* XMLTags.m */; };
+		0D56EDB421412B7600BC00CF /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D56EDB321412B7600BC00CF /* ExternalAccessory.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -176,6 +177,7 @@
 		0D56ED5A21409B1B00BC00CF /* LogInfoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogInfoObject.m; sourceTree = "<group>"; };
 		0D56ED5B21409B1B00BC00CF /* MpedDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpedDevice.h; sourceTree = "<group>"; };
 		0D56ED5C21409B1B00BC00CF /* XMLTags.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLTags.m; sourceTree = "<group>"; };
+		0D56EDB321412B7600BC00CF /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D56EDB421412B7600BC00CF /* ExternalAccessory.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +198,7 @@
 				0D56ED03213EFC0A00BC00CF /* UniversalFramework.sh */,
 				0D56ECF8213EF50B00BC00CF /* HandpointSDK */,
 				0D56ECF7213EF50B00BC00CF /* Products */,
+				0D56EDB221412B7500BC00CF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -334,6 +338,14 @@
 				0D56ED5121409B1B00BC00CF /* ResponseCommand.h */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		0D56EDB221412B7500BC00CF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0D56EDB321412B7600BC00CF /* ExternalAccessory.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
