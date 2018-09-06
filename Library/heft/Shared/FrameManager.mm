@@ -147,7 +147,7 @@ void FrameManager::Write(HeftConnection* connection)
 				continue;
 			}
             NSString* message = [NSString stringWithFormat:@"Instead of ACK: %04x", ack];
-            LOG(message);
+            LOG(@"%@", message);
 			throw communication_exception(message);
 		}
 		if(i == MAX_ATTEMPTS) {

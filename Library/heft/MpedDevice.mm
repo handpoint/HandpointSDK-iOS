@@ -601,22 +601,6 @@ enum eSignConditions
     return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
 }
 
-//Deprecated enable scanner function names
-- (BOOL)enableScanner:(BOOL)multiScan
-{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:TRUE timeoutSeconds:0];
-}
-
-- (BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode
-{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:0];
-}
-
-- (BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds
-{
-    return [self enableScannerWithMultiScan:multiScan buttonMode:buttonMode timeoutSeconds:timeoutSeconds];
-}
-
 - (BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds
 {
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
@@ -764,7 +748,7 @@ enum eSignConditions
     {
         dispatch_async(dispatch_get_main_queue(), ^
         {
-            id <HeftStatusReportDelegate> tmp = delegate;
+            id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp responseScannerEvent:info];
         });
     }
@@ -782,7 +766,7 @@ enum eSignConditions
         info.xml = xml;
         dispatch_async(dispatch_get_main_queue(), ^
         {
-            id <HeftStatusReportDelegate> tmp = delegate;
+            id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp responseScannerDisabled:info];
         });
     }
@@ -799,7 +783,7 @@ enum eSignConditions
     LOG_RELEASE(Logger::eFine, @"%@", info.status);
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        id <HeftStatusReportDelegate> tmp = delegate;
+        id <HeftStatusReportDelegate> tmp = self->delegate;
         LOG_RELEASE(Logger::eFine, @"calling responseStatus");
         [tmp responseStatus:info];
     });
@@ -814,7 +798,7 @@ enum eSignConditions
 
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        id <HeftStatusReportDelegate> tmp = delegate;
+        id <HeftStatusReportDelegate> tmp = self->delegate;
         [tmp responseError:info];
     });
     cancelAllowed = NO;
@@ -826,7 +810,7 @@ enum eSignConditions
     {
         dispatch_async(dispatch_get_main_queue(), ^
         {
-            id <HeftStatusReportDelegate> tmp = delegate;
+            id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp responseEMVReport:report];
         });
     }
@@ -844,7 +828,7 @@ enum eSignConditions
     // note: cancelAllowed = NO; // is not needed here as the card reader will send us a status message with the flag set correctly just before
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        id <HeftStatusReportDelegate> tmp = delegate;
+        id <HeftStatusReportDelegate> tmp = self->delegate;
         [tmp requestSignature:@(pRequest->GetReceipt().c_str())];
     });
 
@@ -863,7 +847,7 @@ enum eSignConditions
     {
         dispatch_async(dispatch_get_main_queue(), ^
         {
-            id <HeftStatusReportDelegate> tmp = delegate;
+            id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp cancelSignature];
         });
     }
@@ -972,7 +956,7 @@ enum eSignConditions
     {
         dispatch_async(dispatch_get_main_queue(), ^
         {
-            id <HeftStatusReportDelegate> tmp = delegate;
+            id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp responseFinanceStatus:info];
         });
         analyticsAction = @"responseFinanceStatus";
@@ -982,7 +966,7 @@ enum eSignConditions
         info = transactionResultPending ? info : nil;
         dispatch_async(dispatch_get_main_queue(), ^
         {
-            id <HeftStatusReportDelegate> tmp = delegate;
+            id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp responseRecoveredTransactionStatus:info];
         });
 
@@ -1004,7 +988,7 @@ enum eSignConditions
 
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        id <HeftStatusReportDelegate> tmp = delegate;
+        id <HeftStatusReportDelegate> tmp = self->delegate;
         [tmp responseLogInfo:info];
     });
 

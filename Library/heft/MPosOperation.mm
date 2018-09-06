@@ -418,7 +418,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 
                                                           if (error != nil)
                                                           {
-                                                              host_communication_error = error;
+                                                              self->host_communication_error = error;
                                                           }
                                                           else
                                                           {
@@ -440,14 +440,14 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
                                                                                                             status_string];
 
                                                               NSData *tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
-                                                              host_response_data = [tmp_data mutableCopy];
-                                                              [host_response_data appendData:response_data];
+                                                              self->host_response_data = [tmp_data mutableCopy];
+                                                              [self->host_response_data appendData:response_data];
                                                           }
-                                                          [wait_until_done signal];
+                                                          [self->wait_until_done signal];
                                                       }];
 
 
-    LOG([[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
+    LOG(@"%@", [[request allHTTPHeaderFields] descriptionInStringsFileFormat]);
 
     //Don't forget this line ever
     [uploadTask resume];
@@ -586,7 +586,7 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
 
                                                           if (error != nil)
                                                           {
-                                                              host_communication_error = error;
+                                                              self->host_communication_error = error;
                                                           }
                                                           else
                                                           {
@@ -609,10 +609,10 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
                                                                                                             status_string];
 
                                                               NSData *tmp_data = [header dataUsingEncoding:NSUTF8StringEncoding];
-                                                              host_response_data = [tmp_data mutableCopy];
-                                                              [host_response_data appendData:response_data];
+                                                              self->host_response_data = [tmp_data mutableCopy];
+                                                              [self->host_response_data appendData:response_data];
                                                           }
-                                                          [wait_until_done signal];
+                                                          [self->wait_until_done signal];
                                                       }
     ];
 

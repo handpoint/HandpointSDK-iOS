@@ -151,10 +151,6 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  returns  YES if request is sent and No if there is already an active operation running. 
  */
 -(BOOL)enableScanner;
--(BOOL)enableScanner:(BOOL)multiScan DEPRECATED_ATTRIBUTE;
--(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode DEPRECATED_ATTRIBUTE;
--(BOOL)enableScanner:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds DEPRECATED_ATTRIBUTE;
-
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan;
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode;
 -(BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds;
