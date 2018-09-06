@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <HandpointSDK/HandpointAll.h>
+
 
 //! Project version number for HandpointSDK.
 FOUNDATION_EXPORT double HandpointSDKVersionNumber;
