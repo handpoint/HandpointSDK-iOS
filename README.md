@@ -1,5 +1,3 @@
-# Handpoint-iOS-SDK
-
 ![HandpointSDK](logo.png)
 
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/HandpointSDK.svg)](https://img.shields.io/cocoapods/v/HandpointSDK.svg)
