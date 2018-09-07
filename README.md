@@ -5,17 +5,15 @@
 [![Platform](https://img.shields.io/cocoapods/p/HandpointSDK.svg?style=flat)](https://cocoapods.org/pods/HandpointSDK)
 
 
-- [Installation](#installation)
 - [Required Settings](#required-settings)
-- [CocoaPods](#cocoapods)
-- [Carthage](#carthage)
-- [Manually](#manually)
+- [Installation](#installation)
+    - [CocoaPods](#cocoapods)
+    - [Carthage](#carthage)
+    - [Manually](#manually)
 - [Full SDK Documentation](#full-sdk-documentation)
 
 
-## Installation
-
-### Required Settings
+## Required Settings
 
 To be able to use HanbdpointSDK you need to setup some things first:
 
@@ -49,6 +47,7 @@ You can also enable this support by including the UIBackgroundModes key with the
 </array>
 ```
 
+## Installation
 
 ### CocoaPods
 
