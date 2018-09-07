@@ -6,13 +6,49 @@
 
 
 - [Installation](#installation)
+- [Required Settings](#required-settings)
 - [CocoaPods](#cocoapods)
 - [Carthage](#carthage)
 - [Manually](#manually)
 - [Full SDK Documentation](#full-sdk-documentation)
 
 
-## 1. Installation
+## Installation
+
+### Required Settings
+
+To be able to use HanbdpointSDK you need to setup some things first:
+
+#### Setup external accessory protocols in your `Info.plist`
+
+Add/modify the property "Supported external accessory protocols" and add *com.datecs.pinpad*
+
+This is what it should look like in the "source code" view of your info.plist:
+
+```plist
+<key>UISupportedExternalAccessoryProtocols</key>
+<array>
+    <string>com.datecs.pinpad</string>
+</array>
+```
+
+**Important**
+
+The Handpoint bluetooth card readers are part of the Apple MFi program. In order to release apps supporting accessories that are part of the MFi Program, you have to apply at Apple. Please fill the [MFi form](http://hndpt.co/hp-mfi) and we will help you with this process.
+
+#### Setup external accessory communication background mode
+
+Enable support for external accessory communication from the Background modes section of the Capabilities tab in your Xcode project.
+
+You can also enable this support by including the UIBackgroundModes key with the `external-accessory` value in your app’s Info.plist file:
+
+```plist
+<key>UIBackgroundModes</key>
+<array>
+    <string>external-accessory</string>
+</array>
+```
+
 
 ### CocoaPods
 
@@ -60,42 +96,10 @@ $ brew install carthage
 To integrate HandpointSDK into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "handpoint/HandpointSDK"
+github "handpoint/HandpointSDK-iOS"
 ```
 
 Run `carthage update` to build the framework and drag the built `HandpointSDK.framework` into your Xcode project.
-
-To be able to use HanbdpointSDK you need to setup several things first:
-
-##### Setup external accessory protocols in your `Info.plist`
-
-Add/modify the property "Supported external accessory protocols" and add *com.datecs.pinpad*
-
-This is what it should look like in the "source code" view of your info.plist:
-
-```plist
-<key>UISupportedExternalAccessoryProtocols</key>
-<array>
-    <string>com.datecs.pinpad</string>
-</array>
-```
-
-**Important**
-
-The Handpoint bluetooth card readers are part of the Apple MFi program. In order to release apps supporting accessories that are part of the MFi Program, you have to apply at Apple. Please fill the [MFi form](http://hndpt.co/hp-mfi) and we will help you with this process.
-
-##### Setup external accessory communication background mode
-
-Enable support for external accessory communication from the Background modes section of the Capabilities tab in your Xcode project.
-
-You can also enable this support by including the UIBackgroundModes key with the `external-accessory` value in your app’s Info.plist file:
-
-```plist
-<key>UIBackgroundModes</key>
-<array>
-    <string>external-accessory</string>
-</array>
-```
 
 ### Manually
 
@@ -122,8 +126,6 @@ Alternatively you can add it as a git [submodule](https://git-scm.com/docs/git-s
 #### Framework
 
 You'll find the dynamic framework project called `HandpointSDK.xcodeproj` at the root of the repo.
-
-Please refer to the [Carthage](#carthage) section for required configuration parameters needed in your app.
 
 #### Static Library
 
