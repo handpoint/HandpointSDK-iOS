@@ -123,6 +123,8 @@ Alternatively you can add it as a git [submodule](https://git-scm.com/docs/git-s
 
 You'll find the dynamic framework project called `HandpointSDK.xcodeproj` at the root of the repo.
 
+Please refer to the [Carthage](#carthage) section for required configuration parameters needed in your app.
+
 #### Static Library
 
 You'll find the static library project called `headstart.xcodeproj` under the `Library` folder.
