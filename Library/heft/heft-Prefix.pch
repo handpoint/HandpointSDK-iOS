@@ -1,0 +1,14 @@
+//
+// Prefix header for all source files of the 'heft' target in the 'headstart' project
+//
+
+//#import <Availability.h>
+
+#ifdef __OBJC__
+//	#import <UIKit/UIKit.h>
+//	#import <Foundation/Foundation.h>
+//	#import <ExternalAccessory/ExternalAccessory.h>
+#endif
+
+//#import
+#import "utils.h"
