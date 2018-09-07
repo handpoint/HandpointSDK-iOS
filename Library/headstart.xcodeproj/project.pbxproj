@@ -1,0 +1,1263 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		FB6B266F1E01549700C422F1 /* device-simulator Debug */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = FB6B267B1E01549700C422F1 /* Build configuration list for PBXAggregateTarget "device-simulator Debug" */;
+			buildPhases = (
+				FB6B26701E01549700C422F1 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "device-simulator Debug";
+			productName = "device-simulator";
+		};
+		FBDA036A1CD018DC00607201 /* device-simulator Release */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator Release" */;
+			buildPhases = (
+				FBDA03701CD018EB00607201 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "device-simulator Release";
+			productName = "device-simulator";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		0D41FA0C1FF2B6A30033A2C7 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
+		0D72755520DD6ACE003997C9 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D72755420DD6ACE003997C9 /* Version.h */; };
+		0D750F6420D9BD3500B882F3 /* XMLTags.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D750F6220D9BD3400B882F3 /* XMLTags.m */; };
+		0D750F6620D9BD3500B882F3 /* XMLTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D750F6320D9BD3500B882F3 /* XMLTags.h */; };
+		0DA0D0E120DA89F1003F34AA /* BaseModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DA0D0DB20DA89ED003F34AA /* BaseModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DA0D0E520DA89F1003F34AA /* BaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA0D0DE20DA89EF003F34AA /* BaseModel.m */; };
+		0DAC677F20EF847C0081C673 /* Currency.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DAC677E20EF847C0081C673 /* Currency.m */; };
+		0DAC678120EF84A10081C673 /* Currency.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DAC678020EF84A10081C673 /* Currency.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
+		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
+		2D1A425C16F757CB00CD6781 /* FrameManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425B16F757CB00CD6781 /* FrameManagerTest.m */; };
+		2D1B8AD416A0AD5700B11BC9 /* RequestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */; };
+		2D1B8AD516A0AD5B00B11BC9 /* ResponseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */; };
+		2D398937165FF23E00F8FA29 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3721628B0580043AFBC /* UIKit.framework */; };
+		2D398938165FF23E00F8FA29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
+		2D39893B165FF23E00F8FA29 /* libheft.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D398927165FF23D00F8FA29 /* libheft.a */; };
+		2D398941165FF23E00F8FA29 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D39893F165FF23E00F8FA29 /* InfoPlist.strings */; };
+		2D398973165FF88800F8FA29 /* MPosOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39894E165FF88800F8FA29 /* MPosOperation.mm */; };
+		2D398974165FF88800F8FA29 /* HeftConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398951165FF88800F8FA29 /* HeftConnection.mm */; };
+		2D398975165FF88800F8FA29 /* HeftManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398953165FF88800F8FA29 /* HeftManager.mm */; };
+		2D398978165FF88800F8FA29 /* MpedDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398959165FF88800F8FA29 /* MpedDevice.mm */; };
+		2D398979165FF88800F8FA29 /* ResponseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D39895B165FF88800F8FA29 /* ResponseParser.m */; };
+		2D39897A165FF88800F8FA29 /* BCDCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398960165FF88800F8FA29 /* BCDCoder.mm */; };
+		2D39897B165FF88800F8FA29 /* Crc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398963165FF88800F8FA29 /* Crc.mm */; };
+		2D39897C165FF88800F8FA29 /* Frame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398965165FF88800F8FA29 /* Frame.mm */; };
+		2D39897D165FF88800F8FA29 /* FrameManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398967165FF88800F8FA29 /* FrameManager.mm */; };
+		2D39897E165FF88800F8FA29 /* Logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896C165FF88800F8FA29 /* Logger.mm */; };
+		2D39897F165FF88800F8FA29 /* RequestCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896E165FF88800F8FA29 /* RequestCommand.mm */; };
+		2D398980165FF88800F8FA29 /* ResponseCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398970165FF88800F8FA29 /* ResponseCommand.mm */; };
+		2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
+		31F2B099216F044A3BF19D21 /* ResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B134F950AC98170C7743 /* ResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B0ECC15B98A3733B9807 /* FinanceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B73CFE0D39398E355B51 /* FinanceResponse.h */; };
+		31F2B18729BF8B34BFFEB6E3 /* StatusInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B69B97E31A592161CD85 /* StatusInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B2C5CFA6DCD732C6F7BD /* FinanceResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B3DE7FEC9119D8EA7D31 /* DeviceStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B89825DE416CCD585E4B /* DeviceStatus.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B3F3A412150451C11B72 /* HeftRemoteDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B42BDFF400B48C23CDC6 /* SimulatorAccessory.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B41E970099A064C54E74 /* SimulatorAccessory.h */; };
+		31F2B585C78ECC319D38E60F /* SimulatorAccessory.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */; };
+		31F2B5D92AC501D248724494 /* ScannerDisabledResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponse.m */; };
+		31F2B60647E49970A501FC0B /* HeftDiscovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B60E94A2B1AE5E095C2E /* DeviceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B8262A11A7170E20B36B /* DeviceStatus.m */; };
+		31F2B6387580EE006B1B21AF /* StatusInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */; };
+		31F2B679E1FB2D82AA43D80B /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B7F5A96A1999A4340FF7 /* ScannerDisabledResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */; };
+		31F2B86790156EF0582013AC /* LogInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */; };
+		31F2B86CDAFA82C3D0B2AC83 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BF27AEBB3A4C942FA73D /* utils.m */; };
+		31F2B91BC26BB2DD2CA45F6F /* HapiRemoteService.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2BA0C66A5552B883B755D /* ScannerEventResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */; };
+		31F2BA2F08FE9FF52D4A70D0 /* HeftManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B2DE6C951F89AC732ED3 /* HeftManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2BA68971F24175D3673D0 /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */; };
+		31F2BC15E169EE3A731C18C0 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC845D0AAC6DF2A910BC /* utils.h */; };
+		31F2BC3D5E8563B5928814D4 /* HeftDiscoveryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2BC4A1722C1EA134FDDA7 /* LogInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2BC4BA1B84700604D4191 /* HandpointAll.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3D82C2C03756E7BF898 /* HandpointAll.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2BC648B67A87AFF871579 /* FinanceResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */; };
+		31F2BCAF85707EA7B7F74428 /* ScannerDisabledResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
+		31F2BCD7BCEC029530C885A4 /* ResponseInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BF3A34E4715103899656 /* ResponseInfoObject.h */; };
+		31F2BDEBD7D0A3B24FA4F1F9 /* ScannerEventResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2BEA6CDA71AAAA6286128 /* ResponseInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */; };
+		31F2BFC129B7690078527E2B /* LogInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BBBC458764557DFB7937 /* LogInfoObject.h */; };
+		4975068F1DC8AB280026C6E1 /* HapiRemoteService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */; };
+		497506901DC8AB280026C6E1 /* HapiRemoteService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */; };
+		498A67081BF63765006D4606 /* Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 498A67071BF63765006D4606 /* Logger.m */; };
+		498A67091BF63765006D4606 /* Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 498A67071BF63765006D4606 /* Logger.m */; };
+		49DA880C1BEBB0880088EAA1 /* BcdCoderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425516F746C300CD6781 /* BcdCoderTest.m */; };
+		809FF0691864D45900572A04 /* MPosOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 809FF0671864D45900572A04 /* MPosOperation.h */; };
+		809FF06A1864D45900572A04 /* MPosOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 809FF0681864D45900572A04 /* MPosOperation.mm */; };
+		AD4C085F170C0C910005EDC0 /* CmdIds.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AD75FBAD16FC92C90000446E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEAD200164020A5006E2429 /* Security.framework */; };
+		AD75FBAE16FC92F30000446E /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D3F3B162C64450057301F /* ExternalAccessory.framework */; };
+		AD75FBAF16FC93580000446E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3761628B0590043AFBC /* CoreGraphics.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2D398939165FF23E00F8FA29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DEDA3651628B0580043AFBC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D398926165FF23D00F8FA29;
+			remoteInfo = heft;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0D5A12E2200D4DD100C5B847 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		0D72755420DD6ACE003997C9 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		0D750F6220D9BD3400B882F3 /* XMLTags.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLTags.m; sourceTree = "<group>"; };
+		0D750F6320D9BD3500B882F3 /* XMLTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTags.h; sourceTree = "<group>"; };
+		0DA0D0DB20DA89ED003F34AA /* BaseModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseModel.h; sourceTree = "<group>"; };
+		0DA0D0DE20DA89EF003F34AA /* BaseModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseModel.m; sourceTree = "<group>"; };
+		0DAC677E20EF847C0081C673 /* Currency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Currency.m; sourceTree = "<group>"; };
+		0DAC678020EF84A10081C673 /* Currency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Currency.h; sourceTree = "<group>"; };
+		283D2AE0D17B51B9CE673CA5 /* Pods-heft.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.release.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.release.xcconfig"; sourceTree = "<group>"; };
+		2D0D3F3B162C64450057301F /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
+		2D1A425116F7448B00CD6781 /* CrcTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrcTest.h; sourceTree = "<group>"; };
+		2D1A425216F7448B00CD6781 /* CrcTest.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = CrcTest.m; sourceTree = "<group>"; };
+		2D1A425416F746C300CD6781 /* BcdCoderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BcdCoderTest.h; sourceTree = "<group>"; };
+		2D1A425516F746C300CD6781 /* BcdCoderTest.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = BcdCoderTest.m; sourceTree = "<group>"; };
+		2D1A425716F7537F00CD6781 /* FrameTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameTest.h; sourceTree = "<group>"; };
+		2D1A425816F7537F00CD6781 /* FrameTest.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FrameTest.m; sourceTree = "<group>"; };
+		2D1A425A16F757CB00CD6781 /* FrameManagerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameManagerTest.h; sourceTree = "<group>"; };
+		2D1A425B16F757CB00CD6781 /* FrameManagerTest.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FrameManagerTest.m; sourceTree = "<group>"; };
+		2D270937167F8FCA00FF0E38 /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
+		2D29E54316A8A73A00324510 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2D398927165FF23D00F8FA29 /* libheft.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libheft.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D398935165FF23E00F8FA29 /* heftTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = heftTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D39893E165FF23E00F8FA29 /* heftTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "heftTests-Info.plist"; sourceTree = "<group>"; };
+		2D398940165FF23E00F8FA29 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2D39894D165FF88800F8FA29 /* MPosOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPosOperation.h; sourceTree = "<group>"; };
+		2D39894E165FF88800F8FA29 /* MPosOperation.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MPosOperation.mm; sourceTree = "<group>"; };
+		2D398950165FF88800F8FA29 /* HeftConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftConnection.h; sourceTree = "<group>"; };
+		2D398951165FF88800F8FA29 /* HeftConnection.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = HeftConnection.mm; sourceTree = "<group>"; };
+		2D398953165FF88800F8FA29 /* HeftManager.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = HeftManager.mm; sourceTree = "<group>"; };
+		2D398958165FF88800F8FA29 /* MpedDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpedDevice.h; sourceTree = "<group>"; };
+		2D398959165FF88800F8FA29 /* MpedDevice.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MpedDevice.mm; sourceTree = "<group>"; };
+		2D39895A165FF88800F8FA29 /* ResponseParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseParser.h; sourceTree = "<group>"; };
+		2D39895B165FF88800F8FA29 /* ResponseParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResponseParser.m; sourceTree = "<group>"; };
+		2D39895E165FF88800F8FA29 /* CmdIds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CmdIds.h; sourceTree = "<group>"; };
+		2D39895F165FF88800F8FA29 /* atl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atl.h; sourceTree = "<group>"; };
+		2D398960165FF88800F8FA29 /* BCDCoder.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = BCDCoder.mm; sourceTree = "<group>"; };
+		2D398961165FF88800F8FA29 /* BCDCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCDCoder.h; sourceTree = "<group>"; };
+		2D398962165FF88800F8FA29 /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
+		2D398963165FF88800F8FA29 /* Crc.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Crc.mm; sourceTree = "<group>"; };
+		2D398964165FF88800F8FA29 /* Crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Crc.h; sourceTree = "<group>"; };
+		2D398965165FF88800F8FA29 /* Frame.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Frame.mm; sourceTree = "<group>"; };
+		2D398966165FF88800F8FA29 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
+		2D398967165FF88800F8FA29 /* FrameManager.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FrameManager.mm; sourceTree = "<group>"; };
+		2D398968165FF88800F8FA29 /* FrameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameManager.h; sourceTree = "<group>"; };
+		2D39896A165FF88800F8FA29 /* IHostProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHostProcessor.h; sourceTree = "<group>"; };
+		2D39896B165FF88800F8FA29 /* IResponseProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IResponseProcessor.h; sourceTree = "<group>"; };
+		2D39896C165FF88800F8FA29 /* Logger.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Logger.mm; sourceTree = "<group>"; };
+		2D39896D165FF88800F8FA29 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
+		2D39896E165FF88800F8FA29 /* RequestCommand.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = RequestCommand.mm; sourceTree = "<group>"; };
+		2D39896F165FF88800F8FA29 /* RequestCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestCommand.h; sourceTree = "<group>"; };
+		2D398970165FF88800F8FA29 /* ResponseCommand.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ResponseCommand.mm; sourceTree = "<group>"; };
+		2D398971165FF88800F8FA29 /* ResponseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseCommand.h; sourceTree = "<group>"; };
+		2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = RequestCommand.cpp; path = simulator/Shared/RequestCommand.cpp; sourceTree = "<group>"; };
+		2D5ACCA9169B258F00BA0D48 /* RequestCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RequestCommand.h; path = simulator/Shared/RequestCommand.h; sourceTree = "<group>"; };
+		2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ResponseCommand.cpp; path = simulator/Shared/ResponseCommand.cpp; sourceTree = "<group>"; };
+		2D5ACCAB169B258F00BA0D48 /* ResponseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResponseCommand.h; path = simulator/Shared/ResponseCommand.h; sourceTree = "<group>"; };
+		2DEAD200164020A5006E2429 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		2DEDA3721628B0580043AFBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		2DEDA3741628B0590043AFBC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2DEDA3761628B0590043AFBC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogInfoObject.m; sourceTree = "<group>"; };
+		31F2B0BBFCF9313B5B65CE37 /* ScannerEventResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerEventResponse.h; sourceTree = "<group>"; };
+		31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusInfo.m; sourceTree = "<group>"; };
+		31F2B134F950AC98170C7743 /* ResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseInfo.h; sourceTree = "<group>"; };
+		31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerDisabledResponse.h; sourceTree = "<group>"; };
+		31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResponseInfoObject.m; sourceTree = "<group>"; };
+		31F2B18A909E97283E73A518 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinanceResponseInfo.h; sourceTree = "<group>"; };
+		31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerDisabledResponse.m; sourceTree = "<group>"; };
+		31F2B2DE6C951F89AC732ED3 /* HeftManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftManager.h; sourceTree = "<group>"; };
+		31F2B3521672BCF16FE6B9CB /* LogInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInfo.h; sourceTree = "<group>"; };
+		31F2B3D82C2C03756E7BF898 /* HandpointAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandpointAll.h; sourceTree = "<group>"; };
+		31F2B41E970099A064C54E74 /* SimulatorAccessory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatorAccessory.h; sourceTree = "<group>"; };
+		31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HapiRemoteService.h; sourceTree = "<group>"; };
+		31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftStatusReportDelegate.h; sourceTree = "<group>"; };
+		31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeftRemoteDevice.m; sourceTree = "<group>"; };
+		31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerDisabledResponseInfo.h; sourceTree = "<group>"; };
+		31F2B69B97E31A592161CD85 /* StatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusInfo.h; sourceTree = "<group>"; };
+		31F2B73CFE0D39398E355B51 /* FinanceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinanceResponse.h; sourceTree = "<group>"; };
+		31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerEventResponse.m; sourceTree = "<group>"; };
+		31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FinanceResponse.m; sourceTree = "<group>"; };
+		31F2B8262A11A7170E20B36B /* DeviceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceStatus.m; sourceTree = "<group>"; };
+		31F2B89825DE416CCD585E4B /* DeviceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceStatus.h; sourceTree = "<group>"; };
+		31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftRemoteDevice.h; sourceTree = "<group>"; };
+		31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscovery.h; sourceTree = "<group>"; };
+		31F2BBBC458764557DFB7937 /* LogInfoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInfoObject.h; sourceTree = "<group>"; };
+		31F2BC845D0AAC6DF2A910BC /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerEventResponseInfo.h; sourceTree = "<group>"; };
+		31F2BD15EEFCEA7DB6821342 /* HeftClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftClient.h; sourceTree = "<group>"; };
+		31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulatorAccessory.m; sourceTree = "<group>"; };
+		31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscoveryDelegate.h; sourceTree = "<group>"; };
+		31F2BF27AEBB3A4C942FA73D /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
+		31F2BF3A34E4715103899656 /* ResponseInfoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseInfoObject.h; sourceTree = "<group>"; };
+		31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "heft-Prefix.pch"; sourceTree = "<group>"; };
+		4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HapiRemoteService.m; sourceTree = "<group>"; };
+		498A67071BF63765006D4606 /* Logger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logger.m; sourceTree = "<group>"; };
+		809FF0671864D45900572A04 /* MPosOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPosOperation.h; path = simulator/MPosOperation.h; sourceTree = "<group>"; };
+		809FF0681864D45900572A04 /* MPosOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MPosOperation.mm; path = simulator/MPosOperation.mm; sourceTree = "<group>"; };
+		9AD0F47DCA7651B04120F222 /* Pods-heft.debug simulator.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.debug simulator.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.debug simulator.xcconfig"; sourceTree = "<group>"; };
+		AD87936016E09AEF00A2C326 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		AD8F91301702E39000F309FF /* heftTests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "heftTests-Prefix.pch"; sourceTree = "<group>"; };
+		EDB3B45339F876E9E84EBF3C /* Pods-heft.release simulator.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.release simulator.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.release simulator.xcconfig"; sourceTree = "<group>"; };
+		FBFA75151DB11CF900641641 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		FE442BAA7A442E031B970C25 /* Pods-heft.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.debug.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2D398924165FF23D00F8FA29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D41FA0C1FF2B6A30033A2C7 /* ExternalAccessory.framework in Frameworks */,
+				2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D398931165FF23E00F8FA29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD75FBAF16FC93580000446E /* CoreGraphics.framework in Frameworks */,
+				AD75FBAE16FC92F30000446E /* ExternalAccessory.framework in Frameworks */,
+				AD75FBAD16FC92C90000446E /* Security.framework in Frameworks */,
+				2D398937165FF23E00F8FA29 /* UIKit.framework in Frameworks */,
+				2D398938165FF23E00F8FA29 /* Foundation.framework in Frameworks */,
+				2D39893B165FF23E00F8FA29 /* libheft.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1E9579C351F90D3B26595860 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				FE442BAA7A442E031B970C25 /* Pods-heft.debug.xcconfig */,
+				9AD0F47DCA7651B04120F222 /* Pods-heft.debug simulator.xcconfig */,
+				283D2AE0D17B51B9CE673CA5 /* Pods-heft.release.xcconfig */,
+				EDB3B45339F876E9E84EBF3C /* Pods-heft.release simulator.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		2D398929165FF23D00F8FA29 /* heft */ = {
+			isa = PBXGroup;
+			children = (
+				0DAC677E20EF847C0081C673 /* Currency.m */,
+				0DA0D0DE20DA89EF003F34AA /* BaseModel.m */,
+				31F2B18A909E97283E73A518 /* debug.h */,
+				31F2B8262A11A7170E20B36B /* DeviceStatus.m */,
+				31F2B73CFE0D39398E355B51 /* FinanceResponse.h */,
+				31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */,
+				4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */,
+				31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */,
+				2D398950165FF88800F8FA29 /* HeftConnection.h */,
+				2D398951165FF88800F8FA29 /* HeftConnection.mm */,
+				2D398953165FF88800F8FA29 /* HeftManager.mm */,
+				31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */,
+				31F2BBBC458764557DFB7937 /* LogInfoObject.h */,
+				31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */,
+				2D398958165FF88800F8FA29 /* MpedDevice.h */,
+				2D398959165FF88800F8FA29 /* MpedDevice.mm */,
+				2D39894D165FF88800F8FA29 /* MPosOperation.h */,
+				2D39894E165FF88800F8FA29 /* MPosOperation.mm */,
+				31F2BF3A34E4715103899656 /* ResponseInfoObject.h */,
+				31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */,
+				2D39895A165FF88800F8FA29 /* ResponseParser.h */,
+				2D39895B165FF88800F8FA29 /* ResponseParser.m */,
+				31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */,
+				31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponse.m */,
+				31F2B0BBFCF9313B5B65CE37 /* ScannerEventResponse.h */,
+				31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */,
+				2D39895C165FF88800F8FA29 /* Shared */,
+				2D5ACC95169B229200BA0D48 /* simulator */,
+				31F2B41E970099A064C54E74 /* SimulatorAccessory.h */,
+				31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */,
+				31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */,
+				31F2BC845D0AAC6DF2A910BC /* utils.h */,
+				31F2BF27AEBB3A4C942FA73D /* utils.m */,
+				0D750F6320D9BD3500B882F3 /* XMLTags.h */,
+				0D750F6220D9BD3400B882F3 /* XMLTags.m */,
+				0D72755420DD6ACE003997C9 /* Version.h */,
+			);
+			path = heft;
+			sourceTree = "<group>";
+		};
+		2D39893C165FF23E00F8FA29 /* heftTests */ = {
+			isa = PBXGroup;
+			children = (
+				2D1A425116F7448B00CD6781 /* CrcTest.h */,
+				2D1A425216F7448B00CD6781 /* CrcTest.m */,
+				2D39893D165FF23E00F8FA29 /* Supporting Files */,
+				2D1A425416F746C300CD6781 /* BcdCoderTest.h */,
+				2D1A425516F746C300CD6781 /* BcdCoderTest.m */,
+				2D1A425716F7537F00CD6781 /* FrameTest.h */,
+				2D1A425816F7537F00CD6781 /* FrameTest.m */,
+				2D1A425A16F757CB00CD6781 /* FrameManagerTest.h */,
+				2D1A425B16F757CB00CD6781 /* FrameManagerTest.m */,
+			);
+			path = heftTests;
+			sourceTree = "<group>";
+		};
+		2D39893D165FF23E00F8FA29 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AD8F91301702E39000F309FF /* heftTests-Prefix.pch */,
+				2D39893E165FF23E00F8FA29 /* heftTests-Info.plist */,
+				2D39893F165FF23E00F8FA29 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2D39895C165FF88800F8FA29 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				2D39895D165FF88800F8FA29 /* api */,
+				2D39895F165FF88800F8FA29 /* atl.h */,
+				2D270937167F8FCA00FF0E38 /* Exception.h */,
+				2D398960165FF88800F8FA29 /* BCDCoder.mm */,
+				2D398961165FF88800F8FA29 /* BCDCoder.h */,
+				2D398962165FF88800F8FA29 /* Command.h */,
+				2D398963165FF88800F8FA29 /* Crc.mm */,
+				2D398964165FF88800F8FA29 /* Crc.h */,
+				2D39896A165FF88800F8FA29 /* IHostProcessor.h */,
+				2D39896B165FF88800F8FA29 /* IResponseProcessor.h */,
+				2D39896E165FF88800F8FA29 /* RequestCommand.mm */,
+				2D39896F165FF88800F8FA29 /* RequestCommand.h */,
+				2D398970165FF88800F8FA29 /* ResponseCommand.mm */,
+				2D398971165FF88800F8FA29 /* ResponseCommand.h */,
+				2D398965165FF88800F8FA29 /* Frame.mm */,
+				2D398966165FF88800F8FA29 /* Frame.h */,
+				2D398967165FF88800F8FA29 /* FrameManager.mm */,
+				2D398968165FF88800F8FA29 /* FrameManager.h */,
+				2D39896C165FF88800F8FA29 /* Logger.mm */,
+				2D39896D165FF88800F8FA29 /* Logger.h */,
+				498A67071BF63765006D4606 /* Logger.m */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		2D39895D165FF88800F8FA29 /* api */ = {
+			isa = PBXGroup;
+			children = (
+				0DAC678020EF84A10081C673 /* Currency.h */,
+				0DA0D0DB20DA89ED003F34AA /* BaseModel.h */,
+				31F2B69B97E31A592161CD85 /* StatusInfo.h */,
+				31F2B89825DE416CCD585E4B /* DeviceStatus.h */,
+				31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */,
+				2D39895E165FF88800F8FA29 /* CmdIds.h */,
+				31F2B134F950AC98170C7743 /* ResponseInfo.h */,
+				31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */,
+				31F2BD15EEFCEA7DB6821342 /* HeftClient.h */,
+				31F2B2DE6C951F89AC732ED3 /* HeftManager.h */,
+				31F2B3D82C2C03756E7BF898 /* HandpointAll.h */,
+				31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */,
+				31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */,
+				31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */,
+				31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */,
+				31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */,
+				31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */,
+				31F2B3521672BCF16FE6B9CB /* LogInfo.h */,
+			);
+			path = api;
+			sourceTree = "<group>";
+		};
+		2D5ACC95169B229200BA0D48 /* simulator */ = {
+			isa = PBXGroup;
+			children = (
+				809FF0671864D45900572A04 /* MPosOperation.h */,
+				809FF0681864D45900572A04 /* MPosOperation.mm */,
+				2D5ACC97169B229E00BA0D48 /* Shared */,
+			);
+			name = simulator;
+			sourceTree = "<group>";
+		};
+		2D5ACC97169B229E00BA0D48 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				2D5ACCA8169B258F00BA0D48 /* RequestCommand.cpp */,
+				2D5ACCA9169B258F00BA0D48 /* RequestCommand.h */,
+				2D5ACCAA169B258F00BA0D48 /* ResponseCommand.cpp */,
+				2D5ACCAB169B258F00BA0D48 /* ResponseCommand.h */,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
+		2DEDA3631628B0580043AFBC = {
+			isa = PBXGroup;
+			children = (
+				2D398929165FF23D00F8FA29 /* heft */,
+				2D39893C165FF23E00F8FA29 /* heftTests */,
+				2DEDA3711628B0580043AFBC /* Frameworks */,
+				2DEDA36F1628B0580043AFBC /* Products */,
+				1E9579C351F90D3B26595860 /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		2DEDA36F1628B0580043AFBC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2D398927165FF23D00F8FA29 /* libheft.a */,
+				2D398935165FF23E00F8FA29 /* heftTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2DEDA3711628B0580043AFBC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0D5A12E2200D4DD100C5B847 /* CoreBluetooth.framework */,
+				FBFA75151DB11CF900641641 /* SystemConfiguration.framework */,
+				AD87936016E09AEF00A2C326 /* MessageUI.framework */,
+				2DEAD200164020A5006E2429 /* Security.framework */,
+				2D0D3F3B162C64450057301F /* ExternalAccessory.framework */,
+				2DEDA3721628B0580043AFBC /* UIKit.framework */,
+				2DEDA3741628B0590043AFBC /* Foundation.framework */,
+				2DEDA3761628B0590043AFBC /* CoreGraphics.framework */,
+				2D29E54316A8A73A00324510 /* QuartzCore.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		AD4C085A170C0C3D0005EDC0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD4C085F170C0C910005EDC0 /* CmdIds.h in Headers */,
+				0DAC678120EF84A10081C673 /* Currency.h in Headers */,
+				809FF0691864D45900572A04 /* MPosOperation.h in Headers */,
+				31F2B099216F044A3BF19D21 /* ResponseInfo.h in Headers */,
+				31F2B2C5CFA6DCD732C6F7BD /* FinanceResponseInfo.h in Headers */,
+				31F2B679E1FB2D82AA43D80B /* HeftClient.h in Headers */,
+				31F2BA2F08FE9FF52D4A70D0 /* HeftManager.h in Headers */,
+				31F2BC4BA1B84700604D4191 /* HandpointAll.h in Headers */,
+				0D750F6620D9BD3500B882F3 /* XMLTags.h in Headers */,
+				31F2B91BC26BB2DD2CA45F6F /* HapiRemoteService.h in Headers */,
+				31F2B7F5A96A1999A4340FF7 /* ScannerDisabledResponse.h in Headers */,
+				0DA0D0E120DA89F1003F34AA /* BaseModel.h in Headers */,
+				31F2B60647E49970A501FC0B /* HeftDiscovery.h in Headers */,
+				31F2BDEBD7D0A3B24FA4F1F9 /* ScannerEventResponseInfo.h in Headers */,
+				31F2B18729BF8B34BFFEB6E3 /* StatusInfo.h in Headers */,
+				31F2B3DE7FEC9119D8EA7D31 /* DeviceStatus.h in Headers */,
+				31F2BC4A1722C1EA134FDDA7 /* LogInfo.h in Headers */,
+				31F2BC3D5E8563B5928814D4 /* HeftDiscoveryDelegate.h in Headers */,
+				31F2B42BDFF400B48C23CDC6 /* SimulatorAccessory.h in Headers */,
+				31F2BC15E169EE3A731C18C0 /* utils.h in Headers */,
+				0D72755520DD6ACE003997C9 /* Version.h in Headers */,
+				0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */,
+				31F2BFC129B7690078527E2B /* LogInfoObject.h in Headers */,
+				31F2BCAF85707EA7B7F74428 /* ScannerDisabledResponseInfo.h in Headers */,
+				31F2BCD7BCEC029530C885A4 /* ResponseInfoObject.h in Headers */,
+				31F2B0ECC15B98A3733B9807 /* FinanceResponse.h in Headers */,
+				31F2B3F3A412150451C11B72 /* HeftRemoteDevice.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		2D398926165FF23D00F8FA29 /* heft */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D398945165FF23E00F8FA29 /* Build configuration list for PBXNativeTarget "heft" */;
+			buildPhases = (
+				0D72755320DD5DFF003997C9 /* ShellScript */,
+				2D398923165FF23D00F8FA29 /* Sources */,
+				2D398924165FF23D00F8FA29 /* Frameworks */,
+				AD4C085A170C0C3D0005EDC0 /* Headers */,
+				ADDD488F1705F002009B57DC /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = heft;
+			productName = heft;
+			productReference = 2D398927165FF23D00F8FA29 /* libheft.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		2D398934165FF23E00F8FA29 /* heftTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D398948165FF23E00F8FA29 /* Build configuration list for PBXNativeTarget "heftTests" */;
+			buildPhases = (
+				2D398930165FF23E00F8FA29 /* Sources */,
+				2D398931165FF23E00F8FA29 /* Frameworks */,
+				2D398932165FF23E00F8FA29 /* Resources */,
+				2D398933165FF23E00F8FA29 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2D39893A165FF23E00F8FA29 /* PBXTargetDependency */,
+			);
+			name = heftTests;
+			productName = heftTests;
+			productReference = 2D398935165FF23E00F8FA29 /* heftTests.octest */;
+			productType = "com.apple.product-type.bundle.ocunit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2DEDA3651628B0580043AFBC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastTestingUpgradeCheck = 0640;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = Handpoint;
+				TargetAttributes = {
+					FBDA036A1CD018DC00607201 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+				};
+			};
+			buildConfigurationList = 2DEDA3681628B0580043AFBC /* Build configuration list for PBXProject "headstart" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2DEDA3631628B0580043AFBC;
+			productRefGroup = 2DEDA36F1628B0580043AFBC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2D398926165FF23D00F8FA29 /* heft */,
+				2D398934165FF23E00F8FA29 /* heftTests */,
+				FBDA036A1CD018DC00607201 /* device-simulator Release */,
+				FB6B266F1E01549700C422F1 /* device-simulator Debug */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2D398932165FF23E00F8FA29 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D398941165FF23E00F8FA29 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0D72755320DD5DFF003997C9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo ${SDK_VERSION} > version.txt\necho \"#define CODE_GENERATED_VERSION @\\\"${SDK_VERSION}\\\"\" > heft/Version.h";
+		};
+		2D398933165FF23E00F8FA29 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+		ADDD488F1705F002009B57DC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release-Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi";
+		};
+		FB6B26701E01549700C422F1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "VERSION=$(<version.txt)\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Debug\nxcodebuild -scheme heft -sdk iphoneos -configuration Debug\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Debug-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Debug-Simulator\n\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftLibrary/include\"\n# make a new output folder for simulator\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftSimulatorLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\nlipo -create \"${DIR}/Debug-iphoneos/libheft.a\" \"${DIR}/Debug-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftLibrary/libheft.a\"\nlipo -create \"${DIR}/Debug-Simulator-iphoneos/libheft.a\" \"${DIR}/Debug-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}-Debug/HeftSimulatorLibrary/libheft.a\"\n\ncp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\ncp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\n\npushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}-Debug/\"\nzip -r handpoint-ios-sdk-${VERSION}-Debug.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}-Debug/handpoint-ios-sdk-${VERSION}-Debug.zip\" .";
+		};
+		FBDA03701CD018EB00607201 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "VERSION=$(<version.txt)\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -sdk iphoneos -configuration Release\n\nxcodebuild -scheme heft -sdk iphonesimulator -configuration Release-Simulator\nxcodebuild -scheme heft -sdk iphoneos -configuration Release-Simulator\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\"\n# make a new output folder for simulator\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\nlipo -create \"${DIR}/Release-iphoneos/libheft.a\" \"${DIR}/Release-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/libheft.a\"\nlipo -create \"${DIR}/Release-Simulator-iphoneos/libheft.a\" \"${DIR}/Release-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/libheft.a\"\n\ncp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\ncp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\n\npushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/\"\nzip -r handpoint-ios-sdk-${VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/handpoint-ios-sdk-${VERSION}.zip\" .";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2D398923165FF23D00F8FA29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D398973165FF88800F8FA29 /* MPosOperation.mm in Sources */,
+				2D398974165FF88800F8FA29 /* HeftConnection.mm in Sources */,
+				2D398975165FF88800F8FA29 /* HeftManager.mm in Sources */,
+				2D398978165FF88800F8FA29 /* MpedDevice.mm in Sources */,
+				2D398979165FF88800F8FA29 /* ResponseParser.m in Sources */,
+				2D39897A165FF88800F8FA29 /* BCDCoder.mm in Sources */,
+				498A67081BF63765006D4606 /* Logger.m in Sources */,
+				2D39897B165FF88800F8FA29 /* Crc.mm in Sources */,
+				0D750F6420D9BD3500B882F3 /* XMLTags.m in Sources */,
+				2D39897C165FF88800F8FA29 /* Frame.mm in Sources */,
+				2D39897D165FF88800F8FA29 /* FrameManager.mm in Sources */,
+				2D39897E165FF88800F8FA29 /* Logger.mm in Sources */,
+				2D39897F165FF88800F8FA29 /* RequestCommand.mm in Sources */,
+				2D398980165FF88800F8FA29 /* ResponseCommand.mm in Sources */,
+				0DAC677F20EF847C0081C673 /* Currency.m in Sources */,
+				4975068F1DC8AB280026C6E1 /* HapiRemoteService.m in Sources */,
+				2D1B8AD416A0AD5700B11BC9 /* RequestCommand.cpp in Sources */,
+				2D1B8AD516A0AD5B00B11BC9 /* ResponseCommand.cpp in Sources */,
+				809FF06A1864D45900572A04 /* MPosOperation.mm in Sources */,
+				0DA0D0E520DA89F1003F34AA /* BaseModel.m in Sources */,
+				31F2BA0C66A5552B883B755D /* ScannerEventResponse.m in Sources */,
+				31F2B5D92AC501D248724494 /* ScannerDisabledResponse.m in Sources */,
+				31F2B585C78ECC319D38E60F /* SimulatorAccessory.m in Sources */,
+				31F2B86CDAFA82C3D0B2AC83 /* utils.m in Sources */,
+				31F2BEA6CDA71AAAA6286128 /* ResponseInfoObject.m in Sources */,
+				31F2BC648B67A87AFF871579 /* FinanceResponse.m in Sources */,
+				31F2BA68971F24175D3673D0 /* HeftRemoteDevice.m in Sources */,
+				31F2B86790156EF0582013AC /* LogInfoObject.m in Sources */,
+				31F2B6387580EE006B1B21AF /* StatusInfo.m in Sources */,
+				31F2B60E94A2B1AE5E095C2E /* DeviceStatus.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D398930165FF23E00F8FA29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */,
+				2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */,
+				2D1A425C16F757CB00CD6781 /* FrameManagerTest.m in Sources */,
+				497506901DC8AB280026C6E1 /* HapiRemoteService.m in Sources */,
+				49DA880C1BEBB0880088EAA1 /* BcdCoderTest.m in Sources */,
+				498A67091BF63765006D4606 /* Logger.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2D39893A165FF23E00F8FA29 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D398926165FF23D00F8FA29 /* heft */;
+			targetProxy = 2D398939165FF23E00F8FA29 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		2D39893F165FF23E00F8FA29 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D398940165FF23E00F8FA29 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2D38903A169F629E00720A15 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"HEFT_SIMULATOR=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
+			};
+			name = "Debug-Simulator";
+		};
+		2D38903D169F629E00720A15 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					HeftConnection.m,
+					FinanceTransactionOperation.m,
+					"Shared/*",
+				);
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				HEADER_SEARCH_PATHS = /heft/Shared;
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.6;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
+			};
+			name = "Debug-Simulator";
+		};
+		2D38903E169F629E00720A15 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heftTests/heftTests-Prefix.pch";
+				INFOPLIST_FILE = "heftTests/heftTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Debug-Simulator";
+		};
+		2D389040169F62B800720A15 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HEFT_SIMULATOR=1",
+					"NS_BLOCK_ASSERTIONS=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
+			};
+			name = "Release-Simulator";
+		};
+		2D389043169F62B800720A15 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					HeftConnection.m,
+					FinanceTransactionOperation.m,
+					"Shared/*",
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				HEADER_SEARCH_PATHS = /heft/Shared;
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.6;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
+			};
+			name = "Release-Simulator";
+		};
+		2D389044169F62B800720A15 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heftTests/heftTests-Prefix.pch";
+				INFOPLIST_FILE = "heftTests/heftTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Release-Simulator";
+		};
+		2D398946165FF23E00F8FA29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				HEADER_SEARCH_PATHS = /heft/Shared;
+				INCLUDED_SOURCE_FILE_NAMES = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.6;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
+			};
+			name = Debug;
+		};
+		2D398947165FF23E00F8FA29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DSTROOT = /tmp/heft.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"simulator/Shared/*",
+					"simulator/*",
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "heft/heft-Prefix.pch";
+				HEADER_SEARCH_PATHS = /heft/Shared;
+				INCLUDED_SOURCE_FILE_NAMES = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
+				SDK_VERSION = 3.1.6;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				VALID_ARCHS = "armv7 armv7s i386 arm64";
+			};
+			name = Release;
+		};
+		2D398949165FF23E00F8FA29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heftTests/heftTests-Prefix.pch";
+				INFOPLIST_FILE = "heftTests/heftTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		2D39894A165FF23E00F8FA29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "heftTests/heftTests-Prefix.pch";
+				INFOPLIST_FILE = "heftTests/heftTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Library\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "pragmasoft.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		2DEDA3A81628B0590043AFBC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"UNIT_TESTING=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
+			};
+			name = Debug;
+		};
+		2DEDA3A91628B0590043AFBC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNIT_TESTING=1",
+					"NS_BLOCK_ASSERTIONS=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "armv7 armv7s i386 arm64 x86_64";
+			};
+			name = Release;
+		};
+		FB6B267C1E01549700C422F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FB6B267D1E01549700C422F1 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug-Simulator";
+		};
+		FB6B267E1E01549700C422F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		FB6B267F1E01549700C422F1 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release-Simulator";
+		};
+		FBDA036B1CD018DC00607201 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FBDA036C1CD018DC00607201 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug-Simulator";
+		};
+		FBDA036D1CD018DC00607201 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		FBDA036E1CD018DC00607201 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release-Simulator";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2D398945165FF23E00F8FA29 /* Build configuration list for PBXNativeTarget "heft" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D398946165FF23E00F8FA29 /* Debug */,
+				2D38903D169F629E00720A15 /* Debug-Simulator */,
+				2D398947165FF23E00F8FA29 /* Release */,
+				2D389043169F62B800720A15 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D398948165FF23E00F8FA29 /* Build configuration list for PBXNativeTarget "heftTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D398949165FF23E00F8FA29 /* Debug */,
+				2D38903E169F629E00720A15 /* Debug-Simulator */,
+				2D39894A165FF23E00F8FA29 /* Release */,
+				2D389044169F62B800720A15 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DEDA3681628B0580043AFBC /* Build configuration list for PBXProject "headstart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DEDA3A81628B0590043AFBC /* Debug */,
+				2D38903A169F629E00720A15 /* Debug-Simulator */,
+				2DEDA3A91628B0590043AFBC /* Release */,
+				2D389040169F62B800720A15 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FB6B267B1E01549700C422F1 /* Build configuration list for PBXAggregateTarget "device-simulator Debug" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB6B267C1E01549700C422F1 /* Debug */,
+				FB6B267D1E01549700C422F1 /* Debug-Simulator */,
+				FB6B267E1E01549700C422F1 /* Release */,
+				FB6B267F1E01549700C422F1 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator Release" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBDA036B1CD018DC00607201 /* Debug */,
+				FBDA036C1CD018DC00607201 /* Debug-Simulator */,
+				FBDA036D1CD018DC00607201 /* Release */,
+				FBDA036E1CD018DC00607201 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2DEDA3651628B0580043AFBC /* Project object */;
+}

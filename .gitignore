@@ -16,6 +16,7 @@ profile
 *.moved-aside
 DerivedData
 .idea/
+version.txt
 
 .DS_Store
 
