@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.author       = { "Handpoint" => "hi@handpoint.com" }
   s.source       = { :git => "https://github.com/handpoint/HandpointSDK-iOS.git", :tag => "#{s.version}"}
   s.platform     = :ios, '8.0'
-  s.source_files = 'Library/heft/**/*.{h,m}', 'heft/**/*.mm'
+  s.source_files = 'Library/heft/**/*.{h,m}', 'Library/heft/**/*.mm'
   s.public_header_files = 'Library/heft/Shared/api/*.h' 
   s.framework = 'ExternalAccessory'
   s.library   = 'z', 'c++'
