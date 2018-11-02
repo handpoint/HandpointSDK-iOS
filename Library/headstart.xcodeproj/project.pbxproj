@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		FB6B266F1E01549700C422F1 /* device-simulator Debug */ = {
+		FB6B266F1E01549700C422F1 /* Debug */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = FB6B267B1E01549700C422F1 /* Build configuration list for PBXAggregateTarget "device-simulator Debug" */;
+			buildConfigurationList = FB6B267B1E01549700C422F1 /* Build configuration list for PBXAggregateTarget "Debug" */;
 			buildPhases = (
 				FB6B26701E01549700C422F1 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = "device-simulator Debug";
+			name = Debug;
 			productName = "device-simulator";
 		};
-		FBDA036A1CD018DC00607201 /* device-simulator Release */ = {
+		FBDA036A1CD018DC00607201 /* Release */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator Release" */;
+			buildConfigurationList = FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "Release" */;
 			buildPhases = (
 				FBDA03701CD018EB00607201 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = "device-simulator Release";
+			name = Release;
 			productName = "device-simulator";
 		};
 /* End PBXAggregateTarget section */
@@ -41,6 +41,74 @@
 		0DAC677F20EF847C0081C673 /* Currency.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DAC677E20EF847C0081C673 /* Currency.m */; };
 		0DAC678120EF84A10081C673 /* Currency.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DAC678020EF84A10081C673 /* Currency.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0DDFC63F1FE815B70043F0B1 /* HeftStatusReportDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC60215BE1B4003EE9C0 /* Currency.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DAC677E20EF847C0081C673 /* Currency.m */; };
+		0DEEEC61215BE1B4003EE9C0 /* BaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA0D0DE20DA89EF003F34AA /* BaseModel.m */; };
+		0DEEEC62215BE1B4003EE9C0 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B18A909E97283E73A518 /* debug.h */; };
+		0DEEEC63215BE1B4003EE9C0 /* DeviceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B8262A11A7170E20B36B /* DeviceStatus.m */; };
+		0DEEEC64215BE1B4003EE9C0 /* FinanceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B73CFE0D39398E355B51 /* FinanceResponse.h */; };
+		0DEEEC65215BE1B4003EE9C0 /* FinanceResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */; };
+		0DEEEC66215BE1B4003EE9C0 /* HapiRemoteService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */; };
+		0DEEEC67215BE1B4003EE9C0 /* heft-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */; };
+		0DEEEC68215BE1B4003EE9C0 /* HeftConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D398950165FF88800F8FA29 /* HeftConnection.h */; };
+		0DEEEC69215BE1B4003EE9C0 /* HeftConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398951165FF88800F8FA29 /* HeftConnection.mm */; };
+		0DEEEC6A215BE1B4003EE9C0 /* HeftManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398953165FF88800F8FA29 /* HeftManager.mm */; };
+		0DEEEC6B215BE1B4003EE9C0 /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */; };
+		0DEEEC6C215BE1B4003EE9C0 /* LogInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BBBC458764557DFB7937 /* LogInfoObject.h */; };
+		0DEEEC6D215BE1B4003EE9C0 /* LogInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */; };
+		0DEEEC6E215BE1B4003EE9C0 /* MpedDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D398958165FF88800F8FA29 /* MpedDevice.h */; };
+		0DEEEC6F215BE1B4003EE9C0 /* MpedDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398959165FF88800F8FA29 /* MpedDevice.mm */; };
+		0DEEEC70215BE1B4003EE9C0 /* MPosOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39894D165FF88800F8FA29 /* MPosOperation.h */; };
+		0DEEEC71215BE1B4003EE9C0 /* MPosOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39894E165FF88800F8FA29 /* MPosOperation.mm */; };
+		0DEEEC72215BE1B4003EE9C0 /* ResponseInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BF3A34E4715103899656 /* ResponseInfoObject.h */; };
+		0DEEEC73215BE1B4003EE9C0 /* ResponseInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */; };
+		0DEEEC74215BE1B4003EE9C0 /* ResponseParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39895A165FF88800F8FA29 /* ResponseParser.h */; };
+		0DEEEC75215BE1B4003EE9C0 /* ResponseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D39895B165FF88800F8FA29 /* ResponseParser.m */; };
+		0DEEEC76215BE1B4003EE9C0 /* ScannerDisabledResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */; };
+		0DEEEC77215BE1B4003EE9C0 /* ScannerDisabledResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponse.m */; };
+		0DEEEC78215BE1B4003EE9C0 /* ScannerEventResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B0BBFCF9313B5B65CE37 /* ScannerEventResponse.h */; };
+		0DEEEC79215BE1B4003EE9C0 /* ScannerEventResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */; };
+		0DEEEC7A215BE1BE003EE9C0 /* SimulatorAccessory.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B41E970099A064C54E74 /* SimulatorAccessory.h */; };
+		0DEEEC7B215BE1BE003EE9C0 /* SimulatorAccessory.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */; };
+		0DEEEC7C215BE1BE003EE9C0 /* StatusInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */; };
+		0DEEEC7D215BE1BE003EE9C0 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC845D0AAC6DF2A910BC /* utils.h */; };
+		0DEEEC7E215BE1BE003EE9C0 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BF27AEBB3A4C942FA73D /* utils.m */; };
+		0DEEEC7F215BE1BE003EE9C0 /* XMLTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D750F6320D9BD3500B882F3 /* XMLTags.h */; };
+		0DEEEC80215BE1BE003EE9C0 /* XMLTags.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D750F6220D9BD3400B882F3 /* XMLTags.m */; };
+		0DEEEC81215BE1BE003EE9C0 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D72755420DD6ACE003997C9 /* Version.h */; };
+		0DEEEC82215BE278003EE9C0 /* BluetoothProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BEA28FF2D0D4F40932EE /* BluetoothProvider.h */; };
+		0DEEEC83215BE278003EE9C0 /* BluetoothDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B638D8A187DE9687F226 /* BluetoothDevice.h */; };
+		0DEEEC84215BE278003EE9C0 /* MacOSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BDABBB2089A47E41A7C2 /* MacOSConnection.m */; };
+		0DEEEC85215BE278003EE9C0 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B944C8478D51FE048E06 /* Connection.h */; };
+		0DEEEC86215BE278003EE9C0 /* MacOSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BD2DEFCA329E69520CA8 /* MacOSConnection.h */; };
+		0DEEEC88215BE278003EE9C0 /* MacOSBluetooth.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B849E678D94BFED554C6 /* MacOSBluetooth.m */; };
+		0DEEEC89215BE278003EE9C0 /* MacOSBluetoothClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B968249B9432B80245B8 /* MacOSBluetoothClient.m */; };
+		0DEEEC8A215BE278003EE9C0 /* MacOSBluetooth.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BB9BE4616B4BF4E81E62 /* MacOSBluetooth.h */; };
+		0DEEEC8B215BE278003EE9C0 /* MacOSBluetoothClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B86BC9832D253FEB5A2B /* MacOSBluetoothClient.h */; };
+		0DEEEC90215BEA8C003EE9C0 /* BCDCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398960165FF88800F8FA29 /* BCDCoder.mm */; };
+		0DEEEC91215BEA8C003EE9C0 /* Crc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398963165FF88800F8FA29 /* Crc.mm */; };
+		0DEEEC92215BEA8C003EE9C0 /* RequestCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896E165FF88800F8FA29 /* RequestCommand.mm */; };
+		0DEEEC93215BEA8C003EE9C0 /* ResponseCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398970165FF88800F8FA29 /* ResponseCommand.mm */; };
+		0DEEEC94215BEA8C003EE9C0 /* FrameManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D398967165FF88800F8FA29 /* FrameManager.mm */; };
+		0DEEEC95215BEA8C003EE9C0 /* Logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D39896C165FF88800F8FA29 /* Logger.mm */; };
+		0DEEEC96215BEA8C003EE9C0 /* Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 498A67071BF63765006D4606 /* Logger.m */; };
+		0DEEEC97215BEA99003EE9C0 /* Currency.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DAC678020EF84A10081C673 /* Currency.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC98215BEA99003EE9C0 /* BaseModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DA0D0DB20DA89ED003F34AA /* BaseModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC99215BEA99003EE9C0 /* StatusInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B69B97E31A592161CD85 /* StatusInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC9A215BEA99003EE9C0 /* DeviceStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B89825DE416CCD585E4B /* DeviceStatus.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC9B215BEA99003EE9C0 /* HeftRemoteDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC9C215BEA99003EE9C0 /* CmdIds.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D39895E165FF88800F8FA29 /* CmdIds.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC9D215BEA99003EE9C0 /* ResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B134F950AC98170C7743 /* ResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC9E215BEA99003EE9C0 /* FinanceResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEEC9F215BEA99003EE9C0 /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA0215BEA99003EE9C0 /* HeftManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B2DE6C951F89AC732ED3 /* HeftManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA1215BEA99003EE9C0 /* HandpointAll.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3D82C2C03756E7BF898 /* HandpointAll.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA2215BEA99003EE9C0 /* HapiRemoteService.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA3215BEA99003EE9C0 /* HeftStatusReportDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA4215BEA99003EE9C0 /* HeftDiscovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA5215BEA99003EE9C0 /* HeftDiscoveryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA6215BEA99003EE9C0 /* ScannerDisabledResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA7215BEA99003EE9C0 /* ScannerEventResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0DEEECA8215BEA99003EE9C0 /* LogInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D1A425316F7448B00CD6781 /* CrcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425216F7448B00CD6781 /* CrcTest.m */; };
 		2D1A425916F7537F00CD6781 /* FrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425816F7537F00CD6781 /* FrameTest.m */; };
 		2D1A425C16F757CB00CD6781 /* FrameManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A425B16F757CB00CD6781 /* FrameManagerTest.m */; };
@@ -66,6 +134,8 @@
 		31F2B099216F044A3BF19D21 /* ResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B134F950AC98170C7743 /* ResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B0ECC15B98A3733B9807 /* FinanceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B73CFE0D39398E355B51 /* FinanceResponse.h */; };
 		31F2B18729BF8B34BFFEB6E3 /* StatusInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B69B97E31A592161CD85 /* StatusInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B1C81A8A6E66F800415B /* BluetoothProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BEA28FF2D0D4F40932EE /* BluetoothProvider.h */; };
+		31F2B2AFC7B9F13D44C06B5E /* iOSBluetooth.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BBC2241423C26016385B /* iOSBluetooth.m */; };
 		31F2B2C5CFA6DCD732C6F7BD /* FinanceResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B3DE7FEC9119D8EA7D31 /* DeviceStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B89825DE416CCD585E4B /* DeviceStatus.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B3F3A412150451C11B72 /* HeftRemoteDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -77,20 +147,25 @@
 		31F2B6387580EE006B1B21AF /* StatusInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */; };
 		31F2B679E1FB2D82AA43D80B /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B7F5A96A1999A4340FF7 /* ScannerDisabledResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */; };
+		31F2B7F7BC618B5E8BE5CFB5 /* iOSConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B01B6EFE133CDBDB0E1D /* iOSConnection.mm */; };
+		31F2B8613CF3C323B6CD6CFD /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B944C8478D51FE048E06 /* Connection.h */; };
 		31F2B86790156EF0582013AC /* LogInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */; };
 		31F2B86CDAFA82C3D0B2AC83 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BF27AEBB3A4C942FA73D /* utils.m */; };
 		31F2B91BC26BB2DD2CA45F6F /* HapiRemoteService.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BA0C66A5552B883B755D /* ScannerEventResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */; };
 		31F2BA2F08FE9FF52D4A70D0 /* HeftManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B2DE6C951F89AC732ED3 /* HeftManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BA68971F24175D3673D0 /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */; };
+		31F2BADFC0AAC3FE99993885 /* iOSBluetooth.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BE5EB3835691919073B9 /* iOSBluetooth.h */; };
 		31F2BC15E169EE3A731C18C0 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC845D0AAC6DF2A910BC /* utils.h */; };
 		31F2BC3D5E8563B5928814D4 /* HeftDiscoveryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BC4A1722C1EA134FDDA7 /* LogInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BC4BA1B84700604D4191 /* HandpointAll.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3D82C2C03756E7BF898 /* HandpointAll.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BC648B67A87AFF871579 /* FinanceResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */; };
-		31F2BCAF85707EA7B7F74428 /* ScannerDisabledResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
+		31F2BCAF85707EA7B7F74428 /* ScannerDisabledResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BCD7BCEC029530C885A4 /* ResponseInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BF3A34E4715103899656 /* ResponseInfoObject.h */; };
+		31F2BD8CE994447DEDA30123 /* BluetoothDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B638D8A187DE9687F226 /* BluetoothDevice.h */; };
 		31F2BDEBD7D0A3B24FA4F1F9 /* ScannerEventResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2BE86C1ED814EFB86AEB6 /* iOSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B62C8252C6A8089EEDED /* iOSConnection.h */; };
 		31F2BEA6CDA71AAAA6286128 /* ResponseInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */; };
 		31F2BFC129B7690078527E2B /* LogInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BBBC458764557DFB7937 /* LogInfoObject.h */; };
 		4975068F1DC8AB280026C6E1 /* HapiRemoteService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */; };
@@ -125,6 +200,7 @@
 		0DA0D0DE20DA89EF003F34AA /* BaseModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseModel.m; sourceTree = "<group>"; };
 		0DAC677E20EF847C0081C673 /* Currency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Currency.m; sourceTree = "<group>"; };
 		0DAC678020EF84A10081C673 /* Currency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Currency.h; sourceTree = "<group>"; };
+		0DEEEC55215BE186003EE9C0 /* libheftMacOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libheftMacOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		283D2AE0D17B51B9CE673CA5 /* Pods-heft.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heft.release.xcconfig"; path = "Pods/Target Support Files/Pods-heft/Pods-heft.release.xcconfig"; sourceTree = "<group>"; };
 		2D0D3F3B162C64450057301F /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		2D1A425116F7448B00CD6781 /* CrcTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrcTest.h; sourceTree = "<group>"; };
@@ -177,6 +253,7 @@
 		2DEDA3721628B0580043AFBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2DEDA3741628B0590043AFBC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2DEDA3761628B0590043AFBC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		31F2B01B6EFE133CDBDB0E1D /* iOSConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSConnection.mm; sourceTree = "<group>"; };
 		31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogInfoObject.m; sourceTree = "<group>"; };
 		31F2B0BBFCF9313B5B65CE37 /* ScannerEventResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerEventResponse.h; sourceTree = "<group>"; };
 		31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusInfo.m; sourceTree = "<group>"; };
@@ -194,20 +271,32 @@
 		31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftStatusReportDelegate.h; sourceTree = "<group>"; };
 		31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeftRemoteDevice.m; sourceTree = "<group>"; };
 		31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerDisabledResponseInfo.h; sourceTree = "<group>"; };
+		31F2B62C8252C6A8089EEDED /* iOSConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iOSConnection.h; sourceTree = "<group>"; };
+		31F2B638D8A187DE9687F226 /* BluetoothDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothDevice.h; sourceTree = "<group>"; };
 		31F2B69B97E31A592161CD85 /* StatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusInfo.h; sourceTree = "<group>"; };
 		31F2B73CFE0D39398E355B51 /* FinanceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinanceResponse.h; sourceTree = "<group>"; };
 		31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerEventResponse.m; sourceTree = "<group>"; };
 		31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FinanceResponse.m; sourceTree = "<group>"; };
 		31F2B8262A11A7170E20B36B /* DeviceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceStatus.m; sourceTree = "<group>"; };
+		31F2B849E678D94BFED554C6 /* MacOSBluetooth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacOSBluetooth.m; sourceTree = "<group>"; };
+		31F2B86BC9832D253FEB5A2B /* MacOSBluetoothClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOSBluetoothClient.h; sourceTree = "<group>"; };
 		31F2B89825DE416CCD585E4B /* DeviceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceStatus.h; sourceTree = "<group>"; };
 		31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftRemoteDevice.h; sourceTree = "<group>"; };
+		31F2B944C8478D51FE048E06 /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connection.h; sourceTree = "<group>"; };
+		31F2B968249B9432B80245B8 /* MacOSBluetoothClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacOSBluetoothClient.m; sourceTree = "<group>"; };
 		31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscovery.h; sourceTree = "<group>"; };
+		31F2BB9BE4616B4BF4E81E62 /* MacOSBluetooth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOSBluetooth.h; sourceTree = "<group>"; };
 		31F2BBBC458764557DFB7937 /* LogInfoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInfoObject.h; sourceTree = "<group>"; };
+		31F2BBC2241423C26016385B /* iOSBluetooth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iOSBluetooth.m; sourceTree = "<group>"; };
 		31F2BC845D0AAC6DF2A910BC /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerEventResponseInfo.h; sourceTree = "<group>"; };
 		31F2BD15EEFCEA7DB6821342 /* HeftClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftClient.h; sourceTree = "<group>"; };
+		31F2BD2DEFCA329E69520CA8 /* MacOSConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOSConnection.h; sourceTree = "<group>"; };
 		31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulatorAccessory.m; sourceTree = "<group>"; };
+		31F2BDABBB2089A47E41A7C2 /* MacOSConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacOSConnection.m; sourceTree = "<group>"; };
 		31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscoveryDelegate.h; sourceTree = "<group>"; };
+		31F2BE5EB3835691919073B9 /* iOSBluetooth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iOSBluetooth.h; sourceTree = "<group>"; };
+		31F2BEA28FF2D0D4F40932EE /* BluetoothProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothProvider.h; sourceTree = "<group>"; };
 		31F2BF27AEBB3A4C942FA73D /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		31F2BF3A34E4715103899656 /* ResponseInfoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseInfoObject.h; sourceTree = "<group>"; };
 		31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "heft-Prefix.pch"; sourceTree = "<group>"; };
@@ -224,6 +313,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0DEEEC53215BE186003EE9C0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D398924165FF23D00F8FA29 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -299,6 +395,7 @@
 				0D750F6320D9BD3500B882F3 /* XMLTags.h */,
 				0D750F6220D9BD3400B882F3 /* XMLTags.m */,
 				0D72755420DD6ACE003997C9 /* Version.h */,
+				31F2B9F2C7451C10C7FC9848 /* Bluetooth */,
 			);
 			path = heft;
 			sourceTree = "<group>";
@@ -419,6 +516,7 @@
 			children = (
 				2D398927165FF23D00F8FA29 /* libheft.a */,
 				2D398935165FF23E00F8FA29 /* heftTests.octest */,
+				0DEEEC55215BE186003EE9C0 /* libheftMacOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -439,9 +537,75 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		31F2B9F2C7451C10C7FC9848 /* Bluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				31F2BEA28FF2D0D4F40932EE /* BluetoothProvider.h */,
+				31F2B638D8A187DE9687F226 /* BluetoothDevice.h */,
+				31F2BDABBB2089A47E41A7C2 /* MacOSConnection.m */,
+				31F2B944C8478D51FE048E06 /* Connection.h */,
+				31F2BD2DEFCA329E69520CA8 /* MacOSConnection.h */,
+				31F2B01B6EFE133CDBDB0E1D /* iOSConnection.mm */,
+				31F2B849E678D94BFED554C6 /* MacOSBluetooth.m */,
+				31F2B968249B9432B80245B8 /* MacOSBluetoothClient.m */,
+				31F2BB9BE4616B4BF4E81E62 /* MacOSBluetooth.h */,
+				31F2B86BC9832D253FEB5A2B /* MacOSBluetoothClient.h */,
+				31F2BBC2241423C26016385B /* iOSBluetooth.m */,
+				31F2B62C8252C6A8089EEDED /* iOSConnection.h */,
+				31F2BE5EB3835691919073B9 /* iOSBluetooth.h */,
+			);
+			path = Bluetooth;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0DEEEC51215BE186003EE9C0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DEEECA6215BEA99003EE9C0 /* ScannerDisabledResponseInfo.h in Headers */,
+				0DEEEC6E215BE1B4003EE9C0 /* MpedDevice.h in Headers */,
+				0DEEEC64215BE1B4003EE9C0 /* FinanceResponse.h in Headers */,
+				0DEEECA1215BEA99003EE9C0 /* HandpointAll.h in Headers */,
+				0DEEEC81215BE1BE003EE9C0 /* Version.h in Headers */,
+				0DEEEC8A215BE278003EE9C0 /* MacOSBluetooth.h in Headers */,
+				0DEEEC7D215BE1BE003EE9C0 /* utils.h in Headers */,
+				0DEEEC86215BE278003EE9C0 /* MacOSConnection.h in Headers */,
+				0DEEEC85215BE278003EE9C0 /* Connection.h in Headers */,
+				0DEEECA7215BEA99003EE9C0 /* ScannerEventResponseInfo.h in Headers */,
+				0DEEEC7A215BE1BE003EE9C0 /* SimulatorAccessory.h in Headers */,
+				0DEEEC68215BE1B4003EE9C0 /* HeftConnection.h in Headers */,
+				0DEEEC7F215BE1BE003EE9C0 /* XMLTags.h in Headers */,
+				0DEEEC99215BEA99003EE9C0 /* StatusInfo.h in Headers */,
+				0DEEEC67215BE1B4003EE9C0 /* heft-Prefix.pch in Headers */,
+				0DEEEC98215BEA99003EE9C0 /* BaseModel.h in Headers */,
+				0DEEECA3215BEA99003EE9C0 /* HeftStatusReportDelegate.h in Headers */,
+				0DEEECA8215BEA99003EE9C0 /* LogInfo.h in Headers */,
+				0DEEEC72215BE1B4003EE9C0 /* ResponseInfoObject.h in Headers */,
+				0DEEECA2215BEA99003EE9C0 /* HapiRemoteService.h in Headers */,
+				0DEEEC6C215BE1B4003EE9C0 /* LogInfoObject.h in Headers */,
+				0DEEEC82215BE278003EE9C0 /* BluetoothProvider.h in Headers */,
+				0DEEECA5215BEA99003EE9C0 /* HeftDiscoveryDelegate.h in Headers */,
+				0DEEECA0215BEA99003EE9C0 /* HeftManager.h in Headers */,
+				0DEEEC74215BE1B4003EE9C0 /* ResponseParser.h in Headers */,
+				0DEEECA4215BEA99003EE9C0 /* HeftDiscovery.h in Headers */,
+				0DEEEC9B215BEA99003EE9C0 /* HeftRemoteDevice.h in Headers */,
+				0DEEEC9F215BEA99003EE9C0 /* HeftClient.h in Headers */,
+				0DEEEC97215BEA99003EE9C0 /* Currency.h in Headers */,
+				0DEEEC83215BE278003EE9C0 /* BluetoothDevice.h in Headers */,
+				0DEEEC78215BE1B4003EE9C0 /* ScannerEventResponse.h in Headers */,
+				0DEEEC70215BE1B4003EE9C0 /* MPosOperation.h in Headers */,
+				0DEEEC9C215BEA99003EE9C0 /* CmdIds.h in Headers */,
+				0DEEEC9D215BEA99003EE9C0 /* ResponseInfo.h in Headers */,
+				0DEEEC8B215BE278003EE9C0 /* MacOSBluetoothClient.h in Headers */,
+				0DEEEC9A215BEA99003EE9C0 /* DeviceStatus.h in Headers */,
+				0DEEEC76215BE1B4003EE9C0 /* ScannerDisabledResponse.h in Headers */,
+				0DEEEC9E215BEA99003EE9C0 /* FinanceResponseInfo.h in Headers */,
+				0DEEEC62215BE1B4003EE9C0 /* debug.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AD4C085A170C0C3D0005EDC0 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -473,12 +637,34 @@
 				31F2BCD7BCEC029530C885A4 /* ResponseInfoObject.h in Headers */,
 				31F2B0ECC15B98A3733B9807 /* FinanceResponse.h in Headers */,
 				31F2B3F3A412150451C11B72 /* HeftRemoteDevice.h in Headers */,
+				31F2B1C81A8A6E66F800415B /* BluetoothProvider.h in Headers */,
+				31F2BD8CE994447DEDA30123 /* BluetoothDevice.h in Headers */,
+				31F2B8613CF3C323B6CD6CFD /* Connection.h in Headers */,
+				31F2BE86C1ED814EFB86AEB6 /* iOSConnection.h in Headers */,
+				31F2BADFC0AAC3FE99993885 /* iOSBluetooth.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0DEEEC54215BE186003EE9C0 /* heftMacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0DEEEC5F215BE186003EE9C0 /* Build configuration list for PBXNativeTarget "heftMacOS" */;
+			buildPhases = (
+				0DEEEC51215BE186003EE9C0 /* Headers */,
+				0DEEEC52215BE186003EE9C0 /* Sources */,
+				0DEEEC53215BE186003EE9C0 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = heftMacOS;
+			productName = heftMacos;
+			productReference = 0DEEEC55215BE186003EE9C0 /* libheftMacOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		2D398926165FF23D00F8FA29 /* heft */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D398945165FF23E00F8FA29 /* Build configuration list for PBXNativeTarget "heft" */;
@@ -527,6 +713,9 @@
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = Handpoint;
 				TargetAttributes = {
+					0DEEEC54215BE186003EE9C0 = {
+						CreatedOnToolsVersion = 10.0;
+					};
 					FBDA036A1CD018DC00607201 = {
 						CreatedOnToolsVersion = 7.3;
 					};
@@ -546,8 +735,9 @@
 			targets = (
 				2D398926165FF23D00F8FA29 /* heft */,
 				2D398934165FF23E00F8FA29 /* heftTests */,
-				FBDA036A1CD018DC00607201 /* device-simulator Release */,
-				FB6B266F1E01549700C422F1 /* device-simulator Debug */,
+				FBDA036A1CD018DC00607201 /* Release */,
+				FB6B266F1E01549700C422F1 /* Debug */,
+				0DEEEC54215BE186003EE9C0 /* heftMacOS */,
 			);
 		};
 /* End PBXProject section */
@@ -632,6 +822,42 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0DEEEC52215BE186003EE9C0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DEEEC93215BEA8C003EE9C0 /* ResponseCommand.mm in Sources */,
+				0DEEEC6B215BE1B4003EE9C0 /* HeftRemoteDevice.m in Sources */,
+				0DEEEC61215BE1B4003EE9C0 /* BaseModel.m in Sources */,
+				0DEEEC60215BE1B4003EE9C0 /* Currency.m in Sources */,
+				0DEEEC90215BEA8C003EE9C0 /* BCDCoder.mm in Sources */,
+				0DEEEC7C215BE1BE003EE9C0 /* StatusInfo.m in Sources */,
+				0DEEEC63215BE1B4003EE9C0 /* DeviceStatus.m in Sources */,
+				0DEEEC92215BEA8C003EE9C0 /* RequestCommand.mm in Sources */,
+				0DEEEC91215BEA8C003EE9C0 /* Crc.mm in Sources */,
+				0DEEEC96215BEA8C003EE9C0 /* Logger.m in Sources */,
+				0DEEEC95215BEA8C003EE9C0 /* Logger.mm in Sources */,
+				0DEEEC65215BE1B4003EE9C0 /* FinanceResponse.m in Sources */,
+				0DEEEC89215BE278003EE9C0 /* MacOSBluetoothClient.m in Sources */,
+				0DEEEC79215BE1B4003EE9C0 /* ScannerEventResponse.m in Sources */,
+				0DEEEC84215BE278003EE9C0 /* MacOSConnection.m in Sources */,
+				0DEEEC6D215BE1B4003EE9C0 /* LogInfoObject.m in Sources */,
+				0DEEEC69215BE1B4003EE9C0 /* HeftConnection.mm in Sources */,
+				0DEEEC88215BE278003EE9C0 /* MacOSBluetooth.m in Sources */,
+				0DEEEC75215BE1B4003EE9C0 /* ResponseParser.m in Sources */,
+				0DEEEC6F215BE1B4003EE9C0 /* MpedDevice.mm in Sources */,
+				0DEEEC77215BE1B4003EE9C0 /* ScannerDisabledResponse.m in Sources */,
+				0DEEEC7B215BE1BE003EE9C0 /* SimulatorAccessory.m in Sources */,
+				0DEEEC94215BEA8C003EE9C0 /* FrameManager.mm in Sources */,
+				0DEEEC6A215BE1B4003EE9C0 /* HeftManager.mm in Sources */,
+				0DEEEC73215BE1B4003EE9C0 /* ResponseInfoObject.m in Sources */,
+				0DEEEC7E215BE1BE003EE9C0 /* utils.m in Sources */,
+				0DEEEC71215BE1B4003EE9C0 /* MPosOperation.mm in Sources */,
+				0DEEEC66215BE1B4003EE9C0 /* HapiRemoteService.m in Sources */,
+				0DEEEC80215BE1BE003EE9C0 /* XMLTags.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D398923165FF23D00F8FA29 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -666,6 +892,8 @@
 				31F2B86790156EF0582013AC /* LogInfoObject.m in Sources */,
 				31F2B6387580EE006B1B21AF /* StatusInfo.m in Sources */,
 				31F2B60E94A2B1AE5E095C2E /* DeviceStatus.m in Sources */,
+				31F2B7F7BC618B5E8BE5CFB5 /* iOSConnection.mm in Sources */,
+				31F2B2AFC7B9F13D44C06B5E /* iOSBluetooth.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -704,6 +932,186 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0DEEEC5B215BE186003EE9C0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_BITCODE = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "";
+				OTHER_OSACOMPILEFLAGS = "-std=c++11 -stdlib=libc++ \n\nxcodebuild -scheme heftMacOS -UseNewBuildSystem=NO -sdk macosx -configuration Release";
+				PRELINK_FLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		0DEEEC5C215BE186003EE9C0 /* Debug-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_BITCODE = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "";
+				OTHER_OSACOMPILEFLAGS = "-std=c++11 -stdlib=libc++ \n\nxcodebuild -scheme heftMacOS -UseNewBuildSystem=NO -sdk macosx -configuration Release";
+				PRELINK_FLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = "Debug-Simulator";
+		};
+		0DEEEC5D215BE186003EE9C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "";
+				OTHER_OSACOMPILEFLAGS = "-std=c++11 -stdlib=libc++ \n\nxcodebuild -scheme heftMacOS -UseNewBuildSystem=NO -sdk macosx -configuration Release";
+				PRELINK_FLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		0DEEEC5E215BE186003EE9C0 /* Release-Simulator */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 6BR4R3B384;
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "";
+				OTHER_OSACOMPILEFLAGS = "-std=c++11 -stdlib=libc++ \n\nxcodebuild -scheme heftMacOS -UseNewBuildSystem=NO -sdk macosx -configuration Release";
+				PRELINK_FLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = "Release-Simulator";
+		};
 		2D38903A169F629E00720A15 /* Debug-Simulator */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1202,6 +1610,17 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0DEEEC5F215BE186003EE9C0 /* Build configuration list for PBXNativeTarget "heftMacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0DEEEC5B215BE186003EE9C0 /* Debug */,
+				0DEEEC5C215BE186003EE9C0 /* Debug-Simulator */,
+				0DEEEC5D215BE186003EE9C0 /* Release */,
+				0DEEEC5E215BE186003EE9C0 /* Release-Simulator */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		2D398945165FF23E00F8FA29 /* Build configuration list for PBXNativeTarget "heft" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1235,7 +1654,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FB6B267B1E01549700C422F1 /* Build configuration list for PBXAggregateTarget "device-simulator Debug" */ = {
+		FB6B267B1E01549700C422F1 /* Build configuration list for PBXAggregateTarget "Debug" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FB6B267C1E01549700C422F1 /* Debug */,
@@ -1246,7 +1665,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "device-simulator Release" */ = {
+		FBDA036F1CD018DC00607201 /* Build configuration list for PBXAggregateTarget "Release" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FBDA036B1CD018DC00607201 /* Debug */,

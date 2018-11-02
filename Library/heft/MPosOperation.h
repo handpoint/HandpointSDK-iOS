@@ -6,13 +6,13 @@
 #import "IHostProcessor.h"
 
 class RequestCommand;
-@class HeftConnection;
+@class iOSConnection;
 @protocol IResponseProcessor;
 
 @interface MPosOperation : NSOperation<IHostProcessor>
 
 - (id)initWithRequest:(RequestCommand *)aRequest
-           connection:(HeftConnection *)aConnection
+           connection:(iOSConnection *)aConnection
      resultsProcessor:(id <IResponseProcessor>)processor
          sharedSecret:(NSString *)aSharedSecret;
 

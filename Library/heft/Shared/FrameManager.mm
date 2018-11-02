@@ -3,7 +3,7 @@
 #include "FrameManager.h"
 #include "Frame.h"
 //#include "IConnection.h"
-#include "../HeftConnection.h"
+#include "iOSConnection.h
 #include "RequestCommand.h"
 #include "ResponseCommand.h"
 #include "debug.h"
@@ -120,7 +120,7 @@ void FrameManager::TearDown()
     stop = true;
 }
 
-void FrameManager::Write(HeftConnection* connection)
+void FrameManager::Write(iOSConnection* connection)
 {
     stop = false;
     for(auto& frame : frames) {
@@ -158,7 +158,8 @@ void FrameManager::Write(HeftConnection* connection)
 	}
 }
 
-void FrameManager::WriteWithoutAck(HeftConnection* connection){
+void FrameManager::WriteWithoutAck(iOSConnection* connection)
+{
     stop = false;
 	// ATLASSERT(frames.size() == 1);
     for(auto& frame: frames)
@@ -187,7 +188,8 @@ int FrameManager::EndPos(const std::uint8_t* pData, int pos, int len){
 	return -1;
 }
 
-bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8_t>& buf){
+bool FrameManager::ReadFrames(iOSConnection* connection, std::vector<std::uint8_t>& buf)
+{
 	int pos = 0;
     stop = false;
 	do{
@@ -241,7 +243,8 @@ bool FrameManager::ReadFrames(HeftConnection* connection, std::vector<std::uint8
 	return true;
 }
 
-ResponseCommand* FrameManager::Read(HeftConnection* connection, bool finance_timeout) {
+ResponseCommand* FrameManager::Read(iOSConnection* connection, bool finance_timeout)
+{
     FramePayload* pCommand;
     int nread;
 	std::vector<std::uint8_t> buf;

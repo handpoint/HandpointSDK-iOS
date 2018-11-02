@@ -11,6 +11,9 @@
 #import "HeftStatusReportDelegate.h"
 #import "debug.h"
 #import "Version.h"
+#import "BluetoothProvider.h"
+#import "iOSBluetooth.h"
+#import "iOSConnection.h"
 
 #ifdef HEFT_SIMULATOR
 

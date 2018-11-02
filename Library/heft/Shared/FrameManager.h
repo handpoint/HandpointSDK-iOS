@@ -5,7 +5,7 @@
 
 class Frame;
 //class IConnection;
-@class HeftConnection;
+@class iOSConnection;
 class RequestCommand;
 class ResponseCommand;
 
@@ -13,8 +13,8 @@ class FrameManager{
     std::vector<Frame> frames;
     std::vector<std::uint8_t> data;
 
-	ResponseCommand* Read(HeftConnection* connection, bool finance_timeout);
-    bool ReadFrames(HeftConnection* connection, std::vector<std::uint8_t>& buf);
+	ResponseCommand* Read(iOSConnection* connection, bool finance_timeout);
+	bool ReadFrames(iOSConnection* connection, std::vector<std::uint8_t>& buf);
 
 	static int EndPos(const std::uint8_t* pData, int pos, int len);
 public:
@@ -29,18 +29,18 @@ public:
     ~FrameManager();
      */
     static void TearDown();
-	void Write(HeftConnection* connection/*, volatile bool& bCancel*/);
-	void WriteWithoutAck(HeftConnection* connection/*, volatile bool& bCancel*/);
+	void Write(iOSConnection* connection/*, volatile bool& bCancel*/);
+	void WriteWithoutAck(iOSConnection* connection/*, volatile bool& bCancel*/);
 
 	template<class T>
-	T* ReadResponse(HeftConnection* connection, bool finance_timeout)
-    {
+	T* ReadResponse(iOSConnection* connection, bool finance_timeout)
+	{
         return static_cast<T*>(Read(connection, finance_timeout));
     }
 
 #ifdef UNIT_TESTING
     std::vector<Frame>& GetFrames(){return frames;}
     std::vector<std::uint8_t>& GetData(){return data;}
-    bool ReadFrames_test(HeftConnection* connection, std::vector<std::uint8_t>& buf){return ReadFrames(connection, buf);}
+	bool ReadFrames_test(iOSConnection* connection, std::vector<std::uint8_t>& buf){return ReadFrames(connection, buf);}
 #endif
 };

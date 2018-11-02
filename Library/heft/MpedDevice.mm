@@ -6,7 +6,7 @@
 #include <string>
 
 #import "MpedDevice.h"
-#import "HeftConnection.h"
+#import "iOSConnection.h"
 #import "ResponseParser.h"
 #import "HeftManager.h"
 
@@ -63,7 +63,7 @@ enum eSignConditions
 
 @implementation MpedDevice
 {
-    HeftConnection *connection;
+    iOSConnection* connection;
 
     __weak NSObject <HeftStatusReportDelegate> *delegate;
     NSConditionLock *signLock;
@@ -74,7 +74,7 @@ enum eSignConditions
 @synthesize mpedInfo;
 @synthesize isTransactionResultPending;
 
-- (id)initWithConnection:(HeftConnection *)aConnection
+- (id)initWithConnection:(iOSConnection *)aConnection
             sharedSecret:(NSString *)aSharedSecret
                 delegate:(NSObject <HeftStatusReportDelegate> *)aDelegate
 {

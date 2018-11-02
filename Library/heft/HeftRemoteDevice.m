@@ -11,12 +11,28 @@
 @property (nonatomic) NSString *internalName;
 @property (nonatomic) NSString *internalAddress;
 @property (nonatomic) EAAccessory *internalAccessory;
+@property (nonatomic) IOBluetoothDevice *device;
 
 - (instancetype)initWithSimulator:(SimulatorAccessory *)simulator;
 
 @end
 
 @implementation HeftRemoteDevice
+
+//TODO make extension
+- (instancetype)initWithMacOSDevice:(IOBluetoothDevice *)device
+{
+    self = [super init];
+
+    if (self)
+    {
+        self.internalName = device.name;
+        self.internalAddress = device.addressString;
+        self.device = device;
+    }
+
+    return self;
+}
 
 - (instancetype)initWithAccessory:(EAAccessory *)accessory
 {

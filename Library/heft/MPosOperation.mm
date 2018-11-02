@@ -14,7 +14,7 @@
 #import "Shared/ResponseCommand.h"
 
 #import "MPosOperation.h"
-#import "HeftConnection.h"
+#import "iOSConnection.h"
 
 #import <CommonCrypto/CommonHMAC.h>
 #import <ExternalAccessory/ExternalAccessory.h>
@@ -72,7 +72,7 @@ enum eConnectCondition
 @implementation MPosOperation
 {
     RequestCommand *pRequestCommand;
-    HeftConnection *connection;
+    iOSConnection *connection;
     NSNotificationCenter *defaultCenter;
     __weak id <IResponseProcessor> processor;
     NSString *sharedSecret;
@@ -113,7 +113,7 @@ enum eConnectCondition
 }
 
 - (id)initWithRequest:(RequestCommand *)aRequest
-           connection:(HeftConnection *)aConnection
+          connection:(iOSConnection *)aConnection
      resultsProcessor:(id <IResponseProcessor>)aProcessor
          sharedSecret:(NSString *)aSharedSecret
 {
@@ -303,16 +303,16 @@ namespace {
 void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *request)
 {
     static const NSArray *keys_to_ignore
-            = [NSArray arrayWithObjects:@"Accept",
-                                        @"Content-Type",
-                                        @"Host",
-                                        @"Connection",
-                                        @"Content-Length",
-                                        @"Accept-Language", nil];
+            = @[@"Accept",
+                @"Content-Type",
+                @"Host",
+                @"Connection",
+                @"Content-Length",
+                @"Accept-Language"];
 
     for (int i = 1; i < [header_values count]; i++)
     {
-        NSString *line = [header_values objectAtIndex:i];
+        NSString *line = header_values[i];
         NSArray *key_value = [line componentsSeparatedByString:@":"];
         NSString *key = [key_value firstObject];
 

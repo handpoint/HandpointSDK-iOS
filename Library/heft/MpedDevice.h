@@ -6,14 +6,14 @@
 #import <Foundation/Foundation.h>
 #import "HeftClient.h"
 
-@class HeftConnection;
+@class iOSConnection;
 @protocol HeftStatusReportDelegate;
 
 @interface MpedDevice : NSObject<HeftClient>
 
 @property (readwrite, nonatomic) NSString *sharedSecret;
 
-- (id)initWithConnection:(HeftConnection *)aConnection
+- (id)initWithConnection:(iOSConnection *)aConnection
             sharedSecret:(NSString *)aSharedSecret
                 delegate:(NSObject <HeftStatusReportDelegate>  *)aDelegate;
 
