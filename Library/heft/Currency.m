@@ -847,7 +847,7 @@
 
 + (instancetype)UNKNOWN
 {
-    return [[self alloc] initWithAlpha:@"" code:0 symbol:@"" fractionDigits:0 name:@""];
+    return [[self alloc] initWithAlpha:@"Unknown" code:0 symbol:@"" fractionDigits:0 name:@""];
 }
 
 + (Currency *)currencyFromAlpha:(NSString *)alpha

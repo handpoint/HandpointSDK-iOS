@@ -79,4 +79,10 @@
 
 + (NSString *)CardToken;
 
++ (NSString *)CardTokenizationGuid;
+
++ (NSString *)ExpiryDateMMYY;
+
++ (NSString *)MaskedCardNumber;
+
 @end;

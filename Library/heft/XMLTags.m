@@ -224,4 +224,19 @@
     return @"CardToken";
 }
 
++ (NSString *)CardTokenizationGuid
+{
+    return @"CardTokenizationGuid";
+}
+
++ (NSString *)ExpiryDateMMYY
+{
+    return @"ExpiryDateMMYY";
+}
+
++ (NSString *)MaskedCardNumber
+{
+    return @"MaskedCardNumber";
+}
+
 @end

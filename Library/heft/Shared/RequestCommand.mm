@@ -283,27 +283,27 @@ static bool isNumber (const std::string &str)
 }
 
 FinanceRequestCommand::FinanceRequestCommand (std::uint32_t type,
-        const std::string &currency_code,
-        std::uint32_t trans_amount,
-        std::uint8_t card_present,
-        const std::string &trans_id,
-        const std::string &xml)
-        : RequestCommand(
-        ciMinSize
-                + (int) (xml.length() // this conditional so the "if( trans_id_length || xml_length )" statement below won't corrupt the heap
-                ? (1 + 4 + xml.length() + trans_id.length())
-                : (trans_id.length()
-                        ? (1 + trans_id.length())
-                        : 0
-                )
-        ), type)
+                                              const std::string &currency_code,
+                                              std::uint32_t trans_amount,
+                                              std::uint8_t card_present,
+                                              const std::string &trans_id,
+                                              const std::string &xml)
+: RequestCommand(
+ciMinSize
+                 + (int) (xml.length() // this conditional so the "if( trans_id_length || xml_length )" statement below won't corrupt the heap
+                          ? (1 + 4 + xml.length() + trans_id.length())
+                          : (trans_id.length()
+                             ? (1 + trans_id.length())
+                             : 0
+                             )
+                          ), type)
 {
     FinancePayload *pRequest;
     std::uint8_t *pData;
     int xml_length;
     int trans_id_length;
     const char *code = currency_code.c_str();
-
+    
     if (!isNumber(code))
     {
         bool fCheckCodeSize = true;
@@ -316,22 +316,22 @@ FinanceRequestCommand::FinanceRequestCommand (std::uint32_t type,
                 break;
             }
         }
-
+        
         if (fCheckCodeSize && currency_code.length() != currency_code_length)
         {
             throw std::invalid_argument("invalid currency code");
         }
-
+        
     }
     pRequest = GetPayload<FinancePayload>();
     BCDCoder::Encode(code, pRequest->currency_code, sizeof(pRequest->currency_code));
     pRequest->trans_amount = htonl(trans_amount);
     pRequest->card_present = card_present;
-
+    
     // optional fields
     trans_id_length = (int) trans_id.length();
     xml_length = (int) xml.length();
-
+    
     if (trans_id_length || xml_length)
     {
         // trans id length MUST be present if either of these is true:
@@ -339,11 +339,11 @@ FinanceRequestCommand::FinanceRequestCommand (std::uint32_t type,
         //   xml is not empty
         pRequest->trans_id_length = trans_id_length;
         memcpy(pRequest->trans_id, trans_id.c_str(), trans_id_length);
-
+        
         if (xml_length > 0)
         {
             pData = &pRequest->trans_id[0] + trans_id_length;
-
+            
             pData[0] = (std::uint8_t) (xml_length >> 24);
             pData[1] = (std::uint8_t) (xml_length >> 16);
             pData[2] = (std::uint8_t) (xml_length >> 8);
@@ -352,6 +352,13 @@ FinanceRequestCommand::FinanceRequestCommand (std::uint32_t type,
             memcpy(pData, xml.c_str(), xml_length);
         }
     }
+}
+
+TokenizeCardRequestCommand::TokenizeCardRequestCommand (const std::string &xml)
+: RequestCommand((int) xml.size(), EFT_PACKET_TOKENIZE_CARD)
+{
+    XMLCommandPayload *pRequest = GetPayload<XMLCommandPayload>();
+    memcpy(pRequest->xml_parameters, xml.c_str(), xml.size());
 }
 
 StartOfDayRequestCommand::StartOfDayRequestCommand ()

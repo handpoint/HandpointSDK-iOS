@@ -35,6 +35,7 @@
 #import "Shared/RequestCommand.h"
 #import "Shared/ResponseCommand.h"
 #import "MPosOperation.h"
+#import "XMLTags.h"
 
 #endif
 
@@ -377,6 +378,31 @@ enum eSignConditions
                      dictionary:map];
 }
 
+- (BOOL)tokenizeCard
+{
+    return [self tokenizeCardWithCustomerReference:nil];
+}
+- (BOOL)tokenizeCardWithCustomerReference:(NSString *)reference
+{
+
+    LOG_RELEASE(Logger::eInfo, @"Starting TOKENIZE CARD operation, %@", dictionary);
+    
+    NSMutableDictionary *map = [NSMutableDictionary new];
+    
+    if ([reference length])
+    {
+        map[@"CustomerReference"] = reference;
+    }
+    
+    NSString *params = [self generateXMLFromDictionary:@{@"TokenizeCardRequest": map} appendHeader:YES];
+    
+    MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new TokenizeCardRequestCommand(std::string([params UTF8String]))
+                                                           connection:connection
+                                                     resultsProcessor:self
+                                                         sharedSecret:self.sharedSecret];
+    isTransactionResultPending = NO;
+    return [self postOperationToQueueIfNew:operation];
+}
 
 - (BOOL)refundWithAmount:(NSInteger)amount
                 currency:(NSString *)currency
@@ -924,6 +950,38 @@ enum eSignConditions
     return;
 }
 
+- (void)processTokenizeCardCommandResponseCommand:(TokenizeCardCommandResponseCommand *)pResponse
+{
+    int status = pResponse->GetStatus();
+    FinanceResponse *info = [FinanceResponse new];
+     
+    NSDictionary *xmlDetails = [self getValuesFromXml:@(pResponse->GetXmlDetails().c_str())
+                                                 path:@"CardTokenizationResponse"];
+    info.xml = xmlDetails;
+
+    info.financialResult = [info.xml[XMLTags.FinancialStatus] integerValue];
+    info.isRestarting = NO;
+    info.statusCode = status;
+
+    info.status = status == EFT_PP_STATUS_SUCCESS ? xmlDetails[@"FinancialStatus"] : xmlDetails[@"StatusMessage"];
+    info.authorisedAmount = 0;
+    info.transactionId = @"";
+    info.customerReceipt = @"";
+    info.merchantReceipt = @"";
+
+    dispatch_async(dispatch_get_main_queue(), ^
+    {
+        id <HeftStatusReportDelegate> tmp = self->delegate;
+        [tmp responseFinanceStatus:info];
+    });
+
+    cancelAllowed = NO;
+
+#ifdef HEFT_SIMULATOR
+    [NSThread sleepForTimeInterval:1.];
+#endif
+}
+
 - (void)processFinanceResponse:(FinanceResponseCommand *)pResponse
 {
     int status = pResponse->GetStatus();
@@ -947,8 +1005,6 @@ enum eSignConditions
 
     LOG_RELEASE(Logger::eFine, @"%@", info.status);
 
-    NSString *analyticsAction;
-
     // check if we have a block - if so, post that block instead of calling the event/callback
     // although it looks the same, we just call the block with parameters instead of the other
 
@@ -959,7 +1015,6 @@ enum eSignConditions
             id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp responseFinanceStatus:info];
         });
-        analyticsAction = @"responseFinanceStatus";
     }
     else
     {
@@ -969,8 +1024,6 @@ enum eSignConditions
             id <HeftStatusReportDelegate> tmp = self->delegate;
             [tmp responseRecoveredTransactionStatus:info];
         });
-
-        analyticsAction = @"responseRecoveredTransactionStatus";
     }
     cancelAllowed = NO;
 }

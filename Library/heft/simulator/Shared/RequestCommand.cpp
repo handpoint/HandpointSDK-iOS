@@ -336,11 +336,15 @@ ResponseCommand* FinanceRequestCommand::CreateResponse() const
 	return result;
 }
 
+TokenizeCardRequestCommand::TokenizeCardRequestCommand (const std::string &xml)
+: FinanceRequestCommand(EFT_PACKET_HOST_INIT, "0", 0, 0, "", "") //TODO fix this
+{
+}
+
 ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const
 {
     return new FinanceResponseCommand(m_cmd, currency, amount, EFT_PP_STATUS_USER_CANCELLED, NO);
 }
-
 
 StartOfDayRequestCommand::StartOfDayRequestCommand()
 	: FinanceRequestCommand(EFT_PACKET_START_DAY, "0", 0, 0, "", "")

@@ -32,16 +32,18 @@
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
-	if(inScope)
-		key = elementName;
-	else
-		inScope = [elementName isEqualToString:nodeName];
-	
+	if(inScope) {
+        key = elementName;
+    }
+	else {
+        inScope = [elementName isEqualToString:nodeName];
+    }
 }
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
-	if(inScope)
-		inScope = ![elementName isEqualToString:nodeName];
+	if(inScope) {
+        inScope = ![elementName isEqualToString:nodeName];
+    }
 }
 
 @end

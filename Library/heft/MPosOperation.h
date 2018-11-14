@@ -7,7 +7,7 @@
 
 class RequestCommand;
 @class HeftConnection;
-@protocol IResponseProcessor;
+@protocol xIResponseProcessor;
 
 @interface MPosOperation : NSOperation<IHostProcessor>
 
