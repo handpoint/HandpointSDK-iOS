@@ -70,6 +70,7 @@ enum eSignConditions
     NSConditionLock *signLock;
     BOOL signatureIsOk;
     BOOL cancelAllowed;
+    BOOL isScanning;
 }
 
 @synthesize mpedInfo;
@@ -91,6 +92,7 @@ enum eSignConditions
             delegate = aDelegate;
             signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
             cancelAllowed = NO; // cancel is only allowed when an operation is under way.
+            isScanning = NO;
 
 #ifdef HEFT_SIMULATOR
             mpedInfo = @{
@@ -629,6 +631,12 @@ enum eSignConditions
 
 - (BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds
 {
+    if(isScanning)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Scanner is already enabled.");
+        return NO;
+    }
+
     LOG_RELEASE(Logger::eInfo, @"Scanner mode enabled.");
 
     NSMutableDictionary *map = [@{} mutableCopy];
@@ -653,6 +661,7 @@ enum eSignConditions
                                                      resultsProcessor:self
                                                          sharedSecret:self.sharedSecret];
 
+    isScanning = YES;
     // hardcoded here - should be able to cancel multiscan when nothing has been scanned
     cancelAllowed = YES;
     return [self postOperationToQueueIfNew:operation];
@@ -790,6 +799,7 @@ enum eSignConditions
         info.statusCode = code;
         info.status = xml ? xml[@"StatusMessage"] : status;
         info.xml = xml;
+        isScanning = NO;
         dispatch_async(dispatch_get_main_queue(), ^
         {
             id <HeftStatusReportDelegate> tmp = self->delegate;
