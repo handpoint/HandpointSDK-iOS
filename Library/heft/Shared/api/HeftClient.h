@@ -65,6 +65,12 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency reference:(NSString*)reference;
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency reference:(NSString*)reference divideBy:(NSString*)months;
 
+/**
+ Performs a tokenization request for the credit card .
+ returns  YES if request is sent and NO if there is active transaction already.
+ */
+- (BOOL)tokenizeCard;
+
 /** 
  Performs REFUND transaction.
  amount - The amount - in the smallest unit for the given CurrencyCode -

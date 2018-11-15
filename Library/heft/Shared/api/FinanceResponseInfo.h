@@ -86,6 +86,8 @@
 - (NSString *)dueAmount;
 - (NSString *)balance;
 - (NSString *)cardToken;
+- (NSString *)expiryDateMMYY;
+- (NSString *)maskedCardNumber;
 
 - (NSDictionary *)toDictionary;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "CmdIds.h"
+#include "api/CmdIds.h"
 #include "Command.h"
 #include "IResponseProcessor.h"
 
@@ -122,7 +122,7 @@ public:
 };
 
 class XMLCommandResponseCommand : public ResponseCommand{
-    std::string xml_return;
+	std::string xml_return;
 
 #pragma pack(push, 1)
 	struct XMLCommandPayload : ResponsePayload{
@@ -132,10 +132,28 @@ class XMLCommandResponseCommand : public ResponseCommand{
 
 public:
 	XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size);
-    const std::string& GetXmlReturn(){return xml_return;}
+	const std::string& GetXmlReturn(){return xml_return;}
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor){[processor processXMLCommandResponseCommand:this];}
+};
+
+class TokenizeCardCommandResponseCommand : public ResponseCommand{
+	std::string xml_details;
+
+#pragma pack(push, 1)
+	struct XMLCommandPayload : ResponsePayload{
+		std::uint32_t xml_details_length;
+		char xml_details[];
+	};
+#pragma pack(pop)
+
+public:
+	TokenizeCardCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size);
+	const std::string& GetXmlDetails(){return xml_details;}
+
+	//ResponseCommand
+	void ProcessResult(id<IResponseProcessor> processor){[processor processTokenizeCardCommandResponseCommand:this];}
 };
 
 
@@ -191,8 +209,8 @@ class FinanceResponseCommand : public ResponseCommand{
 #pragma pack(pop)
 
 public:
-	FinanceResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize, BOOL recoveredTransaction);
-    
+    FinanceResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
+
     std::uint8_t GetFinancialStatus() {
         return financial_status & ~EFT_FINANC_STATUS_TRANS_DEVICE_RESET_MASK;
     }

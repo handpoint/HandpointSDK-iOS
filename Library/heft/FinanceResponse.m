@@ -58,12 +58,21 @@ transactionId, customerReceipt, merchantReceipt;
         return  currency.alpha;
     }
 
-    return @"Unknown";
+    return Currency.UNKNOWN.alpha;
 }
 
 - (NSString *)eFTTransactionID
 {
-    return self.xml[XMLTags.EFTTransactionID] ?: @"";
+    if (self.xml[XMLTags.EFTTransactionID])
+    {
+        return self.xml[XMLTags.EFTTransactionID];
+    }
+    else if (self.xml[XMLTags.CardTokenizationGuid])
+    {
+        return self.xml[XMLTags.CardTokenizationGuid];
+    }
+
+    return @"";
 }
 
 - (NSString *)originalEFTTransactionID
@@ -147,40 +156,54 @@ transactionId, customerReceipt, merchantReceipt;
     return self.xml[XMLTags.CardToken] ?: @"";
 }
 
+- (NSString *)expiryDateMMYY
+{
+    return self.xml[XMLTags.ExpiryDateMMYY] ?: @"";
+}
+
+- (NSString *)maskedCardNumber
+{
+    return self.xml[XMLTags.MaskedCardNumber] ?: @"";
+}
 
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *dict = [@{} mutableCopy];
 
     NSDictionary *response = @{
-                     @"statusMessage": self.statusMessage,
-                     @"type": self.type,
-                     @"finStatus": self.finStatus,
-                     @"requestedAmount": self.requestedAmount,
-                     @"gratuityAmount": self.gratuityAmount,
-                     @"gratuityPercentage": self.gratuityPercentage,
-                     @"totalAmount": self.totalAmount,
-                     @"currency": self.currency,
-                     @"transactionID": self.transactionId,
-                     @"eFTTransactionID": self.eFTTransactionID,
-                     @"originalEFTTransactionID": self.originalEFTTransactionID,
-                     @"eFTTimestamp": self.eFTTimestamp,
-                     @"authorisationCode": self.authorisationCode,
-                     @"verificationMethod": self.verificationMethod,
-                     @"cardEntryType": self.cardEntryType,
-                     @"cardSchemeName": self.cardSchemeName,
-                     @"errorMessage": self.errorMessage,
-                     @"customerReference": self.customerReference,
-                     @"budgetNumber": self.budgetNumber,
-                     @"recoveredTransaction": @(self.recoveredTransaction),
-                     @"cardTypeId": self.cardTypeId,
-                     @"merchantReceipt": self.merchantReceipt ?: @"",
-                     @"customerReceipt": self.customerReceipt ?: @"",
-                     @"chipTransactionReport": self.chipTransactionReport,
-                     @"dueAmount": self.dueAmount,
-                     @"balance": self.balance,
-                     @"cardToken": self.cardToken
-             };
+            @"isRestarting" : @(self.isRestarting),
+            @"authorisedAmount" : @(self.authorisedAmount),
+            @"transactionId": self.transactionId,
+            @"statusMessage": self.statusMessage,
+            @"type": self.type,
+            @"finStatus": self.finStatus,
+            @"requestedAmount": self.requestedAmount,
+            @"gratuityAmount": self.gratuityAmount,
+            @"gratuityPercentage": self.gratuityPercentage,
+            @"totalAmount": self.totalAmount,
+            @"currency": self.currency,
+            @"transactionID": self.transactionId,
+            @"eFTTransactionID": self.eFTTransactionID,
+            @"originalEFTTransactionID": self.originalEFTTransactionID,
+            @"eFTTimestamp": self.eFTTimestamp,
+            @"authorisationCode": self.authorisationCode,
+            @"verificationMethod": self.verificationMethod,
+            @"cardEntryType": self.cardEntryType,
+            @"cardSchemeName": self.cardSchemeName,
+            @"errorMessage": self.errorMessage,
+            @"customerReference": self.customerReference,
+            @"budgetNumber": self.budgetNumber,
+            @"recoveredTransaction": @(self.recoveredTransaction),
+            @"cardTypeId": self.cardTypeId,
+            @"merchantReceipt": self.merchantReceipt ?: @"",
+            @"customerReceipt": self.customerReceipt ?: @"",
+            @"chipTransactionReport": self.chipTransactionReport,
+            @"dueAmount": self.dueAmount,
+            @"balance": self.balance,
+            @"cardToken": self.cardToken,
+            @"expiryDateMMYY": self.expiryDateMMYY,
+            @"maskedCardNumber": self.maskedCardNumber
+     };
 
     for(NSString *key in [response allKeys])
     {

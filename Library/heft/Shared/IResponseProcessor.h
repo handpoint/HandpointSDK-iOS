@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import "ResponseCommand.h"
 
 class ResponseCommand;
 class EventInfoResponseCommand;
@@ -8,6 +9,7 @@ class XMLCommandResponseCommand;
 class FinanceResponseCommand;
 class GetLogInfoResponseCommand;
 class SignatureRequestCommand;
+class TokenizeCardCommandResponseCommand;
 
 @protocol IResponseProcessor
 
@@ -19,6 +21,7 @@ class SignatureRequestCommand;
 -(void)processXMLCommandResponseCommand:(XMLCommandResponseCommand*)pResponse;
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse;
 -(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse;
+-(void)processTokenizeCardCommandResponseCommand:(TokenizeCardCommandResponseCommand *)pResponse;
 
 -(BOOL)cancelIfPossible;
 

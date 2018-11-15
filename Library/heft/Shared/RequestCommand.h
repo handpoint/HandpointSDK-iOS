@@ -111,6 +111,16 @@ public:
     FinanceRequestCommand(std::uint32_t type, const std::string& currency_code, std::uint32_t trans_amount, std::uint8_t card_present, const std::string& trans_id, const std::string& xml);
 };
 
+class TokenizeCardRequestCommand : public RequestCommand{
+protected:
+    struct XMLCommandPayload : RequestPayload{
+        char xml_parameters[];
+    } __attribute__((packed));
+
+public:
+    TokenizeCardRequestCommand(const std::string &xml);
+};
+
 class StartOfDayRequestCommand : public RequestCommand{
 public:
 	StartOfDayRequestCommand();

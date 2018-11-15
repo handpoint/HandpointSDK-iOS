@@ -24,57 +24,58 @@ ResponseCommand* ResponseCommand::Create(const std::vector<std::uint8_t>& buf)
 		LOG(@"Response less than command");
 		throw communication_exception(@"Response less than command");
 	}
-	switch(ntohl(pResponse->command))
-    {
-	case EFT_PACKET_INIT_RESP:
-		return new InitResponseCommand(pResponse, (std::uint32_t)buf.size());
-        // return std::make_shared<InitResponseCommand>(pResponse, (std::uint32_t)buf.size());
-	case EFT_PACKET_SALE_RESP:
-	case EFT_PACKET_REFUND_RESP:
-	case EFT_PACKET_SALE_VOID_RESP:
-	case EFT_PACKET_REFUND_VOID_RESP:
-	case EFT_PACKET_START_DAY_RESP:
-	case EFT_PACKET_END_DAY_RESP:
-	case EFT_PACKET_HOST_INIT_RESP:
-		NSCAssert(buf.size() >= sizeof(ResponsePayload), @"EFT_PACKET_INIT_RESP, buf size too small");
-		return new FinanceResponseCommand(pResponse, (std::uint32_t)buf.size(), NO);
-    case EFT_PACKET_RECOVERED_TXN_RESULT_RESP:
-        NSCAssert(buf.size() >= sizeof(ResponsePayload), @"EFT_PACKET_RCVRD_TXN_RSLT_RESP, buf size too small");
-        return new FinanceResponseCommand(pResponse, (std::uint32_t)buf.size(), YES);
-	case EFT_PACKET_HOST_CONNECT:
-	case EFT_PACKET_HOST_SEND:
-	case EFT_PACKET_HOST_RECEIVE:
-	case EFT_PACKET_HOST_DISCONNECT:
-    case EFT_PACKET_HOST_MSG_TO_HOST:
-		return reinterpret_cast<ResponseCommand*>(HostRequestCommand::Create(pResponse, (std::uint32_t)buf.size()));
-	case EFT_PACKET_SIGNATURE_REQ:
-		return reinterpret_cast<ResponseCommand*>(new SignatureRequestCommand(pResponse, (std::uint32_t)buf.size()));
-	case EFT_PACKET_SHARE_SECRET_REQ:
-		return reinterpret_cast<ResponseCommand*>(new ChallengeRequestCommand(pResponse, (std::uint32_t)buf.size()));
-	case EFT_PACKET_LOG_GETINFO_RESP:
-		return new GetLogInfoResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case EFT_PACKET_EVENT_INFO_RESP:
-		return new EventInfoResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case EFT_PACKET_IDLE_RESP:
-		return new IdleResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case EFT_PACKET_DEBUG_ENABLE_RESP:
-	case EFT_PACKET_DEBUG_DISABLE_RESP:
-	case EFT_PACKET_DEBUG_RESET_RESP:
-	case EFT_PACKET_LOG_SET_LEVEL_RESP:
-	case EFT_PACKET_LOG_RESET_RESP:
-		NSCAssert(buf.size() >= sizeof(ResponsePayload), @"EFT_PACKET_LOG_RESET_RESP");
-		return new ResponseCommand(pResponse, (std::uint32_t)buf.size());
-	case EFT_PACKET_COMMAND_RESP:
-		return new XMLCommandResponseCommand(pResponse, buf.size());
-	default:
-		LOG(@"Unknown command");
-		throw communication_exception(@"Unknown command");
+	switch(ntohl(pResponse->command)) {
+		case EFT_PACKET_INIT_RESP:
+			return new InitResponseCommand(pResponse, (std::uint32_t) buf.size());
+		case EFT_PACKET_SALE_RESP:
+		case EFT_PACKET_REFUND_RESP:
+		case EFT_PACKET_SALE_VOID_RESP:
+		case EFT_PACKET_REFUND_VOID_RESP:
+		case EFT_PACKET_START_DAY_RESP:
+		case EFT_PACKET_END_DAY_RESP:
+		case EFT_PACKET_HOST_INIT_RESP:
+		case EFT_PACKET_RECOVERED_TXN_RESULT_RESP:
+			NSCAssert(buf.size() >= sizeof(ResponsePayload), [NSString stringWithFormat:@"Response type: %@, buf size too small", @(pResponse->command)]);
+			return new FinanceResponseCommand(pResponse, (std::uint32_t) buf.size());
+		case EFT_PACKET_TOKENIZE_CARD_RESP:
+			return new TokenizeCardCommandResponseCommand(pResponse, (std::uint32_t) buf.size());
+		case EFT_PACKET_HOST_CONNECT:
+		case EFT_PACKET_HOST_SEND:
+		case EFT_PACKET_HOST_RECEIVE:
+		case EFT_PACKET_HOST_DISCONNECT:
+		case EFT_PACKET_HOST_MSG_TO_HOST:
+			return reinterpret_cast<ResponseCommand *>(HostRequestCommand::Create(pResponse, (std::uint32_t) buf.size()));
+		case EFT_PACKET_SIGNATURE_REQ:
+			return reinterpret_cast<ResponseCommand *>(new SignatureRequestCommand(pResponse, (std::uint32_t) buf.size()));
+		case EFT_PACKET_SHARE_SECRET_REQ:
+			return reinterpret_cast<ResponseCommand *>(new ChallengeRequestCommand(pResponse, (std::uint32_t) buf.size()));
+		case EFT_PACKET_LOG_GETINFO_RESP:
+			return new GetLogInfoResponseCommand(pResponse, (std::uint32_t) buf.size());
+		case EFT_PACKET_EVENT_INFO_RESP:
+			return new EventInfoResponseCommand(pResponse, (std::uint32_t) buf.size());
+		case EFT_PACKET_IDLE_RESP:
+			return new IdleResponseCommand(pResponse, (std::uint32_t) buf.size());
+		case EFT_PACKET_DEBUG_ENABLE_RESP:
+		case EFT_PACKET_DEBUG_DISABLE_RESP:
+		case EFT_PACKET_DEBUG_RESET_RESP:
+		case EFT_PACKET_LOG_SET_LEVEL_RESP:
+		case EFT_PACKET_LOG_RESET_RESP:
+			NSCAssert(buf.size() >= sizeof(ResponsePayload), @"EFT_PACKET_LOG_RESET_RESP");
+			return new ResponseCommand(pResponse, (std::uint32_t) buf.size());
+		case EFT_PACKET_COMMAND_RESP:
+			return new XMLCommandResponseCommand(pResponse, buf.size());
+		default:
+			LOG(@"Unknown command");
+			throw communication_exception(@"Unknown command");
 	}
 	return 0;
 }
 
 ResponseCommand::ResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize)
-    : command_hsb(pPayload->command), iStatus(ReadStatus(pPayload)), length(ReadLength(pPayload))
+    :
+		command_hsb(pPayload->command),
+		iStatus(ReadStatus(pPayload)),
+		length(ReadLength(pPayload))
 {
     if ((payloadSize - 4 - 4 - 6) != length)
     {
@@ -139,11 +140,24 @@ InitResponseCommand::InitResponseCommand(const ResponsePayload* pPayload, std::u
     }
 }
 
-XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size)
-    : ResponseCommand(pPayload, (std::uint32_t)payload_size)
+TokenizeCardCommandResponseCommand::TokenizeCardCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size)
+		: ResponseCommand(pPayload, (std::uint32_t)payload_size)
 {
-		const XMLCommandPayload* pResponse = static_cast<const XMLCommandPayload*>(pPayload);
-		xml_return.assign(pResponse->xml_return, payload_size - sizeof(ResponsePayload));
+	const XMLCommandPayload* pResponse = static_cast<const XMLCommandPayload*>(pPayload);
+	std::uint32_t xml_len = ntohl(pResponse->xml_details_length);
+	if(xml_len > GetLength())
+	{
+		LOG(@"Invalid xml data length in command detected");
+		throw communication_exception(@"Invalid xml data length in command detected");
+	}
+	xml_details.assign(pResponse->xml_details, xml_len);
+}
+
+XMLCommandResponseCommand::XMLCommandResponseCommand(const ResponsePayload* pPayload, size_t payload_size)
+		: ResponseCommand(pPayload, (std::uint32_t)payload_size)
+{
+	const XMLCommandPayload* pResponse = static_cast<const XMLCommandPayload*>(pPayload);
+	xml_return.assign(pResponse->xml_return, payload_size - sizeof(ResponsePayload));
 }
 
 IdleResponseCommand::IdleResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize)
@@ -167,28 +181,29 @@ EventInfoResponseCommand::EventInfoResponseCommand(const ResponsePayload* pPaylo
 	xml_details.assign(pResponse->xml_details, xml_len);
 }
 
-FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize, BOOL recoveredTransaction)
+FinanceResponseCommand::FinanceResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize)
 	: ResponseCommand(pPayload, payloadSize)
 	, financial_status(0)
     , authorised_amount(0)
-    , recovered_transaction(recoveredTransaction)
+    , recovered_transaction((pPayload->command == EFT_PACKET_RECOVERED_TXN_RESULT_RESP))
 {
-	if(GetLength() > sizeof(FinancePayload) - sizeof(ResponsePayload))
-    {
-		const FinancePayload* pResponse = static_cast<const FinancePayload*>(pPayload);
+	if(GetLength() > sizeof(FinancePayload) - sizeof(ResponsePayload)) {
+		const FinancePayload *pResponse = static_cast<const FinancePayload *>(pPayload);
 		financial_status = pResponse->financial_status;
 		authorised_amount = ntohl(pResponse->authorised_amount);
 		trans_id.assign(pResponse->trans_id, pResponse->trans_id_length);
-		const char* pReceiptLen = &pResponse->trans_id[pResponse->trans_id_length];
-		std::uint16_t len = *pReceiptLen << 8 | *((unsigned char*)pReceiptLen + 1);
+		const char *pReceiptLen = &pResponse->trans_id[pResponse->trans_id_length];
+		std::uint16_t len = *pReceiptLen << 8 | *((unsigned char *) pReceiptLen + 1);
 		pReceiptLen += sizeof len;
 		merchant_receipt.assign(pReceiptLen, len);
 		pReceiptLen += len;
-		len = *pReceiptLen << 8 | *((unsigned char*)pReceiptLen + 1);
+		len = *pReceiptLen << 8 | *((unsigned char *) pReceiptLen + 1);
 		pReceiptLen += sizeof len;
 		customer_receipt.assign(pReceiptLen, len);
 		pReceiptLen += len;
-		std::uint32_t xml_len = *pReceiptLen << 24 | *((unsigned char*)pReceiptLen + 1) << 16 | *((unsigned char*)pReceiptLen + 2) << 8 | *((unsigned char*)pReceiptLen + 3);
+		std::uint32_t xml_len = *pReceiptLen << 24 |
+				*((unsigned char *) pReceiptLen + 1) << 16 |
+				*((unsigned char *) pReceiptLen + 2) << 8 | *((unsigned char *) pReceiptLen + 3);
 		pReceiptLen += sizeof xml_len;
 		xml_details.assign(pReceiptLen, xml_len);
 	}
