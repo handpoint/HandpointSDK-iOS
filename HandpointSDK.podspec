@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "HandpointSDK"
-  s.version      = "3.1.7"
+  s.version      = "3.2.0"
   s.summary      = "HandpointSDK for iOS"
   s.description  = <<-DESC
                     For detailed information, please see Handpoint documentation and Readme in https://www.handpoint.com/docs/device/iOS/

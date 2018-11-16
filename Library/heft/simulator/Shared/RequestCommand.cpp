@@ -336,8 +336,12 @@ ResponseCommand* FinanceRequestCommand::CreateResponse() const
 	return result;
 }
 
-TokenizeCardRequestCommand::TokenizeCardRequestCommand (const std::string &xml)
-: FinanceRequestCommand(EFT_PACKET_HOST_INIT, "0", 0, 0, "", "") //TODO fix this
+TokenizeCardRequestCommand::TokenizeCardRequestCommand(const string& xml)
+        : RequestCommand(EFT_PACKET_TOKENIZE_CARD)
+{
+}
+
+ResponseCommand* TokenizeCardRequestCommand::CreateResponse() const
 {
 }
 

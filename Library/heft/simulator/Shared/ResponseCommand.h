@@ -56,6 +56,17 @@ public:
 	void ProcessResult(id<IResponseProcessor> processor){[processor processXMLCommandResponseCommand:this];}
 };
 
+class TokenizeCardCommandResponseCommand : public ResponseCommand{
+    std::string xml_details;
+        
+public:
+    TokenizeCardCommandResponseCommand();
+    const std::string& GetXmlDetails(){return xml_details;}
+    
+    //ResponseCommand
+    void ProcessResult(id<IResponseProcessor> processor){[processor processTokenizeCardCommandResponseCommand:this];}
+};
+
 class FinanceResponseCommand : public ResponseCommand{
 	uint8_t financial_status;
 	uint32_t authorised_amount;

@@ -9,6 +9,7 @@
 #include "debug.h"
 
 #include "Exception.h"
+#include "XMLTags.h"
 
 #include <string>
 #include <vector>

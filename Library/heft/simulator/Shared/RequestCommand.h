@@ -50,9 +50,11 @@ public:
 	ResponseCommand* CreateResponseOnCancel() const;
 };
 
-class TokenizeCardRequestCommand : public FinanceRequestCommand{
+class TokenizeCardRequestCommand : public RequestCommand {
 public:
-    TokenizeCardRequestCommand(const std::string &xml);
+    TokenizeCardRequestCommand(const string& xml);
+
+	ResponseCommand* CreateResponse()const;
 };
 
 class XMLCommandRequestCommand : public RequestCommand{

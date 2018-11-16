@@ -3,6 +3,7 @@
 
 #include "ResponseCommand.h"
 #include "RequestCommand.h"
+#import "XMLTags.h"
 
 #include <cstdint>
 
@@ -184,6 +185,31 @@ FinanceResponseCommand::FinanceResponseCommand(uint32_t cmd, const string& aCurr
     }
 
     xml_details = ConvertDictionaryToXML(xmlDict, @"FinancialTransactionResponse");
+}
+
+TokenizeCardCommandResponseCommand::TokenizeCardCommandResponseCommand()
+: ResponseCommand(EFT_PACKET_TOKENIZE_CARD_RESP)
+{
+    NSDictionary *xmlDict =  @{
+                               XMLTags.StatusMessage: @"Card Token Success",
+                               XMLTags.TransactionType: @"TOKENIZE_CARD",
+                               XMLTags.FinancialStatus: @"AUTHORISED",
+                               XMLTags.EFTTimestamp: @"20181114151925",
+                               XMLTags.CardEntryType : @"MSR",
+                               XMLTags.SerialNumber: @"918900602",
+                               XMLTags.BatteryStatus: @"100",
+                               XMLTags.BatterymV: @"5000",
+                               XMLTags.BatteryCharging: @"false",
+                               XMLTags.ExternalPower: @"true",
+                               XMLTags.ApplicationName: @"mPOS",
+                               XMLTags.ApplicationVersion: @"41.9.0.0",
+                               XMLTags.CardToken: @"ABC4AFQQBC5UR5H",
+                               XMLTags.CardTokenizationGuid: @"4c289fb0-e818-11e8-937f-8b302e5d0ae7",
+                               XMLTags.ExpiryDateMMYY: @"1912",
+                               XMLTags.MaskedCardNumber: @"************6427",
+                               };
+                            
+    xml_details = ConvertDictionaryToXML(xmlDict, @"CardTokenizationResponse");
 }
 
 GetLogInfoResponseCommand::GetLogInfoResponseCommand() : ResponseCommand(EFT_PACKET_LOG_GETINFO)
