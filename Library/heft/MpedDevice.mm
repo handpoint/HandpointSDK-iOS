@@ -21,6 +21,7 @@
 #import "LogInfoObject.h"
 #import "ScannerEventResponse.h"
 #import "FinanceResponse.h"
+#import "XMLTags.h"
 
 #ifdef HEFT_SIMULATOR
 
