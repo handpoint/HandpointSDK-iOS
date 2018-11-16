@@ -415,7 +415,7 @@ ResponseCommand* HostResponseCommand::CreateResponse()const{
                         throw timeout2_exception();
                     }
                     else if(amount == ciExceptionTimeout4) {
-                        [NSThread sleepForTimeInterval:45];
+                        [NSThread sleepForTimeInterval:120];
                         throw timeout4_exception();
                     }
                     else if(amount == ciExceptionCommunication) {
