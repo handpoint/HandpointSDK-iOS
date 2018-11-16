@@ -343,6 +343,7 @@ TokenizeCardRequestCommand::TokenizeCardRequestCommand(const string& xml)
 
 ResponseCommand* TokenizeCardRequestCommand::CreateResponse() const
 {
+    return new TokenizeCardCommandResponseCommand();
 }
 
 ResponseCommand* FinanceRequestCommand::CreateResponseOnCancel()const
