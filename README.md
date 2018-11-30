@@ -71,7 +71,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'your_target' do
-    pod 'HandpointSDK', '~> 3.2.2'
+    pod 'HandpointSDK', '~> 3.2.1'
 end
 ```
 
