@@ -385,10 +385,11 @@ enum eSignConditions
 {
     return [self tokenizeCardWithCustomerReference:nil];
 }
+
 - (BOOL)tokenizeCardWithCustomerReference:(NSString *)reference
 {
 
-    LOG_RELEASE(Logger::eInfo, @"Starting TOKENIZE CARD operation, %@", dictionary);
+    LOG_RELEASE(Logger::eInfo, @"Starting TOKENIZE CARD operation, %@", reference);
     
     NSMutableDictionary *map = [NSMutableDictionary new];
     

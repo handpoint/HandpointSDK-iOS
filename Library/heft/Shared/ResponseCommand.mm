@@ -36,7 +36,6 @@ ResponseCommand* ResponseCommand::Create(const std::vector<std::uint8_t>& buf)
 		case EFT_PACKET_END_DAY_RESP:
 		case EFT_PACKET_HOST_INIT_RESP:
 		case EFT_PACKET_RECOVERED_TXN_RESULT_RESP:
-			NSCAssert(buf.size() >= sizeof(ResponsePayload), [NSString stringWithFormat:@"Response type: %@, buf size too small", @(pResponse->command)]);
 			return new FinanceResponseCommand(pResponse, (std::uint32_t) buf.size());
 		case EFT_PACKET_TOKENIZE_CARD_RESP:
 			return new TokenizeCardCommandResponseCommand(pResponse, (std::uint32_t) buf.size());
