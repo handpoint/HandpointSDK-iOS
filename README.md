@@ -1,4 +1,4 @@
-![HandpointSDK](logo.png)
+![HandpointSDK](https://github.com/handpoint/HandpointSDK-iOS/raw/master/logo.png)
 
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/HandpointSDK.svg)](https://img.shields.io/cocoapods/v/HandpointSDK.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
@@ -71,7 +71,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'your_target' do
-    pod 'HandpointSDK', '~> 3.1.7'
+    pod 'HandpointSDK', '~> 3.2.1'
 end
 ```
 
