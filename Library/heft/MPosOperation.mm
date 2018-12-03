@@ -665,7 +665,11 @@ void copy_headervalues_to_request (NSArray *header_values, NSMutableURLRequest *
     std::vector<std::uint8_t> msg(pRequest->GetRandomNum());
 
     int copied = SecRandomCopyBytes(kSecRandomDefault, mx.size(), &mx[0]);
-    LOG(@"Copied: %@", @(copied == mx.size()));
+    
+    if (copied != errSecSuccess) {
+        LOG(@"Something wentwrong parsing the SS: %@", @(copied));
+    }
+    
     msg.resize(mx.size() * 2);
     memcpy(&msg[mx.size()], &mx[0], mx.size());
 
