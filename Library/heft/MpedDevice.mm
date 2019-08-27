@@ -180,7 +180,15 @@ enum eSignConditions
                  */
 
                 mpedInfo = @{
-                        kSerialNumberInfoKey: @(pResponse->GetSerialNumber().c_str()), kPublicKeyVersionInfoKey: @(pResponse->GetPublicKeyVer()), kEMVParamVersionInfoKey: @(pResponse->GetEmvParamVer()), kGeneralParamInfoKey: @(pResponse->GetGeneralParamVer()), kManufacturerCodeInfoKey: @(pResponse->GetManufacturerCode()), kModelCodeInfoKey: @(pResponse->GetModelCode()), kAppNameInfoKey: @(pResponse->GetAppName().c_str()), kAppVersionInfoKey: @(pResponse->GetAppVer()), kXMLDetailsInfoKey: @(pResponse->GetXmlDetails().c_str())
+                        kSerialNumberInfoKey: @(pResponse->GetSerialNumber().c_str()), 
+                        kPublicKeyVersionInfoKey: @(pResponse->GetPublicKeyVer()), 
+                        kEMVParamVersionInfoKey: @(pResponse->GetEmvParamVer()), 
+                        kGeneralParamInfoKey: @(pResponse->GetGeneralParamVer()), 
+                        kManufacturerCodeInfoKey: @(pResponse->GetManufacturerCode()), 
+                        kModelCodeInfoKey: @(pResponse->GetModelCode()), 
+                        kAppNameInfoKey: @(pResponse->GetAppName().c_str()), 
+                        kAppVersionInfoKey: @(pResponse->GetAppVer()), 
+                        kXMLDetailsInfoKey: @(pResponse->GetXmlDetails().c_str())
                 };
             }
             catch (connection_broken_exception &cb_exception)
@@ -987,6 +995,10 @@ enum eSignConditions
         [tmp responseFinanceStatus:info];
     });
 
+    if(pResponse->GetStatus() == EFT_PP_STATUS_SHARED_SECRET_INVALID) {
+        [self financeInit];
+    }
+    
     cancelAllowed = NO;
 
 #ifdef HEFT_SIMULATOR
@@ -1037,6 +1049,11 @@ enum eSignConditions
             [tmp responseRecoveredTransactionStatus:info];
         });
     }
+    
+    if(pResponse->GetStatus() == EFT_PP_STATUS_SHARED_SECRET_INVALID) {
+        [self financeInit];
+    }
+    
     cancelAllowed = NO;
 }
 
