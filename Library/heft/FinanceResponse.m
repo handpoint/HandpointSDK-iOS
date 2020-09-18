@@ -166,6 +166,11 @@ transactionId, customerReceipt, merchantReceipt;
     return self.xml[XMLTags.MaskedCardNumber] ?: @"";
 }
 
+- (NSString *)tenderType
+{
+    return self.xml[XMLTags.TenderType] ?: @"";
+}
+
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *dict = [@{} mutableCopy];
@@ -202,7 +207,8 @@ transactionId, customerReceipt, merchantReceipt;
             @"balance": self.balance,
             @"cardToken": self.cardToken,
             @"expiryDateMMYY": self.expiryDateMMYY,
-            @"maskedCardNumber": self.maskedCardNumber
+            @"maskedCardNumber": self.maskedCardNumber,
+            @"tenderType": self.tenderType
      };
 
     for(NSString *key in [response allKeys])

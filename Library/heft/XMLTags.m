@@ -239,4 +239,10 @@
     return @"MaskedCardNumber";
 }
 
++ (NSString *)TenderType
+{
+    return @"TenderType";
+}
+
 @end
+
