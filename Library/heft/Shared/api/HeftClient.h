@@ -91,6 +91,7 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency dictionary:(NSDictionary *)dictionary;
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction;
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction dictionary:(NSDictionary *)dictionary;
 
 /**
