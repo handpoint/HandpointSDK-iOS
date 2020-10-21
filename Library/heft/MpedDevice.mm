@@ -451,6 +451,17 @@ enum eSignConditions
                 currency:(NSString *)currency
               dictionary:(NSDictionary *)dictionary
 {
+    return [self refundWithAmount:amount
+                         currency:currency
+                      transaction:nil
+                       dictionary:dictionary];
+}
+
+- (BOOL)refundWithAmount:(NSInteger)amount
+                currency:(NSString*)currency
+             transaction:(NSString*)transaction
+              dictionary:(NSDictionary *)dictionary;
+{
     LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, %@",
             amount, currency, dictionary);
 
@@ -460,7 +471,7 @@ enum eSignConditions
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
             YES,
-            std::string(),
+            transaction ? std::string([transaction NSUTF8String]) : std::string(),
             std::string([params UTF8String]));
 
     return [self postFinanceRequestCommand:frc];
