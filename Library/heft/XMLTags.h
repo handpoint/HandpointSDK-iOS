@@ -85,4 +85,7 @@
 
 + (NSString *)MaskedCardNumber;
 
++ (NSString *)TenderType;
+
 @end;
+

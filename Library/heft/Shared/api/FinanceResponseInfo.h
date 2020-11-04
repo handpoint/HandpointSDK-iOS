@@ -36,7 +36,7 @@
 @property (nonatomic) BOOL isRestarting;
 
 /**
- @brief	The authorisedAmount - in the smallest unit for the given
+ @brief    The authorisedAmount - in the smallest unit for the given
  CurrencyCode - for the transaction. ISO 4217 defines number of digits in
  fractional part of currency for every currency code. Example
  1000 in the case where CurrencyCode is "0826" (GBP) the amount
@@ -45,17 +45,17 @@
 @property (nonatomic) NSInteger authorisedAmount;
 
 /**
- @brief	The id of current transaction.
+ @brief    The id of current transaction.
  */
 @property (nonatomic) NSString *transactionId;
 
 /**
- @brief	Customer receipt of transaction from MPED in html format.
+ @brief    Customer receipt of transaction from MPED in html format.
  */
 @property (nonatomic) NSString *customerReceipt;
 
 /**
- @brief	Merchant receipt of transaction from MPED in html format.
+ @brief    Merchant receipt of transaction from MPED in html format.
  */
 @property (nonatomic) NSString *merchantReceipt;
 
@@ -88,7 +88,7 @@
 - (NSString *)cardToken;
 - (NSString *)expiryDateMMYY;
 - (NSString *)maskedCardNumber;
-
+- (NSString *)tenderType;
 - (NSDictionary *)toDictionary;
 
 @end
