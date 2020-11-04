@@ -85,6 +85,7 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  which can be set instead of numeric values.
  present - Indicates whether the cardholder is present or not during the transaction.
  reference An optional reference id (max 25 characters) that can be associated with the authorization. Example value: 45678135.
+ transaction - The id of transaction to void. 
  returns  YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency;
