@@ -89,6 +89,8 @@
 - (NSString *)expiryDateMMYY;
 - (NSString *)maskedCardNumber;
 - (NSString *)tenderType;
+- (NSString *)paymentScenario;
+- (NSString *)customerLanguagePref;
 - (NSDictionary *)toDictionary;
 
 @end

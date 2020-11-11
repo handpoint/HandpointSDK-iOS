@@ -87,5 +87,9 @@
 
 + (NSString *)TenderType;
 
++ (NSString *)PaymentScenario;
+
++ (NSString *)CustomerLanguagePref;
+
 @end;
 

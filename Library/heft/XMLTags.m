@@ -244,5 +244,15 @@
     return @"TenderType";
 }
 
++ (NSString *)PaymentScenario
+{
+    return @"paymentScenario";
+}
+
++ (NSString *)CustomerLanguagePref
+{
+    return @"customerLanguagePref";
+}
+
 @end
 
