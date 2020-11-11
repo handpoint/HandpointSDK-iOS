@@ -142,4 +142,4 @@ Full SDK documentation can be found at [Handpoint's developer portal](https://ww
 
 ## Internal Documentation
 
-[How to release](../RELEASE.md)
+[How to release](./RELEASE.md)
