@@ -139,3 +139,7 @@ This target produces a .zip file in the same directory as the `headstart.xcodepr
 ## Full SDK Documentation
 
 Full SDK documentation can be found at [Handpoint's developer portal](https://www.handpoint.com/docs/device/iOS/).
+
+## Internal Documentation
+
+[How to release](../RELEASE.md)
