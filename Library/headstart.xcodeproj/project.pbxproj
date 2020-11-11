@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -567,6 +567,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		0D72755320DD5DFF003997C9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -576,7 +577,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo ${SDK_VERSION} > version.txt\necho \"#define CODE_GENERATED_VERSION @\\\"${SDK_VERSION}\\\"\" > heft/Version.h";
+			shellScript = "echo ${SDK_VERSION} > version.txt\necho \"#define CODE_GENERATED_VERSION @\\\"${SDK_VERSION}\\\"\" > heft/Version.h\n";
 		};
 		2D398933165FF23E00F8FA29 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -593,6 +594,7 @@
 		};
 		ADDD488F1705F002009B57DC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -602,7 +604,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release-Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi";
+			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" || \"${CONFIGURATION}\" = \"Release-Simulator\" ]]\nthen\n\tstrip -x \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\nfi\n";
 		};
 		FB6B26701E01549700C422F1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -619,6 +621,7 @@
 		};
 		FBDA03701CD018EB00607201 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -628,7 +631,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "VERSION=$(<version.txt)\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\nxcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphoneos -configuration Release\n\n#xcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphonesimulator -configuration Release-Simulator\n#xcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphoneos -configuration Release-Simulator\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\"\n# make a new output folder for simulator\n#mkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary\"\n#mkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\nlipo -create \"${DIR}/Release-iphoneos/libheft.a\" \"${DIR}/Release-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/libheft.a\"\n#lipo -create \"${DIR}/Release-Simulator-iphoneos/libheft.a\" \"${DIR}/Release-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/libheft.a\"\n\ncp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\n#cp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\n\npushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/\"\nzip -r handpoint-ios-sdk-${VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/handpoint-ios-sdk-${VERSION}.zip\" .\n";
+			shellScript = "VERSION=$(<version.txt)\nDIR=\"${TARGET_BUILD_DIR}/..\"\n\nxcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphonesimulator -configuration Release\nxcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphoneos -configuration Release\n\n#xcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphonesimulator -configuration Release-Simulator\n#xcodebuild -scheme heft -UseNewBuildSystem=NO -sdk iphoneos -configuration Release-Simulator\n\n# make a new output folder\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary\"\nmkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\"\n# make a new output folder for simulator\n#mkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary\"\n#mkdir -p \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\"\n\n# combine lib files for various platforms into one\n#lipo -create \"${DIR}/Release-iphoneos/libheft.a\" \"${DIR}/Release-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/libheft.a\"\nmv \"${DIR}/Release-iphoneos/libheft.a\" \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftLibrary/libheft.a\"\n#lipo -create \"${DIR}/Release-Simulator-iphoneos/libheft.a\" \"${DIR}/Release-Simulator-iphonesimulator/libheft.a\" -output \"${DIR}/Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/libheft.a\"\n\ncp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftLibrary/include\n#cp \"heft/Shared/api/\"*.h ${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/HeftSimulatorLibrary/include\n\npushd \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/\"\nzip -r handpoint-ios-sdk-${VERSION}.zip \"./\"\npopd\nmv \"${TARGET_BUILD_DIR}/../Handpoint-ios-SDK-v${VERSION}/handpoint-ios-sdk-${VERSION}.zip\" .\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -787,7 +790,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.2.4;
+				SDK_VERSION = 3.3.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -897,7 +900,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.2.4;
+				SDK_VERSION = 3.3.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -954,7 +957,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.2.4;
+				SDK_VERSION = 3.3.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -993,7 +996,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.2.4;
+				SDK_VERSION = 3.3.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
