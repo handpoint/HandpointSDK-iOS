@@ -228,6 +228,11 @@ bool isStatusAnError (NSStreamStatus status)
     {
         if ([outputData length] > 0)
         {
+            // Check if current stream is still valid during background process
+            if (outputStream == nil || outputStream.delegate == nil) {
+                return;
+            }
+            
             if ([outputStream hasSpaceAvailable] == NO)
             {
                 return; // since we could not write all of the data, we wait for the next event
