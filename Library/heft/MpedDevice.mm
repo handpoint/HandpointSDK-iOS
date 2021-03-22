@@ -907,6 +907,7 @@ enum eSignConditions
         int status = pResponse->GetStatus();
         NSString *statusMessage = status < ([statusMessages count] - 1) ? statusMessages[status] : @"Unknown status";
         [self sendEnableScannerResponse:statusMessage code:status xml:xml];
+        isWaitingIdleResponse = NO;
     }
     else
     {
@@ -1043,6 +1044,7 @@ enum eSignConditions
     }
     
     cancelAllowed = NO;
+    isWaitingIdleResponse = NO;
 }
 
 - (void)processLogInfoResponse:(GetLogInfoResponseCommand *)pResponse
