@@ -254,5 +254,15 @@
     return @"customerLanguagePref";
 }
 
++ (NSString *)Mid
+{
+    return @"mid";
+}
+
++ (NSString *)Tid
+{
+    return @"tid";
+}
+
 @end
 

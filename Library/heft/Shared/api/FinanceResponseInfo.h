@@ -91,6 +91,8 @@
 - (NSString *)tenderType;
 - (NSString *)paymentScenario;
 - (NSString *)customerLanguagePref;
+- (NSString *)mid;
+- (NSString *)tid;
 - (NSDictionary *)toDictionary;
 
 @end
