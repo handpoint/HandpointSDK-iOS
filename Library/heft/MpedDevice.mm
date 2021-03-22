@@ -37,6 +37,8 @@
 #import "Shared/ResponseCommand.h"
 #import "MPosOperation.h"
 #import "XMLTags.h"
+#import "SaleOptions.h"
+#import "MerchantAuth.h"
 
 #endif
 
@@ -72,6 +74,7 @@ enum eSignConditions
     BOOL signatureIsOk;
     BOOL cancelAllowed;
     BOOL isScanning;
+    BOOL isWaitingIdleResponse;
 }
 
 @synthesize mpedInfo;
@@ -94,6 +97,7 @@ enum eSignConditions
             signLock = [[NSConditionLock alloc] initWithCondition:eNoSignCondition];
             cancelAllowed = NO; // cancel is only allowed when an operation is under way.
             isScanning = NO;
+            isWaitingIdleResponse = NO;
 
 #ifdef HEFT_SIMULATOR
             mpedInfo = @{
@@ -246,6 +250,7 @@ enum eSignConditions
 #if HEFT_SIMULATOR
     // [queue cancelAllOperations];
 #else
+    isWaitingIdleResponse = YES;
     FrameManager fm(IdleRequestCommand(), connection.maxFrameSize);
     fm.WriteWithoutAck(connection);
 #endif
@@ -269,64 +274,55 @@ enum eSignConditions
 {
     return [self saleWithAmount:amount
                        currency:currency
-                     dictionary:@{}];
-}
-
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString *)currency cardholder:(BOOL)present
-{
-    return [self saleWithAmount:amount
-                       currency:currency];
+                        options:[SaleOptions new]];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount
-              currency:(NSString *)currency
-            cardholder:(BOOL)present
-             reference:(NSString *)reference
+              currency:(NSString*)currency
+               options:(SaleOptions *)options
 {
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
-    {
-        map[@"CustomerReference"] = reference;
-    }
-
     return [self saleWithAmount:amount
                        currency:currency
-                     dictionary:map];
+                        options:options
+                       tokenize:NO];
 }
 
 - (BOOL)saleWithAmount:(NSInteger)amount
-              currency:(NSString *)currency
-            cardholder:(BOOL)present
-             reference:(NSString *)reference
-              divideBy:(NSString *)months
+              currency:(NSString*)currency
+               options:(SaleOptions *)options
+              tokenize:(BOOL)tokenize
 {
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
+    if(isWaitingIdleResponse)
     {
-        map[@"CustomerReference"] = reference;
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
     }
 
-    if ([months length])
-    {
-        map[@"BudgetNumber"] = reference;
-    }
-
-    return [self saleWithAmount:amount
-                       currency:currency
-                     dictionary:map];
-}
-
-- (BOOL)saleWithAmount:(NSInteger)amount
-              currency:(NSString *)currency
-            dictionary:(NSDictionary *)dictionary
-{
     LOG_RELEASE(Logger::eInfo,
             @"Starting SALE operation (amount:%d, currency:%@, %@",
-            (int) amount, currency, dictionary);
+            (int) amount, currency, options);
 
-    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([options.customerReference length] != 0) {
+        map[@"CustomerReference"] = options.customerReference;
+    }
+
+    if ([options.divideByMonths length] != 0)
+    {
+        map[@"BudgetNumber"] = options.divideByMonths;
+    }
+
+    if (options.merchantAuth != nil)
+    {
+        map[@"agreement"] = options.merchantAuth.toXML;
+    }
+
+    if (tokenize) {
+        map[@"tokenizeCard"] = @"1";
+    }
+
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": map} appendHeader:YES];
 
     FinanceRequestCommand *frq = new FinanceRequestCommand(EFT_PACKET_SALE,
             std::string([currency UTF8String]),
@@ -342,51 +338,19 @@ enum eSignConditions
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
                              currency:(NSString *)currency
 {
-    return [self saleWithAmount:amount
-                       currency:currency
-                     dictionary:@{@"tokenizeCard": @"1"}];
+    return [self saleAndTokenizeCardWithAmount:amount
+                                      currency:currency
+                                       options:[SaleOptions new]];
 }
 
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
                              currency:(NSString *)currency
-                            reference:(NSString *)reference
+                              options:(SaleOptions *)options
 {
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
-    {
-        map[@"CustomerReference"] = reference;
-    }
-
-    map[@"tokenizeCard"] = @"1";
-
     return [self saleWithAmount:amount
                        currency:currency
-                     dictionary:map];
-}
-
-- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount
-                             currency:(NSString *)currency
-                            reference:(NSString *)reference
-                             divideBy:(NSString *)months
-{
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
-    {
-        map[@"CustomerReference"] = reference;
-    }
-
-    if ([months length])
-    {
-        map[@"BudgetNumber"] = reference;
-    }
-
-    map[@"tokenizeCard"] = @"1";
-
-    return [self saleWithAmount:amount
-                       currency:currency
-                     dictionary:map];
+                        options:options
+                       tokenize:YES];
 }
 
 - (BOOL)tokenizeCard
@@ -398,7 +362,13 @@ enum eSignConditions
 {
 
     LOG_RELEASE(Logger::eInfo, @"Starting TOKENIZE CARD operation, %@", reference);
-    
+
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
+
     NSMutableDictionary *map = [NSMutableDictionary new];
     
     if ([reference length])
@@ -421,40 +391,17 @@ enum eSignConditions
 {
     return [self refundWithAmount:amount
                          currency:currency
-                       dictionary:@{}];
+                          options:[MerchantAuthOptions new]];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount
                 currency:(NSString *)currency
-              cardholder:(BOOL)present
-{
-    return [self refundWithAmount:amount
-                         currency:currency];
-}
-
-- (BOOL)refundWithAmount:(NSInteger)amount
-                currency:(NSString *)currency
-              cardholder:(BOOL)present
-               reference:(NSString *)reference
-{
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
-    {
-        map[@"CustomerReference"] = reference;
-    }
-
-    return [self refundWithAmount:amount currency:currency dictionary:map];
-}
-
-- (BOOL)refundWithAmount:(NSInteger)amount
-                currency:(NSString *)currency
-              dictionary:(NSDictionary *)dictionary
+                 options:(MerchantAuthOptions *)options
 {
     return [self refundWithAmount:amount
                          currency:currency
                       transaction:nil
-                       dictionary:dictionary];
+                          options:options];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount
@@ -464,18 +411,36 @@ enum eSignConditions
     return [self refundWithAmount:amount
                          currency:currency
                       transaction:transaction
-                       dictionary:@{}];
+                          options:[MerchantAuthOptions new]];
 }
 
 - (BOOL)refundWithAmount:(NSInteger)amount
                 currency:(NSString*)currency
              transaction:(NSString*)transaction
-              dictionary:(NSDictionary *)dictionary
+                 options:(MerchantAuthOptions *)options
+
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
+
     LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, %@",
             amount, currency, dictionary);
 
-    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([options.customerReference length] != 0) {
+        map[@"CustomerReference"] = options.customerReference;
+    }
+
+    if (options.merchantAuth != nil)
+    {
+        map[@"agreement"] = options.merchantAuth.toXML;
+    }
+
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": map} appendHeader:YES];
 
     FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_REFUND,
             std::string([currency UTF8String]),
@@ -494,66 +459,30 @@ enum eSignConditions
     return [self saleVoidWithAmount:amount
                            currency:currency
                         transaction:transaction
-                         dictionary:@{}];
+                         options:[Options new]];
 }
 
 - (BOOL)saleVoidWithAmount:(NSInteger)amount
                   currency:(NSString *)currency
-                cardholder:(BOOL)present
                transaction:(NSString *)transaction
+                   options:(Options *)options
 {
-    return [self saleVoidWithAmount:amount
-                           currency:currency
-                        transaction:transaction
-                         dictionary:@{}];
-}
-
-- (BOOL)saleVoidWithAmount:(NSInteger)amount
-                  currency:(NSString *)currency
-                cardholder:(BOOL)present
-               transaction:(NSString *)transaction
-                 reference:(NSString *)reference
-{
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
+    if(isWaitingIdleResponse)
     {
-        map[@"CustomerReference"] = reference;
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
     }
 
-    return [self saleVoidWithAmount:amount
-                           currency:currency
-                        transaction:transaction
-                         dictionary:map];
-}
-
-- (BOOL)saleVoidWithAmount:(NSInteger)amount
-                  currency:(NSString *)currency
-               transaction:(NSString *)transaction
-                 reference:(NSString *)reference
-{
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
-    {
-        map[@"CustomerReference"] = reference;
-    }
-
-    return [self saleVoidWithAmount:amount
-                           currency:currency
-                        transaction:transaction
-                         dictionary:map];
-}
-
-- (BOOL)saleVoidWithAmount:(NSInteger)amount
-                  currency:(NSString *)currency
-               transaction:(NSString *)transaction
-                dictionary:(NSDictionary *)dictionary
-{
     LOG_RELEASE(Logger::eInfo,
             @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, %@", transaction, (int) amount, currency, dictionary);
 
-    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([options.customerReference length] != 0) {
+        map[@"CustomerReference"] = options.customerReference;
+    }
+
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": map} appendHeader:YES];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
     FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_SALE_VOID,
@@ -573,52 +502,33 @@ enum eSignConditions
     return [self refundVoidWithAmount:amount
                              currency:currency
                           transaction:transaction
-                           dictionary:@{}];
+                              options:[Options new]];
 }
 
 - (BOOL)refundVoidWithAmount:(NSInteger)amount
                     currency:(NSString *)currency
                  transaction:(NSString *)transaction
-                   reference:(NSString *)reference
+                     options:(Options *)options
 {
-    NSMutableDictionary *map = [NSMutableDictionary new];
-
-    if ([reference length])
+    if(isWaitingIdleResponse)
     {
-        map[@"CustomerReference"] = reference;
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
     }
 
-    return [self refundVoidWithAmount:amount
-                             currency:currency
-                          transaction:transaction
-                           dictionary:map];
-}
-
-- (BOOL)refundVoidWithAmount:(NSInteger)amount
-                    currency:(NSString *)currency
-                  cardholder:(BOOL)present
-                 transaction:(NSString *)transaction
-{
-    return [self refundVoidWithAmount:amount
-                             currency:currency
-                          transaction:transaction
-                           dictionary:@{}];
-}
-
-- (BOOL)refundVoidWithAmount:(NSInteger)amount
-                    currency:(NSString *)currency
-                 transaction:(NSString *)transaction
-                  dictionary:(NSDictionary *)dictionary
-{
     LOG_RELEASE(Logger::eInfo,
-            @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, %@",
-            transaction, (int) amount, currency, dictionary);
+            @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, %@", transaction, (int) amount, currency, dictionary);
 
-    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": dictionary} appendHeader:YES];
+    NSMutableDictionary *map = [NSMutableDictionary new];
+
+    if ([options.customerReference length] != 0) {
+        map[@"CustomerReference"] = options.customerReference;
+    }
+
+    NSString *params = [self generateXMLFromDictionary:@{@"FinancialTransactionRequest": map} appendHeader:YES];
 
     // an empty transaction id is actually not allowed here, but we will let the EFT Client take care of that
-    FinanceRequestCommand *frc = new FinanceRequestCommand(
-            EFT_PACKET_REFUND_VOID,
+    FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_REFUND_VOID,
             std::string([currency UTF8String]),
             (std::uint32_t) amount,
             YES,
@@ -630,6 +540,11 @@ enum eSignConditions
 
 - (BOOL)retrievePendingTransaction
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
     FinanceRequestCommand *frc = new FinanceRequestCommand(EFT_PACKET_RECOVERED_TXN_RESULT, "0" // must be like this or we throw an invalid currency exception
             , 0, YES, std::string(), std::string());
 
@@ -662,6 +577,12 @@ enum eSignConditions
 
 - (BOOL)enableScannerWithMultiScan:(BOOL)multiScan buttonMode:(BOOL)buttonMode timeoutSeconds:(NSInteger)timeoutSeconds
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
+
     if(isScanning)
     {
         LOG_RELEASE(Logger::eInfo, @"Scanner is already enabled.");
@@ -705,6 +626,11 @@ enum eSignConditions
 
 - (BOOL)financeStartOfDay
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new StartOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -715,6 +641,12 @@ enum eSignConditions
 
 - (BOOL)financeEndOfDay
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
+
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new EndOfDayRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -725,6 +657,12 @@ enum eSignConditions
 
 - (BOOL)financeInit
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
+
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new FinanceInitRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -735,6 +673,11 @@ enum eSignConditions
 
 - (BOOL)logSetLevel:(eLogLevel)level
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new SetLogLevelRequestCommand(level)
                                                            connection:connection
                                                      resultsProcessor:self
@@ -744,6 +687,11 @@ enum eSignConditions
 
 - (BOOL)logReset
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new ResetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -753,6 +701,11 @@ enum eSignConditions
 
 - (BOOL)logGetInfo
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:new GetLogInfoRequestCommand()
                                                            connection:connection
                                                      resultsProcessor:self
@@ -771,6 +724,11 @@ enum eSignConditions
 {
     LOG(@"MpedDevice getEMVConfiguration");
 
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
     NSString *params = [self generateXMLFromDictionary:@{@"getReport": @{@"name": @"EMVConfiguration"}}
                                           appendHeader:YES];
 
@@ -1027,6 +985,15 @@ enum eSignConditions
 #endif
 }
 
+-(void)processIdleResponseCommand:(IdleResponseCommand *)pCommand
+{
+    isWaitingIdleResponse = NO;
+    cancelAllowed = NO;
+#ifdef HEFT_SIMULATOR
+    [NSThread sleepForTimeInterval:1.];
+#endif
+}
+
 - (void)processFinanceResponse:(FinanceResponseCommand *)pResponse
 {
     int status = pResponse->GetStatus();
@@ -1142,6 +1109,11 @@ enum eSignConditions
 
 - (BOOL)postFinanceRequestCommand:(FinanceRequestCommand *)financeRequestCommand
 {
+    if(isWaitingIdleResponse)
+    {
+        LOG_RELEASE(Logger::eInfo, @"Device is busy, please retry after a short wait.");
+        return NO;
+    }
     MPosOperation *operation = [[MPosOperation alloc] initWithRequest:financeRequestCommand
                                                            connection:connection
                                                      resultsProcessor:self

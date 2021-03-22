@@ -5,6 +5,11 @@
 
 #import <Foundation/Foundation.h>
 
+@class MerchantAuth;
+@class SaleOptions;
+@class MerchantAuthOptions;
+@class Options;
+
 /**
  *  @file   HeftClient.h
  *
@@ -53,17 +58,13 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  returns  YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency;
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference divideBy:(NSString*)months;
-- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency dictionary:(NSDictionary *)dictionary;
+- (BOOL)saleWithAmount:(NSInteger)amount currency:(NSString*)currency options:(SaleOptions *)options;
 
 /**
  Performs SALE (see saleWithAmount:) transaction and tries to tokenize the card.
  */
 - (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency;
-- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency reference:(NSString*)reference;
-- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency reference:(NSString*)reference divideBy:(NSString*)months;
+- (BOOL)saleAndTokenizeCardWithAmount:(NSInteger)amount currency:(NSString*)currency options:(SaleOptions *)options;
 
 /**
  Performs a tokenization request for the credit card .
@@ -89,11 +90,9 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  returns  YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency;
-- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present;
-- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present reference:(NSString*)reference;
-- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency dictionary:(NSDictionary *)dictionary;
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency options:(MerchantAuthOptions *)options;
 - (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction;
-- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction dictionary:(NSDictionary *)dictionary;
+- (BOOL)refundWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction options:(MerchantAuthOptions *)options;
 
 /**
  Voids SALE transaction.
@@ -112,9 +111,7 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  returns  YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction;
-- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction reference:(NSString*)reference;
-- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction;
-- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction dictionary:(NSDictionary *)dictionary;
+- (BOOL)saleVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction options:(Options *)options;
 
 /**
  Voids REFUND transaction.
@@ -133,9 +130,7 @@ typedef NS_ENUM(NSUInteger, eLogLevel){
  returns  YES if request is sent and NO if there is active transaction already.
  */
 - (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction;
-- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction reference:(NSString*)reference;
-- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency cardholder:(BOOL)present transaction:(NSString*)transaction;
-- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction dictionary:(NSDictionary *)dictionary;
+- (BOOL)refundVoidWithAmount:(NSInteger)amount currency:(NSString*)currency transaction:(NSString*)transaction options:(Options *)options;
 
 /**
  Fetches a pending transaction result from the card reader.

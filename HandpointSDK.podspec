@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "HandpointSDK"
-  s.version      = "3.3.1"
+  s.version      = "3.3.2"
   s.summary      = "HandpointSDK for iOS"
   s.description  = <<-DESC
                     For detailed information, please see Handpoint documentation and Readme in https://www.handpoint.com/docs/device/iOS/
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://www.handpoint.com/docs/device/iOS/"
   s.license      = { :type => 'Commercial', :file => 'LICENSE' }
   s.author       = { "Handpoint" => "hi@handpoint.com" }
-  s.source       = { :git => "https://github.com/handpoint/HandpointSDK-iOS.git", :tag => "#{s.version}"}
+  s.source       = { :git =>  "" } #:git => "https://github.com/handpoint/HandpointSDK-iOS.git", :tag => "#{s.version}"}
   s.platform     = :ios, '8.0'
   s.source_files = [
     'Library/heft/*.{h,m}', 
