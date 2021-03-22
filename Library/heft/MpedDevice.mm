@@ -427,7 +427,7 @@ enum eSignConditions
     }
 
     LOG_RELEASE(Logger::eInfo, @"Starting REFUND operation (amount:%d, currency:%@, %@",
-            amount, currency, dictionary);
+            amount, currency, options);
 
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -474,7 +474,7 @@ enum eSignConditions
     }
 
     LOG_RELEASE(Logger::eInfo,
-            @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, %@", transaction, (int) amount, currency, dictionary);
+            @"Starting SALE VOID operation (transactionID:%@, amount:%d, currency:%@, %@", transaction, (int) amount, currency, options);
 
     NSMutableDictionary *map = [NSMutableDictionary new];
 
@@ -517,7 +517,7 @@ enum eSignConditions
     }
 
     LOG_RELEASE(Logger::eInfo,
-            @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, %@", transaction, (int) amount, currency, dictionary);
+            @"Starting REFUND VOID operation (transactionID:%@, amount:%d, currency:%@, %@", transaction, (int) amount, currency, options);
 
     NSMutableDictionary *map = [NSMutableDictionary new];
 
