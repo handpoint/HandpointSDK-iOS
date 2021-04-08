@@ -8,9 +8,10 @@
 
 @class Credential;
 
-@interface MerchantAuth : NSMutableArray<ToXML>
+@interface MerchantAuth: NSObject
 - (instancetype)init;
 - (instancetype)initWithCredential:(Credential *)credential;
 - (instancetype)initWithCredentials:(NSArray *)credentials;
+- (void)add:(Credential *)credential;
 - (NSString *)toXML;
 @end

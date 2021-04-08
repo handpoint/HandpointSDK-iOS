@@ -17,7 +17,8 @@ typedef enum Acquirer {
     TSYS,
     VANTIV,
     SANDBOX
-};
+    #define AcquirerValueLast SANDBOX
+} Acquirer;
 
 static const int FIELD_MAX_LENGTH = 23;
 
@@ -28,6 +29,10 @@ static const int FIELD_MAX_LENGTH = 23;
 @property (readwrite) NSString* tid;
 
 - (NSString *)acquirerString;
+
++ (enum Acquirer)getAcquirerFromString:(NSString *)string;
+
++ (NSString *)getAcquirerName:(enum Acquirer)acquirer;
 
 - (NSString *)toXML;
 @end

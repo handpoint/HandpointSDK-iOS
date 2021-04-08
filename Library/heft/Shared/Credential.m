@@ -55,6 +55,40 @@ static inline BOOL isEmpty(id thing) {
             && [(NSArray *)thing count] == 0);
 }
 
++ (enum Acquirer)getAcquirerFromString:(NSString *)string {
+    for (Acquirer value = 0; value <= AcquirerValueLast; value++) {
+        if ([[self getAcquirerName:value] isEqualToString:string]) {
+            return value;
+        }
+    }
+    return UNDEFINED;
+}
+
++ (NSString *)getAcquirerName:(enum Acquirer)acquirer {
+    switch(acquirer) {
+        case AMEX:
+            return @"AMEX";
+        case BORGUN:
+            return @"BORGUN";
+        case EVO:
+            return @"EVO";
+        case OMNIPAY:
+            return @"OMNIPAY";
+        case POSTBRIDGE:
+            return @"PostBridge";
+        case INTERAC:
+            return @"TNS";
+        case TSYS:
+            return @"TSYS";
+        case VANTIV:
+            return @"VANTIV";
+        case SANDBOX:
+            return @"ViscusDummy";
+        default:
+            return @"";
+        }
+}
+
 - (NSString *)toXML
 {
     if(isEmpty(self.mid) && isEmpty(self.tid))
@@ -62,15 +96,15 @@ static inline BOOL isEmpty(id thing) {
         return @"";
     }
     NSMutableString *credential = [NSMutableString new];
-    if(self.acquirer != nil)
+    if(self.acquirerString.length)
     {
         [credential appendFormat:@"<acquirer>%@</acquirer>", self.acquirerString];
     }
-    if(self.mid != nil)
+    if(self.mid.length)
     {
         [credential appendFormat:@"<mid>%@</mid>", self.mid];
     }
-    if(self.tid != nil)
+    if(self.tid.length)
     {
         [credential appendFormat:@"<tid>%@</tid>", self.tid];
     }

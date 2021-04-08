@@ -9,6 +9,13 @@
 #import "MerchantAuthOptions.h"
 #import "Options.h"
 
+
+@interface MerchantAuth()
+
+@property (atomic) NSMutableArray *credentials;
+
+@end
+
 @implementation MerchantAuth
 
 - (instancetype)initWithCredential:(Credential *)credential
@@ -16,7 +23,8 @@
     self = [super init];
     if (self)
     {
-        [self addObject:credential];
+        self.credentials = [NSMutableArray new];
+        [self.credentials addObject:credential];
     }
 
     return self;
@@ -27,7 +35,8 @@
     self = [super init];
     if (self)
     {
-        [self addObjectsFromArray:credentials];
+        self.credentials = [NSMutableArray new];
+        [self.credentials addObjectsFromArray:credentials];
     }
 
     return self;
@@ -37,18 +46,24 @@
 {
     self = [super init];
     if (self)
-    {}
+    {
+        self.credentials = [NSMutableArray new];
+    }
 
     return self;
 }
 
+- (void)add:(Credential *)credential {
+    [self.credentials addObject:credential];
+}
+
 - (NSString *)toXML
 {
-    NSArray *credentials = [self copy];
+    NSArray *credentials = [self.credentials copy];
     NSMutableString *xml = [NSMutableString new];
 
     for(Credential *credential in credentials) {
-        [xml appendString:credential.toXML];
+        [xml appendFormat:@"<credential>%@</credential>", credential.toXML];
     }
 
     return xml;
