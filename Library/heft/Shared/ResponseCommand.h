@@ -170,6 +170,8 @@ class IdleResponseCommand : public ResponseCommand{
 public:
 	IdleResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
     const std::string& GetXmlDetails(){return xml_details;}
+
+	void ProcessResult(id<IResponseProcessor> processor){[processor processIdleResponseCommand:this];}
 };
 
 class EventInfoResponseCommand : public ResponseCommand{
@@ -261,10 +263,11 @@ class GetLogInfoResponseCommand : public ResponseCommand {
 
 public:
 	GetLogInfoResponseCommand(const ResponsePayload* pPayload, std::uint32_t payloadSize);
-    const std::string& GetData(){return data;}
+	const std::string& GetData(){return data;}
 
 	//ResponseCommand
 	void ProcessResult(id<IResponseProcessor> processor) {
-        [processor processLogInfoResponse:this];
-    }
+		[processor processLogInfoResponse:this];
+	}
 };
+

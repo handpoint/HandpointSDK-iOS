@@ -10,6 +10,7 @@ class FinanceResponseCommand;
 class GetLogInfoResponseCommand;
 class SignatureRequestCommand;
 class TokenizeCardCommandResponseCommand;
+class IdleResponseCommand;
 
 @protocol IResponseProcessor
 
@@ -22,7 +23,7 @@ class TokenizeCardCommandResponseCommand;
 -(void)processFinanceResponse:(FinanceResponseCommand*)pResponse;
 -(void)processLogInfoResponse:(GetLogInfoResponseCommand*)pResponse;
 -(void)processTokenizeCardCommandResponseCommand:(TokenizeCardCommandResponseCommand *)pResponse;
+-(void)processIdleResponseCommand:(IdleResponseCommand *)pCommand;
 
 -(BOOL)cancelIfPossible;
-
 @end

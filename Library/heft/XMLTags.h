@@ -91,5 +91,8 @@
 
 + (NSString *)CustomerLanguagePref;
 
++ (NSString *)Mid;
+
++ (NSString *)Tid;
 @end;
 

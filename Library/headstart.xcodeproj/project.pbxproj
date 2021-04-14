@@ -66,16 +66,23 @@
 		2D5ACCB5169B300200BA0D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEDA3741628B0590043AFBC /* Foundation.framework */; };
 		31F2B099216F044A3BF19D21 /* ResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B134F950AC98170C7743 /* ResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B0ECC15B98A3733B9807 /* FinanceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B73CFE0D39398E355B51 /* FinanceResponse.h */; };
+		31F2B15832771C4CFD8DC255 /* MerchantAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B9012665E2E08A9BE11E /* MerchantAuth.m */; };
+		31F2B185D8F45628AAD77BDF /* Options.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B2B6822F366F9DEFA97F /* Options.m */; };
 		31F2B18729BF8B34BFFEB6E3 /* StatusInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B69B97E31A592161CD85 /* StatusInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B1ECAE9AEE5335194652 /* toXML.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BEE68C2714052AEC98FD /* toXML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B2C5CFA6DCD732C6F7BD /* FinanceResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B2EDB13E59B187A86761 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B015E8E3B06AB63303C1 /* Options.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B3DE7FEC9119D8EA7D31 /* DeviceStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B89825DE416CCD585E4B /* DeviceStatus.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B3F3A412150451C11B72 /* HeftRemoteDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B42BDFF400B48C23CDC6 /* SimulatorAccessory.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B41E970099A064C54E74 /* SimulatorAccessory.h */; };
+		31F2B43DFE06C54E241AF689 /* MerchantAuth.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B1331DDE8E07D8A57912 /* MerchantAuth.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31F2B4E05A1B64E9E91AEAEF /* MerchantAuthOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B5A7204198342B857D95 /* MerchantAuthOptions.m */; };
 		31F2B585C78ECC319D38E60F /* SimulatorAccessory.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */; };
 		31F2B5D92AC501D248724494 /* ScannerDisabledResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponse.m */; };
 		31F2B60647E49970A501FC0B /* HeftDiscovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B60E94A2B1AE5E095C2E /* DeviceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B8262A11A7170E20B36B /* DeviceStatus.m */; };
 		31F2B6387580EE006B1B21AF /* StatusInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */; };
+		31F2B6742842A36488DB520A /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BE2A8C92F935FF8A284E /* Credential.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B679E1FB2D82AA43D80B /* HeftClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BD15EEFCEA7DB6821342 /* HeftClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2B7F5A96A1999A4340FF7 /* ScannerDisabledResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */; };
 		31F2B86790156EF0582013AC /* LogInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */; };
@@ -84,13 +91,17 @@
 		31F2BA0C66A5552B883B755D /* ScannerEventResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7983A6A20892C8472F0 /* ScannerEventResponse.m */; };
 		31F2BA2F08FE9FF52D4A70D0 /* HeftManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B2DE6C951F89AC732ED3 /* HeftManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BA68971F24175D3673D0 /* HeftRemoteDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */; };
+		31F2BAE99D29DE66CD463CC5 /* Credential.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B96ED940CEC05211C559 /* Credential.m */; };
+		31F2BB92568A8496803203EF /* SaleOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2BF5C9E583D3D27341FA0 /* SaleOptions.m */; };
 		31F2BC15E169EE3A731C18C0 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC845D0AAC6DF2A910BC /* utils.h */; };
 		31F2BC3D5E8563B5928814D4 /* HeftDiscoveryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BC4A1722C1EA134FDDA7 /* LogInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3521672BCF16FE6B9CB /* LogInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BC4BA1B84700604D4191 /* HandpointAll.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B3D82C2C03756E7BF898 /* HandpointAll.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BC648B67A87AFF871579 /* FinanceResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */; };
 		31F2BCAF85707EA7B7F74428 /* ScannerDisabledResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */; };
+		31F2BCD143E3C8AC5692D926 /* MerchantAuthOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B611FED44E35DEEDA3AC /* MerchantAuthOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BCD7BCEC029530C885A4 /* ResponseInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BF3A34E4715103899656 /* ResponseInfoObject.h */; };
+		31F2BD85910A88763BD4E27A /* SaleOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2B0DA654D7AAD42E9D696 /* SaleOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BDEBD7D0A3B24FA4F1F9 /* ScannerEventResponseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31F2BEA6CDA71AAAA6286128 /* ResponseInfoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */; };
 		31F2BFC129B7690078527E2B /* LogInfoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F2BBBC458764557DFB7937 /* LogInfoObject.h */; };
@@ -177,22 +188,28 @@
 		2DEDA3721628B0580043AFBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2DEDA3741628B0590043AFBC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2DEDA3761628B0590043AFBC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		31F2B015E8E3B06AB63303C1 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
 		31F2B08D35B1BB5E0FDD5267 /* LogInfoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogInfoObject.m; sourceTree = "<group>"; };
 		31F2B0BBFCF9313B5B65CE37 /* ScannerEventResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerEventResponse.h; sourceTree = "<group>"; };
 		31F2B0BF5467D9F2BAF0D228 /* StatusInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusInfo.m; sourceTree = "<group>"; };
+		31F2B0DA654D7AAD42E9D696 /* SaleOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaleOptions.h; sourceTree = "<group>"; };
+		31F2B1331DDE8E07D8A57912 /* MerchantAuth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MerchantAuth.h; sourceTree = "<group>"; };
 		31F2B134F950AC98170C7743 /* ResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseInfo.h; sourceTree = "<group>"; };
 		31F2B17C983602F428AFCFCE /* ScannerDisabledResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerDisabledResponse.h; sourceTree = "<group>"; };
 		31F2B18835E7CFA83E8D5D52 /* ResponseInfoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResponseInfoObject.m; sourceTree = "<group>"; };
 		31F2B18A909E97283E73A518 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinanceResponseInfo.h; sourceTree = "<group>"; };
+		31F2B2B6822F366F9DEFA97F /* Options.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Options.m; sourceTree = "<group>"; };
 		31F2B2C428A94EC1A98A8629 /* ScannerDisabledResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerDisabledResponse.m; sourceTree = "<group>"; };
 		31F2B2DE6C951F89AC732ED3 /* HeftManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftManager.h; sourceTree = "<group>"; };
 		31F2B3521672BCF16FE6B9CB /* LogInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInfo.h; sourceTree = "<group>"; };
 		31F2B3D82C2C03756E7BF898 /* HandpointAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandpointAll.h; sourceTree = "<group>"; };
 		31F2B41E970099A064C54E74 /* SimulatorAccessory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatorAccessory.h; sourceTree = "<group>"; };
 		31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HapiRemoteService.h; sourceTree = "<group>"; };
+		31F2B5A7204198342B857D95 /* MerchantAuthOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MerchantAuthOptions.m; sourceTree = "<group>"; };
 		31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftStatusReportDelegate.h; sourceTree = "<group>"; };
 		31F2B5CC497EAF03AD829C71 /* HeftRemoteDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeftRemoteDevice.m; sourceTree = "<group>"; };
+		31F2B611FED44E35DEEDA3AC /* MerchantAuthOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MerchantAuthOptions.h; sourceTree = "<group>"; };
 		31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerDisabledResponseInfo.h; sourceTree = "<group>"; };
 		31F2B69B97E31A592161CD85 /* StatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusInfo.h; sourceTree = "<group>"; };
 		31F2B73CFE0D39398E355B51 /* FinanceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinanceResponse.h; sourceTree = "<group>"; };
@@ -200,16 +217,21 @@
 		31F2B7EB8B93B3ADA611B022 /* FinanceResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FinanceResponse.m; sourceTree = "<group>"; };
 		31F2B8262A11A7170E20B36B /* DeviceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceStatus.m; sourceTree = "<group>"; };
 		31F2B89825DE416CCD585E4B /* DeviceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceStatus.h; sourceTree = "<group>"; };
+		31F2B9012665E2E08A9BE11E /* MerchantAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MerchantAuth.m; sourceTree = "<group>"; };
 		31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftRemoteDevice.h; sourceTree = "<group>"; };
+		31F2B96ED940CEC05211C559 /* Credential.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Credential.m; sourceTree = "<group>"; };
 		31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscovery.h; sourceTree = "<group>"; };
 		31F2BBBC458764557DFB7937 /* LogInfoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInfoObject.h; sourceTree = "<group>"; };
 		31F2BC845D0AAC6DF2A910BC /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerEventResponseInfo.h; sourceTree = "<group>"; };
 		31F2BD15EEFCEA7DB6821342 /* HeftClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftClient.h; sourceTree = "<group>"; };
 		31F2BDA4422E4ECE5F85E72E /* SimulatorAccessory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulatorAccessory.m; sourceTree = "<group>"; };
+		31F2BE2A8C92F935FF8A284E /* Credential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
 		31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeftDiscoveryDelegate.h; sourceTree = "<group>"; };
+		31F2BEE68C2714052AEC98FD /* toXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = toXML.h; sourceTree = "<group>"; };
 		31F2BF27AEBB3A4C942FA73D /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		31F2BF3A34E4715103899656 /* ResponseInfoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponseInfoObject.h; sourceTree = "<group>"; };
+		31F2BF5C9E583D3D27341FA0 /* SaleOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaleOptions.m; sourceTree = "<group>"; };
 		31F2BF69A1F82BF649E0DF8D /* heft-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "heft-Prefix.pch"; sourceTree = "<group>"; };
 		4975068E1DC8AB280026C6E1 /* HapiRemoteService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HapiRemoteService.m; sourceTree = "<group>"; };
 		498A67071BF63765006D4606 /* Logger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logger.m; sourceTree = "<group>"; };
@@ -353,6 +375,11 @@
 				2D39896C165FF88800F8FA29 /* Logger.mm */,
 				2D39896D165FF88800F8FA29 /* Logger.h */,
 				498A67071BF63765006D4606 /* Logger.m */,
+				31F2B2B6822F366F9DEFA97F /* Options.m */,
+				31F2B5A7204198342B857D95 /* MerchantAuthOptions.m */,
+				31F2B9012665E2E08A9BE11E /* MerchantAuth.m */,
+				31F2B96ED940CEC05211C559 /* Credential.m */,
+				31F2BF5C9E583D3D27341FA0 /* SaleOptions.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -360,24 +387,30 @@
 		2D39895D165FF88800F8FA29 /* api */ = {
 			isa = PBXGroup;
 			children = (
-				0DAC678020EF84A10081C673 /* Currency.h */,
 				0DA0D0DB20DA89ED003F34AA /* BaseModel.h */,
-				31F2B69B97E31A592161CD85 /* StatusInfo.h */,
-				31F2B89825DE416CCD585E4B /* DeviceStatus.h */,
-				31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */,
 				2D39895E165FF88800F8FA29 /* CmdIds.h */,
-				31F2B134F950AC98170C7743 /* ResponseInfo.h */,
+				31F2BE2A8C92F935FF8A284E /* Credential.h */,
+				0DAC678020EF84A10081C673 /* Currency.h */,
+				31F2B89825DE416CCD585E4B /* DeviceStatus.h */,
 				31F2B274A86A2A125387FCF2 /* FinanceResponseInfo.h */,
-				31F2BD15EEFCEA7DB6821342 /* HeftClient.h */,
-				31F2B2DE6C951F89AC732ED3 /* HeftManager.h */,
 				31F2B3D82C2C03756E7BF898 /* HandpointAll.h */,
 				31F2B580BE0FF7BA5AAB82E1 /* HapiRemoteService.h */,
-				31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */,
+				31F2BD15EEFCEA7DB6821342 /* HeftClient.h */,
 				31F2B9DA5877E91020057AA3 /* HeftDiscovery.h */,
 				31F2BE367BBE5A74E77E06BE /* HeftDiscoveryDelegate.h */,
+				31F2B2DE6C951F89AC732ED3 /* HeftManager.h */,
+				31F2B90B85E1B9251B49FDD2 /* HeftRemoteDevice.h */,
+				31F2B5BEB4CF779FC9AB006F /* HeftStatusReportDelegate.h */,
+				31F2B3521672BCF16FE6B9CB /* LogInfo.h */,
+				31F2B1331DDE8E07D8A57912 /* MerchantAuth.h */,
+				31F2B611FED44E35DEEDA3AC /* MerchantAuthOptions.h */,
+				31F2B015E8E3B06AB63303C1 /* Options.h */,
+				31F2B134F950AC98170C7743 /* ResponseInfo.h */,
+				31F2B0DA654D7AAD42E9D696 /* SaleOptions.h */,
 				31F2B622A806F57D530B68F0 /* ScannerDisabledResponseInfo.h */,
 				31F2BC8B8841D5FF4DC19645 /* ScannerEventResponseInfo.h */,
-				31F2B3521672BCF16FE6B9CB /* LogInfo.h */,
+				31F2B69B97E31A592161CD85 /* StatusInfo.h */,
+				31F2BEE68C2714052AEC98FD /* toXML.h */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -463,6 +496,10 @@
 				31F2B3DE7FEC9119D8EA7D31 /* DeviceStatus.h in Headers */,
 				31F2BC4A1722C1EA134FDDA7 /* LogInfo.h in Headers */,
 				31F2BC3D5E8563B5928814D4 /* HeftDiscoveryDelegate.h in Headers */,
+				31F2BCD143E3C8AC5692D926 /* MerchantAuthOptions.h in Headers */,
+				31F2B43DFE06C54E241AF689 /* MerchantAuth.h in Headers */,
+				31F2B6742842A36488DB520A /* Credential.h in Headers */,
+				31F2BD85910A88763BD4E27A /* SaleOptions.h in Headers */,
 				31F2B42BDFF400B48C23CDC6 /* SimulatorAccessory.h in Headers */,
 				31F2BC15E169EE3A731C18C0 /* utils.h in Headers */,
 				0D72755520DD6ACE003997C9 /* Version.h in Headers */,
@@ -473,6 +510,8 @@
 				31F2BCD7BCEC029530C885A4 /* ResponseInfoObject.h in Headers */,
 				31F2B0ECC15B98A3733B9807 /* FinanceResponse.h in Headers */,
 				31F2B3F3A412150451C11B72 /* HeftRemoteDevice.h in Headers */,
+				31F2B2EDB13E59B187A86761 /* Options.h in Headers */,
+				31F2B1ECAE9AEE5335194652 /* toXML.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -670,6 +709,11 @@
 				31F2B86790156EF0582013AC /* LogInfoObject.m in Sources */,
 				31F2B6387580EE006B1B21AF /* StatusInfo.m in Sources */,
 				31F2B60E94A2B1AE5E095C2E /* DeviceStatus.m in Sources */,
+				31F2B185D8F45628AAD77BDF /* Options.m in Sources */,
+				31F2B4E05A1B64E9E91AEAEF /* MerchantAuthOptions.m in Sources */,
+				31F2B15832771C4CFD8DC255 /* MerchantAuth.m in Sources */,
+				31F2BAE99D29DE66CD463CC5 /* Credential.m in Sources */,
+				31F2BB92568A8496803203EF /* SaleOptions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -790,7 +834,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.3.1;
+				SDK_VERSION = 4.0.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -900,7 +944,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.3.1;
+				SDK_VERSION = 4.0.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -957,7 +1001,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.3.1;
+				SDK_VERSION = 4.0.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
@@ -996,7 +1040,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/include";
-				SDK_VERSION = 3.3.1;
+				SDK_VERSION = 4.0.0;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv7 armv7s i386 arm64";
