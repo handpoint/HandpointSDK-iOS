@@ -2,6 +2,8 @@
 
 Commit and push all your work first
 
+`pod spec lint --verbose`
+
 `git tag -a <version> -m "<version> - Minified changelog"`
 
 `git push origin --tags`
