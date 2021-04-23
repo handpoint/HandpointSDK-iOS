@@ -26,11 +26,10 @@
 #import "ScannerDisabledResponseInfo.h"
 #import "DeviceStatus.h"
 #import "StatusInfo.h"
-#import "MerchantAuth.h";
-#import "SaleOptions.h";
-#import "MerchantAuthOptions.h";
-#import "Options.h";
-#import "Credential.h";
+#import "MerchantAuth.h"
+#import "SaleOptions.h"
+#import "MerchantAuthOptions.h"
+#import "Options.h"
+#import "Credential.h"
 
 #endif
-

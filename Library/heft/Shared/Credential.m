@@ -63,7 +63,6 @@ static inline BOOL isEmpty(id thing) {
     }
     return UNDEFINED;
 }
-
 + (NSString *)getAcquirerName:(enum Acquirer)acquirer {
     switch(acquirer) {
         case AMEX:
@@ -75,15 +74,15 @@ static inline BOOL isEmpty(id thing) {
         case OMNIPAY:
             return @"OMNIPAY";
         case POSTBRIDGE:
-            return @"PostBridge";
+            return @"POSTBRIDGE";
         case INTERAC:
-            return @"TNS";
+            return @"INTERAC";
         case TSYS:
             return @"TSYS";
         case VANTIV:
             return @"VANTIV";
         case SANDBOX:
-            return @"ViscusDummy";
+            return @"SANDBOX";
         default:
             return @"";
         }
