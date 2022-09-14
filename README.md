@@ -1,5 +1,9 @@
 ![HandpointSDK](https://github.com/handpoint/HandpointSDK-iOS/raw/master/logo.png)
 
+# Handpoint SDK for iOS
+
+The Handpoint SDK for iOS is a framework that allows you to integrate Handpoint's payment solutions into your iOS application.
+
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/HandpointSDK.svg)](https://img.shields.io/cocoapods/v/HandpointSDK.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Platform](https://img.shields.io/cocoapods/p/HandpointSDK.svg?style=flat)](https://cocoapods.org/pods/HandpointSDK)
