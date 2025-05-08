@@ -90,6 +90,17 @@
 		0D56EDAB21409B1B00BC00CF /* MpedDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56ED5B21409B1B00BC00CF /* MpedDevice.h */; };
 		0D56EDAC21409B1B00BC00CF /* XMLTags.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56ED5C21409B1B00BC00CF /* XMLTags.m */; };
 		0D56EDB421412B7600BC00CF /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D56EDB321412B7600BC00CF /* ExternalAccessory.framework */; };
+		F9480EC32DCA468900C7B3AF /* toXML.h in Headers */ = {isa = PBXBuildFile; fileRef = F9480EC22DCA468900C7B3AF /* toXML.h */; };
+		F9480EC42DCA468900C7B3AF /* SaleOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = F9480EC12DCA468900C7B3AF /* SaleOptions.h */; };
+		F9480EC52DCA468900C7B3AF /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = F9480EBD2DCA468900C7B3AF /* Credential.h */; };
+		F9480EC62DCA468900C7B3AF /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = F9480EC02DCA468900C7B3AF /* Options.h */; };
+		F9480EC72DCA468900C7B3AF /* MerchantAuth.h in Headers */ = {isa = PBXBuildFile; fileRef = F9480EBE2DCA468900C7B3AF /* MerchantAuth.h */; };
+		F9480EC82DCA468900C7B3AF /* MerchantAuthOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = F9480EBF2DCA468900C7B3AF /* MerchantAuthOptions.h */; };
+		F9480ECE2DCA46A200C7B3AF /* MerchantAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = F9480ECA2DCA46A200C7B3AF /* MerchantAuth.m */; };
+		F9480ECF2DCA46A200C7B3AF /* SaleOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = F9480ECD2DCA46A200C7B3AF /* SaleOptions.m */; };
+		F9480ED02DCA46A200C7B3AF /* Credential.m in Sources */ = {isa = PBXBuildFile; fileRef = F9480EC92DCA46A200C7B3AF /* Credential.m */; };
+		F9480ED12DCA46A200C7B3AF /* Options.m in Sources */ = {isa = PBXBuildFile; fileRef = F9480ECC2DCA46A200C7B3AF /* Options.m */; };
+		F9480ED22DCA46A200C7B3AF /* MerchantAuthOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = F9480ECB2DCA46A200C7B3AF /* MerchantAuthOptions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -178,6 +189,17 @@
 		0D56ED5B21409B1B00BC00CF /* MpedDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpedDevice.h; sourceTree = "<group>"; };
 		0D56ED5C21409B1B00BC00CF /* XMLTags.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLTags.m; sourceTree = "<group>"; };
 		0D56EDB321412B7600BC00CF /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
+		F9480EBD2DCA468900C7B3AF /* Credential.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
+		F9480EBE2DCA468900C7B3AF /* MerchantAuth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MerchantAuth.h; sourceTree = "<group>"; };
+		F9480EBF2DCA468900C7B3AF /* MerchantAuthOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MerchantAuthOptions.h; sourceTree = "<group>"; };
+		F9480EC02DCA468900C7B3AF /* Options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
+		F9480EC12DCA468900C7B3AF /* SaleOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SaleOptions.h; sourceTree = "<group>"; };
+		F9480EC22DCA468900C7B3AF /* toXML.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = toXML.h; sourceTree = "<group>"; };
+		F9480EC92DCA46A200C7B3AF /* Credential.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Credential.m; sourceTree = "<group>"; };
+		F9480ECA2DCA46A200C7B3AF /* MerchantAuth.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MerchantAuth.m; sourceTree = "<group>"; };
+		F9480ECB2DCA46A200C7B3AF /* MerchantAuthOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MerchantAuthOptions.m; sourceTree = "<group>"; };
+		F9480ECC2DCA46A200C7B3AF /* Options.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Options.m; sourceTree = "<group>"; };
+		F9480ECD2DCA46A200C7B3AF /* SaleOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SaleOptions.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,6 +289,11 @@
 		0D56ED1821409B1B00BC00CF /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				F9480EC92DCA46A200C7B3AF /* Credential.m */,
+				F9480ECA2DCA46A200C7B3AF /* MerchantAuth.m */,
+				F9480ECB2DCA46A200C7B3AF /* MerchantAuthOptions.m */,
+				F9480ECC2DCA46A200C7B3AF /* Options.m */,
+				F9480ECD2DCA46A200C7B3AF /* SaleOptions.m */,
 				0D56ED1921409B1B00BC00CF /* Frame.mm */,
 				0D56ED1A21409B1B00BC00CF /* RequestCommand.h */,
 				0D56ED1B21409B1B00BC00CF /* debug.h */,
@@ -297,6 +324,12 @@
 		0D56ED2821409B1B00BC00CF /* api */ = {
 			isa = PBXGroup;
 			children = (
+				F9480EBD2DCA468900C7B3AF /* Credential.h */,
+				F9480EBE2DCA468900C7B3AF /* MerchantAuth.h */,
+				F9480EBF2DCA468900C7B3AF /* MerchantAuthOptions.h */,
+				F9480EC02DCA468900C7B3AF /* Options.h */,
+				F9480EC12DCA468900C7B3AF /* SaleOptions.h */,
+				F9480EC22DCA468900C7B3AF /* toXML.h */,
 				0D56ED2921409B1B00BC00CF /* DeviceStatus.h */,
 				0D56ED2A21409B1B00BC00CF /* HeftDiscovery.h */,
 				0D56ED2B21409B1B00BC00CF /* HandpointAll.h */,
@@ -383,6 +416,12 @@
 				0D56ED5F21409B1B00BC00CF /* utils.h in Headers */,
 				0D56ED8121409B1B00BC00CF /* FinanceResponseInfo.h in Headers */,
 				0D56EDA721409B1B00BC00CF /* HeftConnection.h in Headers */,
+				F9480EC32DCA468900C7B3AF /* toXML.h in Headers */,
+				F9480EC42DCA468900C7B3AF /* SaleOptions.h in Headers */,
+				F9480EC52DCA468900C7B3AF /* Credential.h in Headers */,
+				F9480EC62DCA468900C7B3AF /* Options.h in Headers */,
+				F9480EC72DCA468900C7B3AF /* MerchantAuth.h in Headers */,
+				F9480EC82DCA468900C7B3AF /* MerchantAuthOptions.h in Headers */,
 				0D56ED8C21409B1B00BC00CF /* HeftDiscoveryDelegate.h in Headers */,
 				0D56ED8521409B1B00BC00CF /* ScannerDisabledResponseInfo.h in Headers */,
 				0D56ED8E21409B1B00BC00CF /* Command.h in Headers */,
@@ -503,6 +542,11 @@
 				0D56EDA021409B1B00BC00CF /* RequestCommand.cpp in Sources */,
 				0D56ED9C21409B1B00BC00CF /* MPosOperation.mm in Sources */,
 				0D56ED6C21409B1B00BC00CF /* Frame.mm in Sources */,
+				F9480ECE2DCA46A200C7B3AF /* MerchantAuth.m in Sources */,
+				F9480ECF2DCA46A200C7B3AF /* SaleOptions.m in Sources */,
+				F9480ED02DCA46A200C7B3AF /* Credential.m in Sources */,
+				F9480ED12DCA46A200C7B3AF /* Options.m in Sources */,
+				F9480ED22DCA46A200C7B3AF /* MerchantAuthOptions.m in Sources */,
 				0D56EDA521409B1B00BC00CF /* SimulatorAccessory.m in Sources */,
 				0D56EDAC21409B1B00BC00CF /* XMLTags.m in Sources */,
 				0D56ED6921409B1B00BC00CF /* BaseModel.m in Sources */,
@@ -660,6 +704,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = HandpointSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -685,6 +730,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = HandpointSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

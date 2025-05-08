@@ -25,6 +25,23 @@ cp -R "${SIMULATOR_SWIFT_MODULES_DIR}" "${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME
 fi
 
 # Step 4. Create universal binary file using lipo and place the combined executable in the copied framework directory
-lipo -create -output "${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/${PROJECT_NAME}" "${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}" "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework/${PROJECT_NAME}"
+#lipo -create -output "${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/${PROJECT_NAME}" "${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}" "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework/${PROJECT_NAME}"
+
+
+# Paths for input frameworks
+SIMULATOR_FRAMEWORK="${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}"
+DEVICE_FRAMEWORK="${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework/${PROJECT_NAME}"
+
+# Temporary stripped simulator binary (without arm64)
+STRIPPED_SIMULATOR_BINARY="${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}-stripped"
+
+# Remove arm64 from simulator binary to avoid lipo conflict
+xcrun lipo -remove arm64 -output "$STRIPPED_SIMULATOR_BINARY" "$SIMULATOR_FRAMEWORK"
+
+# Create universal binary using lipo
+lipo -create -output "${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/${PROJECT_NAME}" \
+    "$DEVICE_FRAMEWORK" \
+    "$STRIPPED_SIMULATOR_BINARY"
+
 
 fi
