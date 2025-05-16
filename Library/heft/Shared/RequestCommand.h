@@ -55,7 +55,7 @@ public:
 	
     const std::uint8_t* GetData() const
     {
-        return &data[0];
+        return data.empty() ? nullptr : &data[0];
     }
 #ifdef HEFT_EXPORTS
 	CString dump(const CString& prefix)const{return ::dump(prefix, &data[0], data.size());}
