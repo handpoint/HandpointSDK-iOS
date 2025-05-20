@@ -53,9 +53,45 @@ You can also enable this support by including the UIBackgroundModes key with the
 
 ## Installation
 
+### Ruby Dependency
+This project requires Ruby to run. We recommend installing Ruby using [rbenv](https://github.com/rbenv/rbenv) to manage different Ruby versions easily.
+
+To check if Ruby is already installed:
+
+```bash
+$ which ruby
+$ ruby -v
+```
+
+You can install rbenv with [Homebrew](https://brew.sh/) using the following commands:
+
+```bash
+$ brew update
+$ brew install rbenv
+```
+
+The next step is to add rbenv to your shell ( ~/.zshrc or relevant shell config file):
+
+```bash
+eval "$(rbenv init -)"
+```
+
+Then reload the shell configuration:
+
+```bash
+$ source ~/.zshrc
+```
+
+Finally you can install the required Ruby version with the following commands:
+
+```bash
+$ rbenv install 3.2.2
+$ rbenv global 3.2.2
+```
+
 ### CocoaPods
 
-[CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+[CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following commands:
 
 ```bash
 $ gem install cocoapods
@@ -75,14 +111,16 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'your_target' do
-    pod 'HandpointSDK', '~> 4.0.1'
+    pod 'HandpointSDK', '~> 4.0.2'
 end
 ```
 
-Then, run the following command:
+Then, run the following commands:
 
 ```bash
 $ pod install
+$ hash -r
+$ rehash
 ```
 
 ### Carthage
