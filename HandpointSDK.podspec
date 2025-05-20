@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => 'Commercial', :file => 'LICENSE' }
   s.author       = { "Handpoint" => "hi@handpoint.com" }
   s.source       = { :git => "https://github.com/handpoint/HandpointSDK-iOS.git", :tag => "#{s.version}"} #"" } 
-  s.platform     = :ios, '8.0'
+  s.platform     = :ios, '12.0'
   s.source_files = [
     'Library/heft/*.{h,m}', 
     'Library/heft/*.mm',
